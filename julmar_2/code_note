@@ -1,0 +1,85 @@
+@if (session('success'))
+                                            <div class="alert alert-success border-left-success alert-dismissible fade show"
+                                                role="alert">
+                                                {{ session('success') }}
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        @endif
+
+                                        @if (session('error'))
+                                            <div class="alert alert-danger border-left-danger alert-dismissible fade show"
+                                                role="alert">
+                                                {{ session('error') }}
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  $("#principal").change(function() {
+            $('#van_selling_transaction_show_sku_page').show();
+            //$('.loading').show();
+            $('#hide_if_trigger').show();
+            var principal = $('#principal').val();
+            var store_name = $('#customer_selection').val();
+            $.post({
+                type: "POST",
+                url: "/van_selling_transaction_show_sku",
+                data: 'principal=' + principal + '&store_name=' + store_name,
+                success: function(data) {
+                    console.log(data);
+
+                    $('#van_selling_transaction_show_sku_page').html(data);
+                    $('.loading').hide();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+
+
+        $("#van_selling_transaction_proceed").on('submit', (function(e) {
+            e.preventDefault();
+            //$('.loading').show();
+            $('#hide_if_trigger').hide();
+            $.ajax({
+                url: "van_selling_transaction_proceed",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+
+                    $('.loading').hide();
+                    $("#principal").val('').trigger('change');
+                    $('#van_selling_transaction_show_sku_page').hide();
+                    $('#van_selling_transaction_proceed_page').html(data);
+                    $('#hide_if_trigger').show();
+                },
+            });
+        }));
