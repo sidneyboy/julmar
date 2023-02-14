@@ -78,7 +78,7 @@
          </div>
 
          <div class="col-md-12">
-             <button class="btn btn-flat btn-block btn-sm btn-primary next_input_box" type="submit" name="submit"
+             <button class="btn float-right btn-sm btn-primary next_input_box" type="submit" name="submit"
                  value="Submit" onclick="return submitData()" style="font-weight: bold;">Add To Order</button>
          </div>
      </div>

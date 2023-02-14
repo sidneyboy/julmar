@@ -1,11 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
 use App\Sku_add;
 use App\Sku_principal;
-use Session;
 use Cart;
 use App\Purchase_order;
 use App\Purchase_order_details;
@@ -110,7 +107,7 @@ class Purchase_order_controller extends Controller
                     ->with('sales_order_number', $request->input('sales_order_number'))
                     ->with('discount', $principal_discount);
             } else {
-                $po_id = $principal_name . "-" . $month . "-" . 1 . "-" . $year;
+                $po_id = $principal_name . "-" . $month . "-" . $year . "-" . 1;
                 return view('purchase_order_show_data', [
                     'sku' => Cart::session($user_id)->getContent()
                 ])->with('principal_id', $request->input('principal_id'))
@@ -127,9 +124,6 @@ class Purchase_order_controller extends Controller
 
     public function purchase_order_remove_cart(Request $request)
     {
-
-
-
         // $variable_explode = explode('=', $request->input('selected_sku'));
         // $selected_sku_id_to_remove = $variable_explode[1];
         $quantity = $request->input('quantity');
@@ -162,7 +156,8 @@ class Purchase_order_controller extends Controller
             ->with('delivery_term', $request->input('delivery_term'))
             ->with('po_id', $request->input('po_id'))
             ->with('cart_total_quantity', $cart_total_quantity)
-            ->with('particulars', $request->input('particulars'));
+            ->with('particulars', $request->input('particulars'))
+            ->with('sales_order_number', $request->input('sales_order_number'));
     }
 
 
@@ -210,7 +205,6 @@ class Purchase_order_controller extends Controller
             $purchase_order_details_save->save();
         }
 
-        Session::flash('success');
         Cart::session(auth()->user()->id)->clear();
 
         return 'Saved';

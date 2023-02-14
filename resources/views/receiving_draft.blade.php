@@ -22,11 +22,11 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="">Principal</label>
-                            <select name="principal_id" class="form-control" required>
+                            <label for="">Purchase Order</label>
+                            <select name="purchase_id" class="form-control" required>
                                 <option value="" default>Select</option>
-                                @foreach ($principal as $data)
-                                    <option value="{{ $data->id }}">{{ $data->principal }}</option>
+                                @foreach ($purchase_order as $data)
+                                    <option value="{{ $data->id }}">{{ $data->purchase_id }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -84,14 +84,26 @@
                     $('#barcode').val('');
                     if (data == 'wrong_sku') {
                         Swal.fire(
-                            'kani nga sku wala ani nga principal',
-                            'You clicked the button!',
+                            'Cannot Proceed',
+                            'Wrong SKU Scanned',
                             'error'
                         )
                     } else if (data == 'existing') {
                         Swal.fire(
-                            'Existing',
-                            'You clicked the button!',
+                            'Cannot Proceed',
+                            'SKU Already Scanned',
+                            'error'
+                        )
+                    } else if (data == 'Non Existing SKU Barcode') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'Invalid Barcode',
+                            'error'
+                        )
+                    } else if (data == 'Sku Not in the PO') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'Scanned SKU Cannot be found in PO or SKU already received',
                             'error'
                         )
                     } else {

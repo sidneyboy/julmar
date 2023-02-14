@@ -97,7 +97,13 @@
                         @foreach ($draft as $data)
                             <tr>
                                 <td><span style="color:green;font-weight:bold;">{{ $data->sku->sku_code }}</span>-
-                                    {{ $data->sku->description }}</td>
+                                    {{ $data->sku->description }}
+                                    <input type="hidden" value="{{ $data->sku->id }}" name="sku_id[]">
+                                    <input type="hidden" value="{{ $data->sku->sku_code }}"
+                                        name="sku_code[{{ $data->sku->id }}]">
+                                    <input type="hidden" value="{{ $data->sku->description }}"
+                                        name="description[{{ $data->sku->id }}]">
+                                </td>
                                 <td><input style="text-align: right" type="number" class="form-control form-control-sm"
                                         onkeypress="return isNumberKey(event)" value="{{ $data->quantity }}"
                                         name="received_quantity[{{ $data->sku->id }}]">
@@ -113,13 +119,8 @@
         </div>
     </div>
 
-    <input type="hidden" name=sku_code[{{ $data->sku->id }}] value="{{ $data->sku->sku_code }}">
-    <input type="hidden" name="description[{{ $data->sku->id }}]" value="{{ $data->sku->description }}">
-    <input type="hidden" name="quantity[{{ $data->sku->id }}]" value="{{ $data->quantity }}">
-    <input type="hidden" name="sku_id[]" value="{{ $data->sku->id }}">
-    <input type="hidden" name="unit_of_measurement[{{ $data->sku->id }}]"
-        value="{{ $data->sku->unit_of_measurement }}">
 
+    <input type="hidden" name="freight" value="{{ $freight }}">
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="branch" value="{{ $branch }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
@@ -131,6 +132,8 @@
     <input type="hidden" name="category_id[{{ $data->sku->id }}]" value="{{ $data->sku->category_id }}">
     <input type="hidden" name="sku_type[{{ $data->sku->id }}]" value="{{ $data->sku->sku_type }}">
     <input type="hidden" name="invoice_date" value="{{ $invoice_date }}">
+    <input type="hidden" name="scanned_by" value="{{ $draft[0]->user_id }}">
+    <input type="hidden" name="draft_id" value="{{ $draft[0]->id }}">
     <br />
     <button class="btn btn-sm float-right btn-info">Proceed Final Summary</button>
 </form>

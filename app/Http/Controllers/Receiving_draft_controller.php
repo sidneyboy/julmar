@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Receiving_draft;
 use App\Receiving_draft_main;
 use App\User;
 use App\Sku_add;
-use App\Sku_principal;
 use App\Purchase_order;
+use App\Purchase_order_details;
 use Illuminate\Http\Request;
 
 class Receiving_draft_controller extends Controller
@@ -17,12 +18,12 @@ class Receiving_draft_controller extends Controller
             date_default_timezone_set('Asia/Manila');
             $date = date('Ymd');
             $time = date('his');
-            $session_id = $date."".$time;
+            $session_id = $date . "" . $time;
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal = Sku_principal::select('id','principal')->where('principal','!=','none')->get();
+            $purchase_order = Purchase_order::select('id', 'purchase_id')->where('remarks', '!=', 'received')->get();
             return view('receiving_draft', [
                 'user' => $user,
-                'principal' => $principal,
+                'purchase_order' => $purchase_order,
                 'session_id' => $session_id,
                 'main_tab' => 'receiving_and_purchases_main_tab',
                 'sub_tab' => 'receiving_and_purchases_sub_tab',
@@ -35,38 +36,61 @@ class Receiving_draft_controller extends Controller
 
     public function receiving_draft_proceed(Request $request)
     {
-        $purchase_order = Purchase_order::select('id','purchase_id')->where('remarks','!=','Received')->get();
-        $sku = Sku_add::select('id','principal_id')->where('barcode',$request->input('barcode'))->where('sku_type','case')->first();
+        $sku = Sku_add::select('id')->where('barcode', $request->input('barcode'))->where('sku_type', 'case')->first();
 
-       if ($sku->principal_id == $request->input('principal_id')) {
-           $check_draft = Receiving_draft::where('sku_id',$sku->id)->where('session_id',$request->input('session_id'))->count();
-           if ($check_draft == 0) {
-                $new_draft = new Receiving_draft([
-                    'sku_id' => $sku->id,
-                    'session_id' => $request->input('session_id'),
-                    'user_id' => auth()->user()->id,
-                ]);
+        if ($sku) {
+            $check_po_details = Purchase_order_details::where('purchase_order_id', $request->input('purchase_id'))->where('sku_id', $sku->id)->where('remarks','!=','received')->count();
+            if ($check_po_details == 1) {
+                $check_draft = Receiving_draft::where('sku_id', $sku->id)->where('session_id', $request->input('session_id'))->count();
+                if ($check_draft == 0) {
+                    $new_draft = new Receiving_draft([
+                        'sku_id' => $sku->id,
+                        'session_id' => $request->input('session_id'),
+                        'user_id' => auth()->user()->id,
+                    ]);
 
-                $new_draft->save();
+                    $new_draft->save();
 
-                $receiving_draft = Receiving_draft::select('id','sku_id','user_id','session_id')->where('session_id',$request->input('session_id'))->get();
+                    Purchase_order_details::where('sku_id', $sku->id)
+                        ->where('purchase_order_id', $request->input('purchase_id'))
+                        ->update(['scanned_remarks' => 'scanned']);
 
-                return view('receiving_draft_proceed',[
-                    'receiving_draft' => $receiving_draft,
-                    'purchase_order' => $purchase_order,
-                ])->with('session_id',$request->input('session_id'));
-           }else{
-             return 'existing';
-           }
-       }else{
-        return 'wrong_sku';
-       }
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
+
+                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
+
+
+
+                    return view('receiving_draft_proceed', [
+                        'receiving_draft' => $receiving_draft,
+                        'purchase_order_details' => $purchase_order_details,
+                        'check_po_details' => $check_po_details,
+                    ])->with('session_id', $request->input('session_id'));
+                } else {
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
+
+                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
+
+
+                    return view('receiving_draft_proceed', [
+                        'receiving_draft' => $receiving_draft,
+                        'purchase_order_details' => $purchase_order_details,
+                        'check_po_details' => $check_po_details,
+                    ])->with('session_id', $request->input('session_id'));
+                }
+            } else {
+                return 'Sku Not in the PO';
+            }
+        } else {
+            return 'Non Existing SKU Barcode';
+        }
     }
 
     public function receiving_draft_final_saved(Request $request)
     {
+        //return $request->input();
         $new = new Receiving_draft_main([
-            'purchase_order_id' => $request->input('purchase_id'),
+            'purchase_order_id' => $request->input('purchase_order_id'),
             'session_id' => $request->input('session_id'),
             'user_id' => auth()->user()->id,
         ]);
@@ -74,12 +98,12 @@ class Receiving_draft_controller extends Controller
         $new->save();
 
         foreach ($request->input('quantity_received') as $key => $value) {
-           Receiving_draft::where('id', $key)
-            ->where('session_id', $request->input('session_id'))
-            ->update([
-                'quantity' => $request->input('quantity_received')[$key],
-                'remarks' => $request->input('remarks')[$key],
-            ]);
+            Receiving_draft::where('id', $key)
+                ->where('session_id', $request->input('session_id'))
+                ->update([
+                    'quantity' => $request->input('quantity_received')[$key],
+                    'remarks' => $request->input('remarks')[$key],
+                ]);
         }
 
         return 'saved';

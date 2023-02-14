@@ -14,7 +14,8 @@ class Purchase_order_details extends Model
       'receive',
       'unit_cost',
       'discount_rate',
-      'remarks'
+      'remarks',
+      'scanned_remarks'
     ];
 
    public function purchaseOrderDetailsID()

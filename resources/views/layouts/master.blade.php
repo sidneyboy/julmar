@@ -130,7 +130,7 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                                                               with font-awesome or any other icon font library -->
+                                                                   with font-awesome or any other icon font library -->
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -294,7 +294,7 @@
                                         <a href="{{ url('/receiving_draft') }}"
                                             class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
                                             <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Receiving Draft</p>
+                                            <p>Received as Draft</p>
                                         </a>
                                     </li>
 

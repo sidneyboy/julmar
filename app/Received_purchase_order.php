@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Received_purchase_order extends Model
 {
      protected $fillable = [
-      'principal_discount_id',
+      'discount_id',
       'principal_id',
       'purchase_order_id',
       'dr_si',
@@ -17,12 +17,10 @@ class Received_purchase_order extends Model
       'remarks',
       'date',
       'invoice_image',
-      'total_freight',
-      'total_vatable_purchase',
-      'total_discount',
-      'total_bo_allowance_discount',
-      'total_vat_amount',
-      'grand_total_final_cost',
+      'discount_type',
+      'scanned_by',
+      'finalized_by',
+      'branch'
     ];
 
     public function purchase_order()

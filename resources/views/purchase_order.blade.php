@@ -37,14 +37,14 @@
                         </div>
 
                     </div>
-                    <div class="col-md-12">
-                        <div id="show_purcase_order_inputs"></div>
-                    </div>
+
                 </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-                Footer
+                <div class="col-md-12">
+                    <div id="show_purcase_order_inputs"></div>
+                </div>
             </div>
             <!-- /.card-footer-->
         </div>
@@ -62,10 +62,6 @@
                 </div>
             </div>
             <!-- /.card-body -->
-            <div class="card-footer">
-                Footer
-            </div>
-            <!-- /.card-footer-->
         </div>
     </section>
     <!-- /.content -->

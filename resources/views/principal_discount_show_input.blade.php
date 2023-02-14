@@ -58,7 +58,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Discount_name:</label>
-                        <input type="text" name="discount_name[]" onkeypress="return isNumberKey(event)"
+                        <input type="text" name="discount_name[]"
                             class="form-control" required>
                     </div>
                     <div class="form-group">

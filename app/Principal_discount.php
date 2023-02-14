@@ -15,6 +15,6 @@ class Principal_discount extends Model
 
     public function principal_discount_details()
     {
-    	 return $this->hasMany('App\Principal_discount_details', 'principal_discount_id','principal_discount_id');
+    	 return $this->hasMany('App\Principal_discount_details', 'principal_discount_id');
     }
 }

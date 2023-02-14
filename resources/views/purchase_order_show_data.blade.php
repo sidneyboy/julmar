@@ -130,13 +130,13 @@
             </tr>
         @else
             <tr>
-                <td colspan="7" style="color:red;font-weight: bold;text-align: center;">NO DATA FOUND!</td>
+                <td colspan="9" style="color:red;font-weight: bold;text-align: center;">NO DATA FOUND!</td>
             </tr>
         @endif
     </table>
 </form>
 <br /><br />
-<button class="float-right btn btn-success btn-flat btn-xs saveCart" onclick="return save()" style="font-weight: bold;">Submit Purchase Order</button>
+<button class="float-right btn btn-success btn-sm saveCart" onclick="return save()" style="font-weight: bold;">Submit Purchase Order</button>
 
 </div>
 
