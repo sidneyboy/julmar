@@ -360,8 +360,8 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ url('/return_to_principal_report') }}"
-                                            class="nav-link {{ $active_tab == 'return_to_principal_report' ? 'active' : '' }}">
+                                        <a href="{{ url('/return_to_principal_reports') }}"
+                                            class="nav-link {{ $active_tab == 'return_to_principal_reports' ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar nav-icon"></i>
                                             <p>RTP - Report </p>
                                         </a>

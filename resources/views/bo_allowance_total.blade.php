@@ -6,7 +6,6 @@
 
  @section('content')
   
-    <br />
     <!-- Main content -->
     <section class="content">
 
@@ -43,7 +42,7 @@
                 <div class="col-md-4">
                   <div class="form-group">
                    <label>Select Principal:</label>
-                    <select class="form-control select2" name="principal" style="width:100%;">
+                    <select class="form-control" name="principal" style="width:100%;">
                       <option value="" default>Select Principal</option>
                       @foreach ($principals as $principal)
                         <option value="{{ $principal->id}}">{{ $principal->principal }}</option>
@@ -58,15 +57,11 @@
                   </div>
                 </div>
               </div>
-            
-        
-          <div class="form-group">
-            <button type="submit" class="btn btn-info btn-block">GENERATE DATA</button>
-          </div> 
           </form>
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
+          <button type="submit" class="btn btn-info btn-sm float-right">Generate</button><br />
           <div id="bo_allowance_total_generate_page"></div>
         </div>
         <!-- /.card-footer-->

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Received_purchase_order;
-use App\Sku_add_details;
+use App\Received_purchase_order_details;
 use App\Sku_principal;
 use App\Bo_allowance_adjustments;
 use App\Bo_allowance_adjustments_details;
@@ -40,7 +40,7 @@ class Bo_allowance_adjustments_controller extends Controller
         $principal_id = $variable_explode[1];
         $purchase_id = $variable_explode[2];
         $dr_si = $variable_explode[3];
-        $sku_add_details = Sku_add_details::where('received_id', $received_id)->get();
+        $sku_add_details = Received_purchase_order_details::where('received_id', $received_id)->get();
         $principal_name = Sku_principal::where('id', $principal_id)->first();
         return view('bo_allowance_adjustments_inputs', [
             'sku_add_details' => $sku_add_details

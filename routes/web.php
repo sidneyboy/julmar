@@ -126,7 +126,7 @@ Route::post('/return_to_principal_summary', 'Return_to_principal_controller@retu
 Route::post('/return_to_principal_save', 'Return_to_principal_controller@return_to_principal_save')->name('postData');
 
 
-Route::get('return_to_principal_report', 'Return_to_principal_report_controller@index');
+Route::get('return_to_principal_reports', 'Return_to_principal_report_controller@index');
 Route::post('/return_to_principal_report_data', 'Return_to_principal_report_controller@return_to_principal_report_data')->name('postData');
 Route::get('/return_to_principal_show_list_details/{id}', 'Return_to_principal_report_controller@return_to_principal_show_list_details')->name('return_to_principal_show_list_details');
 

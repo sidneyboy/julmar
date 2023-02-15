@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Received_purchase_order;
-use App\Sku_add_details;
 use App\Sku_principal;
 use App\Invoice_cost_adjustments;
 use App\Invoice_cost_adjustment_details;
@@ -13,6 +12,7 @@ use App\Principal_ledger;
 use App\User;
 use App\Principal_discount;
 use App\Principal_discount_details;
+use App\Received_purchase_order_details;
 use Illuminate\Http\Request;
 
 class Invoice_cost_adjustment_controller extends Controller
@@ -41,7 +41,7 @@ class Invoice_cost_adjustment_controller extends Controller
         $principal_id = $variable_explode[1];
         $purchase_id = $variable_explode[2];
         $dr_si = $variable_explode[3];
-        $sku_add_details = Sku_add_details::where('received_id', $received_id)->get();
+        $sku_add_details = Received_purchase_order_details::where('received_id', $received_id)->get();
         $principal_name = Sku_principal::where('id', $principal_id)->first();
         return view('invoice_cost_adjustment_input', [
             'sku_add_details' => $sku_add_details

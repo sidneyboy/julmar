@@ -10,7 +10,7 @@ class Return_to_principal extends Model
       'principal_id',
       'received_id',
       'discount_id',
-      'personnel_id',
+      'personnel',
       'user_id',
       'remarks',
       'date',

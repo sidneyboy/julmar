@@ -81,5 +81,159 @@
                     $('#van_selling_transaction_proceed_page').html(data);
                     $('#hide_if_trigger').show();
                 },
+                error: function(error) {
+                    console.log(error);
+                }
             });
         }));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ---------------------------------- return to principal save
+
+        
+
+
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        $sku = $request->input('checkbox_entry');
+        $unit_cost = $request->input('unit_cost');
+        $final_unit_cost = $request->input('final_unit_cost');
+        $quantity_return_per_sku = $request->input('quantity_return_per_sku');
+        $principal_id = $request->input('principal_id');
+        $category_id = $request->input('category_id');
+        $sku_type = $request->input('sku_type');
+
+        $return_to_principal_save = new Return_to_principal([
+            'principal_id' => $request->input('return_principal_id'),
+            'received_id' => $request->input('received_id'),
+            'personnel' => $request->input('personnel'),
+            'discount_id' => $request->input('return_discount_id'),
+            'user_id' => auth()->user()->id,
+            'remarks' => $request->input('remarks'),
+            'total_amount_return' => $request->input('total_amount_return'),
+            'return_vatable_purchase' => $request->input('return_vatable_purchase'),
+            'return_less_discount' => $request->input('return_less_discount'),
+            'return_net_discount' => $request->input('return_net_discount'),
+            'return_vat_amount' => $request->input('return_vat_amount'),
+            'return_net_of_deduction' => $request->input('return_net_of_deduction'),
+            'date' => $date,
+        ]);
+
+        $return_to_principal_save->save();
+        $return_to_principal_id = $return_to_principal_save->id;
+
+
+        $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('return_principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+
+        $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+        $principal_ledger_saved = new Principal_ledger([
+            'principal_id' => $request->input('return_principal_id'),
+            'date' => $date,
+            'rr_dr' => $return_to_principal_id,
+            'principal_invoice' => $request->input('dr_si'),
+            'transaction' => 'returned',
+            'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            'received' => 0,
+            'returned' => $request->input('total_amount_return'),
+            'adjustment' => 0,
+            'payment' => 0,
+            'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('total_amount_return'),
+        ]);
+
+        $principal_ledger_saved->save();
+
+
+
+        foreach ($request->input('checkbox_entry') as $key => $data) {
+            $return_to_principal_details_save = new Return_to_principal_details([
+                'sku_id' => $data,
+                'return_to_principal_id' => $return_to_principal_id,
+                'quantity_return' => $quantity_return_per_sku[$data],
+                'unit_cost' => $unit_cost[$data],
+            ]);
+
+            $return_to_principal_details_save->save();
+
+
+            $sku_details_update = Sku_add_details::where('received_id', $request->input('received_id'))
+                ->where('sku_id', $data)
+                ->update(['quantity_return_per_sku' => $quantity_return_per_sku[$data]]);
+
+
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+
+            $ledger_quantity = ($quantity_return_per_sku[$data]) * -1;
+            $ledger_running_balance = $ledger_results[0]->running_balance - $quantity_return_per_sku[$data];
+            $ledger_unit_cost = $final_unit_cost[$data];
+            $ledger_total_cost = $ledger_quantity * $ledger_unit_cost;
+            $ledger_running_total_cost = $ledger_results[0]->running_total_cost + $ledger_total_cost;
+
+
+
+
+
+
+
+            if ($ledger_running_balance == 0) {
+                $ledger_final_unit_cost = $ledger_results[0]->final_unit_cost;
+            } else {
+                $ledger_final_unit_cost = $ledger_running_total_cost / $ledger_running_balance;
+            }
+
+            $ledger_add = new Sku_ledger([
+                'sku_id' => $data,
+                'category_id' => $category_id[$data],
+                'sku_type' => $sku_type[$data],
+                'principal_id' => $principal_id[$data],
+                'in_out_adjustments' => 'Ret',
+                'rr_dr' => $request->input('purchase_id'),
+                'sales_order_number' => '',
+                'principal_invoice' => $request->input('dr_si'),
+                'quantity' => $ledger_quantity,
+                'running_balance' => $ledger_running_balance,
+                'unit_cost' => $ledger_unit_cost,
+                'total_cost' => $ledger_total_cost,
+                'adjustments' => 0,
+                'running_total_cost' => $ledger_running_total_cost,
+                'final_unit_cost' => $ledger_final_unit_cost,
+                'transaction_date' => $date,
+                'user_id' => auth()->user()->id
+            ]);
+
+            $ledger_add->save();
+        }
+
+
+
+        $return_to_principal_jers = new Return_to_principal_jer([
+            'return_to_principal_id' => $return_to_principal_id,
+            'dr' => $request->input('total_amount_return'),
+            'cr' => $request->input('total_amount_return'),
+            'date' => $date
+        ]);
+
+        $return_to_principal_jers->save();
+
+        return 'Saved';
+
+
+        return_vatable_purchase' = 12665.21
+return total discount = 949.06 
+return vat amount = 1519.82
+return total amount = 14 185.03
+	return bo allowance = 258.47

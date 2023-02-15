@@ -46,7 +46,7 @@ class Receive_order_report_controller extends Controller
         $principal_name = $variable_explode[1];
         $date = date('F j, Y', strtotime($date_from)) . ' - ' . date('F j, Y', strtotime($date_to));
 
-        $received_order_data = Received_purchase_order::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
+        return $received_order_data = Received_purchase_order::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
         $received_counter = count($received_order_data);
 
         $return_order_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();

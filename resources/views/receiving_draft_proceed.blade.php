@@ -19,7 +19,7 @@
                                     <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                         -
                                         {{ $po_data->sku->description }}</td>
-                                    <td>{{ $po_data->quantity }}</td>
+                                    <td>{{ $po_data->quantity - $po_data->receive }}</td>
                                 </tr>
                             @else
                                 <tr>

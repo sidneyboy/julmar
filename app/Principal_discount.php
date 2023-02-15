@@ -17,4 +17,9 @@ class Principal_discount extends Model
     {
     	 return $this->hasMany('App\Principal_discount_details', 'principal_discount_id');
     }
+
+    public function principal()
+    {
+    	 return $this->belongsTo('App\Sku_principal', 'principal_id');
+    }
 }

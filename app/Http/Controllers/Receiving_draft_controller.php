@@ -57,7 +57,7 @@ class Receiving_draft_controller extends Controller
 
                     $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
 
-                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
+                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks','receive')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
 
 
 
@@ -69,7 +69,7 @@ class Receiving_draft_controller extends Controller
                 } else {
                     $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
 
-                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
+                    $purchase_order_details = Purchase_order_details::select('purchase_order_id','quantity','sku_id','scanned_remarks','receive')->where('purchase_order_id', $request->input('purchase_id'))->where('remarks','!=','received')->get();
 
 
                     return view('receiving_draft_proceed', [

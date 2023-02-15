@@ -38,7 +38,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <select class="form-control select2" id="principal" style="width:100%;">
+                  <select class="form-control" id="principal" style="width:100%;">
                     <option value="" default>Select Principal</option>
                     @foreach ($principals as $principal)
                       <option value="{{ $principal->id ."=". $principal->principal}}">{{ $principal->principal }}</option>
@@ -49,7 +49,7 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <button class="btn btn-block btn-success" id="generate" style="border-radius: 0px;">GENERATE REPORT</button>
+                <button class="btn btn-info float-right btn-sm" id="generate">Generate Report</button>
               </div>
             </div>
         </div>

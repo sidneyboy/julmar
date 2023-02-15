@@ -9,8 +9,7 @@
 
 
  @section('content')
-  
-    <br />
+
     <!-- Main content -->
     <section class="content">
 
@@ -40,7 +39,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <select name="principal" id="principal" class="form-control select2">
+                <select name="principal" id="principal" class="form-control">
                   <option value="" default>Select Principal</option>
                   @foreach ($principals as $data)
                     <option value="{{ $data->id }}">{{ $data->principal }}</option>

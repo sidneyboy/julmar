@@ -130,7 +130,7 @@ class Receive_controller extends Controller
                 ->with('remarks', $request->input('remarks'))
                 ->with('branch', $request->input('branch'))
                 ->with('scanned_by', $request->input('scanned_by'))
-                ->with('draft_id', $request->input('draft_id'));
+                ->with('draft_session_id', $request->input('draft_session_id'));
         }
     }
 
@@ -272,7 +272,7 @@ class Receive_controller extends Controller
 
         $received_jer_save->save();
 
-        Receiving_draft_main::where('id', $request->input('draft_id'))
+        Receiving_draft_main::where('session_id', $request->input('draft_session_id'))
             ->update(['status' => 'completed']);
 
         return 'saved';

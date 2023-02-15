@@ -23,12 +23,12 @@
                             <td>
                                 <span style="color:green;font-weight:bold;">{{ $sku_code[$data] }}</span>-
                                 {{ $description[$data] }}
-                                <input type="text" value="{{ $data }}" name="sku_id[]">
-                                <input type="text" value="{{ $received_quantity[$data] }}"
+                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $received_quantity[$data] }}"
                                     name="received_quantity[{{ $data }}]">
-                                <input type="text" value="{{ $unit_cost[$data] }}"
+                                <input type="hidden" value="{{ $unit_cost[$data] }}"
                                     name="unit_cost[{{ $data }}]">
-                                <input type="text" value="{{ $freight }}" name="freight[{{ $data }}]">
+                                <input type="hidden" value="{{ $freight }}" name="freight[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $received_quantity[$data] }}</td>
                             <td style="text-align: right">{{ $unit_cost[$data] }}</td>
@@ -98,7 +98,7 @@
                 </tbody>
             </table>
 
-            <table class="table table-bordered table-hover float-right" style="width:30%;">
+            <table class="table table-bordered table-hover float-right table-sm" style="width:30%;">
                 <tr>
                     <td style="font-weight: bold; text-align: left;width:50%;">SUMMARY:</td>
                     <td></td>
@@ -164,14 +164,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY PPMC</td>
+                        <td style="text-align: center;">INVENTORY {{ $selected_discount_allocation->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($grand_total_final_cost, 2, '.', ','); ?></td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE - PPMC</td>
+                        <td style="text-align: center;">ACCOUNTS PAYABLE {{ $selected_discount_allocation->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($grand_total_final_cost, 2, '.', ','); ?></td>
                     </tr>
@@ -204,12 +204,12 @@
                             <td>
                                 <span style="color:green;font-weight:bold;">{{ $sku_code[$data] }}</span>-
                                 {{ $description[$data] }}
-                                <input type="text" value="{{ $data }}" name="sku_id[]">
-                                <input type="text" value="{{ $received_quantity[$data] }}"
+                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $received_quantity[$data] }}"
                                     name="received_quantity[{{ $data }}]">
-                                <input type="text" value="{{ $unit_cost[$data] }}"
+                                <input type="hidden" value="{{ $unit_cost[$data] }}"
                                     name="unit_cost[{{ $data }}]">
-                                <input type="text" value="{{ $freight }}" name="freight[{{ $data }}]">
+                                <input type="hidden" value="{{ $freight }}" name="freight[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $received_quantity[$data] }}</td>
                             <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
@@ -458,14 +458,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY GCI</td>
+                        <td style="text-align: center;">INVENTORY {{ $selected_discount_allocation->principal->principal }} </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($grand_total_final_cost, 2, '.', ','); ?></td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE - GCI</td>
+                        <td style="text-align: center;">ACCOUNTS PAYABLE {{ $selected_discount_allocation->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($grand_total_final_cost, 2, '.', ','); ?></td>
                     </tr>
@@ -475,18 +475,18 @@
     </div>
     <br />
 
-    <input type="text" value="{{ $discount_type }}" name="discount_type">
-    <input type="text" value="{{ $branch }}" name="branch">
-    <input type="text" value="{{ $selected_discount_allocation->id }}" name="discount_id">
-    <input type="text" value="{{ $principal_id }}" name="principal_id">
-    <input type="text" value="{{ $dr_si }}" name="dr_si">
-    <input type="text" value="{{ $truck_number }}" name="truck_number">
-    <input type="text" value="{{ $courier }}" name="courier">
-    <input type="text" value="{{ $invoice_date }}" name="invoice_date">
-    <input type="text" value="{{ $scanned_by }}" name="scanned_by">
-    <input type="text" value="{{ $purchase_order_id }}" name="purchase_order_id">
-    <input type="text" value="{{ $grand_total_final_cost }}" name="grand_total_final_cost">
-    <input type="text" value="{{ $draft_id }}" name="draft_id">
+    <input type="hidden" value="{{ $discount_type }}" name="discount_type">
+    <input type="hidden" value="{{ $branch }}" name="branch">
+    <input type="hidden" value="{{ $selected_discount_allocation->id }}" name="discount_id">
+    <input type="hidden" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $dr_si }}" name="dr_si">
+    <input type="hidden" value="{{ $truck_number }}" name="truck_number">
+    <input type="hidden" value="{{ $courier }}" name="courier">
+    <input type="hidden" value="{{ $invoice_date }}" name="invoice_date">
+    <input type="hidden" value="{{ $scanned_by }}" name="scanned_by">
+    <input type="hidden" value="{{ $purchase_order_id }}" name="purchase_order_id">
+    <input type="hidden" value="{{ $grand_total_final_cost }}" name="grand_total_final_cost">
+    <input type="text" value="{{ $draft_session_id }}" name="draft_session_id">
     <button class="btn btn-sm float-right btn-success" type="submit">Submit Transaction</button>
 </form>
 

@@ -43,6 +43,11 @@ class Received_purchase_order extends Model
       return $this->hasOne('App\Sku_add_details', 'received_id');
     }
 
+    public function received_purchase_order_details()
+    {
+      return $this->hasOne('App\Received_purchase_order_details', 'received_id');
+    }
+
     public function bo_allowance_adjustment()
     {
       return $this->hasOne('App\Bo_allowance_adjustments', 'received_id');

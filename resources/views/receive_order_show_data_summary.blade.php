@@ -133,7 +133,7 @@
     <input type="hidden" name="sku_type[{{ $data->sku->id }}]" value="{{ $data->sku->sku_type }}">
     <input type="hidden" name="invoice_date" value="{{ $invoice_date }}">
     <input type="hidden" name="scanned_by" value="{{ $draft[0]->user_id }}">
-    <input type="hidden" name="draft_id" value="{{ $draft[0]->id }}">
+    <input type="hidden" name="draft_session_id" value="{{ $draft[0]->session_id }}">
     <br />
     <button class="btn btn-sm float-right btn-info">Proceed Final Summary</button>
 </form>

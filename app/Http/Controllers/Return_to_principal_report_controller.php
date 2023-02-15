@@ -15,13 +15,13 @@ class Return_to_principal_report_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $return_to_principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
-            return view('return_to_principal_report', [
+            $principals = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
+            return view('return_to_principal_reports', [
                 'user' => $user,
-                'return_to_principal' => $return_to_principal,
+                'principals' => $principals,
                 'main_tab' => 'manage_adjustments_main_tab',
                 'sub_tab' => 'manage_adjustments_sub_tab',
-                'active_tab' => 'return_to_principal_report',
+                'active_tab' => 'return_to_principal_reports',
             ]);
         } else {
             return redirect('auth.login')->with('error', 'Session Expired. Please Login');
