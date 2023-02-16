@@ -11,8 +11,6 @@
 
  @section('content')
 
- 
-    <br />
     <!-- Main content -->
     <section class="content">
 
@@ -32,8 +30,8 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Unit of Measurement:</label>
-                  <select name="uom" id="uom" class="form-control select2" style="width: 100%;">
+                  <label>SKU Type:</label>
+                  <select name="uom" id="uom" class="form-control" style="width: 100%;">
                     <option value="" default>Select UOM</option>
                     <option value="Case">Case</option>
                     <option value="Butal">Butal</option>
@@ -43,7 +41,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Principal:</label>
-                  <select name="principal" id="principal" class="form-control select2" style="width: 100%;">
+                  <select name="principal" id="principal" class="form-control" style="width: 100%;">
                     <option value="" default>Select Principal</option>
                     @foreach($principals as $data)
                     <option value="{{ $data->id ."=". $data->principal }}">{{ $data->principal }}</option>
@@ -53,7 +51,7 @@
               </div>
               <div class="col-md-12">
                 <div class="form-group">
-                  <button class="btn btn-block btn-info btn-flat" id="proceed">PROCEED</button>
+                  <button class="btn btn-sm btn-info float-right" id="proceed">Proceed</button>
                 </div>
               </div>
               <div class="col-md-12">
@@ -71,7 +69,7 @@
 
       <div class="card">
         <div class="card-header">
-        <h3 class="card-title" style="font-weight: bold;">DATA</h3>
+        <h3 class="card-title" style="font-weight: bold;">SUMMARY</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">

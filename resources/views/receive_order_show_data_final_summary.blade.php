@@ -31,7 +31,7 @@
                                 <input type="hidden" value="{{ $freight }}" name="freight[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $received_quantity[$data] }}</td>
-                            <td style="text-align: right">{{ $unit_cost[$data] }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
                                     $total_amount = $received_quantity[$data] * $unit_cost[$data];

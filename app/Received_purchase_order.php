@@ -55,6 +55,6 @@ class Received_purchase_order extends Model
 
     public function principal_discount()
     {
-      return $this->hasMany('App\Principal_discount_details', 'principal_discount_id','principal_discount_id');
+      return $this->belongsTo('App\Principal_discount_details', 'discount_id');
     }
 }

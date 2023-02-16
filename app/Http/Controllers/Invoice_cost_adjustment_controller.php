@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Received_purchase_order;
 use App\Sku_principal;
 use App\Invoice_cost_adjustments;
@@ -57,193 +58,29 @@ class Invoice_cost_adjustment_controller extends Controller
 
         //return $request->input();
 
-        if (is_null($request->input('particulars'))) {
-            return 'no particulars';
-        } else {
-            foreach ($request->input('checkbox_entry') as $key => $data) {
-                if ($request->input('unit_cost_adjustment')[$data] == 0 or '') {
-                    return 'no unit_cost';
-                    break;
-                }
-            }
-            $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
-            $received_id = Received_purchase_order::find($request->input('received_id'));
+        
+        $received_purchase_order = Received_purchase_order::select('id','discount_id','discount_type')->where('id', $request->input('received_id'))->first();
 
-            $discount_rate = Principal_discount::find($received_id->principal_discount_id);
-            $principal_discount_details = Principal_discount_details::where('principal_discount_id', $received_id->principal_discount_id)->get();
-
-            $principal_discount_details_counter = count($principal_discount_details);
-
-            return view('invoice_cost_adjustments_summary', [
-                'principal_discount_details' => $principal_discount_details,
-            ])->with('received_id', $request->input('received_id'))
-                ->with('unit_cost_adjustment', $unit_cost_adjustment)
-                ->with('description', $request->input('description'))
-                ->with('quantity', $request->input('quantity'))
-                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-                ->with('sku', $request->input('checkbox_entry'))
-                ->with('code', $request->input('code'))
-                ->with('particulars', $request->input('particulars'))
-                ->with('principal_name', $request->input('principal_name'))
-                ->with('principal_id', $request->input('principal_id'))
-                ->with('last_unit_cost', $request->input('last_unit_cost'))
-                ->with('discount_rate', $discount_rate)
-                ->with('principal_discount_details_counter', $principal_discount_details_counter)
-                ->with('invoice_cost', $request->input('invoice_cost'));
-        }
+        $selected_discount_allocation = Principal_discount::find($received_purchase_order->discount_id);
 
         // $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
+        // $received_id = Received_purchase_order::find($request->input('received_id'));
 
-        // if ($request->input('principal_name') == 'PPMC') {
-        //     $received_id = Received_purchase_order::find($request->input('received_id'));
+        // $discount_rate = Principal_discount::find($received_id->principal_discount_id);
+        // $principal_discount_details = Principal_discount_details::where('principal_discount_id', $received_id->principal_discount_id)->get();
 
-        //     $discount_rate = Principal_discount_ppmc::find($received_id->discount_id);
+        // $principal_discount_details_counter = count($principal_discount_details);
 
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }else if ($request->input('principal_name') == 'GCI') {
-
-
-        //     foreach ($request->input('discounts') as $key => $value) {
-        //           $discounts[] = Principal_discount_gci::where('id', $value)->first();
-        //       }
-
-
-
-
-
-        //      $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //       $select_discount = Principal_discount_gci::find($received_id->discount_id);
-        //       $discount_rate =  $select_discount->logistics_fee + $select_discount->selling_fee + $select_discount->cwo_discount + $select_discount->vmi_discount + $select_discount->per_category_sell_discount + $select_discount->total_sell_discount + $select_discount->dops_discount + $select_discount->dbs_discount + $select_discount->reach + $select_discount->shelf_management_discount + $select_discount->display_allowance + $select_discount->bleach_management_project + $select_discount->business_development_fund_discount + $select_discount->others;
-        //       $bo_allowance_rate =  $select_discount->bo_discount;
-
-        //       return view('invoice_cost_adjustments_summary',[
-        //             'discounts' => $discounts
-        //       ])->with('received_id', $request->input('received_id'))
-        //          ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //          ->with('description', $request->input('description'))
-        //          ->with('quantity', $request->input('quantity'))
-        //          ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //          ->with('sku', $request->input('checkbox_entry'))
-        //          ->with('code', $request->input('code'))
-        //          ->with('particulars', $request->input('particulars'))
-        //          ->with('principal_name', $request->input('principal_name'))
-        //          ->with('principal_id', $request->input('principal_id'))
-        //          ->with('discounts', $discounts)
-        //          ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //          ->with('discount_rate', $discount_rate)
-        //          ->with('bo_allowance_rate', $bo_allowance_rate);
-        // }else if($request->input('principal_name') == 'EPI'){
-
-
-        //     $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //     $discount_rate = Principal_discount_epi::find($received_id->discount_id);
-
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }else if($request->input('principal_name') == 'CIFPI'){
-        //    $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //     $discount_rate = Principal_discount_cifpi::find($received_id->discount_id);
-
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }else if($request->input('principal_name') == 'ALASKA'){
-        //    $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //     $discount_rate = Principal_discount_alaska::find($received_id->discount_id);
-
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }else if($request->input('principal_name') == 'PFC'){
-        //    $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //     $discount_rate = Principal_discount_pfc::find($received_id->discount_id);
-
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }else if($request->input('principal_name') == 'DOLE'){
-        //    $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        //     $discount_rate = Principal_discount_dole::find($received_id->discount_id);
-
-        //     return view('invoice_cost_adjustments_summary')
-        //            ->with('received_id', $request->input('received_id'))
-        //            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-        //            ->with('description', $request->input('description'))
-        //            ->with('quantity', $request->input('quantity'))
-        //            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-        //            ->with('sku', $request->input('checkbox_entry'))
-        //            ->with('code', $request->input('code'))
-        //            ->with('particulars', $request->input('particulars'))
-        //            ->with('principal_name', $request->input('principal_name'))
-        //            ->with('principal_id', $request->input('principal_id'))
-        //            ->with('last_unit_cost', $request->input('last_unit_cost'))
-        //            ->with('discount_rate', $discount_rate);
-
-        // }
+        return view('invoice_cost_adjustments_summary', [
+            'received_purchase_order' => $received_purchase_order,
+            'selected_discount_allocation' => $selected_discount_allocation,
+        ])->with('checkbox_entry', $request->input('checkbox_entry'))
+        ->with('unit_cost', $request->input('unit_cost'))
+        ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
+        ->with('particulars', $request->input('particulars'))
+        ->with('code', $request->input('code'))
+        ->with('description', $request->input('description'))
+        ->with('quantity', $request->input('quantity'));
     }
 
     public function invoice_cost_adjustments_save(Request $request)
@@ -276,9 +113,6 @@ class Invoice_cost_adjustment_controller extends Controller
 
             $invoice_cost_save->save();
             $invoice_cost_id = $invoice_cost_save->id;
-
-
-            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('invoice_cost_principal_id'))->latest()->orderBy('id', 'DESC')->take(1)->first();
 
 
             $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('invoice_cost_principal_id'))->orderBy('id', 'DESC')->limit(1)->first();

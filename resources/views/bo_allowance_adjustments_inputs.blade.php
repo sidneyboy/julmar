@@ -25,7 +25,7 @@
                             {{ $quantity }}
                         </td>
                         <td style="text-align: right;">{{ number_format($data->unit_cost, 2, '.', ',') }}</td>
-                        <td><input type="text" class="form-control" required
+                        <td><input type="text" class="form-control" onkeypress="return isNumberKey(event)" required
                                 name="unit_cost_adjustment[{{ $data->sku->id }}]">
                         </td>
                         <td>
@@ -69,6 +69,15 @@
 </form>
 
 <script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
     function toggle(source) {
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');
         for (var i = 0; i < checkboxes.length; i++) {
@@ -95,37 +104,4 @@
             },
         });
     }));
-
-    // function generate() {
-
-    // var form = document.myform;
-    // var dataString = $(form).serialize();
-
-    //     //$('.loading').show();
-
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/bo_allowance_adjustments_show_summary',
-    //         data: dataString,
-    //         success: function(data){
-
-    //           console.log(data);   
-
-
-    //           if(data == 'no particulars'){
-    //             toastr.warning('PARTICULAR FIELD IS NEEDED');
-    //             $('#show_bo_allowance_adjustments_summary').hide();
-    //           }else if(data == 'no unit cost adjustment'){
-    //             toastr.warning('INPUT UNIT COST ADJUSTMENT AMOUNT ON THE SELECTED SKU');
-    //             $('#show_bo_allowance_adjustments_summary').hide();
-    //           }else{
-    //             toastr.info('PROCEEDING..');
-    //             $('.loading').hide();
-    //             $('#show_bo_allowance_adjustments_summary').show();
-    //             $('#show_bo_allowance_adjustments_summary').html(data);
-    //           }
-    //         }
-    //     });
-    //     return false;
-    // }
 </script>
