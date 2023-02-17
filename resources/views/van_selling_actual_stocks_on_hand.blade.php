@@ -10,7 +10,6 @@
 
  @section('content')
   
-    <br />
     <!-- Main content -->
     <section class="content">
 
@@ -34,7 +33,7 @@
                {{--  <label>Search for</label>
                 <input type="text" style="text-transform: uppercase;" name="store_code" class="form-control" placeholder="Store Code" required> --}}
                 <label>SELECT VAN SELLING AGENT:</label>
-                <select class="form-control select2" style="width:100%;" name="store_id" required>
+                <select class="form-control select2bs4" style="width:100%;" name="store_id" required>
                   <option value="" default>SELECT VAN SELLING AGENT</option>
                   @foreach($van_selling_agent as $data)
                     <option value="{{ $data->id }}">{{ $data->store_name }}</option>
@@ -43,7 +42,7 @@
               </div>
               <div class="col-md-6">
                 <label>&nbsp;</label>
-                <button type="submit" class="btn btn-info btn-block">GENERATE</button>
+                <button type="submit" class="btn btn-info btn-block">Generate</button>
               </div>
             </div>
           </form>

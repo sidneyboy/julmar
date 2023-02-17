@@ -1,17 +1,17 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-hover" id="extract_data">
+    <table class="table table-bordered table-hover table-sm" id="extract_data">
         <thead>
             <tr>
-                <th style="text-transform: uppercase">Location ID</th>
-                <th style="text-transform: uppercase">Store Name</th>
-                <th style="text-transform: uppercase">Store Type</th>
-                <th style="text-transform: uppercase">Barangay</th>
-                <th style="text-transform: uppercase">Address</th>
-                <th style="text-transform: uppercase">Contact Person</th>
-                <th style="text-transform: uppercase">Contact Number</th>
-                <th style="text-transform: uppercase">Latitude</th>
-                <th style="text-transform: uppercase">Longitude</th>
-                <th style="text-transform: uppercase">van_selling_customer_exported_from_main_system</th>
+                <th>Location ID</th>
+                <th>Store Name</th>
+                <th>Store Type</th>
+                <th>Barangay</th>
+                <th>Address</th>
+                <th>Contact Person</th>
+                <th>Contact Number</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>van_selling_customer_exported_from_main_system</th>
             </tr>
         </thead>
         <tbody>
@@ -32,9 +32,8 @@
     </table>
 </div>
 <br />
-<button class="btn btn-block btn-success"
-    onclick="exportTableToCSV('VAN SELLING CUSTOMER MAIN SYSTEM - {{ $location->location }}.csv')">EXPORT VAN SELLING
-    CUSTOMER</button>
+<button class="btn btn-sm float-right btn-success"
+    onclick="exportTableToCSV('VAN SELLING CUSTOMER MAIN SYSTEM - {{ $location->location }}.csv')">Export Van Selling Customer Data</button>
 
 
 <script>

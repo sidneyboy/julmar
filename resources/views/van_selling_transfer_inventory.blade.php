@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -17,7 +16,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label>Transfer From:</label>
-                            <select name="transfer_from" class="form-control select2" required style="width:100%;">
+                            <select name="transfer_from" class="form-control select2bs4" required style="width:100%;">
                                 <option value="" default>SELECT</option>
                                 @foreach ($van_selling_transfer as $data)
                                     <option
@@ -29,7 +28,7 @@
                         </div>
                         <div class="col-md-6">
                             <label>Transfer To:</label>
-                            <select name="transfer_to" class="form-control select2" required style="width:100%;">
+                            <select name="transfer_to" class="form-control select2bs4" required style="width:100%;">
                                 <option value="" default>SELECT</option>
                                 @foreach ($customer as $data)
                                     <option value="{{ $data->id . '-' . $data->store_name }}">{{ $data->store_name }}
@@ -43,7 +42,7 @@
                         </div>
                         <div class="col-md-12">
                             <br />
-                            <button type="submit" class="btn btn-block btn-info">PROCEED</button>
+                            <button type="submit" class="btn btn-sm float-right btn-info">Proceed</button>
                         </div>
                     </div>
                 </form>

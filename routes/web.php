@@ -555,15 +555,15 @@ Route::get('/van_selling_other_adjustments', 'van_selling_other_adjustments_cont
 Route::post('/van_selling_other_adjustments_save', 'van_selling_other_adjustments_controller@van_selling_other_adjustments_save')->name('van_selling_other_adjustments_save');
 
 
-Route::get('/van_selling_report_date_range', 'van_selling_report_date_range_controller@index')->name('van_selling_report_date_range');
-Route::post('/van_selling_report_date_range_generate_data', 'van_selling_report_date_range_controller@van_selling_report_date_range_generate_data')->name('van_selling_report_date_range_generate_data');
-Route::get('/van_selling_report_date_range_itemized/{data}', 'van_selling_report_date_range_controller@van_selling_report_date_range_itemized')->name('van_selling_report_date_range_itemized');
-Route::post('/van_selling_report_date_range_generate_sku_movement', 'van_selling_report_date_range_controller@van_selling_report_date_range_generate_sku_movement')->name('van_selling_report_date_range_generate_sku_movement');
-Route::post('/van_selling_report_date_range_generate_clearing', 'van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing')->name('van_selling_report_date_range_generate_clearing');
-Route::post('/van_selling_report_date_range_generate_clearing_per_principal', 'van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_principal')->name('van_selling_report_date_range_generate_clearing_per_principal');
-Route::post('/van_selling_report_date_range_generate_clearing_per_sku', 'van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_sku')->name('van_selling_report_date_range_generate_clearing_per_sku');
+Route::get('/van_selling_report_date_range', 'Van_selling_report_date_range_controller@index')->name('van_selling_report_date_range');
+Route::post('/van_selling_report_date_range_generate_data', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_data')->name('van_selling_report_date_range_generate_data');
+Route::get('/van_selling_report_date_range_itemized/{data}', 'Van_selling_report_date_range_controller@van_selling_report_date_range_itemized')->name('van_selling_report_date_range_itemized');
+Route::post('/van_selling_report_date_range_generate_sku_movement', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_sku_movement')->name('van_selling_report_date_range_generate_sku_movement');
+Route::post('/van_selling_report_date_range_generate_clearing', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing')->name('van_selling_report_date_range_generate_clearing');
+Route::post('/van_selling_report_date_range_generate_clearing_per_principal', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_principal')->name('van_selling_report_date_range_generate_clearing_per_principal');
+Route::post('/van_selling_report_date_range_generate_clearing_per_sku', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_sku')->name('van_selling_report_date_range_generate_clearing_per_sku');
 
-Route::post('/van_selling_report_date_range_clearing_operation_save', 'van_selling_report_date_range_controller@van_selling_report_date_range_clearing_operation_save')->name('van_selling_report_date_range_clearing_operation_save');
+Route::post('/van_selling_report_date_range_clearing_operation_save', 'Van_selling_report_date_range_controller@van_selling_report_date_range_clearing_operation_save')->name('van_selling_report_date_range_clearing_operation_save');
 
 
 

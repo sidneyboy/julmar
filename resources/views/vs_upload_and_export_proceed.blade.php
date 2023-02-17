@@ -4,6 +4,6 @@
     <label>Upload Customer Data</label>
     <input type="file" class="form-control" required name="customer_csv_file">
     <br />
-    <button class="btn btn-success btn-block">UPLOAD</button>
+    <button class="btn btn-success btn-sm float-right">Upload Customer Data</button>
 
 </form>

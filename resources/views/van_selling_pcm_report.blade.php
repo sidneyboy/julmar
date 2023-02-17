@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-<br />
 <!-- Main content -->
 <section class="content">
   <!-- Default box -->
@@ -16,7 +15,7 @@
         <div class="row">
           <div class="col-md-6">
             <label>Salesman:</label>
-            <select class="form-control select2" name="location_id" id="location_id" required style="width:100%;">
+            <select class="form-control select2bs4" name="location_id" id="location_id" required style="width:100%;">
               <option value="" default>SELECT AGENT</option>
               @foreach($customer as $data)
               <option value="{{ $data->id }}">{{ $data->store_name }}</option>
@@ -38,8 +37,8 @@
             <div id="van_selling_report_show_input_page"></div>
           </div>
           <div class="col-md-12">
-            <label>&nbsp;</label>
-            <button type="submit" id="generate" class="btn btn-success btn-block">GENERATE REPORT</button>
+            <br />
+            <button type="submit" id="generate" class="btn btn-success btn-sm float-right">Generate</button>
           </div>
         </div>
       </form>

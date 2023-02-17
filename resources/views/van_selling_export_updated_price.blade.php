@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-<br />
 <!-- Main content -->
 <section class="content">
   <!-- Default box -->
@@ -16,7 +15,7 @@
         <div class="row">
           <div class="col-md-6">
           	<label>LOCATION:</label>
-            <select class="form-control select2" name="location_id" id="location_id" style="width:100%;" required>
+            <select class="form-control select2bs4" name="location_id" id="location_id" style="width:100%;" required>
              	<option value="" default>SELECT</option>
              	@foreach($location as $data)
              		<option value="{{ $data->id }}">{{ $data->location }}</option>
@@ -25,7 +24,7 @@
           </div>
           <div class="col-md-6">
             <label>PRINCIPAL:</label>
-            <select class="form-control select2" name="principal_id" id="principal_id" style="width:100%;" required>
+            <select class="form-control select2bs4" name="principal_id" id="principal_id" style="width:100%;" required>
               <option value="" default>SELECT</option>
               @foreach($principal as $data)
                 <option value="{{ $data->principal }}">{{ $data->principal }}</option>
@@ -36,8 +35,8 @@
           	<div id="van_selling_export_updated_price_generate_customer_page"></div>
           </div>
           <div class="col-md-12">
-              <label>&nbsp;</label>
-              <button class="btn btn-info btn-block" type="submit" >GENERATE SKU</button>
+              <br />
+              <button class="btn btn-info btn-sm float-right" type="submit" >Generate</button>
           </div>
         </div>
       </form>

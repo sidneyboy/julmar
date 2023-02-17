@@ -130,7 +130,7 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                                                                   with font-awesome or any other icon font library -->
+                                                                       with font-awesome or any other icon font library -->
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -497,6 +497,173 @@
                                             <p>App Customer To Agent</p>
                                         </a>
                                     </li> --}}
+                                </ul>
+                            </li>
+
+
+                            <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Manage Van Selling
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_dashboard') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_dashboard' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Dashboard</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_sales_report') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_sales_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Sales Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_report_date_range') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Inventory Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_inventory_adjustments_report') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Inventory Adj Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_pcm_report') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_pcm_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Pcm Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_calls_report') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_calls_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Calls Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_os_report') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_os_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS OS Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('vs_upload_and_export_customer') }}"
+                                            class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Customers</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_ar') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_ar' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS AR Beginning</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_inventory_adjustments') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Inv. Adjustments</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_actual_stocks_on_hand') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_actual_stocks_on_hand' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Actual Stocks on Hand</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_withdrawal') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Load Withdrawal</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_invoice') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Invoice</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_reinvoice') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_reinvoice' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Re-Invoice</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_transfer_inventory') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_transfer_inventory' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Transfer Inventory</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_inventory_export') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Inventory Export</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_export_updated_price') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_export_updated_price' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Export U/P</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_pcm') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>VS Pcm</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_import_data') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Import Sales</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_import_os') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_import_os' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Import OS</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_import_calls') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_import_calls' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Van Import Calls</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>

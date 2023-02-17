@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-<br />
 <!-- Main content -->
 <section class="content">
   <!-- Default box -->
@@ -16,7 +15,7 @@
         <div class="row">
           <div class="col-md-6">
              <label>SELECT VAN SELLING AGENT</label>
-             <select class="form-control select2" name="customer_id" required style="width:100%;">
+             <select class="form-control select2bs4" name="customer_id" required style="width:100%;">
                <option value="" default>SELECT</option>
                @foreach($customer as $data)
                 <option value="{{ $data->id }}">{{ $data->store_name ." - [". $data->location->location ."]" }}</option>
@@ -25,7 +24,7 @@
           </div>
           <div class="col-md-6">
              <label>SEARCH FOR:</label>
-             <select class="form-control select2" name="search_for" required style="width:100%;">
+             <select class="form-control select2bs4" name="search_for" required style="width:100%;">
                <option value="" default>SEARCH FOR</option>
                <option value="van_load_export">NEW VAN LOAD EXPORT</option>
                <option value="inventory_adjustment_export">INVENTORY ADJUSTMENT EXPORT(EVERY CUT OFF)</option>
@@ -33,8 +32,8 @@
              </select>
           </div>
           <div class="col-md-12">
-              <label>&nbsp;</label>
-              <button class="btn btn-info btn-block" type="submit" >GENERATE DR</button>
+              <br />
+              <button class="btn btn-info btn-sm float-right" type="submit" >Generate</button>
           </div>
         </div>
       </form>

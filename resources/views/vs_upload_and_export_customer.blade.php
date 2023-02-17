@@ -3,7 +3,7 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
+    
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -33,7 +33,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>To Do:</label>
-                            <select name="to_do" class="form-control select2" id="to_do" style="width:100%" required>
+                            <select name="to_do" class="form-control" id="to_do" style="width:100%" required>
                                 <option value="" default>Select</option>
                                 <option value="Extract Customer">Extract Customer</option>
                                 <option value="Upload Customer">Upload Customer</option>
@@ -41,7 +41,7 @@
                         </div>
                         <div class="col-md-12" style="width:100%;display:none;" id="location_id">
                             <label>Location:</label>
-                            <select name="location_id" class="form-control select2" >
+                            <select name="location_id" class="form-control" >
                                 <option value="" default>Select Location</option>
                                 @foreach ($location as $data)
                                     <option value="{{ $data->id }}">{{ $data->location }}</option>
@@ -49,8 +49,8 @@
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <label>&nbsp;</label>
-                            <button type="submit" id="proceed" class="btn btn-info btn-block">PROCEED</button>
+                            <br />
+                            <button type="submit" id="proceed" class="btn btn-info btn-sm float-right">Proceed</button>
                         </div>
                     </div>
                 </form>

@@ -32,7 +32,7 @@
             <div class="row">
               <div class="col-md-6">
                 <label>SELECT VAN SELLING AGENT:</label>
-                <select class="form-control select2" style="width:100%;" id="customer_id" name="customer_id" required>
+                <select class="form-control select2bs4" style="width:100%;" id="customer_id" name="customer_id" required>
                   <option value="" default>SELECT VAN SELLING AGENT</option>
                   @foreach($van_selling_agent as $data)
                     <option value="{{ $data->id }}">{{ $data->store_name }}</option>
@@ -51,15 +51,15 @@
                 </div>
               </div>
               <div class="col-md-12" id="hide_if_proceed">
-                <label>&nbsp;</label>
-                <button type="button" class="btn btn-info btn-block" id="proceed_button">PROCEED</button> 
+                <br />
+                <button type="button" class="btn btn-info float-right btn-sm" id="proceed_button">Proceed</button> 
               </div>
               <div class="col-md-12">
                <div id="van_selling_inventory_adjustments_show_sku_page"></div> 
               </div>
               <div class="col-md-12" id="generate_button" style="display: none;">
-                  <label>&nbsp;</label>
-                  <button type="submit" class="btn btn-info btn-block">GENERATE</button>
+                  <br />
+                  <button type="submit" class="btn btn-info float-right btn-sm">Generate</button>
               </div>
             </div>
           </form>

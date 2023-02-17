@@ -3,7 +3,7 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
+   
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -18,7 +18,7 @@
                          <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select PCM Type</label>
-                                <select name="pcm_type" id="pcm_type" class="form-control select2" required
+                                <select name="pcm_type" id="pcm_type" class="form-control select2bs4" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     <option value="panel">PANEL</option>
@@ -30,7 +30,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select Salesman</label>
-                                <select name="salesman" id="salesman" class="form-control select2" required
+                                <select name="salesman" id="salesman" class="form-control select2bs4" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     @foreach ($customer as $data)
@@ -43,7 +43,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select Principal</label>
-                                <select name="principal" id="principal" class="form-control select2" required
+                                <select name="principal" id="principal" class="form-control select2bs4" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     @foreach ($principal as $data)
@@ -58,7 +58,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <button type="submit" class="btn btn-block btn-info">Proceed</button>
+                                <button type="submit" class="btn btn-sm float-right btn-info">Proceed</button>
                             </div>
                         </div>
                     </div>

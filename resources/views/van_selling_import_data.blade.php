@@ -41,8 +41,8 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <input type="submit" value="UPLOAD AGENT SALES ORDER" id="upload_agent_sales_order"
-                                    class="btn btn-block btn-success" />
+                                <input type="submit" value="Upload" id="upload_agent_sales_order"
+                                    class="btn btn-sm float-right btn-success" />
                             </div>
                         </div>
                     </div>

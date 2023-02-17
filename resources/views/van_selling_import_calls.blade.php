@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -37,7 +36,7 @@
                     <label>Upload Calls Data</label>
                     <input type="file" class="form-control" required name="os_csv_file">
                     <br />
-                    <button class="btn btn-success btn-block">UPLOAD</button>
+                    <button class="btn btn-success btn-sm float-right">Upload</button>
 
                 </form>
             </div>

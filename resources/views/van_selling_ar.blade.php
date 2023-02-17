@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -17,7 +16,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>Agent</label>
-                            <select class="form-control select2" name="customer_id" style="width:100%;" required>
+                            <select class="form-control select2bs4" name="customer_id" style="width:100%;" required>
                                 <option value="" default>SELECT</option>
                                 @foreach ($customer as $data)
                                     <option value="{{ $data->id . ',' . $data->store_name }}">{{ $data->store_name }}
@@ -27,9 +26,9 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>&nbsp;</label>
-                                <input type="submit" value="GENERATE" id="upload_agent_sales_order"
-                                    class="btn btn-block btn-info" />
+                                <br />
+                                <input type="submit" value="Generate" id="upload_agent_sales_order"
+                                    class="btn btn-sm float-right btn-info" />
                             </div>
                         </div>
                     </div>
