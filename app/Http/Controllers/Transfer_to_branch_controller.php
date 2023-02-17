@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Received_purchase_order;
-use App\Sku_add_details;
+use App\Received_purchase_order_details;
 use App\User;
 use App\Transfer_to_bran;
 use App\Transfer_to_bran_details;
@@ -43,7 +43,7 @@ class Transfer_to_branch_controller extends Controller
 
         $branch = str_replace('to be transfer to', '', $remarks);
 
-        $sku_details = Sku_add_details::where('received_id', $id)->get();
+        $sku_details = Received_purchase_order_details::where('received_id', $id)->get();
         $principal_name = Sku_principal::where('id', $principal_id)->first();
 
 

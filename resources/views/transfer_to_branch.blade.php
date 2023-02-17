@@ -9,8 +9,7 @@
 
 
  @section('content')
-  
-    <br />
+
     <!-- Main content -->
     <section class="content">
 
@@ -29,7 +28,7 @@
         <div class="card-body">
        	  <div class="form-group">
             <label>DR #</label>
-            <select name="received_id" id="received_id" class="form-control select2" style="width:100%;">
+            <select name="received_id" id="received_id" class="form-control select2bs4" style="width:100%;">
               <option value="" default>Select DR</option>
               @foreach ($received as $data)
                 <option value="{{ $data->id ."=". $data->principal_id ."=".  $data->purchase_order->purchase_id ."=".  $data->dr_si ."=". $data->remarks }}">{{ "RR - ". $data->id ." | POID ". $data->purchase_order->purchase_id ." | REMARKS ". $data->remarks }}</option>

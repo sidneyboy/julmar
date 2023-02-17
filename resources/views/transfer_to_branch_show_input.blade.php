@@ -1,5 +1,5 @@
 <form name="myform" class="myform" id="myform">
-	<table class="table table-bordered table-hover">
+	<table class="table table-bordered table-hover table-sm">
 		<thead>
 			<tr>
 				<td colspan="2" style="text-align: center;font-weight: bold;">RECEIVED ID: <span style="color:blue;">{{ $id }}</span></td>
@@ -18,39 +18,39 @@
 				</td>
 			</tr>
 			<tr>
-				<th style="text-align: center;">Code</th>
-				<th style="text-align: center;">Description</th>
-				<th style="text-align: center;">Received</th>
-				<th style="text-align: center;">Final Unit Cost</th>
-				<th style="text-align: center;">Total Amount</th>
-				<th style="text-align: center;"><input type="checkbox" onclick="toggle(this);"  class="big-checkbox"/></th>
+				<th>Code</th>
+				<th>Description</th>
+				<th>Received</th>
+				<th>Final Unit Cost</th>
+				<th>Total Amount</th>
+				<th><input type="checkbox" onclick="toggle(this);"  class="big-checkbox"/></th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach($sku_details as $data)
 			<tr>
-				<td style="text-align: center;text-transform: uppercase;">{{ $data->sku->sku_code }}</td>
-				<td style="text-align: center;text-transform: uppercase;">{{ $data->sku->description }}</td>
-				<td style="text-align: center;text-transform: uppercase;">
-					{{ $data->quantity_per_sku }}
-					<input type="hidden" name="quantity[{{ $data->sku_id }}]" value="{{ $data->quantity_per_sku }}">
+				<td>{{ $data->sku->sku_code }}</td>
+				<td>{{ $data->sku->description }}</td>
+				<td>
+					{{ $data->quantity }}
+					<input type="hidden" name="quantity[{{ $data->sku_id }}]" value="{{ $data->quantity }}">
 				</td>
 				<td style="text-align: right;">
-					{{ number_format($data->final_unit_cost_per_sku,2,".",",") }}
-					<input type="hidden" name="last_final_unit_cost_case[{{ $data->sku_id }}]" value="{{ $data->final_unit_cost_per_sku }}">
+					{{ number_format($data->final_unit_cost,2,".",",") }}
+					<input type="hidden" name="last_final_unit_cost_case[{{ $data->sku_id }}]" value="{{ $data->final_unit_cost }}">
 				</td>
 				<td style="text-align: right;">
 					@php
-						$sum_total_amount[] = $data->quantity_per_sku * $data->final_unit_cost_per_sku;
+						$sum_total_amount[] = $data->quantity * $data->final_unit_cost;
 					@endphp
-					{{ number_format($data->quantity_per_sku * $data->final_unit_cost_per_sku,2,".",",") }}
+					{{ number_format($data->quantity * $data->final_unit_cost,2,".",",") }}
 					
 				</td>
-				<td style="text-align: center;"><center><input type="checkbox"  name="checkboxEntry[{{ $data->sku_id }}]" value="{{ $data->sku_id }}" class="big-checkbox" /></center></td>
+				<td><center><input type="checkbox"  name="checkboxEntry[{{ $data->sku_id }}]" value="{{ $data->sku_id }}" class="big-checkbox" /></center></td>
 			</tr>
 			@endforeach
 			<tr>
-				<th colspan="4" style="text-align: center;">GRAND TOTAL</th>
+				<th colspan="4">GRAND TOTAL</th>
 				<th style="text-align: right;">{{ number_format(array_sum($sum_total_amount),2,".",",") }}</th>
 				<th></th>
 			</tr>
@@ -81,7 +81,7 @@
 </form>
 	
 
-	<button class="btn btn-success btn-block btn-flat" type="button" onclick="return save()" style="width:100%;">PROCEED TRANSFER</button>
+	<button class="btn btn-success btn-sm float-right" type="button" onclick="return save()">Proceed</button>
 
 
 <script>

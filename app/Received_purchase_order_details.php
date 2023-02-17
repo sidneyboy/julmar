@@ -13,6 +13,7 @@ class Received_purchase_order_details extends Model
         'unit_cost',
         'freight',
         'quantity_returned',
+        'final_unit_cost',
     ];
 
     public function sku()
