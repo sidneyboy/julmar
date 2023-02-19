@@ -35,7 +35,8 @@ class Receiving_draft_controller extends Controller
     }
 
     public function receiving_draft_proceed(Request $request)
-    {
+    {   
+        //return $request->input();
         $sku = Sku_add::select('id')->where('barcode', $request->input('barcode'))->where('sku_type', 'case')->first();
 
         if ($sku) {

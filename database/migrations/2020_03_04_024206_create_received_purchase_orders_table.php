@@ -15,7 +15,7 @@ class CreateReceivedPurchaseOrdersTable extends Migration
     {
         Schema::create('received_purchase_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('discount_id')->unsigned()->index();
+            $table->double('bo_allowance_discount_rate',5,4);
             $table->integer('principal_id')->unsigned()->index()->nullable();
             $table->foreign('principal_id')->references('id')->on('sku_principals');
             $table->bigInteger('purchase_order_id')->unsigned()->index();

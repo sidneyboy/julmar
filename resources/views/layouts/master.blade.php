@@ -40,6 +40,8 @@
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
+    
+
 </head>
 
 <body class="hold-transition sidebar-mini sidebar-collapse sidebar-mini">
@@ -501,7 +503,7 @@
                             </li>
 
 
-                            <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
+                            {{-- <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -665,7 +667,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

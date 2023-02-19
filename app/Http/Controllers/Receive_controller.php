@@ -15,6 +15,8 @@ use App\Receiving_draft;
 use App\Receiving_draft_main;
 use App\Sku_ledger;
 use App\Sku_price_details;
+use App\Received_discount_details;
+use App\Received_other_discount_details;
 use DB;
 use App\User;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class Receive_controller extends Controller
                 $id = $received_purchase_order_id->id + 1;
             }
 
-            $draft = Receiving_draft_main::where('status', null)->get();
+            $draft = Receiving_draft_main::where('status', null)->orderBy('id', 'desc')->get();
             return view('receive_order', [
                 'user' => $user,
                 'draft' => $draft,
@@ -52,7 +54,7 @@ class Receive_controller extends Controller
     public function receive_order_generate_data(Request $request)
     {
         //return $request->input();
-        $freight = str_replace(',', '', $request->input('freight'));
+
 
         $variable_explode = explode('=', $request->input('purchase_id'));
         $session_id = $variable_explode[0];
@@ -66,6 +68,8 @@ class Receive_controller extends Controller
             ->get();
 
         $select_principal_discount = Principal_discount::select('id', 'total_bo_allowance_discount', 'total_discount')->where('principal_id', $principal_id)->get();
+
+
 
         $draft = Receiving_draft::where('session_id', $session_id)->orderBy('sku_id')->get();
 
@@ -81,7 +85,6 @@ class Receive_controller extends Controller
             ->with('session_id', $session_id)
             ->with('purchase_id', $purchase_id)
             ->with('purchase_order_id', $purchase_order_id)
-            ->with('freight', $freight)
             ->with('invoice_date', $request->input('invoice_date'))
             ->with('branch', $request->input('branch'));
     }
@@ -89,22 +92,19 @@ class Receive_controller extends Controller
     public function receive_order_data_final_summary(Request $request)
     {
 
-        if (is_null($request->input('discount'))) {
-            return 'null';
-        } else {
-
-            $unit_cost = str_replace(',', '', $request->input('unit_cost'));
-            $freight = str_replace(',', '', $request->input('freight'));
-            $selected_discount_allocation = Principal_discount::find($request->input('discount'));
-
-            $selected_discount_rate = Principal_discount_details::where('principal_discount_id', $request->input('discount'))->get();
-            $selected_discount_counter = count($selected_discount_rate);
-
+        //return $request->input();
+        $unit_cost = str_replace(',', '', $request->input('unit_cost'));
+        $discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
+        $check_less_other_discounts = $request->input('less_other_discount_selected');
+        if (isset($check_less_other_discounts)) {
+            $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();
 
             return view('receive_order_show_data_final_summary')
                 ->with('sku_id', $request->input('sku_id'))
                 ->with('discount_type', $request->input('discount_type'))
-                ->with('category_id', $request->input('category_id'))
+                ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                ->with('less_other_discount_selected', $less_other_discount_selected)
+                ->with('discount_selected', $discount_selected)
                 ->with('sku_type', $request->input('sku_type'))
                 ->with('received_quantity', $request->input('received_quantity'))
                 ->with('remarks', $request->input('remarks'))
@@ -119,13 +119,37 @@ class Receive_controller extends Controller
                 ->with('dr_si', $request->input('dr_si'))
                 ->with('courier', $request->input('courier'))
                 ->with('purchase_id', $request->input('purchase_id'))
-                ->with('gci_discount_id', $request->input('discount'))
-                ->with('selected_discount_allocation', $selected_discount_allocation)
                 ->with('expiration_date', $request->input('expiration_date'))
-                ->with('selected_discount_rate', $selected_discount_rate)
-                ->with('selected_discount_counter', $selected_discount_counter)
                 ->with('unit_cost', $unit_cost)
-                ->with('freight', $freight)
+                ->with('freight', $request->input('freight'))
+                ->with('invoice_date', $request->input('invoice_date'))
+                ->with('remarks', $request->input('remarks'))
+                ->with('branch', $request->input('branch'))
+                ->with('scanned_by', $request->input('scanned_by'))
+                ->with('draft_session_id', $request->input('draft_session_id'));
+        } else {
+            return view('receive_order_show_data_final_summary')
+                ->with('sku_id', $request->input('sku_id'))
+                ->with('discount_type', $request->input('discount_type'))
+                ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                ->with('discount_selected', $discount_selected)
+                ->with('sku_type', $request->input('sku_type'))
+                ->with('received_quantity', $request->input('received_quantity'))
+                ->with('remarks', $request->input('remarks'))
+                ->with('sku_code', $request->input('sku_code'))
+                ->with('description', $request->input('description'))
+                ->with('quantity', $request->input('quantity'))
+                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
+                ->with('principal_name', $request->input('principal_name'))
+                ->with('principal_id', $request->input('principal_id'))
+                ->with('purchase_order_id', $request->input('purchase_order_id'))
+                ->with('truck_number', $request->input('truck_number'))
+                ->with('dr_si', $request->input('dr_si'))
+                ->with('courier', $request->input('courier'))
+                ->with('purchase_id', $request->input('purchase_id'))
+                ->with('expiration_date', $request->input('expiration_date'))
+                ->with('unit_cost', $unit_cost)
+                ->with('freight', $request->input('freight'))
                 ->with('invoice_date', $request->input('invoice_date'))
                 ->with('remarks', $request->input('remarks'))
                 ->with('branch', $request->input('branch'))
@@ -142,6 +166,7 @@ class Receive_controller extends Controller
         $date = date('Y-m-d');
 
         $new_received_purchase_orders = new Received_purchase_order([
+            'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
             'discount_id' => $request->input('discount_id'),
             'principal_id' => $request->input('principal_id'),
             'purchase_order_id' => $request->input('purchase_order_id'),
@@ -153,9 +178,137 @@ class Receive_controller extends Controller
             'scanned_by' => $request->input('scanned_by'),
             'finalized_by' => auth()->user()->id,
             'branch' => $request->input('branch'),
+            'gross_purchase' => $request->input('gross_purchases'),
+            'total_less_discount' => $request->input('total_less_discount'),
+            'bo_discount' => $request->input('bo_discount'),
+            'vatable_purchase' => $request->input('vatable_purchase'),
+            'vat' => $request->input('vat'),
+            'freight' => $request->input('freight'),
+            'total_final_cost' => $request->input('total_final_cost'),
+            'total_less_other_discount' => $request->input('total_less_other_discount'),
+            'net_payable' => $request->input('net_payable'),
+            'invoice_image' => 'No Sales Invoice Yet',
         ]);
 
         $new_received_purchase_orders->save();
+
+        $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
+
+        if (isset($check_less_other_discount_selected_name)) {
+            for ($i = 0; $i < count($check_less_other_discount_selected_name); $i++) {
+                $new_received_purchase_order_other_discount = new Received_other_discount_details([
+                    'received_id' => $new_received_purchase_orders->id,
+                    'discount_name' => $check_less_other_discount_selected_name[$i],
+                    'discount_rate' => $request->input('less_other_discount_selected_rate')[$i],
+                ]);
+
+                $new_received_purchase_order_other_discount->save();
+            }
+
+            $received_jer_save = new Received_jer([
+                'principal_id' => $request->input('principal_id'),
+                'received_id' => $new_received_purchase_orders->id,
+                'dr' => $request->input('net_payable'),
+                'cr' => $request->input('net_payable'),
+                'date' => $date
+            ]);
+
+            $received_jer_save->save();
+
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+
+            if ($principal_ledger_latest) {
+                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'rr_dr' => $new_received_purchase_orders->id,
+                    'principal_invoice' => $request->input('dr_si'),
+                    'transaction' => 'received',
+                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                    'received' => $request->input('net_payable'),
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' => 0,
+                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
+                ]);
+
+                $principal_ledger_saved->save();
+            } else {
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'rr_dr' => $new_received_purchase_orders->id,
+                    'principal_invoice' => $request->input('dr_si'),
+                    'transaction' => 'received',
+                    'accounts_payable_beginning' => 0,
+                    'received' => $request->input('net_payable'),
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' => 0,
+                    'accounts_payable_end' => $request->input('net_payable'),
+                ]);
+
+                $principal_ledger_saved->save();
+            }
+        } else {
+            $received_jer_save = new Received_jer([
+                'principal_id' => $request->input('principal_id'),
+                'received_id' => $new_received_purchase_orders->id,
+                'dr' => $request->input('total_final_cost'),
+                'cr' => $request->input('total_final_cost'),
+                'date' => $date
+            ]);
+
+            $received_jer_save->save();
+
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+
+            if ($principal_ledger_latest) {
+                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'rr_dr' => $new_received_purchase_orders->id,
+                    'principal_invoice' => $request->input('dr_si'),
+                    'transaction' => 'received',
+                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                    'received' => $request->input('total_final_cost'),
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' => 0,
+                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
+                ]);
+
+                $principal_ledger_saved->save();
+            } else {
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'rr_dr' => $new_received_purchase_orders->id,
+                    'principal_invoice' => $request->input('dr_si'),
+                    'transaction' => 'received',
+                    'accounts_payable_beginning' => 0,
+                    'received' => $request->input('total_final_cost'),
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' => 0,
+                    'accounts_payable_end' => $request->input('total_final_cost'),
+                ]);
+
+                $principal_ledger_saved->save();
+            }
+        }
+
+        for ($i = 0; $i < count($request->input('discount_selected_name')); $i++) {
+            $new_received_purchase_order_discount = new Received_discount_details([
+                'received_id' => $new_received_purchase_orders->id,
+                'discount_name' => $request->input('discount_selected_name')[$i],
+                'discount_rate' => $request->input('discount_selected_rate')[$i],
+            ]);
+
+            $new_received_purchase_order_discount->save();
+        }
 
         foreach ($request->input('sku_id') as $key => $data) {
             $new_received_purchase_order_details = new Received_purchase_order_details([
@@ -163,7 +316,8 @@ class Receive_controller extends Controller
                 'sku_id' => $data,
                 'quantity' => $request->input('received_quantity')[$data],
                 'unit_cost' => $request->input('unit_cost')[$data],
-                'freight' => $request->input('freight')[$data],
+                'freight' => str_replace('', '', $request->input('freight_per_sku')[$data]),
+                'final_unit_cost' => $request->input('final_unit_cost')[$data],
             ]);
 
             $new_received_purchase_order_details->save();
@@ -196,7 +350,7 @@ class Receive_controller extends Controller
                 $new_sku_ledger->save();
             }
 
-            $update_purchase_order_details = Purchase_order_details::select('id','quantity','receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
+            $update_purchase_order_details = Purchase_order_details::select('id', 'quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
 
             $update_received = $update_purchase_order_details->receive + $request->input('received_quantity')[$data];
             if ($update_received == $update_purchase_order_details->quantity) {
@@ -204,7 +358,7 @@ class Receive_controller extends Controller
                 $update_purchase_order_details->remarks = 'received';
                 $update_purchase_order_details->scanned_remarks = null;
                 $update_purchase_order_details->save();
-            }else{
+            } else {
                 $update_purchase_order_details->receive = $update_received;
                 $update_purchase_order_details->remarks = 'staggered';
                 $update_purchase_order_details->scanned_remarks = null;
@@ -224,53 +378,6 @@ class Receive_controller extends Controller
                 $update_purchase_order->save();
             }
         }
-
-        $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-
-        if ($principal_ledger_latest) {
-            $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-            $principal_ledger_saved = new Principal_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'date' => $date,
-                'rr_dr' => $new_received_purchase_orders->id,
-                'principal_invoice' => $request->input('dr_si'),
-                'transaction' => 'received',
-                'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                'received' => $request->input('grand_total_final_cost'),
-                'returned' => 0,
-                'adjustment' => 0,
-                'payment' => 0,
-                'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('grand_total_final_cost'),
-            ]);
-
-            $principal_ledger_saved->save();
-        } else {
-            $principal_ledger_saved = new Principal_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'date' => $date,
-                'rr_dr' => $new_received_purchase_orders->id,
-                'principal_invoice' => $request->input('dr_si'),
-                'transaction' => 'received',
-                'accounts_payable_beginning' => 0,
-                'received' => $request->input('grand_total_final_cost'),
-                'returned' => 0,
-                'adjustment' => 0,
-                'payment' => 0,
-                'accounts_payable_end' => $request->input('grand_total_final_cost'),
-            ]);
-
-            $principal_ledger_saved->save();
-        }
-
-        $received_jer_save = new Received_jer([
-            'principal_id' => $request->input('principal_id'),
-            'received_id' => $new_received_purchase_orders->id,
-            'dr' => $request->input('grand_total_final_cost'),
-            'cr' => $request->input('grand_total_final_cost'),
-            'date' => $date
-        ]);
-
-        $received_jer_save->save();
 
         Receiving_draft_main::where('session_id', $request->input('draft_session_id'))
             ->update(['status' => 'completed']);

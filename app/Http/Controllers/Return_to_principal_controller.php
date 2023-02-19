@@ -37,9 +37,6 @@ class Return_to_principal_controller extends Controller
 
     public function return_show_inputs(Request $request)
     {
-
-        //return $request->input();
-
         $variable_explode = explode('=', $request->input('received_id'));
         $received_id = $variable_explode[0];
         $principal_id = $variable_explode[1];
@@ -66,10 +63,13 @@ class Return_to_principal_controller extends Controller
                     break;
                 }
             }
-            $selected_discount_allocation = Principal_discount::find($request->input('discount_id'));
 
-            return view('return_to_principal_summary')
-                ->with('quantity', $request->input('quantity'))
+            $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
+
+
+            return view('return_to_principal_summary', [
+                'received_purchase_order' => $received_purchase_order,
+            ])->with('quantity', $request->input('quantity'))
                 ->with('unit_cost', $request->input('unit_cost'))
                 ->with('code', $request->input('code'))
                 ->with('description', $request->input('description'))
@@ -79,8 +79,7 @@ class Return_to_principal_controller extends Controller
                 ->with('sku_type', $request->input('sku_type'))
                 ->with('discount_id', $request->input('discount_id'))
                 ->with('personnel', $request->input('personnel'))
-                ->with('discount_type', $request->input('discount_type'))
-                ->with('selected_discount_allocation', $selected_discount_allocation);
+                ->with('discount_type', $request->input('discount_type'));
         }
     }
 

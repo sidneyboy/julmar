@@ -20,7 +20,7 @@ class CreateVanSellingArLedgersTable extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users');
             $table->BigInteger('van_selling_print_id')->unsigned()->index();
-            $table->foreign('van_selling_print_id')->references('id')->on('van_selling_printeds');
+            $table->foreign('van_selling_print_id')->references('id')->on('van_selling_printeds')->nullable();
             $table->BigInteger('vs_inv_adj_id')->unsigned()->index();
             $table->foreign('vs_inv_adj_id')->references('id')->on('van_selling_printeds');
             $table->BigInteger('van_selling_payment_id')->unsigned()->index();

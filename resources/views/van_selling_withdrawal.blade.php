@@ -14,7 +14,8 @@
             <div class="card-body">
                 <form id="van_selling_generate_sku_quantity" enctype="multipart/form-data" method="post">
                     @csrf
-                    <p style="color:blue;">NOTE: PALIHOG CHECK SA VS AR LEDGER KONG NAA NABA SIYA BEGINNING BEFORE MAG IN SA IYANG INVENTORY AND NEW
+                    <p style="color:blue;">NOTE: PALIHOG CHECK SA VS AR LEDGER KONG NAA NABA SIYA BEGINNING BEFORE MAG IN SA
+                        IYANG INVENTORY AND NEW
                         VANLOADS SALAMAT</p>
                     <div class="row">
                         <div class="col-md-4">

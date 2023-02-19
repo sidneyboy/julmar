@@ -94,7 +94,7 @@ class Purchase_order_controller extends Controller
                 $variableExplode = explode('-', $purchase_order_id->purchase_id);
                 $series = $variableExplode[2];
                 $code =  $series + 1;
-                $po_id = $principal_name . "-" . $month . "-" . $code . "-" . $year;
+                $po_id = $principal_name . "-" . $month . "-" . $year . "-" . $code;
 
                 return view('purchase_order_show_data', [
                     'sku' => Cart::session($user_id)->getContent()
@@ -107,7 +107,7 @@ class Purchase_order_controller extends Controller
                     ->with('sales_order_number', $request->input('sales_order_number'))
                     ->with('discount', $principal_discount);
             } else {
-                $po_id = $principal_name . "-" . $month . "-" . $year . "-" . 1;
+                return $po_id = $principal_name . "-" . $month . "-" . $year . "-" . 1;
                 return view('purchase_order_show_data', [
                     'sku' => Cart::session($user_id)->getContent()
                 ])->with('principal_id', $request->input('principal_id'))

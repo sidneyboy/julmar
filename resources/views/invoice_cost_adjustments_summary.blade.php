@@ -8,7 +8,14 @@
                     <th style="text-align: center;">U/C <br /> Adjustment</th>
                     <th style="text-align: center">Sub-Total<br />Amount(VAT EX)</th>
                     <th style="text-align: center">Vatable<br />Purchase</th>
-                    <th style="text-align: center">Discount</th>
+                    <th style="text-align: center">Discount
+                        @foreach ($received_purchase_order->received_discount_details as $data)
+                            @php
+                                $sum_discount_selected[] = $data->discount_rate;
+                            @endphp
+                        @endforeach
+                        ({{ array_sum($sum_discount_selected) }}%)
+                    </th>
                     <th style="text-align: center">Bo<br />Allowance</th>
                     <th style="text-align: center">Vat<br />Amount</th>
                     <th style="text-align: center">Net Adjustment<br />(VAT INC)</th>
@@ -44,14 +51,14 @@
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $discount = ($vatable_purchase * $selected_discount_allocation->total_discount) / 100;
+                                $discount = ($vatable_purchase * array_sum($sum_discount_selected)) / 100;
                                 $sum_discount[] = $discount;
                             @endphp
                             {{ number_format($discount, 2, '.', ',') }}
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $bo_allowance = ($vatable_purchase * $selected_discount_allocation->total_bo_allowance_discount) / 100;
+                                $bo_allowance = ($vatable_purchase * $received_purchase_order->total_bo_allowance_discount_rate) / 100;
                                 $sum_bo_allowance[] = $bo_allowance;
                             @endphp
                             {{ number_format($bo_allowance, 2, '.', ',') }}
@@ -98,65 +105,65 @@
             </tbody>
         </table>
 
-      
+
     </div>
 
-	<table class="table table-bordered table-hover table-sm float-right" style="width:30%">
-		<tr>
-			<td style="font-weight: bold; text-align: center;width:50%;" colspan="2">SUMMARY OF DEDUCTION</td>
-		</tr>
-		<tr>
-			<td style="font-weight: bold; text-align: left;width:50%;">VATABLE PURCHASE:</td>
-			<td style="font-weight: bold; text-align: right;font-size: 15px;">
+    <table class="table table-bordered table-hover table-sm float-right" style="width:30%">
+        <tr>
+            <td style="font-weight: bold; text-align: center;width:50%;" colspan="2">SUMMARY OF DEDUCTION</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; text-align: left;width:50%;">VATABLE PURCHASE:</td>
+            <td style="font-weight: bold; text-align: right;font-size: 15px;">
 
-				@php
-					$total_vatable_purchase = array_sum($sum_total_amount) / 1.12;
-				@endphp
-				{{ number_format($total_vatable_purchase, 2, '.', ',') }}
-				<input type="hidden" name="total_vatable_purchase" value={{ $total_vatable_purchase }}>
-			</td>
-		</tr>
-		<tr>
-			<td style="text-align: left;width:50%;">LESS: DISCOUNTS</td>
-			<td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
-				@php
-					$total_less_discount = array_sum($sum_discount) + array_sum($sum_bo_allowance);
-				@endphp
-				{{ number_format($total_less_discount, 2, '.', ',') }}
-				<input type="hidden" name="total_less_discount" value={{ $total_less_discount }}>
-			</td>
-		</tr>
-		<tr>
-			<td style="font-weight: bold;">NET OF DISCOUNTS</td>
-			<td style="font-weight: bold; text-align: right;font-size: 15px;">
-				@php
-					$total_net_discount = $total_vatable_purchase - $total_less_discount;
-				@endphp
-				{{ number_format($total_net_discount, 2, '.', ',') }}
-				<input type="hidden" name="total_net_discount" value={{ $total_net_discount }}>
-			</td>
-		</tr>
-		<tr>
-			<td>VAT AMOUNT</td>
-			<td style="text-align: right;font-size: 15px;">
-				@php
-					$total_vat_amount = $total_net_discount * 0.12;
-				@endphp
-				{{ number_format($total_vat_amount, 2, '.', ',') }}
-				<input type="hidden" name="total_vat_amount" value={{ $total_vat_amount }}>
-			</td>
-		</tr>
-		<tr>
-			<td style="font-weight: bold;">NET ADJUSTMENT</td>
-			<td style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
-				@php
-					$total_net_adjustment = $total_net_discount + $total_vat_amount;
-				@endphp
-				{{ number_format($total_net_adjustment, 2, '.', ',') }}
-				<input type="hidden" name="total_net_adjustment" value={{ $total_net_adjustment }}>
-			</td>
-		</tr>
-	</table>
+                @php
+                    $total_vatable_purchase = array_sum($sum_total_amount) / 1.12;
+                @endphp
+                {{ number_format($total_vatable_purchase, 2, '.', ',') }}
+                <input type="hidden" name="total_vatable_purchase" value={{ $total_vatable_purchase }}>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left;width:50%;">LESS: DISCOUNTS</td>
+            <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                @php
+                    $total_less_discount = array_sum($sum_discount) + array_sum($sum_bo_allowance);
+                @endphp
+                {{ number_format($total_less_discount, 2, '.', ',') }}
+                <input type="hidden" name="total_less_discount" value={{ $total_less_discount }}>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold;">NET OF DISCOUNTS</td>
+            <td style="font-weight: bold; text-align: right;font-size: 15px;">
+                @php
+                    $total_net_discount = $total_vatable_purchase - $total_less_discount;
+                @endphp
+                {{ number_format($total_net_discount, 2, '.', ',') }}
+                <input type="hidden" name="total_net_discount" value={{ $total_net_discount }}>
+            </td>
+        </tr>
+        <tr>
+            <td>VAT AMOUNT</td>
+            <td style="text-align: right;font-size: 15px;">
+                @php
+                    $total_vat_amount = $total_net_discount * 0.12;
+                @endphp
+                {{ number_format($total_vat_amount, 2, '.', ',') }}
+                <input type="hidden" name="total_vat_amount" value={{ $total_vat_amount }}>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold;">NET ADJUSTMENT</td>
+            <td style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
+                @php
+                    $total_net_adjustment = $total_net_discount + $total_vat_amount;
+                @endphp
+                {{ number_format($total_net_adjustment, 2, '.', ',') }}
+                <input type="hidden" name="total_net_adjustment" value={{ $total_net_adjustment }}>
+            </td>
+        </tr>
+    </table>
 
     {{-- <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $principal_name }}" name="principal_name"> --}}
@@ -174,7 +181,7 @@
             <tbody>
                 <tr>
                     <td style="text-align: center;">ACCOUNTS PAYABLE
-                        {{ $selected_discount_allocation->principal->principal }}</td>
+                        {{ $received_purchase_order->principal->principal }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
                         {{ number_format(array_sum($sum_total_adjustment) * -1, 2, '.', ',') }}</td>
@@ -183,7 +190,7 @@
                 <tr>
                     <td></td>
                     <td style="text-align: center;">INVENTORY -
-                        {{ $selected_discount_allocation->principal->principal }}</td>
+                        {{ $received_purchase_order->principal->principal }}</td>
                     <td>
                         <input type="hidden" name="total_invoice_adjusted" value="{{ $total_net_adjustment }}">
                         <input type="hidden" name="total_bo_allowance" value="{{ array_sum($sum_bo_allowance) }}">
@@ -207,7 +214,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">INVENTORY {{ $selected_discount_allocation->principal->principal }}
+                    <td style="text-align: center;">INVENTORY {{ $received_purchase_order->principal->principal }}
                     </td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?></td>
@@ -216,7 +223,7 @@
                 <tr>
                     <td></td>
                     <td style="text-align: center;">ACCOUNTS PAYABLE -
-                        {{ $selected_discount_allocation->principal->principal }}</td>
+                        {{ $received_purchase_order->principal->principal }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?>
                         <input type="hidden" name="total_invoice_adjusted" value="{{ $total_net_adjustment }}">
@@ -235,7 +242,7 @@
                     <th>Qty</th>
                     <th style="text-align: center;">U/C <br /> Adjustment</th>
                     <th style="text-align: center">Sub-Total<br />Amount(VAT EX)</th>
-                    @foreach ($selected_discount_allocation->principal_discount_details as $principal_discount)
+                    @foreach ($received_purchase_order->received_discount_details as $principal_discount)
                         <th style="text-align: center">
                             {{ $principal_discount->discount_name . ' ' . $principal_discount->discount_rate }}%</th>
                     @endforeach
@@ -273,7 +280,7 @@
                             $discount_value_holder_history_for_bo_allowance = [];
                             $totalArray = [];
                             $percent = [];
-                            foreach ($selected_discount_allocation->principal_discount_details as $principal_discount) {
+                            foreach ($received_purchase_order->received_discount_details as $principal_discount) {
                                 $discount_value_holder_dummy = $discount_value_holder;
                                 $less_percentage_by = $principal_discount->discount_rate / 100;
                             
@@ -288,7 +295,7 @@
                         @endphp
                         <td style="text-align: right;">
                             @php
-                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance) - end($discount_value_holder_history_for_bo_allowance) * ($selected_discount_allocation->total_bo_allowance_discount / 100);
+                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance) - end($discount_value_holder_history_for_bo_allowance) * ($received_purchase_order->total_bo_allowance_discount / 100);
                                 $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
@@ -321,7 +328,7 @@
                         $total_sum = array_sum($sum_total_amount_per_sku);
                         
                         $discount_value_holder_sum = $total_sum;
-                        foreach ($selected_discount_allocation->principal_discount_details as $principal_discount) {
+                        foreach ($received_purchase_order->received_discount_details as $principal_discount) {
                             $discount_value_holder_sum_dummy = $discount_value_holder_sum;
                             $less_percentage_by = $principal_discount->discount_rate / 100;
                         
@@ -364,7 +371,7 @@
             $less_discount_value_holder_history_for_bo_allowance = [];
             $totalArray = [];
             $percent = [];
-            foreach ($selected_discount_allocation->principal_discount_details as $data_discount) {
+            foreach ($received_purchase_order->received_discount_details as $data_discount) {
                 echo '<tr><td style="text-align:right"> Less ' . $data_discount->discount_rate / 100 . '% </td>';
                 $discount_value_holder_dummy = $discount_value_holder;
                 $less_percentage_by = $data_discount->discount_rate / 100;
@@ -386,10 +393,10 @@
         </tr>
         <tr>
             <td style="text-align: left;width:50%;font-weight: bold;text-align: center;">BO <br />ALLOWANCE:
-                {{ number_format($selected_discount_allocation->total_bo_allowance_discount, 2, '.', ',') }} %</td>
+                {{ number_format($received_purchase_order->total_bo_allowance_discount, 2, '.', ',') }} %</td>
             <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                 @php
-                    $less_bo_allowance = end($less_discount_value_holder_history_for_bo_allowance) - end($less_discount_value_holder_history_for_bo_allowance) * ($selected_discount_allocation->total_bo_allowance_discount / 100);
+                    $less_bo_allowance = end($less_discount_value_holder_history_for_bo_allowance) - end($less_discount_value_holder_history_for_bo_allowance) * ($received_purchase_order->total_bo_allowance_discount / 100);
                     $less_bo_allowance_per_summary = end($less_discount_value_holder_history_for_bo_allowance) - $less_bo_allowance;
                 @endphp
                 {{ number_format($less_bo_allowance_per_summary, 2, '.', ',') }}
@@ -432,70 +439,72 @@
         </tr>
     </table>
 
-	@if (array_sum($sum_total_adjustment) < 0)
-	<table class="table table-bordered table-hover table-sm">
-		<thead>
-			<tr>
-				<th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
-				<th style="text-align: center;">DR</th>
-				<th style="text-align: center;">CR</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td style="text-align: center;">ACCOUNTS PAYABLE {{ $selected_discount_allocation->principal->principal }}</td>
-				<td></td>
-				<td style="font-weight: bold;text-align: center;">
-					{{ number_format(array_sum($sum_total_adjustment) * -1, 2, '.', ',') }}</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td style="text-align: center;">INVENTORY - {{ $selected_discount_allocation->principal->principal }}</td>
-				<td>
-					<input type="hidden" name="total_invoice_adjusted"
-						value="{{ $total_net_adjustment }}">
-					<input type="hidden" name="total_bo_allowance"
-						value="{{ array_sum($sum_bo_allowance_per_sku) }}">
-				</td>
-				<td style="font-weight: bold;text-align: center;">
-					{{ number_format(array_sum($sum_total_adjustment) * -1, 2, '.', ',') }}
+    @if (array_sum($sum_total_adjustment) < 0)
+        <table class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                    <th style="text-align: center;">DR</th>
+                    <th style="text-align: center;">CR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">ACCOUNTS PAYABLE
+                        {{ $received_purchase_order->principal->principal }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;">
+                        {{ number_format(array_sum($sum_total_adjustment) * -1, 2, '.', ',') }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: center;">INVENTORY -
+                        {{ $received_purchase_order->principal->principal }}</td>
+                    <td>
+                        <input type="hidden" name="total_invoice_adjusted" value="{{ $total_net_adjustment }}">
+                        <input type="hidden" name="total_bo_allowance"
+                            value="{{ array_sum($sum_bo_allowance_per_sku) }}">
+                    </td>
+                    <td style="font-weight: bold;text-align: center;">
+                        {{ number_format(array_sum($sum_total_adjustment) * -1, 2, '.', ',') }}
 
 
-				</td>
-			</tr>
-		</tbody>
-	</table>
-@else
-	<table class="table table-bordered table-hover table-sm">
-		<thead>
-			<tr>
-				<th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
-				<th style="text-align: center;">DR</th>
-				<th style="text-align: center;">CR</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td style="text-align: center;">INVENTORY {{ $selected_discount_allocation->principal->principal }}</td>
-				<td></td>
-				<td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td style="text-align: center;">ACCOUNTS PAYABLE - {{ $selected_discount_allocation->principal->principal }}</td>
-				<td></td>
-				<td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?>
-					<input type="hidden" name="total_invoice_adjusted"
-						value="{{ $total_net_adjustment }}">
-					<input type="hidden" name="total_bo_allowance"
-						value="{{ array_sum($sum_bo_allowance_per_sku) }}">
-				</td>
-			</tr>
-		</tbody>
-	</table>
-@endif
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    @else
+        <table class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                    <th style="text-align: center;">DR</th>
+                    <th style="text-align: center;">CR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">INVENTORY
+                        {{ $received_purchase_order->principal->principal }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: center;">ACCOUNTS PAYABLE -
+                        {{ $received_purchase_order->principal->principal }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_total_adjustment), 2, '.', ','); ?>
+                        <input type="hidden" name="total_invoice_adjusted" value="{{ $total_net_adjustment }}">
+                        <input type="hidden" name="total_bo_allowance"
+                            value="{{ array_sum($sum_bo_allowance_per_sku) }}">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
 
 
 @endif

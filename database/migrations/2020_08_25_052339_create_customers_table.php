@@ -18,8 +18,6 @@ class CreateCustomersTable extends Migration
             $table->string('store_name');
             $table->bigInteger('location_id')->unsigned()->index();
             $table->foreign('location_id')->references('id')->on('locations');
-            $table->bigInteger('location_details_id')->unsigned()->index();
-            $table->foreign('location_details_id')->references('id')->on('location_details');
             $table->string('detailed_location');
             $table->string('credit_term');
             $table->double('credit_line_amount');

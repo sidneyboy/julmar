@@ -59,9 +59,9 @@ class Invoice_cost_adjustment_controller extends Controller
         //return $request->input();
 
         
-        $received_purchase_order = Received_purchase_order::select('id','discount_id','discount_type')->where('id', $request->input('received_id'))->first();
+        $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
 
-        $selected_discount_allocation = Principal_discount::find($received_purchase_order->discount_id);
+        // $selected_discount_allocation = Principal_discount::find($received_purchase_order->discount_id);
 
         // $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
         // $received_id = Received_purchase_order::find($request->input('received_id'));
@@ -73,7 +73,6 @@ class Invoice_cost_adjustment_controller extends Controller
 
         return view('invoice_cost_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
-            'selected_discount_allocation' => $selected_discount_allocation,
         ])->with('checkbox_entry', $request->input('checkbox_entry'))
         ->with('unit_cost', $request->input('unit_cost'))
         ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))

@@ -48,7 +48,7 @@ class Customer_controller extends Controller
 
     public function customer_save(Request $request)
     {
-
+        //return $request->input();
         //eturn $request->input();
 
         date_default_timezone_set('Asia/Manila');
@@ -70,20 +70,9 @@ class Customer_controller extends Controller
         $save_new_customer->save();
         $save_new_customer_last_id = $save_new_customer->id;
 
-        // foreach ($request->input('principal') as $key => $data) {
-        //     $customer_principal_prices_saved = new Customer_principal_price([
-        //         'customer_id'    => $save_new_customer_last_id,
-        //         'principal_id'    => $data,
-        //         'price_level' => strtoupper($request->input('price_level')[$data]),
-        //         'user_id' => auth()->user()->id,
-        //     ]);
-
-        //     $customer_principal_prices_saved->save();
-        // }
-
         $save_new_customer_ledger = new Customer_ledger([
             'customer_id'    => $save_new_customer_last_id,
-            'principal_id'    => 0,
+            // 'principal_id'    => 0,
             'sales_order_number'    => '',
             'transaction_reference'    => 'new customer',
             'accounts_receivable_previous'    => 0.00,

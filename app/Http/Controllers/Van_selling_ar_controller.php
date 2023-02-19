@@ -48,7 +48,7 @@ class Van_selling_ar_controller extends Controller
 
     public function van_selling_ar_save(Request $request)
     {
-        //return $request->input();
+       // return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -83,6 +83,7 @@ class Van_selling_ar_controller extends Controller
             'running_balance' => $request->input('running_balance'),
             'actual_stocks_on_hand' => $request->input('actual_stocks_on_hand'),
             'outstanding_balance' => $request->input('running_balance'),
+            'running_balance' => $request->input('running_balance'),
             'over_short' => $request->input('over_short'),
             'user_id' => auth()->user()->id,
             'date' => $date,

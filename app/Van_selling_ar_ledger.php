@@ -27,6 +27,7 @@ class Van_selling_ar_ledger extends Model
         'date',
         'remarks',
         'outstanding_balance',
+        'vs_inv_adj_id'
     ];
 
     public function customer()

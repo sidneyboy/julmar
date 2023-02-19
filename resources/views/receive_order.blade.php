@@ -24,24 +24,25 @@
                  @csrf
                  <div class="card-body">
                      <div class="row">
-                         <div class="col-md-3">
+                         <div class="col-md-4">
                              <label>Receive ID:</label>
                              <div class="form-group">
                                  <input type="text" class="form-control" style="border-radius: 0px;text-align: center;"
                                      value="{{ $id }}" disabled>
                              </div>
                          </div>
-                         <div class="col-md-3">
+                         <div class="col-md-4">
                              <label for="">Draft #</label>
                              <select name="purchase_id" class="form-control" required>
                                  <option value="" default>Select</option>
                                  @foreach ($draft as $data)
-                                     <option value="{{ $data->session_id ."=". $data->purchase_order->id . '=' . $data->purchase_order->skuPrincipal->principal . '=' . $data->purchase_order->purchase_id . '=' . $data->purchase_order->skuPrincipal->id }}">
-                                         {{ $data->session_id . '-' . $data->purchase_order->purchase_id }}</option>
+                                     <option
+                                         value="{{ $data->session_id . '=' . $data->purchase_order->id . '=' . $data->purchase_order->skuPrincipal->principal . '=' . $data->purchase_order->purchase_id . '=' . $data->purchase_order->skuPrincipal->id }}">
+                                         {{ $data->purchase_order->purchase_id . ' - Draft' }}</option>
                                  @endforeach
                              </select>
                          </div>
-                         <div class="col-md-3">
+                         <div class="col-md-4">
                              <label for="">Receiving Branch</label>
                              <select class="form-control" name="branch" style="width:100%;">
                                  <option value="" default>Select Branch</option>
@@ -49,11 +50,6 @@
                                  <option value="CARAGA">CARAGA</option>
                                  <option value="POD">POD</option>
                              </select>
-                         </div>
-                         <div class="col-md-3">
-                             <label for="">Freight Cost</label>
-                             <input type="text" class="form-control" required name="freight"
-                                 onkeypress="return isNumberKey(event)">
                          </div>
                          <div class="col-md-3">
                              <div class="form-group">

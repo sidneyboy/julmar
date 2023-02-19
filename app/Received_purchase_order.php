@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Received_purchase_order extends Model
 {
      protected $fillable = [
-      'discount_id',
+      'bo_allowance_discount_rate',
       'principal_id',
       'purchase_order_id',
       'dr_si',
@@ -20,12 +20,31 @@ class Received_purchase_order extends Model
       'discount_type',
       'scanned_by',
       'finalized_by',
-      'branch'
+      'branch',
+      'gross_purchase',
+      'total_less_discount',
+      'bo_discount',
+      'vatable_purchase',
+      'vat',
+      'freight',
+      'total_final_cost',
+      'total_less_other_discount',
+      'net_payable',
     ];
 
     public function purchase_order()
     {
     	return $this->belongsTo('App\Purchase_order', 'purchase_order_id');
+    }
+
+    public function received_discount_details()
+    {
+    	return $this->hasMany('App\Received_discount_details', 'received_id');
+    }
+
+    public function received_other_discount_details()
+    {
+    	return $this->hasMany('App\Received_other_discount_details', 'received_id');
     }
 
     public function principal()
@@ -45,7 +64,7 @@ class Received_purchase_order extends Model
 
     public function received_purchase_order_details()
     {
-      return $this->hasOne('App\Received_purchase_order_details', 'received_id');
+      return $this->hasMany('App\Received_purchase_order_details', 'received_id');
     }
 
     public function bo_allowance_adjustment()

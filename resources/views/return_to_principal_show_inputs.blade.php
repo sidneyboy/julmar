@@ -14,10 +14,8 @@
         <label>Driver</label>
         <input type="text" name="personnel" class="form-control" required>
     </div>
-    <input type="text" value="{{ $principal_id }}" name="principal_id">
-    <input type="text" value="{{ $received_id }}" name="received_id">
-    <input type="text" value="{{ $received[0]->received_purchase_order->discount_id }}" name="discount_id">
-    <input type="text" value="{{ $received[0]->received_purchase_order->discount_type }}" name="discount_type">
+    <input type="hidden" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $received_id }}" name="received_id">
 
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-sm">
@@ -49,10 +47,10 @@
                         <td>
                             <center><input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"
                                     class="big-checkbox" /></center>
-                            <input type="text" name="code[{{ $data->sku_id }}]" value="{{ $data->sku->sku_code }}">
-                            <input type="text" name="description[{{ $data->sku_id }}]"
+                            <input type="hidden" name="code[{{ $data->sku_id }}]" value="{{ $data->sku->sku_code }}">
+                            <input type="hidden" name="description[{{ $data->sku_id }}]"
                                 value="{{ $data->sku->description }}">
-                            <input type="text" name="sku_type[{{ $data->sku_id }}]"
+                            <input type="hidden" name="sku_type[{{ $data->sku_id }}]"
                                 value="{{ $data->sku->sku_type }}">
                         </td>
                     </tr>
