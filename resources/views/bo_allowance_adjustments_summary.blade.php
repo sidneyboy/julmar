@@ -25,7 +25,7 @@
                         <td style="text-align: center;">{{ $quantity[$data] }}</td>
                         <td style="text-align: right;">
                             {{ number_format($unit_cost[$data], 2, '.', ',') }}
-                            <input type="hidden" name="unit_cost[$data]" value="{{ $unit_cost[$data] }}">
+                            
                         </td>
                         <td style="text-align: right;">{{ number_format($unit_cost_adjustment[$data], 2, '.', ',') }}
                         </td>
@@ -34,6 +34,11 @@
                                 $difference = $unit_cost[$data] - $unit_cost_adjustment[$data];
                             @endphp
                             {{ number_format($difference, 2, '.', ',') }}
+
+                            <input type="text" name="sku_id[]" value="{{ $data }}">
+                            <input type="text" name="quantity[{{ $data }}]" value="{{ $quantity[$data] }}">
+                            <input type="text" name="unit_cost[{{ $data }}]" value="{{ $unit_cost[$data] }}">
+                            <input type="text" name="adjusted_amount[{{ $data }}]" value="{{ $unit_cost_adjustment[$data] }}">
                         </td>
                         <td style="text-align: right;">
                             @php

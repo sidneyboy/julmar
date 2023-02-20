@@ -618,6 +618,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-04-28T08:47:37+00:00"
         },
         {
