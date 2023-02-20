@@ -11,7 +11,6 @@ class Bo_allowance_adjustments extends Model
       'particulars',
       'principal_id',
       'bo_allowance_deduction',
-      'vat_deduction',
       'net_deduction',
       'user_id',
       'date'

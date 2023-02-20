@@ -46,34 +46,27 @@ class Receive_order_report_controller extends Controller
         $principal_name = $variable_explode[1];
         $date = date('F j, Y', strtotime($date_from)) . ' - ' . date('F j, Y', strtotime($date_to));
 
-        return $received_order_data = Received_purchase_order::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
-        $received_counter = count($received_order_data);
+        $received_order_data = Received_purchase_order::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
+        //$received_counter = count($received_order_data);
 
-        $return_order_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
-        $return_counter = count($return_order_data);
+        // $return_order_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
+        // $return_counter = count($return_order_data);
 
-        $bo_adjustment_data = Bo_allowance_adjustments::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
-        $bo_counter = count($bo_adjustment_data);
+        // $bo_adjustment_data = Bo_allowance_adjustments::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
+        // $bo_counter = count($bo_adjustment_data);
 
-        $invoice_cost_data = Invoice_cost_adjustments::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
-        $invoice_cost_counter = count($invoice_cost_data);
+        // $invoice_cost_data = Invoice_cost_adjustments::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
+        // $invoice_cost_counter = count($invoice_cost_data);
 
         return view('receive_order_report_show_list', [
             'received_order_data' => $received_order_data,
-            'return_order_data' => $return_order_data,
-            'bo_adjustment_data' => $bo_adjustment_data,
-            'invoice_cost_data' => $invoice_cost_data,
         ])->with('principal_name', $principal_name)
             ->with('date', $date)
             ->with('date_from_to', $request->input('date'))
             ->with('principal', $request->input('principal'))
             ->with('date_from', $date_from)
             ->with('date_to', $date_to)
-            ->with('principal_id', $principal_id)
-            ->with('return_counter', $return_counter)
-            ->with('bo_counter', $bo_counter)
-            ->with('invoice_cost_counter', $invoice_cost_counter)
-            ->with('received_counter', $received_counter);
+            ->with('principal_id', $principal_id);
 
 
         // $a = Received_purchase_order::select('grand_total_final_cost','date')->where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();

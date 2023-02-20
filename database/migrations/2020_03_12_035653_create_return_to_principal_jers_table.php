@@ -19,7 +19,6 @@ class CreateReturnToPrincipalJersTable extends Migration
             $table->foreign('return_to_principal_id')->references('id')->on('return_to_principals');
             $table->double('dr', 15,4);
             $table->double('cr', 15,4);
-            $table->date('date')->index();
             $table->timestamps();
         });
     }

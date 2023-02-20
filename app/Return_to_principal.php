@@ -9,17 +9,17 @@ class Return_to_principal extends Model
      protected $fillable = [
       'principal_id',
       'received_id',
-      'discount_id',
       'personnel',
       'user_id',
-      'remarks',
-      'date',
-      'total_amount_return',
-      'return_vatable_purchase',
-      'return_less_discount',
-      'return_net_discount',
-      'return_vat_amount',
-      'return_net_of_deduction',
+      'gross_purchase',
+      'total_less_discount',
+      'bo_discount',
+      'vatable_purchase',
+      'vat',
+      'freight',
+      'total_final_cost',
+      'total_less_other_discount',
+      'net_payable',
     ];
 
     public function principal()

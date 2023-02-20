@@ -42,8 +42,6 @@
                                 name="code[{{ $data->sku->id }}]">
                             <input type="hidden" value="{{ $data->unit_cost }}"
                                 name="unit_cost[{{ $data->sku_id }}]">
-                            <input type="hidden" value="{{ $principal_id }}"
-                                name="principal_id[{{ $data->sku_id }}]">
                             <input type="hidden" value="{{ $data->sku->category_id }}"
                                 name="category_id[{{ $data->sku_id }}]">
                             <input type="hidden" value="{{ $data->sku->sku_type }}"
@@ -58,7 +56,7 @@
     </div>
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $principal_name }}" name="principal_name">
-    <input type="hidden" value="{{ $principal_id }}" name="bo_allowance_principal_id">
+    <input type="text" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $purchase_id }}" name="purchase_id">
     <input type="hidden" value="{{ $dr_si }}" name="dr_si">
 

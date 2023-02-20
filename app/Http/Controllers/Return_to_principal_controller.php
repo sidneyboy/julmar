@@ -88,21 +88,115 @@ class Return_to_principal_controller extends Controller
         //return $request->input();
 
         $return_to_principal_save = new Return_to_principal([
-            'principal_id' => $request->input('return_principal_id'),
+            'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
             'personnel' => $request->input('personnel'),
-            'discount_id' => $request->input('discount_id'),
             'user_id' => auth()->user()->id,
-            'remarks' => $request->input('remarks'),
-            'total_amount_return' => $request->input('total_amount_return'),
-            'return_vatable_purchase' => $request->input('return_vatable_purchase'),
-            'return_less_discount' => $request->input('return_less_discount'),
-            'return_net_discount' => $request->input('return_net_discount'),
-            'return_vat_amount' => $request->input('return_vat_amount'),
-            'return_net_of_deduction' => $request->input('return_net_of_deduction'),
-            'date' => $date,
+            'gross_purchase' => $request->input('gross_purchases'),
+            'total_less_discount' => $request->input('total_less_discount'),
+            'bo_discount' => $request->input('bo_discount'),
+            'vatable_purchase' => $request->input('vatable_purchase'),
+            'vat' => $request->input('vat'),
+            'freight' => $request->input('freight'),
+            'total_final_cost' => $request->input('total_final_cost'),
+            'total_less_other_discount' => $request->input('total_less_other_discount'),
+            'net_payable' => $request->input('net_payable'),
         ]);
 
         $return_to_principal_save->save();
+
+        $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
+
+        if (isset($check_less_other_discount_selected_name)) {
+            $return_to_principal_jer_saved = new Return_to_principal_jer([
+                'return_to_principal_id' => $return_to_principal_save->id,
+                'dr' => $request->input('net_payable'),
+                'cr' => $request->input('net_payable'),
+            ]);
+
+            $return_to_principal_jer_saved->save();
+
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+
+            $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            $principal_ledger_saved = new Principal_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'all_id' => $return_to_principal_save->id,
+                'transaction' => 'returned',
+                'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                'received' => 0,
+                'returned' => $request->input('net_payable'),
+                'adjustment' => 0,
+                'payment' => 0,
+                'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('net_payable'),
+            ]);
+
+            $principal_ledger_saved->save();
+        } else {
+            $return_to_principal_jer_saved = new Return_to_principal_jer([
+                'return_to_principal_id' => $return_to_principal_save->id,
+                'dr' => $request->input('total_final_cost'),
+                'cr' => $request->input('total_final_cost'),
+            ]);
+
+            $return_to_principal_jer_saved->save();
+
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            
+            $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            $principal_ledger_saved = new Principal_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'all_id' => $return_to_principal_save->id,
+                'transaction' => 'returned',
+                'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                'received' => 0,
+                'returned' => $request->input('total_final_cost'),
+                'adjustment' => 0,
+                'payment' => 0,
+                'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('total_final_cost'),
+            ]);
+
+            $principal_ledger_saved->save();
+        }
+
+
+        foreach ($request->input('sku_id') as $key => $data) {
+            $new_return_details = new Return_to_principal_details([
+                'return_to_principal_id' => $return_to_principal_save->id,
+                'sku_id' => $data,
+                'quantity_return' => $request->input('quantity_return')[$data],
+                'unit_cost' => $request->input('unit_cost')[$data],
+            ]);
+
+            $new_return_details->save();
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $count_ledger_row = count($ledger_results);
+
+            if ($count_ledger_row > 0) {
+                $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $data,
+                    'quantity' => $request->input('quantity_return')[$data],
+                    'running_balance' => $running_balance,
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'returned',
+                    'all_id' => $return_to_principal_save->id,
+                ]);
+
+                $new_sku_ledger->save();
+            } else {
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $data,
+                    'quantity' => $request->input('quantity_return')[$data],
+                    'running_balance' => $request->input('quantity_return')[$data],
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'returned',
+                    'all_id' => $return_to_principal_save->id,
+                ]);
+
+                $new_sku_ledger->save();
+            }
+        }
     }
 }

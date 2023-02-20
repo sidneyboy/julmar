@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Sku_add;
 use App\Sku_principal;
 use Cart;
@@ -107,7 +108,7 @@ class Purchase_order_controller extends Controller
                     ->with('sales_order_number', $request->input('sales_order_number'))
                     ->with('discount', $principal_discount);
             } else {
-                return $po_id = $principal_name . "-" . $month . "-" . $year . "-" . 1;
+                $po_id = $principal_name . "-" . $month . "-" . $year . "-" . 1;
                 return view('purchase_order_show_data', [
                     'sku' => Cart::session($user_id)->getContent()
                 ])->with('principal_id', $request->input('principal_id'))

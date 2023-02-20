@@ -17,9 +17,7 @@ class Transfer_to_branch_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $remarks = 'to be transfer to CARAGA';
-            $remarks2 = 'to be transfer to POD';
-            $received = Received_purchase_order::select('id', 'purchase_order_id', 'principal_id', 'dr_si', 'remarks')->where('remarks', $remarks2)->orWhere('remarks', $remarks)->get();
+            $received = Received_purchase_order::select('id', 'purchase_order_id', 'principal_id', 'dr_si')->where('branch', '!=','NORTH MIN')->orderBy('id','desc')->get();
             return view('transfer_to_branch', [
                 'user' => $user,
                 'received' => $received,

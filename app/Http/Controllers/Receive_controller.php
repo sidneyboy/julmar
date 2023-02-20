@@ -38,9 +38,7 @@ class Receive_controller extends Controller
             return view('receive_order', [
                 'user' => $user,
                 'draft' => $draft,
-                // 'purchase_id' => $purchase_id,
                 'id' => $id,
-                // 'received_purchase_order_id' => $received_purchase_order_id,
                 'main_tab' => 'receiving_and_purchases_main_tab',
                 'sub_tab' => 'receiving_and_purchases_sub_tab',
                 'active_tab' => 'receive_order',
@@ -53,9 +51,6 @@ class Receive_controller extends Controller
 
     public function receive_order_generate_data(Request $request)
     {
-        //return $request->input();
-
-
         $variable_explode = explode('=', $request->input('purchase_id'));
         $session_id = $variable_explode[0];
         $purchase_order_id = $variable_explode[1];
@@ -68,8 +63,6 @@ class Receive_controller extends Controller
             ->get();
 
         $select_principal_discount = Principal_discount::select('id', 'total_bo_allowance_discount', 'total_discount')->where('principal_id', $principal_id)->get();
-
-
 
         $draft = Receiving_draft::where('session_id', $session_id)->orderBy('sku_id')->get();
 
@@ -222,8 +215,7 @@ class Receive_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'rr_dr' => $new_received_purchase_orders->id,
-                    'principal_invoice' => $request->input('dr_si'),
+                    'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
                     'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
                     'received' => $request->input('net_payable'),
@@ -238,8 +230,7 @@ class Receive_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'rr_dr' => $new_received_purchase_orders->id,
-                    'principal_invoice' => $request->input('dr_si'),
+                    'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
                     'accounts_payable_beginning' => 0,
                     'received' => $request->input('net_payable'),
@@ -269,8 +260,7 @@ class Receive_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'rr_dr' => $new_received_purchase_orders->id,
-                    'principal_invoice' => $request->input('dr_si'),
+                    'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
                     'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
                     'received' => $request->input('total_final_cost'),
@@ -285,8 +275,7 @@ class Receive_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'rr_dr' => $new_received_purchase_orders->id,
-                    'principal_invoice' => $request->input('dr_si'),
+                    'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
                     'accounts_payable_beginning' => 0,
                     'received' => $request->input('total_final_cost'),
@@ -332,7 +321,7 @@ class Receive_controller extends Controller
                     'quantity' => $request->input('received_quantity')[$data],
                     'running_balance' => $running_balance,
                     'user_id' => auth()->user()->id,
-                    'transaction_type' => 'receiving',
+                    'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
                 ]);
 
@@ -343,7 +332,7 @@ class Receive_controller extends Controller
                     'quantity' => $request->input('received_quantity')[$data],
                     'running_balance' => $request->input('received_quantity')[$data],
                     'user_id' => auth()->user()->id,
-                    'transaction_type' => 'receiving',
+                    'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
                 ]);
 

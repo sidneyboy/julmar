@@ -38,7 +38,7 @@
               </div>
             </div>
             <div class="col-md-6">
-              <button type="button" class="btn btn-flat btn-success btn-block" id="generate">Generate</button>
+              <button type="button" class="btn btn-success btn-block" id="generate">Generate</button>
             </div>
           </div>
         </div>

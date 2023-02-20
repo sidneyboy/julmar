@@ -9,7 +9,7 @@ class Principal_ledger extends Model
     protected $fillable = [
     	'principal_id',
     	'date',
-    	'rr_dr',
+    	'all_id',
         'principal_invoice',    
     	'transaction',
     	'accounts_payable_beginning',

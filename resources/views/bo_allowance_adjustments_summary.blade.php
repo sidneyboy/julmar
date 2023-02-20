@@ -1,16 +1,19 @@
-<form id="myform" class="myform" method="post" name="myform">
+<form id="bo_allowance_adjustments_save">
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-sm">
             <thead>
                 <tr>
-                    <th style="text-align: center;">Code</th>
-                    <th style="text-align: center;">Description</th>
-                    <th style="text-align: center;">UOM</th>
-                    <th style="text-align: center;">Quantity Received</th>
-                    <th style="text-align: center;">Unit Cost</th>
-                    <th style="text-align: center;">BO Cost Adjustment</th>
-                    <th style="text-align: center;">Adjusted Unit Cost</th>
-                    <th style="text-align: center;">BO Allowance</th>
+                    <th colspan="8">Particulars: {{ $particulars }}</th>
+                </tr>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>UOM</th>
+                    <th>Quantity Received</th>
+                    <th>Unit Cost</th>
+                    <th>BO Cost Adjustment</th>
+                    <th>Adjusted Unit Cost</th>
+                    <th>BO Allowance</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,14 +57,14 @@
     </div>
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $principal_name }}" name="principal_name">
-    <h3>Particulars</h3>
-    <p>{{ $particulars }}</p>
+    <input type="hidden" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $particulars }}" name="particulars">
 
 
-    <table class="table table-bordered table-hover table-sm">
+    <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
         <tr>
-            <td style="font-weight: bold; text-align: left;width:50%;">SUMMARY OF DEDUCTION:</td>
-            <td></td>
+            <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
+            </td>
         </tr>
         <tr>
             <td style="font-weight: bold;">BO ALLOWANCE</td>
@@ -73,38 +76,21 @@
                 <input type="hidden" name="bo_allowance_deduction" value="{{ $bo_allowance_deduction }}">
             </td>
         </tr>
-        {{-- <tr>
-          <td>VAT DEDUCTION</td>
-          <td style="text-align: right;font-size: 15px;">
-          	
-          </td>
-        </tr> --}}
         <tr>
             <td style="font-weight: bold;">NET DEDUCTION</td>
             <td style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
-                {{--  @php
-             	$net_deduction = $bo_allowance_deduction + $vat_deduction;
-             @endphp --}}
-
                 @php
                     $vat_deduction = array_sum($sum_total_amount) * 0.12;
                 @endphp
-
-
                 <input type="hidden" name="vat_deduction" value="{{ $vat_deduction }}">
                 @php
                     $net_deduction = $bo_allowance_deduction;
                 @endphp
                 {{ number_format($net_deduction, 2, '.', ',') }}
-
                 <input type="hidden" name="net_deduction" value="{{ $net_deduction }}">
             </td>
         </tr>
     </table>
-
-    <label>JOURNAL ENTRY</label>
-
-
     <table class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
@@ -138,33 +124,28 @@
 </form>
 
 <script>
-    function save() {
-
-        var form = document.myform;
-        var dataString = $(form).serialize();
-
-        // /$('.loading').show();
+    $("#bo_allowance_adjustments_save").on('submit', (function(e) {
+        e.preventDefault();
+        //$('.loading').show();
+        $('#hide_if_trigger').hide();
         $.ajax({
-            type: 'POST',
-            url: '/bo_allowance_adjustments_save',
-            data: dataString,
+            url: "bo_allowance_adjustments_save",
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
             success: function(data) {
-
                 console.log(data);
-                if (data == 'Saved') {
 
-                    toastr.success('BO ALLOWANCE ADJUSTMENT SAVED! RELOADING PAGE PLEASE WAIT.')
-                    $('.loading').show();
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
-
-                } else {
-                    toastr.error('Something went wrong, please redo process');
-                }
-
+            },
+            error: function(error) {
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
             }
         });
-        return false;
-    }
+    }));
 </script>

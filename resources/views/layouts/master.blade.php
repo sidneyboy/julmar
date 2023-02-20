@@ -40,7 +40,7 @@
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
-    
+
 
 </head>
 
@@ -132,7 +132,7 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                                                                       with font-awesome or any other icon font library -->
+                                                                           with font-awesome or any other icon font library -->
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -318,32 +318,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Transfer SKU To Branch
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('transfer_to_branch') }}"
-                                            class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Transfer </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('transfer_to_branch_report') }}"
-                                            class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Transfer Report</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+
                             <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
@@ -408,6 +383,33 @@
                                             class="nav-link {{ $active_tab == 'subsidy' ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar nav-icon"></i>
                                             <p>Subsidy</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Transfer to Branch
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('transfer_to_branch') }}"
+                                            class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Transfer </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('transfer_to_branch_report') }}"
+                                            class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Transfer Report</p>
                                         </a>
                                     </li>
                                 </ul>

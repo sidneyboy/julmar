@@ -1,0 +1,7 @@
+principal ledger
+received
+returned
+bo adjustment
+invoice cost adjustment
+transfer
+bodega out
