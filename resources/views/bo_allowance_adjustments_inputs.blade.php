@@ -56,7 +56,7 @@
     </div>
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $principal_name }}" name="principal_name">
-    <input type="text" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $purchase_id }}" name="purchase_id">
     <input type="hidden" value="{{ $dr_si }}" name="dr_si">
 

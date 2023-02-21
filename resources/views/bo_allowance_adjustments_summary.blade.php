@@ -25,7 +25,7 @@
                         <td style="text-align: center;">{{ $quantity[$data] }}</td>
                         <td style="text-align: right;">
                             {{ number_format($unit_cost[$data], 2, '.', ',') }}
-                            
+
                         </td>
                         <td style="text-align: right;">{{ number_format($unit_cost_adjustment[$data], 2, '.', ',') }}
                         </td>
@@ -35,10 +35,12 @@
                             @endphp
                             {{ number_format($difference, 2, '.', ',') }}
 
-                            <input type="text" name="sku_id[]" value="{{ $data }}">
-                            <input type="text" name="quantity[{{ $data }}]" value="{{ $quantity[$data] }}">
-                            <input type="text" name="unit_cost[{{ $data }}]" value="{{ $unit_cost[$data] }}">
-                            <input type="text" name="adjusted_amount[{{ $data }}]" value="{{ $unit_cost_adjustment[$data] }}">
+                            <input type="hidden" name="sku_id[]" value="{{ $data }}">
+                            <input type="hidden" name="quantity[{{ $data }}]" value="{{ $quantity[$data] }}">
+                            <input type="hidden" name="unit_cost[{{ $data }}]"
+                                value="{{ $unit_cost[$data] }}">
+                            <input type="hidden" name="adjusted_amount[{{ $data }}]"
+                                value="{{ $unit_cost_adjustment[$data] }}">
                         </td>
                         <td style="text-align: right;">
                             @php
@@ -141,8 +143,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
+                location.reload();
             },
             error: function(error) {
                 Swal.fire(

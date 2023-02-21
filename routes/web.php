@@ -110,12 +110,12 @@ Route::post('received_invoice', 'Received_invoice_controller@received_invoice_up
 
 Route::get('/receive_order_report', 'Receive_order_report_controller@index');
 Route::post('/receive_order_report_list', 'Receive_order_report_controller@receive_order_report_list')->name('postData');
-Route::get('/received_order_report_show_details/{id}', 'Receive_order_report_controller@received_order_report_show_details')->name('received_order_report_show_details');
-
 Route::get('/discount_allocation/{id}', 'Receive_order_report_controller@discount_allocation')->name('discount_allocation');
 Route::get('/received_sku_report/{id}', 'Receive_order_report_controller@received_sku_report')->name('received_sku_report');
 Route::get('/discount_allocation_all/{id}', 'Receive_order_report_controller@discount_allocation_all')->name('discount_allocation_all');
 Route::get('/received_order_report_print/{id}', 'Receive_order_report_controller@received_order_report_print')->name('received_order_report_print');
+
+Route::get('/received_order_report_show_details/{id}', 'Receive_order_report_controller@received_order_report_show_details')->name('received_order_report_show_details');
 
 
 

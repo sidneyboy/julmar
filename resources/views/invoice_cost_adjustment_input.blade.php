@@ -9,7 +9,7 @@
                     <th>Qty Received</th>
                     <th>Unit Cost</th>
                     <th>Adjusted Unit Cost</th>
-                    <th><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
                 </tr>
             </thead>
             <tbody>

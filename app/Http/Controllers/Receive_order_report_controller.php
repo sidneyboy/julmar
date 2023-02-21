@@ -46,7 +46,7 @@ class Receive_order_report_controller extends Controller
         $principal_name = $variable_explode[1];
         $date = date('F j, Y', strtotime($date_from)) . ' - ' . date('F j, Y', strtotime($date_to));
 
-        $received_order_data = Received_purchase_order::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
+        $received_purchase_order = Received_purchase_order::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->orderBy('id','desc')->get();
         //$received_counter = count($received_order_data);
 
         // $return_order_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
@@ -59,7 +59,7 @@ class Receive_order_report_controller extends Controller
         // $invoice_cost_counter = count($invoice_cost_data);
 
         return view('receive_order_report_show_list', [
-            'received_order_data' => $received_order_data,
+            'received_purchase_order' => $received_purchase_order,
         ])->with('principal_name', $principal_name)
             ->with('date', $date)
             ->with('date_from_to', $request->input('date'))
@@ -762,120 +762,13 @@ class Receive_order_report_controller extends Controller
         // }
     }
 
-    public function received_order_report_show_details(Request $request, $id)
+    public function received_order_report_show_details($id)
     {
-        date_default_timezone_set('Asia/Manila');
-        $date = date('m-d-Y');
+       $received_purchase_order = Received_purchase_order::find($id);
 
-
-
-        $variable_explode = explode('=', $id);
-        $id = $variable_explode[0];
-        $principal_name = $variable_explode[1];
-        $received_details = Sku_add_details::where('received_id', $id)->get();
-        $received_data = Received_purchase_order::where('id', $id)->first();
-        $principal_discount = Principal_discount::where('id', $received_data->principal_discount_id)->first();
-        $principal_discount_details = Principal_discount_details::where('principal_discount_id', $principal_discount->id)->get();
-        $prepared_by = User::select('name')->find(auth()->user()->id);
-
-
-        return view('received_order_report_show_details', [
-            'received_details' => $received_details,
-            'principal_discount_details' => $principal_discount_details,
-        ])->with('principal_name', $principal_name)
-            ->with('date', $date)
-            ->with('prepared_by', $prepared_by->name)
-            ->with('id', $id)
-            ->with('received_data', $received_data)
-            ->with('principal_discount', $principal_discount);
-
-
-
-        // if ($principal_name == 'GCI') {
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('principal_discount', $principal_discount);
-
-        // }elseif ($principal_name == 'EPI') {
-
-
-        //   $epi_discount_rate = Principal_discount_epi::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('epi_discount_rate', $epi_discount_rate);
-
-
-
-
-
-        // }elseif($principal_name == 'DOLE'){
-        //   $dole_discount_rate = Principal_discount_dole::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('dole_discount_rate', $dole_discount_rate);
-        // }elseif ($principal_name == 'PFC') {
-        //    $pfc_discount_rate = Principal_discount_pfc::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('pfc_discount_rate', $pfc_discount_rate);
-        // }elseif ($principal_name == 'ALASKA') {
-        //    $alaska_discount_rate = Principal_discount_alaska::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('alaska_discount_rate', $alaska_discount_rate);
-        // }elseif ($principal_name == 'CIFPI') {
-        //    $cifpi_discount_rate = Principal_discount_cifpi::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('cifpi_discount_rate', $cifpi_discount_rate);
-        // }elseif ($principal_name == 'PPMC') {
-        //    $ppmc_discount_rate = Principal_discount_ppmc::find($received_data->discount_id);
-
-        //   return view('received_order_report_show_details',[
-        //   'received_details' => $received_details
-        //   ])->with('principal_name', $principal_name)
-        //    ->with('date', $date)
-        //    ->with('prepared_by', $prepared_by->name)
-        //    ->with('id', $id)
-        //    ->with('received_data', $received_data)
-        //    ->with('ppmc_discount_rate', $ppmc_discount_rate);
-        // }
+       return view('received_order_report_show_details',[
+        'received_purchase_order' => $received_purchase_order,
+       ]);
     }
 
     public function discount_allocation($id)

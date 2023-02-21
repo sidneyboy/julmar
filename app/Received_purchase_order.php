@@ -37,6 +37,16 @@ class Received_purchase_order extends Model
     	return $this->belongsTo('App\Purchase_order', 'purchase_order_id');
     }
 
+    public function scanned_by_data()
+    {
+    	return $this->belongsTo('App\User', 'scanned_by');
+    }
+
+    public function finalized_data()
+    {
+    	return $this->belongsTo('App\User', 'finalized_by');
+    }
+
     public function received_discount_details()
     {
     	return $this->hasMany('App\Received_discount_details', 'received_id');

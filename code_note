@@ -12,7 +12,7 @@ function isNumberKey(evt) {
 
 
 
-
+<td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
 
 
 

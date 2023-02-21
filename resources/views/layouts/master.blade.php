@@ -132,7 +132,7 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                                                                           with font-awesome or any other icon font library -->
+                                                                               with font-awesome or any other icon font library -->
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -318,7 +318,6 @@
                                     </li>
                                 </ul>
                             </li>
-
                             <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
@@ -387,7 +386,6 @@
                                     </li>
                                 </ul>
                             </li>
-
                             <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
@@ -414,7 +412,6 @@
                                     </li>
                                 </ul>
                             </li>
-
                             <li
                                 class="nav-item {{ $main_tab == 'manage_agent_and_location_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
@@ -443,7 +440,6 @@
                                     </li>
                                 </ul>
                             </li>
-
                             <li class="nav-item {{ $main_tab == 'manage_customer_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_customer_sub_tab' ? 'active' : '' }}">
@@ -503,7 +499,25 @@
                                     </li> --}}
                                 </ul>
                             </li>
-
+                            <li class="nav-item {{ $main_tab == 'manage_booking_main_tab' ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ $sub_tab == 'manage_booking_sub_tab' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Manage Booking
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('walkin_sales_order') }}"
+                                            class="nav-link {{ $active_tab == 'walkin_sales_order' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>Walk-in</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
                             {{-- <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
