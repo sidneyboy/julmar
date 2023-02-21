@@ -8,6 +8,7 @@
                     <th>SKU Type</th>
                     <th>Qty Received</th>
                     <th>Unit Cost</th>
+                    <th>Freight</th>
                     <th>Adjusted Unit Cost</th>
                     <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
                 </tr>
@@ -23,6 +24,9 @@
                         <td style="text-align: right;">
                             {{ number_format($data->unit_cost, 2, '.', ',') }}
                             <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $data->unit_cost }}">
+                        </td>
+                        <td>{{ $data->freight }}
+                            <input type="hidden" name="freight[{{ $data->sku->id }}]" value="{{ $data->freight }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
                                 name="unit_cost_adjustment[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"

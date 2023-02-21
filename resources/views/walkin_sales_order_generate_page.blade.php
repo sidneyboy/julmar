@@ -21,14 +21,13 @@
     <table class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
-                <th>CODE</th>
-                <th>DESC</th>
-                <th>SKU TYPE</th>
-                <th>PRICE</th>
-                <th>RB</th>
-                <th>QTY</th>
-                <th>LINE DISC 1</th>
-                <th>LINE DISC 2</th>
+                <th>Code</th>
+                <th>Desc</th>
+                <th>Type</th>
+                <th>U/C</th>
+                <th>Inventory</th>
+                <th>Quantity</th>
+                <th>Total Line Discount</th>
             </tr>
         </thead>
         <tbody>
@@ -85,30 +84,19 @@
                         <input type="text" class="form-control form-control-sm"
                             name="line_discount_rate_1[{{ $data->id }}]" value="0" onkeypress="return isNumberKey(event)">
                     </td>
-                    <td>
-                        <input type="text" class="form-control form-control-sm"
-                            name="line_discount_rate_2[{{ $data->id }}]" value="0" onkeypress="return isNumberKey(event)">
-                    </td>
                 </tr>
             @endforeach
-            {{-- <tr>
-                <td colspan="8">
-                    <select class="form-control select2bs4" name="customer_discount[]" multiple="multiple"
-                        data-placeholder="Select Customer Discounts" style="width: 100%;">
-                        @foreach ($customer_discount as $discount_data)
-                            <option selected value="{{ $discount_data->customer_discount }}">
-                                {{ $discount_data->customer_discount }}</option>
-                        @endforeach
-                    </select>
-                </td>
-            </tr> --}}
         </tbody>
     </table>
+
+    <label for="">Total Other Discount:</label>
+    <input type="text" name="total_other_discount" class="form-control form-control-sm" value="0" onkeypress="return isNumberKey(event)" required>
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="customer_id" value="{{ $customer_id }}">
     <input type="hidden" name="store_name" value="{{ $store_name }}">
     <input type="hidden" name="type" value="{{ $type }}">
+    <br />
     <button type="submit" class="btn btn-info btn-sm float-right">Proceed Final Summary</button>
 </form>
 

@@ -9,9 +9,6 @@
                 @if (array_sum($line_discount_rate_1) != 0)
                     <th style="text-align: center;">Disc</th>
                 @endif
-                @if (array_sum($line_discount_rate_2) != 0)
-                    <th style="text-align: center;">Disc</th>
-                @endif
                 <th style="text-align: center;">Total</th>
             </tr>
         </thead>
@@ -25,7 +22,7 @@
                             echo $quantity[$data];
                         @endphp
                     </td>
-                    <td style="text-align: right">{{ number_format($unit_price[$data], 2, '.', ',')  }}</td>
+                    <td style="text-align: right">{{ number_format($unit_price[$data], 2, '.', ',') }}</td>
                     <td style="text-align: right">
                         @php
                             $amount = $quantity[$data] * $unit_price[$data];
@@ -47,24 +44,9 @@
                             $sum_line_discount_1[] = $line_discount_1;
                         @endphp
                     @endif
-
-                    @if (array_sum($line_discount_rate_2) != 0)
-                        <td style="text-align: right;">
-                            @php
-                                $line_discount_2 = (($amount - $line_discount_1) * $line_discount_rate_2[$data]) / 100;
-                                $sum_line_discount_2[] = $line_discount_2;
-                                echo number_format($line_discount_2, 2, '.', ',');
-                            @endphp
-                        </td>
-                    @else
-                        @php
-                            $line_discount_2 = 0;
-                            $sum_line_discount_2[] = $line_discount_2;
-                        @endphp
-                    @endif
                     <td style="text-align: right">
                         @php
-                            $total_amount_per_sku = $amount - $line_discount_1 - $line_discount_2;
+                            $total_amount_per_sku = $amount - $line_discount_1;
                             $sum_total_amount_per_sku[] = $total_amount_per_sku;
                             echo number_format($total_amount_per_sku, 2, '.', ',');
                         @endphp
@@ -72,22 +54,41 @@
                 </tr>
             @endforeach
             <tr>
-                <td style="text-align: center;font-weight: bold">GRAND TOTAL</td>
-                <td style="text-align: center;font-weight: bold">{{ array_sum($sum_quantity) }}</td>
+                <td style="text-align: center;font-weight: bold">SUB TOTAL</td>
+                <td style="text-align: right;font-weight: bold">{{ array_sum($sum_quantity) }}</td>
                 <td></td>
-                <td style="text-align: right;font-weight: bold;">{{ number_format(array_sum($sum_amount), 2, '.', ',') }}
+                <td style="text-align: right;font-weight: bold;">
+                    {{ number_format(array_sum($sum_amount), 2, '.', ',') }}
                 </td>
                 @if (array_sum($line_discount_rate_1) != 0)
                     <td style="text-align: right;font-weight: bold">
                         {{ number_format(array_sum($sum_line_discount_1), 2, '.', ',') }}</td>
                 @endif
-                @if (array_sum($line_discount_rate_2) != 0)
-                    <td style="text-align: right;font-weight: bold">
-                        {{ number_format(array_sum($sum_line_discount_2), 2, '.', ',') }}</td>
-                @endif
                 <td style="text-align: right;font-weight: bold">
                     {{ number_format(array_sum($sum_total_amount_per_sku), 2, '.', ',') }}</td>
             </tr>
         </tbody>
+    </table>
+
+    <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+        <tr>
+            @if (array_sum($line_discount_rate_1) != 0)
+                <td style="text-align: center;font-weight:bold">Other Discount</td>
+                <th style="text-align: right">{{ number_format(($total_other_discount / 100) * array_sum($sum_total_amount_per_sku), 2, '.', ',') }}</th>
+            @else
+                
+                <td style="text-align: center;font-weight:bold">Other Discount</td>
+                <th style="text-align: right">{{ number_format(($total_other_discount / 100) * array_sum($sum_total_amount_per_sku), 2, '.', ',') }}</th>
+            @endif
+        </tr>
+        <tr>
+            <td style="text-align: center;font-weight:bold">Net Payable</td>
+            <th style="text-align: right">
+                @php
+                    $total_payable = array_sum($sum_total_amount_per_sku) - (($total_other_discount / 100) * array_sum($sum_total_amount_per_sku));
+                    echo number_format($total_payable, 2, '.', ',');
+                @endphp
+            </th>
+        </tr>
     </table>
 </div>

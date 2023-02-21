@@ -65,12 +65,13 @@ class Return_to_principal_controller extends Controller
             }
 
             $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
-
+           // return $request->input();
 
             return view('return_to_principal_summary', [
                 'received_purchase_order' => $received_purchase_order,
             ])->with('quantity', $request->input('quantity'))
                 ->with('unit_cost', $request->input('unit_cost'))
+                ->with('freight', $request->input('freight'))
                 ->with('code', $request->input('code'))
                 ->with('description', $request->input('description'))
                 ->with('checkbox_entry', $request->input('checkbox_entry'))
@@ -142,7 +143,7 @@ class Return_to_principal_controller extends Controller
             $return_to_principal_jer_saved->save();
 
             $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-            
+
             $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
             $principal_ledger_saved = new Principal_ledger([
                 'principal_id' => $request->input('principal_id'),
@@ -169,6 +170,10 @@ class Return_to_principal_controller extends Controller
             ]);
 
             $new_return_details->save();
+
+            // Received_purchase_order_details::where('received_id', $request->input('received_id'))
+            //     ->where('sku_idi', $data)
+            //     ->update(['quantity_returned' => $request->input('quantity_return')]);
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
             $count_ledger_row = count($ledger_results);

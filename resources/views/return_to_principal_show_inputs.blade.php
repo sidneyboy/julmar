@@ -25,7 +25,6 @@
                     <th>Description</th>
                     <th>Type</th>
                     <th>Qty Received</th>
-                    <th>Qty Returned</th>
                     <th>Qty To Be Return</th>
                     <th>Cost</th>
                     <th><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
@@ -38,8 +37,8 @@
                         <td>{{ $data->sku->description }}</td>
                         <td>{{ $data->sku->sku_type }}</td>
                         <td>{{ $data->quantity }}</td>
-                        <td>{{ $data->quantity_returned }}</td>
                         <td><input type="number" name="quantity[{{ $data->sku_id }}]" class="form-control">
+                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}" class="form-control">
                         </td>
                         <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $data->unit_cost }}">{{ number_format($data->unit_cost, 2, '.', ',') }}

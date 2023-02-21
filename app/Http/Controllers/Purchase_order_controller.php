@@ -93,7 +93,7 @@ class Purchase_order_controller extends Controller
 
             if ($purchase_order_id) {
                 $variableExplode = explode('-', $purchase_order_id->purchase_id);
-                $series = $variableExplode[2];
+                $series = $variableExplode[3];
                 $code =  $series + 1;
                 $po_id = $principal_name . "-" . $month . "-" . $year . "-" . $code;
 

@@ -26,19 +26,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($received_purchase_order->received_purchase_order_details as $details)
+                    @foreach ($checkbox_entry as $data)
                         <tr>
-                            <td><span style="color:green;font-weight:bold;">{{ $details->sku->sku_code }}</span>-
-                                {{ $details->sku->description }}
-                                <input type="hidden" value="{{ $details->sku_id }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity[$details->sku_id] }}" name="quantity_return[{{ $details->sku_id }}]">
-                                <input type="hidden" value="{{ $unit_cost[$details->sku_id] }}" name="unit_cost[{{ $details->sku_id }}]">
+                            <td><span style="color:green;font-weight:bold;">{{ $code[$data] }}</span>-
+                                {{ $description[$data] }}
+                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $quantity[$data] }}" name="quantity_return[{{ $data }}]">
+                                <input type="hidden" value="{{ $unit_cost[$data] }}" name="unit_cost[{{ $data }}]">
                             </td>
-                            <td style="text-align: right">{{ $quantity[$details->sku_id] }}</td>
-                            <td style="text-align: right">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $quantity[$data] }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $quantity[$details->sku_id] * $details->unit_cost;
+                                    $total_amount = $quantity[$data] * $unit_cost[$data];
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -73,7 +73,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $details->freight * $quantity[$details->sku_id];
+                                    $freight_per_sku = $freight[$data] * $quantity[$data];
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
@@ -87,7 +87,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost = $final_total_cost / $quantity[$details->sku_id];
+                                    $final_unit_cost = $final_total_cost / $quantity[$data];
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
                                 {{ number_format($final_unit_cost, 2, '.', ',') }}
@@ -393,21 +393,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($received_purchase_order->received_purchase_order_details as $details)
+                    @foreach ($checkbox_entry as $data)
                         <tr>
                             <td>
-                                <span style="color:green;font-weight:bold;">{{ $details->sku->sku_code }}</span>-
-                                {{ $details->sku->description }}
+                                <span style="color:green;font-weight:bold;">{{ $code[$data] }}</span>-
+                                {{ $description[$data] }}
 
-                                <input type="hidden" value="{{ $details->sku_id }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity[$details->sku_id] }}" name="quantity_return[{{ $details->sku_id }}]">
-                                <input type="hidden" value="{{ $unit_cost[$details->sku_id] }}" name="unit_cost[{{ $details->sku_id }}]">
+                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $quantity[$data] }}" name="quantity_return[{{ $data }}]">
+                                <input type="hidden" value="{{ $unit_cost[$data] }}" name="unit_cost[{{ $data }}]">
                             </td>
-                            <td style="text-align: right">{{ $details->quantity }}</td>
-                            <td style="text-align: right">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $quantity[$data] }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $details->quantity * $details->unit_cost;
+                                    $total_amount = $quantity[$data] * $unit_cost[$data];
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -458,7 +458,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $details->freight * $details->quantity;
+                                    $freight_per_sku = $freight[$data] * $quantity[$data];
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
@@ -473,7 +473,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $details->quantity;
+                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity[$data];
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}

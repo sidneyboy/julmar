@@ -388,7 +388,6 @@
                 </table>
             @endif
 
-            </table>
         @elseif($discount_type == 'type_b')
             <table class="table table-bordered table-sm table-hover">
                 <thead>

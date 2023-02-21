@@ -56,178 +56,146 @@ class Invoice_cost_adjustment_controller extends Controller
     public function invoice_cost_adjustments_show_summary(Request $request)
     {
 
-        //return $request->input();
-
-        
         $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
-
-        // $selected_discount_allocation = Principal_discount::find($received_purchase_order->discount_id);
-
-        // $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
-        // $received_id = Received_purchase_order::find($request->input('received_id'));
-
-        // $discount_rate = Principal_discount::find($received_id->principal_discount_id);
-        // $principal_discount_details = Principal_discount_details::where('principal_discount_id', $received_id->principal_discount_id)->get();
-
-        // $principal_discount_details_counter = count($principal_discount_details);
-
         return view('invoice_cost_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
         ])->with('checkbox_entry', $request->input('checkbox_entry'))
-        ->with('unit_cost', $request->input('unit_cost'))
-        ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
-        ->with('particulars', $request->input('particulars'))
-        ->with('code', $request->input('code'))
-        ->with('description', $request->input('description'))
-        ->with('quantity', $request->input('quantity'));
+            ->with('unit_cost', $request->input('unit_cost'))
+            ->with('freight', $request->input('freight'))
+            ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
+            ->with('particulars', $request->input('particulars'))
+            ->with('code', $request->input('code'))
+            ->with('description', $request->input('description'))
+            ->with('quantity', $request->input('quantity'))
+            ->with('received_id', $request->input('received_id'));
     }
 
     public function invoice_cost_adjustments_save(Request $request)
     {
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        //return $request->input();
 
-        //return $request->input('total_net_adjustment');
+        $new_invoice_cost_adjustment = new Invoice_cost_adjustments([
+            'received_id' => $request->input('received_id'),
+            'particulars' => $request->input('particulars'),
+            'gross_purchase' => $request->input('gross_purchases'),
+            'total_less_discount' => $request->input('total_less_discount'),
+            'bo_discount' => $request->input('bo_discount'),
+            'vatable_purchase' => $request->input('vatable_purchase'),
+            'vat' => $request->input('vat'),
+            'freight' => $request->input('freight'),
+            'total_final_cost' => $request->input('total_final_cost'),
+            'total_less_other_discount' => $request->input('total_less_other_discount'),
+            'net_payable' => $request->input('net_payable'),
+            'user_id' => auth()->user()->id,
+        ]);
 
+        $new_invoice_cost_adjustment->save();
 
+        foreach ($request->input('sku_id') as $key => $data) {
+            $invoice_cost_details_save = new invoice_cost_adjustment_details([
+                'invoice_cost_id' => 1,
+                'sku_id' => $data,
+                'original_unit_cost' => $request->input('unit_cost')[$data],
+                'adjusted_amount' => $request->input('unit_cost_adjustment')[$data],
+                'adjustments' =>  $request->input('unit_cost')[$data] -  $request->input('unit_cost_adjustment')[$data],
+                'quantity' => $request->input('quantity')[$data],
+            ]);
+            $invoice_cost_details_save->save();
+        }
 
-        if ($request->input('principal_name') == 'PPMC' or $request->input('principal_name') == 'CIFPI') {
-            return 'waiting to ask maam van';
-        } else {
-            $unit_cost_adjustment_input = str_replace(',', '', $request->input('unit_cost_adjustment'));
-
-            date_default_timezone_set('Asia/Manila');
-            $date = date('Y-m-d');
-            $invoice_cost_save = new Invoice_cost_adjustments([
-                'received_id' => $request->input('received_id'),
-                'principal_id' => $request->input('invoice_cost_principal_id'),
-                'particulars' => $request->input('particulars'),
-                'total_invoice_adjusted' => $request->input('total_invoice_adjusted'),
-                'total_bo_allowance' => $request->input('total_bo_allowance'),
-                'vatable_purchase' => $request->input('total_vatable_purchase'),
-                'less_discount' => $request->input('total_less_discount'),
-                'net_discount' => $request->input('total_net_discount'),
-                'vat_amount' => $request->input('total_vat_amount'),
-                'net_adjustment' => $request->input('total_net_adjustment'),
+        if (isset($check_less_other_discount_selected_name)) {
+            $invoice_cost_adjustment_jer_save = new Invoice_cost_adjustments_jer([
+                'principal_id' => $request->input('principal_id'),
+                'invoice_cost_id' => 1,
+                'dr' => $request->input('net_payable'),
+                'cr' => $request->input('net_payable'),
                 'date' => $date
             ]);
 
-            $invoice_cost_save->save();
-            $invoice_cost_id = $invoice_cost_save->id;
+            $invoice_cost_adjustment_jer_save->save();
 
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('invoice_cost_principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-
-            $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-            $principal_ledger_saved = new Principal_ledger([
-                'principal_id' => $request->input('invoice_cost_principal_id'),
-                'date' => $date,
-                'rr_dr' => $invoice_cost_id,
-                'principal_invoice' => $request->input('dr_si'),
-                'transaction' => 'invoice cost adjustment',
-                'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                'received' => 0,
-                'returned' => 0,
-                'adjustment' => $request->input('total_net_adjustment'),
-                'payment' => 0,
-                'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_net_adjustment'),
-            ]);
-
-            $principal_ledger_saved->save();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            $unit_cost_adjustment = $unit_cost_adjustment_input;
-            $last_unit_cost = $request->input('last_unit_cost');
-            $quantity = $request->input('quantity');
-            $category_id = $request->input('category_id');
-            $principal_id = $request->input('principal_id');
-            $sku_type = $request->input('sku_type');
-
-            foreach ($request->input('checkbox_entry') as $key => $data) {
-
-                $invoice_cost_details_save = new invoice_cost_adjustment_details([
-                    'invoice_cost_id' => $invoice_cost_id,
-                    'sku_id' => $data,
-                    'adjustments' => $unit_cost_adjustment[$data] - $last_unit_cost[$data],
-                    'quantity' => $quantity[$data],
+            if ($principal_ledger_latest) {
+                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'all_id' => 1,
+                    'transaction' => 'invoice cost adjustment',
+                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => $request->input('net_payable'),
+                    'payment' => 0,
+                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
                 ]);
 
-                // $update_sku_details = Sku_add_details::where('received_id', $request->input('received_id'))
-                //                       ->where('sku_id', $data)
-                //                       ->update(['unit_cost' => $unit_cost_adjustment[$data]]);
-                // $update_sku_details = Sku_add::where('id', $data)
-                //                       ->update(['unit_cost' => $unit_cost_adjustment[$data]]);
-
-                $invoice_cost_details_save->save();
-
-
-                $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-
-                if ($request->input('invoice_cost')[$data] < $request->input('unit_cost_adjustment')[$data]) {
-                    $running_total_cost =  $ledger_results[0]->running_total_cost - $request->input('total_adjustment')[$data];
-                } else {
-
-                    $running_total_cost =  $ledger_results[0]->running_total_cost + $request->input('total_adjustment')[$data];
-                }
-
-
-
-                $final_unit_cost = $running_total_cost / $ledger_results[0]->running_balance;
-
-                $ledger_add = new Sku_ledger([
-                    'sku_id' => $data,
-                    'category_id' => $category_id[$data],
-                    'sku_type' => $sku_type[$data],
-                    'principal_id' => $principal_id[$data],
-                    'in_out_adjustments' => 'Adj_3',
-                    'rr_dr' => $request->input('purchase_id'),
-                    'sales_order_number' => '',
-                    'principal_invoice' => $request->input('dr_si'),
-                    'quantity' => 0,
-                    'running_balance' => $ledger_results[0]->running_balance,
-                    'unit_cost' => 0,
-                    'total_cost' => 0,
-                    'adjustments' => $request->input('total_adjustment')[$data],
-                    'running_total_cost' => $running_total_cost,
-                    'final_unit_cost' => $final_unit_cost,
-                    'transaction_date' => $date,
-                    'user_id' => auth()->user()->id
+                $principal_ledger_saved->save();
+            } else {
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'all_id' => 1,
+                    'transaction' => 'invoice cost adjustment',
+                    'accounts_payable_beginning' => 0,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => $request->input('net_payable'),
+                    'payment' => 0,
+                    'accounts_payable_end' => $request->input('net_payable'),
                 ]);
 
-                $ledger_add->save();
+                $principal_ledger_saved->save();
             }
-
-
-
-
-
-            $invoice_cost_jer = new Invoice_cost_adjustments_jer([
-                'invoice_cost_id' => $invoice_cost_id,
-                'dr' => $request->input('total_invoice_adjusted'),
-                'cr' => $request->input('total_invoice_adjusted'),
-                'date' => $date,
+        } else {
+            $invoice_cost_adjustment_jer_save = new Invoice_cost_adjustments_jer([
+                'principal_id' => $request->input('principal_id'),
+                'invoice_cost_id' => 1,
+                'dr' => $request->input('total_final_cost'),
+                'cr' => $request->input('total_final_cost'),
+                'date' => $date
             ]);
 
-            $invoice_cost_jer->save();
+            $invoice_cost_adjustment_jer_save->save();
 
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
+            if ($principal_ledger_latest) {
+                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'all_id' => 1,
+                    'transaction' => 'invoice cost adjustment',
+                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => $request->input('total_final_cost'),
+                    'payment' => 0,
+                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
+                ]);
 
+                $principal_ledger_saved->save();
+            } else {
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'date' => $date,
+                    'all_id' => 1,
+                    'transaction' => 'invoice cost adjustment',
+                    'accounts_payable_beginning' => 0,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => $request->input('total_final_cost'),
+                    'payment' => 0,
+                    'accounts_payable_end' => $request->input('total_final_cost'),
+                ]);
 
-            return 'Saved';
+                $principal_ledger_saved->save();
+            }
         }
     }
 }

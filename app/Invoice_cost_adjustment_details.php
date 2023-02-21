@@ -11,6 +11,8 @@ class Invoice_cost_adjustment_details extends Model
       'sku_id',
       'adjustments',
       'quantity',
+      'original_unit_cost',
+      'adjusted_amount',
     ];
 
     public function invoice_cost_adjusment()
