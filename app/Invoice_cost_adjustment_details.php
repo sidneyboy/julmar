@@ -13,9 +13,10 @@ class Invoice_cost_adjustment_details extends Model
       'quantity',
       'original_unit_cost',
       'adjusted_amount',
+      'freight',
     ];
 
-    public function invoice_cost_adjusment()
+    public function invoice_cost_adjustment()
     {
     	return $this->belongsTo('App\Invoice_cost_adjustment', 'invoice_cost_id');
     }

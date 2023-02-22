@@ -323,6 +323,7 @@ class Receive_controller extends Controller
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
+                    'principal_id' => $request->input('principal_id'),
                 ]);
 
                 $new_sku_ledger->save();
@@ -334,6 +335,7 @@ class Receive_controller extends Controller
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
+                    'principal_id' => $request->input('principal_id'),
                 ]);
 
                 $new_sku_ledger->save();

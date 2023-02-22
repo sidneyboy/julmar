@@ -7,6 +7,7 @@ use App\Sku_principal;
 use App\Return_to_principal_details;
 use App\Principal_discount;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 
 class Return_to_principal_report_controller extends Controller
@@ -38,35 +39,23 @@ class Return_to_principal_report_controller extends Controller
         $principal_id = $variable_explode[0];
         $principal_name = $variable_explode[1];
 
-        $return_to_principal_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween('date', [$date_from, $date_to])->get();
+        $return_to_principal_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->orderBy('id','desc')->get();
 
         return view('return_to_principal_reports_show_list', [
             'return_to_principal_data' => $return_to_principal_data
         ]);
     }
 
-    public function return_to_principal_show_list_details(Request $request, $id)
+    public function return_to_principal_show_list_details($id)
     {
         date_default_timezone_set('Asia/Manila');
         $date = date('m-d-Y');
 
-
-        $variable_explode = explode('=', $id);
-        $return_id = $variable_explode[0];
-        $principal_name = $variable_explode[1];
-
-        $return_to_principal = Return_to_principal::find($return_id);
-        $return_details_data = Return_to_principal_details::where('return_to_principal_id', $return_id)->get();
-
-        $principal_discount = Principal_discount::select('id', 'total_discount', 'total_bo_allowance_discount')->find($return_to_principal->received->principal_discount_id);
-        $user = User::where('id', auth()->user()->id)->first();
+        $return_to_principal = Return_to_principal::select('id','received_id')->find($id);
+        
+  
         return view('return_to_principal_show_list_details', [
-            'return_details_data' => $return_details_data
-        ])->with('principal_name', $principal_name)
-            ->with('date', $date)
-            ->with('prepared_by', $user)
-            ->with('return_id', $return_id)
-            ->with('return_to_principal', $return_to_principal)
-            ->with('principal_discount', $principal_discount);
+            'return_to_principal' => $return_to_principal
+        ]);
     }
 }

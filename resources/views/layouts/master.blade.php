@@ -95,9 +95,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+                        {{-- <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
                             role="button">
                             <i class="fas fa-th-large"></i>
+                        </a> --}}
+                        <a class="nav-link" href="{{ route('logout_page') }}" style="font-weight: bold;color:white;">
+                            LOGOUT
                         </a>
                     </li>
                 </ul>
@@ -132,7 +135,7 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                                                                               with font-awesome or any other icon font library -->
+                                                                                   with font-awesome or any other icon font library -->
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -143,6 +146,14 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('/principal_ledger') }}"
+                                            class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
+                                            <i class="fas fa-plus-circle nav-icon"></i>
+                                            <p>Principal Ledger</p>
+                                        </a>
+                                    </li>
+
                                     <li class="nav-item">
                                         <a href="{{ url('/new_principal') }}"
                                             class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
@@ -167,13 +178,6 @@
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('principal_ledger') }}"
-                                            class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
-                                            <i class="fas fa-percent nav-icon"></i>
-                                            <p>Payment Ledger</p>
-                                        </a>
-                                    </li>
                                     <li class="nav-item">
                                         <a href="{{ url('principal_payment') }}"
                                             class="nav-link {{ $active_tab == 'principal_payment' ? 'active' : '' }}">
@@ -221,7 +225,7 @@
                                         <a href="{{ url('/sku_ledger') }}"
                                             class="nav-link {{ $active_tab == 'sku_ledger' ? 'active' : '' }}">
                                             <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>SKU Ledger</p>
+                                            <p>Inventory Ledger</p>
                                         </a>
                                     </li>
 
@@ -353,7 +357,7 @@
                                         <a href="{{ url('/bo_allowance_adjustments_report') }}"
                                             class="nav-link {{ $active_tab == 'bo_allowance_adjustments_report' ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>BoA - Report</p>
+                                            <p>BOA - Report</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -370,7 +374,7 @@
                                             <p>ICA - Report</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('/bo_allowance_total') }}"
                                             class="nav-link {{ $active_tab == 'bo_allowance_total' ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar nav-icon"></i>
@@ -383,7 +387,7 @@
                                             <i class="fas fa-chart-bar nav-icon"></i>
                                             <p>Subsidy</p>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
                             <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">

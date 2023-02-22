@@ -29,9 +29,13 @@ class Principal_payment_controller extends Controller
     public function principal_payment_generate_accounts_payable(Request $request)
     {
 
-        // return $principal_ledger = Principal_ledger::where('principal_id', $request->input('principal'))->latest()->get();
+        
         $principal_ledger = Principal_ledger::where('principal_id', $request->input('principal'))->orderBy('id', 'DESC')->limit(1)->first();
-        return number_format($principal_ledger->accounts_payable_end, 2, ".", ",");
+        if ($principal_ledger) {
+            return number_format($principal_ledger->accounts_payable_end, 2, ".", ",");
+        }else{
+            return 0;
+        }
     }
 
     public function principal_payment_generate_final_summary(Request $request)
@@ -61,16 +65,15 @@ class Principal_payment_controller extends Controller
 
         $principal_payment_save = new Principal_payment([
             'principal_id' => $request->input('principal_id'),
-            'current_accounts_payable' => $request->input('current_accounts_payable_final'),
-            'paid_by' => $request->input('employee_id'),
+            'current_accounts_payable_final' => $request->input('current_accounts_payable_final'),
+            'user_id' => auth()->user()->id,
             'cheque_number' => $request->input('cheque_number'),
             'disbursement_number' => $request->input('disbursement_number'),
             'payment' => $request->input('amount'),
-            'date' => $request->input('date'),
         ]);
 
         $principal_payment_save->save();
-        $principal_payment_save_id = $principal_payment_save->id;
+       
 
         $principal_ledger = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
@@ -78,8 +81,7 @@ class Principal_payment_controller extends Controller
         $principal_ledger_saved = new Principal_ledger([
             'principal_id' => $request->input('principal_id'),
             'date' => $request->input('date'),
-            'rr_dr' => $principal_payment_save_id,
-            'principal_invoice' => '',
+            'all_id' => $principal_payment_save->id,
             'transaction' => 'payment',
             'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
             'received' => 0,

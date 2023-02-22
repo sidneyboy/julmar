@@ -11,6 +11,7 @@ class Return_to_principal_details extends Model
       'sku_id',
       'quantity_return',
       'unit_cost',
+      'freight',
     ];
 
     public function return_to_principal()

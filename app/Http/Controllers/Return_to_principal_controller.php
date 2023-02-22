@@ -167,6 +167,7 @@ class Return_to_principal_controller extends Controller
                 'sku_id' => $data,
                 'quantity_return' => $request->input('quantity_return')[$data],
                 'unit_cost' => $request->input('unit_cost')[$data],
+                'freight' => $request->input('freight_per_sku')[$data],
             ]);
 
             $new_return_details->save();
@@ -187,6 +188,7 @@ class Return_to_principal_controller extends Controller
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'returned',
                     'all_id' => $return_to_principal_save->id,
+                    'principal_id' => $request->input('principal_id'),
                 ]);
 
                 $new_sku_ledger->save();
@@ -198,6 +200,7 @@ class Return_to_principal_controller extends Controller
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'returned',
                     'all_id' => $return_to_principal_save->id,
+                    'principal_id' => $request->input('principal_id'),
                 ]);
 
                 $new_sku_ledger->save();

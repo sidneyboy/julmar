@@ -47,21 +47,18 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-12">
-              <button id="generate" class="btn btn-flat btn-success btn-block">GENERATE REPORT</button>
-            </div>
           </div>
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
-          
+          <button id="generate" class="btn btn-sm btn-info float-right">Generate Report</button>
         </div>
         <!-- /.card-footer-->
       </div>
       <!-- /.card -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title" style="font-weight: bold;">LIST</h3>
+          <h3 class="card-title" style="font-weight: bold;">REPORT DATA</h3>
         </div>
         <div class="card-body">
           <div id="show_report_list"></div>

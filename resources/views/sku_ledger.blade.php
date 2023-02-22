@@ -39,13 +39,11 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Select Search Method:</label>
-                                <select class="form-control select2bs4" name="search_method" required style="width:100%;">
+                                <label>Select SKU Type:</label>
+                                <select class="form-control select2bs4" name="sku_type" required style="width:100%;">
                                     <option value="" default>Select</option>
-                                    <option value="sku_code">Sku Code</option>
-                                    <option value="type">Type</option>
-                                    <option value="category">Category</option>
-                                    <option value="principal">Principal</option>
+                                    <option value="Case">Case</option>
+                                    <option value="Butal">Butal</option>
                                 </select>
                             </div>
                         </div>
@@ -87,10 +85,6 @@
                 </div>
             </div>
             <!-- /.card-body -->
-            <div class="card-footer">
-                Footer
-            </div>
-            <!-- /.card-footer-->
         </div>
     </section>
     <!-- /.content -->

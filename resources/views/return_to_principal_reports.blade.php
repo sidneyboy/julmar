@@ -38,7 +38,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-                <button class="btn float-right btn-sm btn-info" id="generate" style="border-radius: 0px;">Generate Report</button>
+                <button class="btn float-right btn-sm btn-info" id="generate">Generate Report</button>
             </div>
             <!-- /.card-footer-->
         </div>

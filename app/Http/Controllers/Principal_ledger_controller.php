@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Sku_principal;
 use App\Principal_ledger;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 
 class Principal_ledger_controller extends Controller
@@ -12,10 +14,10 @@ class Principal_ledger_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal_data = Sku_principal::get();
+            $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('principal_ledger', [
                 'user' => $user,
-                'principal_data' => $principal_data,
+                'principal' => $principal,
                 'main_tab' => 'manage_principal_main_tab',
                 'sub_tab' => 'manage_principal_sub_tab',
                 'active_tab' => 'principal_ledger',
@@ -31,7 +33,11 @@ class Principal_ledger_controller extends Controller
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
 
-        $principal_ledger = Principal_ledger::where('principal_id', $request->input('principal'))->whereBetween('date', [$date_from, $date_to])->get();
+        if ($request->input('principal') == 'all') {
+            $principal_ledger = Principal_ledger::whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
+        } else {
+            $principal_ledger = Principal_ledger::where('principal_id', $request->input('principal'))->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
+        }
 
         $principal_ledger_counter = count($principal_ledger);
 

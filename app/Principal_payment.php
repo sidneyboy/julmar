@@ -9,12 +9,10 @@ class Principal_payment extends Model
     protected $fillable = [
     	'principal_id',
     	'payment',
-    	'paid_by',
+    	'user_id',
     	'cheque_number',
     	'disbursement_number',
     	'payment',
-    	'current_accounts_payable',
-    	'date',
-    
+    	'current_accounts_payable_final',
     ];
 }

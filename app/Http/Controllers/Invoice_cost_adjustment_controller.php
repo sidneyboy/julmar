@@ -77,6 +77,7 @@ class Invoice_cost_adjustment_controller extends Controller
         //return $request->input();
 
         $new_invoice_cost_adjustment = new Invoice_cost_adjustments([
+            'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
             'particulars' => $request->input('particulars'),
             'gross_purchase' => $request->input('gross_purchases'),
@@ -101,6 +102,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'adjusted_amount' => $request->input('unit_cost_adjustment')[$data],
                 'adjustments' =>  $request->input('unit_cost')[$data] -  $request->input('unit_cost_adjustment')[$data],
                 'quantity' => $request->input('quantity')[$data],
+                'freight' => $request->input('freight_per_sku')[$data],
             ]);
             $invoice_cost_details_save->save();
         }

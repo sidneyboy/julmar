@@ -16,7 +16,6 @@ class Principal_ledger extends Model
     	'received',
     	'returned',
     	'adjustment',
-       
     	'payment',
     	'accounts_payable_end',
     ];

@@ -25,7 +25,7 @@
                             {{ number_format($data->unit_cost, 2, '.', ',') }}
                             <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $data->unit_cost }}">
                         </td>
-                        <td>{{ $data->freight }}
+                        <td style="text-align: right">{{ $data->freight }}
                             <input type="hidden" name="freight[{{ $data->sku->id }}]" value="{{ $data->freight }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"

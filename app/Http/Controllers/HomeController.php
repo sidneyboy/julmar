@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\User;
+use Session;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -29,6 +31,13 @@ class HomeController extends Controller
             'sub_tab' => 'manage_principal_sub_tab',
             'active_tab' => 'new_principal',
         ])->with('user',$user);
+    }
+
+    public function logout_page()
+    {
+        Session::flush();
+        Auth::logout();
+        return redirect('/');
     }
 
 }

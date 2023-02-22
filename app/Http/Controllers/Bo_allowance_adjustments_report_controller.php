@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sku_principal;
-use Session;
+use DB;
 use App\Bo_allowance_adjustments;
 use App\Bo_allowance_adjustments_details;
 use App\User;
@@ -35,9 +35,7 @@ class Bo_allowance_adjustments_report_controller extends Controller
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
 
-
-
-        $bo_adjustments_data = Bo_allowance_adjustments::where('principal_id', $request->input('principal'))->whereBetween('date', [$date_from, $date_to])->get();
+        $bo_adjustments_data = Bo_allowance_adjustments::where('principal_id', $request->input('principal'))->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
 
         return view('bo_allowance_adjustments_report_list', [
             'bo_adjustments_data' => $bo_adjustments_data
@@ -46,23 +44,10 @@ class Bo_allowance_adjustments_report_controller extends Controller
 
     public function bo_allowance_adjustments_show_details($id)
     {
-        $variable_explode = explode('=', $id);
-        $id = $variable_explode[0];
-        $principal_name = $variable_explode[1];
-        $particulars = $variable_explode[2];
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
-
-        $user = User::select('name')->where('id', auth()->user()->id)->first();
+        //return $id;
         $bo_adjustments_details = Bo_allowance_adjustments_details::where('bo_allowance_id', $id)->get();
-        $bo_total_adjusted_amount = Bo_allowance_adjustments::select('bo_allowance_deduction', 'vat_deduction', 'net_deduction')->where('id', $id)->first();
         return view('bo_allowance_adjustments_show_details', [
             'bo_adjustments_details' => $bo_adjustments_details,
-        ])->with('principal_name', $principal_name)
-            ->with('prepared_by', $user)
-            ->with('date', $date)
-            ->with('id', $id)
-            ->with('particulars', $particulars)
-            ->with('bo_total_adjusted_amount', $bo_total_adjusted_amount);
+        ]);
     }
 }

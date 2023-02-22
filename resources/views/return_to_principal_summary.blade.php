@@ -77,6 +77,7 @@
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
+                                <input type="hidden" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -462,6 +463,7 @@
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
+                                <input type="hidden" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php

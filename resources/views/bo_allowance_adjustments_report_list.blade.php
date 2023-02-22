@@ -1,34 +1,55 @@
-<table class="table table-bordered table-hover">
-	<thead>
-		<tr>
-			<th style="text-align: center;">ID #</th>
-			<th style="text-align: center;">Received ID #</th>
-			<th style="text-align: center;">Particulars</th>
-			<th style="text-align: center;">Bo<br />Allowance<br>Deduction</th>
-			<th style="text-align: center;">Vat<br />Deduction</th>
-			<th style="text-align: center;">Net<br />Deduction</th>
-			<th style="text-align: center;">Date</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach ($bo_adjustments_data as $data)
+<div class="table table-responsive">
+    <table class="table table-bordered table-hover table-sm" id="example1">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Received #</th>
+                <th>Principal</th>
+                <th>Particulars</th>
+                <th>Net BO Adjustment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($bo_adjustments_data as $data)
+                <tr>
+                    <td><a href="{{ route('bo_allowance_adjustments_show_details', $data->id) }}"
+                            target="_blank">DM - BO {{ $data->id }}</a></td>
+                    <td><a href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
+                            target="_blank">RR - {{ $data->received_id }}</a></td>
+                    <td>{{ $data->principal->principal }}</td>
+                    <td>{{ $data->particulars }}</td>
+                    <td style="text-align: right;">
+                        {{ number_format($data->net_deduction, 2, '.', ',') }}
+						@php
+							$sum_net_deduction[] = $data->net_deduction;
+						@endphp
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+		<tfoot>
 			<tr>
-				<td style="text-align: center"><a href="{{ route('bo_allowance_adjustments_show_details', $data->id ."=". $data->principal->principal ."=". $data->particulars) }}" target="_blank">DM - BO {{ $data->id }}</a></td>
-				<td style="text-align: center"><a href="{{ route('received_order_report_show_details', $data->received_id ."=". $data->principal->principal) }}" target="_blank">RR - {{ $data->received_id }}</a></td>
-				<td style="text-transform: uppercase;text-align: center;">{{ $data->particulars }}</td>
-				<td style="text-align: right;font-weight: bold;">
-					{{ number_format($data->bo_allowance_deduction,2,".",",")  }}
-				</td>
-				<td style="text-align: right;font-weight: bold;">
-			
-					{{ number_format($data->vat_deduction,2,".",",") }}
-				</td>
-				<td style="text-align: right;font-weight: bold;">
-					
-					{{ number_format($data->net_deduction,2,".",",") }}
-				</td>
-				<td style="text-align: center;">{{ $data->date }}</td>
+				<th>Grand Total</th>
+				<th></th>
+                <th></th>
+				<th></th>
+				<th style="text-align: right">{{ number_format(array_sum($sum_net_deduction), 2, '.', ',') }}</th>
 			</tr>
-		@endforeach
-	</tbody>
-</table>
+		</tfoot>
+    </table>
+</div>
+
+<script>
+    $("#example1").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "paging": false,
+        "buttons": [
+            { extend: 'copyHtml5', footer: true },
+            { extend: 'excelHtml5', footer: true },
+            { extend: 'csvHtml5', footer: true },
+			{ extend: 'print', footer: true}
+        ]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+</script>

@@ -13,6 +13,7 @@ class Sku_ledger extends Model
       'user_id',
       'transaction_type',
       'all_id',
+      'principal_id',
     ];
 
     public function sku()

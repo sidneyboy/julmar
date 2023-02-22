@@ -27,7 +27,12 @@ class Return_to_principal extends Model
     	return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
 
-    public function received()
+    public function return_to_principal_details()
+    {
+    	return $this->hasMany('App\Return_to_principal_details', 'return_to_principal_id');
+    }
+
+    public function received_purchase_order()
     {
     	return $this->belongsTo('App\Received_purchase_order', 'received_id');
     }

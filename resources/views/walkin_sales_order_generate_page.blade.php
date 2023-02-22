@@ -1,4 +1,5 @@
 <form id="walkin_sales_order_generate_final_summary">
+    @csrf
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -14,7 +15,8 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label>Delivery Receipt:</label>
-                <input type="text" class="form-control" name="delivery_receipt" placeholder="Delivery Receipt" required>
+                <input type="text" class="form-control" name="delivery_receipt" placeholder="Delivery Receipt"
+                    required>
             </div>
         </div>
     </div>
@@ -27,7 +29,7 @@
                 <th>U/C</th>
                 <th>Inventory</th>
                 <th>Quantity</th>
-                <th>Total Line Discount</th>
+                <th>Line Discount Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -82,15 +84,17 @@
                     </td>
                     <td>
                         <input type="text" class="form-control form-control-sm"
-                            name="line_discount_rate_1[{{ $data->id }}]" value="0" onkeypress="return isNumberKey(event)">
+                            name="line_discount_rate_1[{{ $data->id }}]" value="0"
+                            onkeypress="return isNumberKey(event)">
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <label for="">Total Other Discount:</label>
-    <input type="text" name="total_other_discount" class="form-control form-control-sm" value="0" onkeypress="return isNumberKey(event)" required>
+    <label for="">Other Discount Amount:</label>
+    <input type="text" name="total_other_discount" class="form-control form-control-sm" value="0"
+        onkeypress="return isNumberKey(event)" required>
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="customer_id" value="{{ $customer_id }}">
@@ -101,6 +105,12 @@
 </form>
 
 <script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $('.select2bs4').select2({
         theme: 'bootstrap4'
     })
@@ -117,8 +127,6 @@
 
     $("#walkin_sales_order_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-
         $.ajax({
             url: "walkin_sales_order_generate_final_summary",
             type: "POST",

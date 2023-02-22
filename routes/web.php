@@ -21,6 +21,7 @@ Auth::routes();
 
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/Logout', 'HomeController@logout_page')->name('logout_page');
 
 Route::get('/new_principal', 'Manage_principal_controller@index')->name('new_principal');
 Route::post('/new_principal_process', 'Manage_principal_controller@new_principal_process')->name('new_principal_process');

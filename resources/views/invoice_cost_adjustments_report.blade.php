@@ -61,7 +61,7 @@
          <!-- /.card -->
          <div class="card">
              <div class="card-header">
-                 <h3 class="card-title" style="font-weight: bold;">LIST</h3>
+                 <h3 class="card-title" style="font-weight: bold;">REPORT DATA</h3>
              </div>
              <div class="card-body">
                  <div id="show_report_list"></div>

@@ -10,8 +10,24 @@ function isNumberKey(evt) {
     onkeypress="return isNumberKey(event)"
 
 
+    $("#example1").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "paging": false,
+        "buttons": [
+            { extend: 'copyHtml5', footer: true },
+            { extend: 'excelHtml5', footer: true },
+            { extend: 'csvHtml5', footer: true },
+			{ extend: 'print', footer: true}
+        ]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
 
 
+    DB::raw('DATE(created_at)'),  [$date_from, $date_to]
+
+    
 <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
 
 

@@ -90,6 +90,7 @@
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
+                                <input type="text" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -498,6 +499,7 @@
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
+                                <input type="text" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -861,15 +863,15 @@
     @endif
 
     <br />
-    <input type="text" value="{{ $received_purchase_order->principal_id }}" name="principal_id">
-    <input type="text" value="{{ $particulars }}" name="particulars">
-    <input type="text" value="{{ $received_id }}" name="received_id">
-    <input type="text" value="{{ $gross_purchases }}" name="gross_purchases">
-    <input type="text" value="{{ $bo_discount }}" name="bo_discount">
-    <input type="text" value="{{ $vatable_purchase }}" name="vatable_purchase">
-    <input type="text" value="{{ $vat }}" name="vat">
-    <input type="text" value="{{ $freight }}" name="freight">
-    <input type="text" value="{{ $total_final_cost }}" name="total_final_cost">
+    <input type="hidden" value="{{ $received_purchase_order->principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $particulars }}" name="particulars">
+    <input type="hidden" value="{{ $received_id }}" name="received_id">
+    <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
+    <input type="hidden" value="{{ $bo_discount }}" name="bo_discount">
+    <input type="hidden" value="{{ $vatable_purchase }}" name="vatable_purchase">
+    <input type="hidden" value="{{ $vat }}" name="vat">
+    <input type="hidden" value="{{ $freight }}" name="freight">
+    <input type="hidden" value="{{ $total_final_cost }}" name="total_final_cost">
     <button class="btn btn-success btn-sm float-right" type="submit">Submit</button>
 </form>
 
@@ -887,8 +889,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
+                location.reload();
             },
             error: function(error) {
                 Swal.fire(
