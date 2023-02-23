@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="">Scan Barcode:</label>
-                            <input type="text" class="form-control" required name="barcode">
+                            <input type="text" class="form-control" id="barcode" required name="barcode">
                         </div>
                     </div>
                 </div>
@@ -101,6 +101,8 @@
                         )
                     } else {
                         $('#invoice_out_page').html(data);
+                        $('#barcode').val('');
+                        $('#barcode').focus();
                     }
                 },
                 error: function(error) {

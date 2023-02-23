@@ -158,6 +158,7 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
+       
         $new_received_purchase_orders = new Received_purchase_order([
             'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
             'discount_id' => $request->input('discount_id'),

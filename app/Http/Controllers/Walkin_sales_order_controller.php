@@ -138,7 +138,7 @@ class Walkin_sales_order_controller extends Controller
 
         foreach ($request->input('sku_id') as $key => $data) {
             $new_invoice_draft_details = new Invoice_draft_details([
-                'invoice_draft_id' => 1,
+                'invoice_draft_id' => $new_invoice_draft->id,
                 'sku_id' => $data,
                 'quantity' => $request->input('quantity')[$data],
                 'unit_price' => $request->input('unit_price')[$data],

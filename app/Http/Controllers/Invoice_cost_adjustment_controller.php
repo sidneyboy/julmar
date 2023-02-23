@@ -96,7 +96,7 @@ class Invoice_cost_adjustment_controller extends Controller
 
         foreach ($request->input('sku_id') as $key => $data) {
             $invoice_cost_details_save = new invoice_cost_adjustment_details([
-                'invoice_cost_id' => 1,
+                'invoice_cost_id' => $new_invoice_cost_adjustment->id,
                 'sku_id' => $data,
                 'original_unit_cost' => $request->input('unit_cost')[$data],
                 'adjusted_amount' => $request->input('unit_cost_adjustment')[$data],
@@ -110,7 +110,7 @@ class Invoice_cost_adjustment_controller extends Controller
         if (isset($check_less_other_discount_selected_name)) {
             $invoice_cost_adjustment_jer_save = new Invoice_cost_adjustments_jer([
                 'principal_id' => $request->input('principal_id'),
-                'invoice_cost_id' => 1,
+                'invoice_cost_id' => $new_invoice_cost_adjustment->id,
                 'dr' => $request->input('net_payable'),
                 'cr' => $request->input('net_payable'),
                 'date' => $date
@@ -126,7 +126,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'all_id' => 1,
+                    'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
                     'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
                     'received' => 0,
@@ -141,7 +141,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'all_id' => 1,
+                    'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
                     'accounts_payable_beginning' => 0,
                     'received' => 0,
@@ -156,7 +156,7 @@ class Invoice_cost_adjustment_controller extends Controller
         } else {
             $invoice_cost_adjustment_jer_save = new Invoice_cost_adjustments_jer([
                 'principal_id' => $request->input('principal_id'),
-                'invoice_cost_id' => 1,
+                'invoice_cost_id' => $new_invoice_cost_adjustment->id,
                 'dr' => $request->input('total_final_cost'),
                 'cr' => $request->input('total_final_cost'),
                 'date' => $date
@@ -171,7 +171,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'all_id' => 1,
+                    'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
                     'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
                     'received' => 0,
@@ -186,7 +186,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
                     'date' => $date,
-                    'all_id' => 1,
+                    'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
                     'accounts_payable_beginning' => 0,
                     'received' => 0,

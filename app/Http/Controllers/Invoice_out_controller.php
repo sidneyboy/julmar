@@ -16,7 +16,7 @@ class Invoice_out_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $invoice_draft = Invoice_draft::select('id', 'delivery_receipt')->where('status', null)->get();
+            $invoice_draft = Invoice_draft::select('id', 'delivery_receipt')->where('status', null)->orderBy('id','desc')->get();
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,

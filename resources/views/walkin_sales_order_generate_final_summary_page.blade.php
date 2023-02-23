@@ -52,10 +52,10 @@
                                 $sum_total_amount_per_sku[] = $total_amount_per_sku;
                                 echo number_format($total_amount_per_sku, 2, '.', ',');
                             @endphp
-                            <input type="text" value="{{ $data }}" name="sku_id[]">
-                            <input type="text" value="{{ $quantity[$data] }}" name="quantity[{{ $data }}]">
-                            <input type="text" value="{{ $unit_price[$data] }}" name="unit_price[{{ $data }}]">
-                            <input type="text" value="{{ $line_discount_rate_1[$data] }}" name="line_discount[{{ $data }}]">
+                            <input type="hidden" value="{{ $data }}" name="sku_id[]">
+                            <input type="hidden" value="{{ $quantity[$data] }}" name="quantity[{{ $data }}]">
+                            <input type="hidden" value="{{ $unit_price[$data] }}" name="unit_price[{{ $data }}]">
+                            <input type="hidden" value="{{ $line_discount_rate_1[$data] }}" name="line_discount[{{ $data }}]">
                         </td>
                     </tr>
                 @endforeach
@@ -98,14 +98,14 @@
         </table>
     </div>
     <br />
-    <input type="text" value="{{ $delivery_receipt }}" name="delivery_receipt">
-    <input type="text" value="{{ $mode_of_transaction }}" name="mode_of_transaction">
-    <input type="text" value="{{ $sku_type }}" name="sku_type">
-    <input type="text" value="{{ $customer_id }}" name="customer_id">
-    <input type="text" value="{{ $agent }}" name="agent">
-    <input type="text" value="{{ $total_other_discount }}" name="other_discount">
-    <input type="text" value="{{ $total_payable }}" name="total_amount">
-    <input type="text" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $delivery_receipt }}" name="delivery_receipt">
+    <input type="hidden" value="{{ $mode_of_transaction }}" name="mode_of_transaction">
+    <input type="hidden" value="{{ $sku_type }}" name="sku_type">
+    <input type="hidden" value="{{ $customer_id }}" name="customer_id">
+    <input type="hidden" value="{{ $agent }}" name="agent">
+    <input type="hidden" value="{{ $total_other_discount }}" name="other_discount">
+    <input type="hidden" value="{{ $total_payable }}" name="total_amount">
+    <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <button class="btn btn-success btn-sm float-right">Submit</button>
 </form>
 
