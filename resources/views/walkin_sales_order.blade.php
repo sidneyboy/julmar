@@ -9,7 +9,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">WALK-IN SALES ORDER</h3>
+                <h3 class="card-title" style="font-weight: bold;">INVOICE DRAFT</h3>
             </div>
             <form id="walkin_sales_order_generate_form" enctype="multipart/form-data" method="post">
                 @csrf

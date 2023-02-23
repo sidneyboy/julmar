@@ -517,7 +517,15 @@
                                         <a href="{{ url('walkin_sales_order') }}"
                                             class="nav-link {{ $active_tab == 'walkin_sales_order' ? 'active' : '' }}">
                                             <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Walk-in</p>
+                                            <p>Invoice Draft</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('invoice_out') }}"
+                                            class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>Invoice Out</p>
                                         </a>
                                     </li>
                                 </ul>

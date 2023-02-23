@@ -1,7 +1,7 @@
 <form id="walkin_sales_order_generate_final_summary">
     @csrf
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 <label>Mode of Transaction:</label>
                 <select class="form-control select2" name="mode_of_transaction" required style="width:100%;">
@@ -12,11 +12,17 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 <label>Delivery Receipt:</label>
                 <input type="text" class="form-control" name="delivery_receipt" placeholder="Delivery Receipt"
                     required>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Agent Name:</label>
+                <input type="text" class="form-control" name="agent"  required>
             </div>
         </div>
     </div>
@@ -48,30 +54,9 @@
                         {{ $data->sku_type }}
                     </td>
                     <td>
-                        @if ($customer_principal_price->price_level == 'price_1')
-                            @php
-                                $sku_price = $data->sku_price_details_one->price_1;
-                            @endphp
-                        @elseif($customer_principal_price->price_level == 'price_2')
-                            @php
-                                $sku_price = $data->sku_price_details_one->price_2;
-                            @endphp
-                        @elseif($customer_principal_price->price_level == 'price_3')
-                            @php
-                                $sku_price = $data->sku_price_details_one->price_3;
-                            @endphp
-                        @elseif($customer_principal_price->price_level == 'price_4')
-                            @php
-                                $sku_price = $data->sku_price_details_one->price_4;
-                            @endphp
-                        @else
-                            @php
-                                $sku_price = $data->sku_price_details_one->price_5;
-                            @endphp
-                        @endif
                         <input type="text" class="form-control form-control-sm"
                             onkeypress="return isNumberKey(event)" name="unit_price[{{ $data->id }}]"
-                            value="{{ $sku_price }}">
+                            value="0">
                     </td>
                     <td>
                         <input type="hidden" name="remaining_balance[{{ $data->id }}]"
@@ -99,7 +84,7 @@
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="customer_id" value="{{ $customer_id }}">
     <input type="hidden" name="store_name" value="{{ $store_name }}">
-    <input type="hidden" name="type" value="{{ $type }}">
+    <input type="hidden" name="sku_type" value="{{ $type }}">
     <br />
     <button type="submit" class="btn btn-info btn-sm float-right">Proceed Final Summary</button>
 </form>
