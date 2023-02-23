@@ -22,6 +22,8 @@
                         @elseif($data->transaction_type == 'returned')
                             <a target="_blank"
                                 href="{{ route('return_to_principal_show_list_details', $data->all_id) }}">{{ $data->all_id }}</a>
+                        @elseif($data->transaction_type == 'out from warehouse')
+                            {{ $data->all_id }}
                         @endif
                     </td>
                     <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
@@ -29,6 +31,8 @@
                         @if ($data->transaction_type == 'received')
                             <span style="color:green">{{ $data->quantity }}</span>
                         @elseif($data->transaction_type == 'returned')
+                            (<span style="color:red">{{ $data->quantity }}</span>)
+                        @elseif($data->transaction_type == 'out from warehouse')
                             (<span style="color:red">{{ $data->quantity }}</span>)
                         @endif
                     </td>

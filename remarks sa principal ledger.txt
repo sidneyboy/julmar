@@ -3,5 +3,8 @@ received
 returned
 bo adjustment
 invoice cost adjustment
+out from warehouse
+
+
 transfer
 bodega out

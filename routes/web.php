@@ -664,3 +664,8 @@ Route::post('/van_selling_calls_report_generate_data', 'Van_selling_calls_contro
 Route::get('/customer_upload_check', 'Customer_upload_check_controller@index')->name('customer_upload_check');
 Route::post('/customer_upload_check_process', 'Customer_upload_check_controller@customer_upload_check_process')->name('customer_upload_check_process');
 
+Route::get('/invoice_out', 'Invoice_out_controller@index')->name('invoice_out');
+Route::post('/invoice_out_proceed', 'Invoice_out_controller@invoice_out_proceed')->name('invoice_out_proceed');
+Route::post('/invoice_out_final_summary', 'Invoice_out_controller@invoice_out_final_summary')->name('invoice_out_final_summary');
+Route::post('/invoice_out_saved', 'Invoice_out_controller@invoice_out_saved')->name('invoice_out_saved');
+
