@@ -207,7 +207,7 @@ Route::get('/bodega_out_show_details/{id}', 'Bodega_out_report_controller@bodega
 
 Route::get('/transfer_to_branch', 'Transfer_to_branch_controller@index');
 Route::post('/transfer_to_branch_show_input', 'Transfer_to_branch_controller@transfer_to_branch_show_input')->name('postData');
-Route::get('/transfer_to_branch_saved', 'Transfer_to_branch_controller@transfer_to_branch_saved')->name('postData');
+Route::post('/transfer_to_branch_saved', 'Transfer_to_branch_controller@transfer_to_branch_saved')->name('postData');
 
 Route::get('/transfer_to_branch_report', 'Transfer_to_branch_report_controller@index');
 Route::post('/transfer_to_branch_show_list', 'Transfer_to_branch_report_controller@transfer_to_branch_show_list')->name('postData');

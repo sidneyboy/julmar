@@ -6,6 +6,7 @@ use App\Sku_principal;
 use App\Transfer_to_bran;
 use App\Transfer_to_bran_details;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 
 class Transfer_to_branch_report_controller extends Controller
@@ -33,9 +34,9 @@ class Transfer_to_branch_report_controller extends Controller
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
 
+        //return $request->input();
 
-
-        $transfer_to_bran = Transfer_to_bran::where('principal_id', $request->input('principal'))->whereBetween('date', [$date_from, $date_to])->get();
+        $transfer_to_bran = Transfer_to_bran::where('principal_id', $request->input('principal'))->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
 
         return view('transfer_to_branch_show_list', [
             'transfer_to_bran' => $transfer_to_bran

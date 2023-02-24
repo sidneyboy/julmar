@@ -21,6 +21,11 @@ class Sku_ledger extends Model
       return $this->belongsTo('App\Sku_add', 'sku_id');
     }
 
+    public function principal()
+    {
+      return $this->belongsTo('App\Sku_principal', 'principal_id');
+    }
+
     public function user()
     {
       return $this->belongsTo('App\User', 'user_id');

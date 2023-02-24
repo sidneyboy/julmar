@@ -6,16 +6,16 @@
                 <th>Received #</th>
                 <th>Principal</th>
                 <th>Particulars</th>
+                <th>Transacted By</th>
                 <th>Gross Purchase</th>
                 <th>Less Discount</th>
                 <th>BO Discount</th>
                 <th>Vatable Purchase</th>
                 <th>Vat</th>
                 <th>Freight</th>
-                <th>Final Cost</th>
+                <th>Total Cost Adj</th>
                 <th>Other Discount</th>
-                <th>Net Payable</th>
-                <th>User</th>
+                <th>Net Adjustment</th>
             </tr>
         </thead>
         <tbody>

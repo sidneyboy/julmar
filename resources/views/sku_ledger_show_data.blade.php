@@ -24,6 +24,15 @@
                                 href="{{ route('return_to_principal_show_list_details', $data->all_id) }}">{{ $data->all_id }}</a>
                         @elseif($data->transaction_type == 'out from warehouse')
                             {{ $data->all_id }}
+                        @elseif($data->transaction_type == 'bodega out')
+                            <a href="{{ route('bodega_out_show_details', $data->all_id) }}"
+                                target="_blank">{{ $data->all_id }}</a>
+                        @elseif($data->transaction_type == 'bodega in')
+                            <a href="{{ route('bodega_out_show_details', $data->all_id) }}"
+                                target="_blank">{{ $data->all_id }}</a>
+                        @elseif($data->transaction_type == 'transfer to branch')
+                            <a href="{{ route('transfer_to_branch_show_details', $data->all_id . '=' . $data->principal->principal) }}"
+                                target="_blank">{{ $data->all_id }}</a>
                         @endif
                     </td>
                     <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
@@ -33,6 +42,12 @@
                         @elseif($data->transaction_type == 'returned')
                             (<span style="color:red">{{ $data->quantity }}</span>)
                         @elseif($data->transaction_type == 'out from warehouse')
+                            (<span style="color:red">{{ $data->quantity }}</span>)
+                        @elseif($data->transaction_type == 'bodega in')
+                            <span style="color:green">{{ $data->quantity }}</span>
+                        @elseif($data->transaction_type == 'bodega out')
+                            (<span style="color:red">{{ $data->quantity }}</span>)
+                        @elseif($data->transaction_type == 'transfer to branch')
                             (<span style="color:red">{{ $data->quantity }}</span>)
                         @endif
                     </td>

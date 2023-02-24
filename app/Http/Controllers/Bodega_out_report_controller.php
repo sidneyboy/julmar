@@ -5,6 +5,7 @@ use App\Sku_principal;
 use App\Bodega_out;
 use App\Bodega_out_details;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 
 class Bodega_out_report_controller extends Controller
@@ -34,7 +35,7 @@ class Bodega_out_report_controller extends Controller
 
 
 
-        $bodega_out = bodega_out::where('principal_id', $request->input('principal'))->whereBetween('date', [$date_from, $date_to])->get();
+        $bodega_out = bodega_out::where('principal_id', $request->input('principal'))->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
 
         return view('bodega_out_report_list', [
             'bodega_out' => $bodega_out
@@ -43,32 +44,13 @@ class Bodega_out_report_controller extends Controller
 
     public function bodega_out_show_details($id)
     {
-        $variable_explode = explode('=', $id);
-        $id = $variable_explode[0];
-        $principal_name = $variable_explode[1];
-        $remarks = $variable_explode[2];
+ 
+        $bodega_out = bodega_out::find($id);
+        $bodega_out_details = Bodega_out_details::where('bodega_out_id',$id)->get();
 
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
-
-        $user = User::select('name')->where('id', auth()->user()->id)->first();
-        $bodega_out_details = bodega_out_details::where('bodega_out_id', $id)->first();
-
-        $explode_prices = explode('=', $bodega_out_details->fuc_prices);
-        $final_unit_cost = $explode_prices[0];
-        $price_1 = $explode_prices[1];
-        $price_2 = $explode_prices[2];
-        $price_3 = $explode_prices[3];
-
-        return view('bodega_out_show_details')->with('principal_name', $principal_name)
-            ->with('prepared_by', $user)
-            ->with('date', $date)
-            ->with('id', $id)
-            ->with('remarks', $remarks)
-            ->with('bodega_out_details', $bodega_out_details)
-            ->with('price_1', $price_1)
-            ->with('price_2', $price_2)
-            ->with('price_3', $price_3)
-            ->with('final_unit_cost', $final_unit_cost);
+        return view('bodega_out_show_details',[
+            'bodega_out' => $bodega_out,
+            'bodega_out_details' => $bodega_out_details,
+        ]);
     }
 }

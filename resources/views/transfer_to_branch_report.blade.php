@@ -9,8 +9,6 @@
 
 
  @section('content')
-  
-    <br />
     <!-- Main content -->
     <section class="content">
 
@@ -28,7 +26,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6" style="margin-bottom: 10px">
               <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -40,7 +38,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <select name="principal" id="principal" class="form-control select2" style="width: 100%;">
+                <select name="principal" id="principal" class="form-control" style="width: 100%;">
                   <option value="" default>Select Principal</option>
                   @foreach ($principals as $data)
                     <option value="{{ $data->id }}">{{ $data->principal }}</option>
@@ -49,7 +47,7 @@
               </div>
             </div>
             <div class="col-md-12">
-              <button id="generate" class="btn btn-flat btn-success btn-block">GENERATE REPORT</button>
+              <button id="generate" class="btn btn-sm btn-info float-right">Generate</button>
             </div>
           </div>
         </div>
@@ -62,7 +60,7 @@
       <!-- /.card -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title" style="font-weight: bold;">LIST</h3>
+          <h3 class="card-title" style="font-weight: bold;">DATA</h3>
         </div>
         <div class="card-body">
           <div id="show_report_list"></div>

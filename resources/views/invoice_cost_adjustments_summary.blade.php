@@ -45,7 +45,7 @@
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $difference_of_new_and_old_unit_cost = $unit_cost[$data] - $unit_cost_adjustment[$data];
+                                    $difference_of_new_and_old_unit_cost =  $unit_cost_adjustment[$data] - $unit_cost[$data];
                                     echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                                 @endphp
                             </td>
@@ -86,7 +86,12 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $freight[$data] * $quantity[$data];
+                                    if ($difference_of_new_and_old_unit_cost > 0) {
+                                       $freight_per_sku = $new_freight[$data] * $quantity[$data];
+                                    } else {
+                                       $freight_per_sku = ($new_freight[$data] * $quantity[$data]) * -1;
+                                    }
+                                    
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
@@ -439,7 +444,7 @@
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $difference_of_new_and_old_unit_cost =  $unit_cost[$data] - $unit_cost_adjustment[$data];
+                                    $difference_of_new_and_old_unit_cost =  $unit_cost_adjustment[$data] - $unit_cost[$data];
                                     echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                                 @endphp
                             </td>
@@ -495,7 +500,14 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $freight[$data] * $quantity[$data];
+                                    if ($difference_of_new_and_old_unit_cost > 0) {
+                                        $freight_per_sku = $freight[$data] * $quantity[$data];
+                                    } else {
+                                        $freight_per_sku = ($freight[$data] * $quantity[$data]) * -1;
+                                    }
+                                    
+
+                                    
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}

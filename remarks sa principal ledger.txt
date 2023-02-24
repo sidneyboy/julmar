@@ -4,7 +4,7 @@ returned
 bo adjustment
 invoice cost adjustment
 out from warehouse
-
-
-transfer
+bodega in
 bodega out
+transfer to branch
+

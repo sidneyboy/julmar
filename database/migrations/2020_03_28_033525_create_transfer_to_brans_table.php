@@ -21,8 +21,6 @@ class CreateTransferToBransTable extends Migration
             $table->foreign('principal_id')->references('id')->on('sku_principals');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('branch')->index();
-            $table->date('date')->index();
             $table->timestamps();
         });
     }

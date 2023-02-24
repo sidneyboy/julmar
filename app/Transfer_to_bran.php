@@ -7,16 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Transfer_to_bran extends Model
 {
     protected $fillable = [
-    	'received_id',
-    	'principal_id',
-    	'branch',
-    	'user_id',
-    	'date'
+        'received_id',
+        'principal_id',
+        'user_id',
+        'transfer_from',
+        'transfer_to',
+        'total_amount',
     ];
 
     public function principal()
     {
-    	return $this->belongsTo('App\Sku_principal', 'principal_id');
+        return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
 
     public function user()
@@ -24,9 +25,9 @@ class Transfer_to_bran extends Model
         return $this->belongsTo('App\user', 'user_id');
     }
 
-    public function received()
+    public function received_purchase_order()
     {
-        return $this->belongsTo('App\user', 'received_id');
+        return $this->belongsTo('App\Received_purchase_order', 'received_id');
     }
 
     public function transfer_details()

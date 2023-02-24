@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Received_purchase_order;
 use App\Received_purchase_order_details;
 use App\User;
@@ -17,7 +18,7 @@ class Transfer_to_branch_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $received = Received_purchase_order::select('id', 'purchase_order_id', 'principal_id', 'dr_si')->where('branch', '!=','NORTH MIN')->orderBy('id','desc')->get();
+            $received = Received_purchase_order::select('id', 'purchase_order_id', 'principal_id', 'dr_si', 'branch')->orderBy('id', 'desc')->get();
             return view('transfer_to_branch', [
                 'user' => $user,
                 'received' => $received,
@@ -32,6 +33,7 @@ class Transfer_to_branch_controller extends Controller
 
     public function transfer_to_branch_show_input(Request $request)
     {
+        //return $request->input();
         $variable_explode = explode('=', $request->input('received_id'));
         $id = $variable_explode[0];
         $principal_id = $variable_explode[1];
@@ -41,17 +43,18 @@ class Transfer_to_branch_controller extends Controller
 
         $branch = str_replace('to be transfer to', '', $remarks);
 
+        $received_purchase_order = Received_purchase_order::select('branch', 'principal_id')->find($id);
         $sku_details = Received_purchase_order_details::where('received_id', $id)->get();
-        $principal_name = Sku_principal::where('id', $principal_id)->first();
 
-
+        $user = User::select('name')->find(auth()->user()->id);
         return view('transfer_to_branch_show_input', [
-            'sku_details' => $sku_details
+            'sku_details' => $sku_details,
+            'received_purchase_order' => $received_purchase_order
         ])->with('id', $id)
             ->with('purchase_id', $purchase_id)
+            ->with('transfer_to_branch', $request->input('transfer_to_branch'))
             ->with('principal_id', $principal_id)
             ->with('dr_si', $dr_si)
-            ->with('principal_name', $principal_name)
             ->with('branch', $branch);
     }
 
@@ -66,73 +69,39 @@ class Transfer_to_branch_controller extends Controller
             'received_id' => $request->input('received_id'),
             'principal_id' => $request->input('principal_id'),
             'user_id' => auth()->user()->id,
-            'branch' => $request->input('branch'),
-            'date' => $date,
+            'transfer_from' => $request->input('transfer_from_branch'),
+            'transfer_to' => $request->input('transfer_to_branch'),
+            'total_amount' => $request->input('total_amount'),
         ]);
 
         $transfer_to_branch_save->save();
-        $transfer_id = $transfer_to_branch_save->id;
 
-        $received_purchase_order_update = Received_purchase_order::find($request->input('received_id'));
-
-        $received_purchase_order_update->remarks = 'Transafered To' . $request->input('branch');
-
-        $received_purchase_order_update->save();
-
-        $received_update = Received_purchase_order::find($request->input('id'));
-
-        $received_update->remarks = 'Transfered';
-
-        $received_update->save();
-
-        $quantity = $request->input('quantity');
-        foreach ($request->input('checkboxEntry') as $key => $sku) {
+        foreach ($request->input('sku_id') as $key => $data) {
             $transfer_to_branch_details_save = new Transfer_to_bran_details([
-                'transfer_id' => $transfer_id,
-                'sku_id' => $sku,
-                'quantity' => $quantity[$sku],
-                'final_unit_cost' => $request->input('last_final_unit_cost_case')[$sku],
+                'transfer_id' => $transfer_to_branch_save->id,
+                'sku_id' => $data,
+                'quantity' => $request->input('quantity')[$data],
+                'final_unit_cost' => $request->input('final_unit_cost')[$data],
             ]);
 
             $transfer_to_branch_details_save->save();
 
-            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-
-            $final_cost = $request->input('last_final_unit_cost_case')[$sku];
-            $quantity_transfer = $quantity[$sku] * -1;
-            $running_balance =  $ledger_results[0]->running_balance - $quantity[$sku];
-            $last_final_unit_cost = $final_cost;
-            $total_cost = $last_final_unit_cost * $quantity_transfer;
-            $running_total_cost = $ledger_results[0]->running_total_cost + $total_cost;
-
-            if ($running_balance > 0) {
-                $final_unit_cost = $running_total_cost / $running_balance;
-            } else {
-                $final_unit_cost =  $ledger_results[0]->final_unit_cost;
-            }
-
-
-            $ledger_add = new Sku_ledger([
-                'sku_id' => $sku,
-                'in_out_adjustments' => 'Transfer to Branch',
-                'rr_dr' => $transfer_id,
-                'sales_order_number' => '',
-                'principal_invoice' => $request->input('dr_si'),
-                'quantity' => $quantity_transfer,
-                'running_balance' => $running_balance,
-                'unit_cost' => $last_final_unit_cost,
-                'total_cost' => $total_cost,
-                'adjustments' => 0,
-                'running_total_cost' => $running_total_cost,
-                'final_unit_cost' => $final_unit_cost,
-                'transaction_date' => $date,
-                'user_id' => auth()->user()->id
+            $out_from_sku_running_balance = $ledger_results[0]->running_balance - $request->input('quantity')[$data];
+            $out_from_sku_ledger_new_sku_ledger = new Sku_ledger([
+                'sku_id' => $data,
+                'quantity' => $request->input('quantity')[$data],
+                'running_balance' => $out_from_sku_running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => 'transfer to branch',
+                'all_id' => $transfer_to_branch_save->id,
+                'principal_id' => $request->input('principal_id'),
             ]);
 
-            $ledger_add->save();
+            $out_from_sku_ledger_new_sku_ledger->save();
         }
 
-        return 'Saved';
+        return 'saved';
     }
 }

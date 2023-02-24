@@ -55,7 +55,7 @@ class Invoice_cost_adjustment_controller extends Controller
 
     public function invoice_cost_adjustments_show_summary(Request $request)
     {
-
+        //return $request->input();
         $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
         return view('invoice_cost_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
@@ -67,7 +67,8 @@ class Invoice_cost_adjustment_controller extends Controller
             ->with('code', $request->input('code'))
             ->with('description', $request->input('description'))
             ->with('quantity', $request->input('quantity'))
-            ->with('received_id', $request->input('received_id'));
+            ->with('received_id', $request->input('received_id'))
+            ->with('new_freight', $request->input('new_freight'));
     }
 
     public function invoice_cost_adjustments_save(Request $request)
