@@ -58,85 +58,90 @@
     <input type="hidden" name="po_id" id="po_id" value="{{ $po_id }}">
     <input type="hidden" name="particulars" id="particulars" value="{{ $particulars }}">
     <input type="hidden" name="sales_order_number" id="sales_order_number" value="{{ $sales_order_number }}">
-    <table id="tableCss">
-        <thead>
-            <tr>
-                <th></th>
-                <th style="text-align: center;color:black;">CODE</th>
-                <th style="text-align: center;color:black;">TYPE</th>
-                <th style="text-align: center;color:black;">DESCRIPTION</th>
-                <th style="text-align: center;color:black;">QUANTITY</th>
-                <th style="text-align: center;color:black;">UNIT<br />COST</th>
-
-                <th style="text-align: center;color:black;">FINAL UNIT COST</th>
-                <th style="text-align: center;color:black;">TOTAL COST</th>
-                <th style="text-align: center;color:black;">ACTION</th>
-            </tr>
-        </thead>
-        @if ($cart_total_quantity != 0)
-
-            @foreach ($sku as $data)
+    <div class="table table-responsive">
+        <table id="tableCss">
+            <thead>
                 <tr>
-                    <td>
-                        {{ $data->id }}
-                        {{-- <input type="hidden" name="selected_sku" value="{{ $data->id }}"> --}}
-                    </td>
-                    <td style="text-align: center;text-transform: uppercase;">{{ $data->attributes[0] }}</td>
-                    <td style="text-align: center;text-transform: uppercase;">{{ $data->attributes[1] }}</td>
-                    <td style="text-align: center;text-transform: uppercase;">{{ $data->name }}</td>
-                    <td style="text-align: center;text-transform: uppercase;">
-                        <input type="number" style="text-align: center;" class="form-control"
-                            name="quantity[{{ $data->id }}]" value="{{ $data->quantity }}">
-                        <input type="hidden" name="sku_id[]" value="{{ $data->id }}">
+                    <th></th>
+                    <th style="text-align: center;color:black;">CODE</th>
+                    <th style="text-align: center;color:black;">TYPE</th>
+                    <th style="text-align: center;color:black;">DESCRIPTION</th>
+                    <th style="text-align: center;color:black;">QUANTITY</th>
+                    <th style="text-align: center;color:black;">UNIT<br />COST</th>
 
-                    </td>
-                    <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->id }}]"
-                            value="{{ $data->price }}">{{ number_format($data->price, 2, '.', ',') }}</td>
-                    <td style="text-align: right;">
-                        @php
-                            
-                            $discounted_final_unit_cost = $data->price - ($data->price * $discount->total_discount) / 100;
-                            $sum_discounted_final_unit_cost[] = $discounted_final_unit_cost;
-                        @endphp
-                        {{ number_format($discounted_final_unit_cost, 2, '.', ',') }}
-                        <input type="hidden" name="final_unit_cost[{{ $data->id }}]"
-                            value="{{ $discounted_final_unit_cost }}">
-                        <input type="hidden" name="discount_rate[{{ $data->id }}]"
-                            value="{{ $discount->total_discount }}">
-                    </td>
-                    <td style="text-align: right;">
-                        @php
-                            $total_cost = $discounted_final_unit_cost * $data->quantity;
-                            $sum_total_cost[] = $total_cost;
-                            echo number_format($total_cost, 2, '.', ',');
-                        @endphp
-                    </td>
-                    <td style="text-align: center;text-transform: uppercase;"><button
-                            class="btn btn-danger btn-xs btn-flat remove_sku" id="{{ $data->id }}">REMOVE</button>
-                    </td>
+                    <th style="text-align: center;color:black;">FINAL UNIT COST</th>
+                    <th style="text-align: center;color:black;">TOTAL COST</th>
+                    <th style="text-align: center;color:black;">ACTION</th>
                 </tr>
-            @endforeach
-            <tr>
-                <td style="text-align: center;font-weight: bold;" colspan="3">TOTAL QUANTITY</td>
-                <td></td>
-                <td style="text-align: center;font-weight: bold;">{{ number_format($cart_total_quantity, 2, '.', ',') }}
-                </td>
-                <td></td>
-                <td style="text-align: right;font-weight: bold;">
-                    {{ number_format(array_sum($sum_discounted_final_unit_cost), 2, '.', ',') }}</td>
-                <td style="text-align: right;font-weight: bold;">
-                    {{ number_format(array_sum($sum_total_cost), 2, '.', ',') }}</td>
-                <td></td>
-            </tr>
-        @else
-            <tr>
-                <td colspan="9" style="color:red;font-weight: bold;text-align: center;">NO DATA FOUND!</td>
-            </tr>
-        @endif
-    </table>
+            </thead>
+            @if ($cart_total_quantity != 0)
+
+                @foreach ($sku as $data)
+                    <tr>
+                        <td>
+                            {{ $data->id }}
+                            {{-- <input type="hidden" name="selected_sku" value="{{ $data->id }}"> --}}
+                        </td>
+                        <td style="text-align: center;text-transform: uppercase;">{{ $data->attributes[0] }}</td>
+                        <td style="text-align: center;text-transform: uppercase;">{{ $data->attributes[1] }}</td>
+                        <td style="text-align: center;text-transform: uppercase;">{{ $data->name }}</td>
+                        <td style="text-align: center;text-transform: uppercase;">
+                            <input type="number" style="text-align: center;" class="form-control"
+                                name="quantity[{{ $data->id }}]" value="{{ $data->quantity }}">
+                            <input type="hidden" name="sku_id[]" value="{{ $data->id }}">
+
+                        </td>
+                        <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->id }}]"
+                                value="{{ $data->price }}">{{ number_format($data->price, 2, '.', ',') }}</td>
+                        <td style="text-align: right;">
+                            @php
+                                
+                                $discounted_final_unit_cost = $data->price - ($data->price * $discount->total_discount) / 100;
+                                $sum_discounted_final_unit_cost[] = $discounted_final_unit_cost;
+                            @endphp
+                            {{ number_format($discounted_final_unit_cost, 2, '.', ',') }}
+                            <input type="hidden" name="final_unit_cost[{{ $data->id }}]"
+                                value="{{ $discounted_final_unit_cost }}">
+                            <input type="hidden" name="discount_rate[{{ $data->id }}]"
+                                value="{{ $discount->total_discount }}">
+                        </td>
+                        <td style="text-align: right;">
+                            @php
+                                $total_cost = $discounted_final_unit_cost * $data->quantity;
+                                $sum_total_cost[] = $total_cost;
+                                echo number_format($total_cost, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align: center;text-transform: uppercase;"><button
+                                class="btn btn-danger btn-xs btn-flat remove_sku"
+                                id="{{ $data->id }}">REMOVE</button>
+                        </td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td style="text-align: center;font-weight: bold;" colspan="3">TOTAL QUANTITY</td>
+                    <td></td>
+                    <td style="text-align: center;font-weight: bold;">
+                        {{ number_format($cart_total_quantity, 2, '.', ',') }}
+                    </td>
+                    <td></td>
+                    <td style="text-align: right;font-weight: bold;">
+                        {{ number_format(array_sum($sum_discounted_final_unit_cost), 2, '.', ',') }}</td>
+                    <td style="text-align: right;font-weight: bold;">
+                        {{ number_format(array_sum($sum_total_cost), 2, '.', ',') }}</td>
+                    <td></td>
+                </tr>
+            @else
+                <tr>
+                    <td colspan="9" style="color:red;font-weight: bold;text-align: center;">NO DATA FOUND!</td>
+                </tr>
+            @endif
+        </table>
+    </div>
 </form>
 <br /><br />
-<button class="float-right btn btn-success btn-sm saveCart" onclick="return save()" style="font-weight: bold;">Submit Purchase Order</button>
+<button class="float-right btn btn-success btn-sm saveCart" onclick="return save()" style="font-weight: bold;">Submit
+    Purchase Order</button>
 
 </div>
 
@@ -171,7 +176,7 @@
             success: function(data) {
                 console.log(data);
                 if (data == 'Saved') {
-					Swal.fire({
+                    Swal.fire({
                         position: 'top-end',
                         icon: 'success',
                         title: 'Your work has been saved',
@@ -181,7 +186,7 @@
                     location.reload();
 
                 } else {
-                   alert('naay error');
+                    alert('naay error');
                 }
 
             }

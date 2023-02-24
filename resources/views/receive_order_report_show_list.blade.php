@@ -107,7 +107,7 @@
 
 <script>
     $("#example1").DataTable({
-        "responsive": true,
+        "responsive": false,
         "lengthChange": false,
         "autoWidth": false,
         "paging": false,
