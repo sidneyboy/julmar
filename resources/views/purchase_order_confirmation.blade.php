@@ -13,7 +13,7 @@
     <!-- Main content -->
     <section class="content">
 
-        <!-- Default box -->
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title" style="font-weight: bold">PURCHASE ORDER</h3>
@@ -43,7 +43,17 @@
             </div>
             <!-- /.card-footer-->
         </div>
-        <!-- /.card -->
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" style="font-weight: bold">FINAL SUMMARY</h3>
+            </div>
+            <div class="card-body">
+                <div id="purchase_order_confirmation_final_summary_page"></div>
+            </div>
+        </div>
+
+
     </section>
     <!-- /.content -->
 
@@ -60,8 +70,6 @@
 
         $("#purchase_order_confirmation_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
-            $('#hide_if_trigger').hide();
             $.ajax({
                 url: "purchase_order_confirmation_proceed",
                 type: "POST",

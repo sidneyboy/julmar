@@ -79,6 +79,7 @@ Route::post('/purchase_order_save', 'Purchase_order_controller@purchase_order_sa
 
 Route::get('/purchase_order_confirmation', 'Purchase_order_confirmation_controller@index')->name('purchase_order_confirmation');
 Route::post('/purchase_order_confirmation_proceed', 'Purchase_order_confirmation_controller@purchase_order_confirmation_proceed')->name('purchase_order_confirmation_proceed');
+Route::post('/purchase_order_confirmation_final_summary', 'Purchase_order_confirmation_controller@purchase_order_confirmation_final_summary')->name('purchase_order_confirmation_final_summary');
 
 
 

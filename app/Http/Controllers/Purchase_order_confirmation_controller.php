@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\User;
 use App\Purchase_order;
+use App\Principal_discount;
 use Illuminate\Http\Request;
 
 class Purchase_order_confirmation_controller extends Controller
@@ -28,8 +29,16 @@ class Purchase_order_confirmation_controller extends Controller
     {
         $purchase_order = Purchase_order::find($request->input('purchase_id'));
 
+        $principal_discount = Principal_discount::where('principal_id',$purchase_order->principal_id)->get();
+
         return view('purchase_order_confirmation_proceed',[
             'purchase_order' => $purchase_order,
+            'principal_discount' => $principal_discount,
         ]);
+    }
+
+    public function purchase_order_confirmation_final_summary(Request $request)
+    {
+        return $request->input();
     }
 }

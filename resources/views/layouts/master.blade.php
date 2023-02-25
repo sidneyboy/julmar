@@ -828,7 +828,4 @@
                 });
             });
         </script>
-    </body>
-
-    </html>
 @show
