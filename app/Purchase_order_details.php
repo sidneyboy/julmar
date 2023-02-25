@@ -10,12 +10,12 @@ class Purchase_order_details extends Model
       'purchase_order_id',
       'sku_id',
       'quantity',
-      'payment_term',
       'receive',
       'unit_cost',
-      'discount_rate',
       'remarks',
-      'scanned_remarks'
+      'scanned_remarks',
+      'freight',
+      'final_unit_cost',
     ];
 
    public function purchaseOrderDetailsID()

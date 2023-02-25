@@ -10,19 +10,24 @@ class Purchase_order extends Model
       'purchase_id',
       'principal_id',
       'user_id',
-      'email',
       'payment_term',
       'delivery_term',
       'sales_order_number',
       'particulars',
       'po_confirmation_image',
       'remarks',
-      'date'
+      'status',
+      'sku_type',
     ];
 
   public function purchaseOrderDetails()
   {
     return $this->hasMany('App\Purchase_order_details', 'purchase_order_id', 'purchase_order_id');
+  }
+
+  public function purchase_order_details()
+  {
+    return $this->hasMany('App\Purchase_order_details', 'purchase_order_id');
   }
 
   public function skuPrincipal()

@@ -22,23 +22,33 @@
                     onclick="return reload_page()">RELOAD FOR NEW TRANSACTION</button>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <div class="form-group">
-                            <label>Principal</label>
-                            <select class="form-control" style="width:100%;" id="principal_id" required>
-                                <option value="" default>Select Principal</option>
-                                @foreach ($principals as $principal)
-                                    <option value="{{ $principal->id . '-' . $principal->principal }}">
-                                        {{ $principal->principal }}</option>
-                                @endforeach
+                <form id="principal_show_inputs">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Principal</label>
+                                <select class="form-control" style="width:100%;" name="principal_id" required>
+                                    <option value="" default>Select Principal</option>
+                                    @foreach ($principals as $principal)
+                                        <option value="{{ $principal->id }}">
+                                            {{ $principal->principal }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="margin-bottom: 5px;">
+                            <label for="">SKU Type</label>
+                            <select name="sku_type" class="form-control" required>
+                                <option value="" default>Select</option>
+                                <option value="Case">Case</option>
+                                <option value="Butal">Butal</option>
                             </select>
                         </div>
-
+                        <div class="col-md-12">
+                            <button class="btn btn-sm float-right btn-info">Proceed</button>
+                        </div>
                     </div>
-
-                </div>
+                </form>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
@@ -77,37 +87,31 @@
             }
         });
 
-        $('#principal_id').on('change', function(e) {
-            var principal_id = $(this).val();
-            $('.loading').show();
-            $.post({
+        
+
+        $("#principal_show_inputs").on('submit', (function(e) {
+            e.preventDefault();
+            //$('.loading').show();
+            $('#hide_if_trigger').hide();
+            $.ajax({
+                url: "principal_show_inputs",
                 type: "POST",
-                url: "/principal_show_inputs",
-                data: 'principal_id=' + principal_id,
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
                 success: function(data) {
-
-                    $('.loading').hide();
-                    $('#reload_page').show();
                     $('#show_purcase_order_inputs').html(data);
-
-
                 },
                 error: function(error) {
-                    console.log(error);
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
                 }
             });
-        });
-
-        var hasSuccess = '<?php echo Session::has('not_empty'); ?>';
-        if (hasSuccess) {
-            toastr.warning('YOU HAVE PENDING PO!')
-        }
-
-
-        function reload_page() {
-            $('.loading').show();
-            location.reload();
-        }
+        }));
     </script>
     </body>
 

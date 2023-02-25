@@ -46,10 +46,10 @@ Route::post('/sku_barcode_save', 'Sku_barcode_controller@sku_barcode_save')->nam
 
 Route::get('/sku_list', 'Sku_list_controller@index')->name('sku_list');
 Route::get('pagination/fetch_data', 'Sku_list_controller@fetch_data');
-Route::post('/sku_list_update_price','Sku_list_controller@sku_list_update_price')->name('sku_list_update_price');
-Route::post('/sku_list_update_price_save','Sku_list_controller@sku_list_update_price_save')->name('sku_list_update_price_save');
-Route::post('/sku_list_update_info','Sku_list_controller@sku_list_update_info')->name('sku_list_update_info');
-Route::post('/search_sku_list','Sku_list_controller@search_sku_list')->name('search_sku_list');
+Route::post('/sku_list_update_price', 'Sku_list_controller@sku_list_update_price')->name('sku_list_update_price');
+Route::post('/sku_list_update_price_save', 'Sku_list_controller@sku_list_update_price_save')->name('sku_list_update_price_save');
+Route::post('/sku_list_update_info', 'Sku_list_controller@sku_list_update_info')->name('sku_list_update_info');
+Route::post('/search_sku_list', 'Sku_list_controller@search_sku_list')->name('search_sku_list');
 Route::post('sku_list', 'Sku_list_controller@sku_update_data')->name('update.sku.post');
 
 
@@ -76,6 +76,11 @@ Route::post('/purchase_order_store_data', 'Purchase_order_controller@purchase_or
 Route::post('/purchase_order_cart', 'Purchase_order_controller@purchase_order_cart')->name('postData');
 Route::post('/purchase_order_remove_cart', 'Purchase_order_controller@purchase_order_remove_cart')->name('postData');
 Route::post('/purchase_order_save', 'Purchase_order_controller@purchase_order_save')->name('postData');
+
+Route::get('/purchase_order_confirmation', 'Purchase_order_confirmation_controller@index')->name('purchase_order_confirmation');
+Route::post('/purchase_order_confirmation_proceed', 'Purchase_order_confirmation_controller@purchase_order_confirmation_proceed')->name('purchase_order_confirmation_proceed');
+
+
 
 Route::get('/purchase_order_report', 'Purchase_order_report_controller@index');
 Route::post('/purchase_order_report_show_list', 'Purchase_order_report_controller@purchase_order_report_show_list')->name('postData');
@@ -668,4 +673,3 @@ Route::get('/invoice_out', 'Invoice_out_controller@index')->name('invoice_out');
 Route::post('/invoice_out_proceed', 'Invoice_out_controller@invoice_out_proceed')->name('invoice_out_proceed');
 Route::post('/invoice_out_final_summary', 'Invoice_out_controller@invoice_out_final_summary')->name('invoice_out_final_summary');
 Route::post('/invoice_out_saved', 'Invoice_out_controller@invoice_out_saved')->name('invoice_out_saved');
-

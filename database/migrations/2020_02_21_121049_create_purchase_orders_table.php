@@ -16,16 +16,14 @@ class CreatePurchaseOrdersTable extends Migration
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('purchase_id',50);
-            $table->integer('principal_id')->unsigned()->index();
+            $table->integer('principal_id')->unsigned()->nullable()->index();
             $table->foreign('principal_id')->references('id')->on('sku_principals');
-            $table->Integer('user_id')->unsigned()->index();
+            $table->Integer('user_id')->unsigned()->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('email', 100);
-            $table->string('payment_term');
-            $table->string('delivery_term');
-            $table->string('particulars');
-            $table->string('remarks');
-            $table->date('date')->index();
+            $table->string('payment_term')->nullable();
+            $table->string('delivery_term')->nullable();
+            $table->string('particulars')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }

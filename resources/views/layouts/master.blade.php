@@ -284,7 +284,15 @@
                                         <a href="{{ url('/purchase_order') }}"
                                             class="nav-link {{ $active_tab == 'purchase_order' ? 'active' : '' }}">
                                             <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Purchase Order</p>
+                                            <p>PO Draft</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('/purchase_order_confirmation') }}"
+                                            class="nav-link {{ $active_tab == 'purchase_order_confirmation' ? 'active' : '' }}">
+                                            <i class="fas fa-plus-circle nav-icon"></i>
+                                            <p>PO Confirmation</p>
                                         </a>
                                     </li>
 
