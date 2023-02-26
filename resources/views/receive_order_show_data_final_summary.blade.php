@@ -1,6 +1,6 @@
 <form id="received_order_save">
     @csrf
-    <div class="table table-responsive">
+   
         @if ($discount_type == 'type_a')
             <table class="table table-bordered table-sm table-hover">
                 <thead>
@@ -848,7 +848,7 @@
         @endif
 
 
-    </div>
+   
     <br />
 
     <input type="hidden" value="{{ $discount_type }}" name="discount_type">

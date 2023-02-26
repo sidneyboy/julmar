@@ -16,7 +16,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold">PURCHASE ORDER</h3>
+                <h3 class="card-title" style="font-weight: bold">PURCHASE ORDER CONFIRMATION</h3>
             </div>
             <div class="card-body">
                 <form id="purchase_order_confirmation_proceed">

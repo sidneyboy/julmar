@@ -18,6 +18,16 @@ class Purchase_order extends Model
       'remarks',
       'status',
       'sku_type',
+      'gross_purchase',
+      'total_less_discount',
+      'bo_discount',
+      'vatable_purchase',
+      'vat',
+      'freight',
+      'total_final_cost',
+      'total_less_other_discount',
+      'net_payable',
+      'discount_type',
     ];
 
   public function purchaseOrderDetails()

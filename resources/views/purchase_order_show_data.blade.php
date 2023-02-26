@@ -17,12 +17,24 @@
                 @foreach ($sku as $data)
                     <tr>
                         <td>{{ $data->attributes[0] }}</td>
-                        <td>{{ $purchase_order_id->skuPrincipal->principal }}</td>
+                        <td>{{ $principal_name }}</td>
                         <td>{{ $data->attributes[1] }}</td>
-                        <td style="text-align: right">{{ number_format($data->quantity) }}</td>
+                        <td style="text-align: right">{{ number_format($data->quantity) }}
+                            @php
+                                $sum_quantity[] = $data->quantity;
+                            @endphp
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right">{{ array_sum($sum_quantity) }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

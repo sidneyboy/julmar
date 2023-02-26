@@ -2,7 +2,8 @@
     <table class="table table-bordered table-hover table-sm" id="example1">
         <thead>
             <tr>
-				<th>Transacted</th>
+                <th>Transacted</th>
+                <th>Date</th>
                 <th>Principal</th>
                 <th>#</th>
                 <th>Transaction</th>
@@ -33,19 +34,23 @@
                         @elseif($data->transaction == 'invoice cost adjustment')
                             <a href="{{ route('invoice_cost_adjustments_show_details', $data->all_id) }}"
                                 target="_blank">{{ $data->all_id }}</a>
+                        @elseif($data->transaction == 'cash with order')
+                            {{-- <a href="{{ route('cash with order', $data->all_id) }}"
+                                target="_blank">{{ $data->all_id }}</a> --}}
+                            {{ $data->all_id }}
                         @else
                             {{ $data->all_id }}
                         @endif
                     </td>
                     <td>{{ Str::ucfirst($data->transaction) }}</td>
                     <td style="text-align: right">{{ number_format($data->accounts_payable_beginning, 2, '.', ',') }}
-                       
+
                     </td>
                     <td style="text-align: right">{{ number_format($data->received, 2, '.', ',') }}
-                        
+
                     </td>
                     <td style="text-align: right">{{ number_format($data->returned, 2, '.', ',') }}
-                      
+
                     </td>
                     <td style="text-align: right">
                         @if ($data->adjustment < 0)
@@ -54,10 +59,10 @@
                         @else
                             {{ number_format($data->adjustment, 2, '.', ',') }}
                         @endif
-                       
+
                     </td>
                     <td style="text-align: right">{{ number_format($data->payment, 2, '.', ',') }}
-                  
+
                     </td>
                     <td style="text-align: right">{{ number_format($data->accounts_payable_end, 2, '.', ',') }}
 
@@ -70,7 +75,7 @@
 
 <script>
     $("#example1").DataTable({
-        "responsive": true,
+        "responsive": false,
         "lengthChange": false,
         "autoWidth": false,
         "paging": false,

@@ -63,29 +63,31 @@ class Purchase_order_controller extends Controller
             'attributes' => array($description->sku_code, $description->sku_type),
         ]);
 
-        $purchase_order_id = Purchase_order::select('purchase_id', 'principal_id')->where('principal_id', $request->input('principal_id'))->orderBy('id', 'desc')->first();
-
+        $purchase_order_id = Purchase_order::select('purchase_id')->where('principal_id', $request->input('principal_id'))->orderBy('id', 'desc')->first();
+        $principal_name = Sku_principal::select('principal')->find($request->input('principal_id'));
         if ($purchase_order_id) {
             $variableExplode = explode('-', $purchase_order_id->purchase_id);
             $series = $variableExplode[3];
             $code =  $series + 1;
-            $po_id = $purchase_order_id->skuPrincipal->principal . "-" . $month . "-" . $year . "-" . $code;
+            $po_id = $principal_name->principal . "-" . $month . "-" . $year . "-" . $code;
 
             return view('purchase_order_show_data', [
                 'sku' => Cart::session(auth()->user()->id)->getContent(),
             ])->with('principal_id', $request->input('principal_id'))
                 ->with('sku_type', $request->input('sku_type'))
                 ->with('po_id', $po_id)
-                ->with('purchase_order_id', $purchase_order_id);
+                ->with('purchase_order_id', $purchase_order_id)
+                ->with('principal_name', $principal_name->principal);
         } else {
-            $po_id = $purchase_order_id->skuPrincipal->principal . "-" . $month . "-" . $year . "-" . 1;
+            $po_id = $principal_name->principal . "-" . $month . "-" . $year . "-" . 1;
 
             return view('purchase_order_show_data', [
                 'sku' => Cart::session(auth()->user()->id)->getContent(),
             ])->with('principal_id', $request->input('principal_id'))
                 ->with('sku_type', $request->input('sku_type'))
                 ->with('po_id', $po_id)
-                ->with('purchase_order_id', $purchase_order_id);
+                ->with('purchase_order_id', $purchase_order_id)
+                ->with('principal_name', $principal_name->principal);
         }
     }
 

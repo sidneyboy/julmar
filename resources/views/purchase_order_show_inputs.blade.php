@@ -3,7 +3,7 @@
          <div class="col-md-12">
              <div class="form-group">
                  <label>Sku</label>
-                 <select style="width:100%;" class="form-control select2bs4" required name="sku" id="sku">
+                 <select style="width:100%;" class="form-control select2bs4" autofocus required name="sku" id="sku">
                      <option value="" default>Select Item</option>
                      @foreach ($sku_principal as $sku)
                          <option value="{{ $sku->id }}">
