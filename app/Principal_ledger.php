@@ -18,6 +18,7 @@ class Principal_ledger extends Model
     	'adjustment',
     	'payment',
     	'accounts_payable_end',
+		'user_id',
     ];
 
     public function principal()

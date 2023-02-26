@@ -126,6 +126,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
@@ -141,6 +142,7 @@ class Invoice_cost_adjustment_controller extends Controller
             } else {
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
@@ -171,6 +173,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',
@@ -186,6 +189,7 @@ class Invoice_cost_adjustment_controller extends Controller
             } else {
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_invoice_cost_adjustment->id,
                     'transaction' => 'invoice cost adjustment',

@@ -158,7 +158,7 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-       
+
         $new_received_purchase_orders = new Received_purchase_order([
             'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
             'discount_id' => $request->input('discount_id'),
@@ -215,6 +215,7 @@ class Receive_controller extends Controller
                 $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
@@ -230,6 +231,7 @@ class Receive_controller extends Controller
             } else {
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
@@ -260,6 +262,7 @@ class Receive_controller extends Controller
                 $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',
@@ -275,6 +278,7 @@ class Receive_controller extends Controller
             } else {
                 $principal_ledger_saved = new Principal_ledger([
                     'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
                     'date' => $date,
                     'all_id' => $new_received_purchase_orders->id,
                     'transaction' => 'received',

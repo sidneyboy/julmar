@@ -122,6 +122,7 @@ class Return_to_principal_controller extends Controller
             $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
             $principal_ledger_saved = new Principal_ledger([
                 'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
                 'all_id' => $return_to_principal_save->id,
                 'transaction' => 'returned',
                 'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
@@ -147,6 +148,7 @@ class Return_to_principal_controller extends Controller
             $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
             $principal_ledger_saved = new Principal_ledger([
                 'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
                 'all_id' => $return_to_principal_save->id,
                 'transaction' => 'returned',
                 'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
