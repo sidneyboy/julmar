@@ -1,6 +1,6 @@
 <form id="receiving_draft_final_saved">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="table table-responsive">
                 <table class="table table-bordered table-sm table-hover">
                     <thead>
@@ -34,15 +34,17 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="table table-responsive">
                 <table class="table table-bordered table-sm table-hover">
                     <thead>
                         <tr>
-                            <th colspan="3">Scanned SKU(Draft)</th>
+                            <th colspan="5">Scanned SKU(Draft)</th>
                         </tr>
                         <tr>
                             <th>Desc</th>
+                            <th>U/C(VAT EXT)</th>
+                            <th>Freight</th>
                             <th>Received</th>
                             <th>Remarks</th>
                         </tr>
@@ -52,8 +54,10 @@
                             <tr>
                                 <td><span style="color:red;font-weight:bold">{{ $draft_data->sku->sku_code }}</span>
                                     {{ $draft_data->sku->description }}</td>
+                                <td style="text-align: right">{{ number_format($draft_data->unit_cost,2,".",",")  }}</td>
+                                <td style="text-align: right">{{ number_format($draft_data->freight,2,".",",")  }}</td>
                                 <td><input type="number" min="0" class="form-control form-control-sm"
-                                        name="quantity_received[{{ $draft_data->id }}]"></td>
+                                    name="quantity_received[{{ $draft_data->id }}]"></td>
                                 <td>
                                     <select name="remarks[{{ $draft_data->id }}]" class="form-control form-control-sm"
                                         required>

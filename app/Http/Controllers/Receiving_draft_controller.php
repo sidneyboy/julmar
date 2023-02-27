@@ -41,14 +41,16 @@ class Receiving_draft_controller extends Controller
         $sku = Sku_add::select('id')->where('barcode', $request->input('barcode'))->where('sku_type', $po_sku_type->sku_type)->first();
 
         if ($sku) {
-            $check_po_details = Purchase_order_details::where('purchase_order_id', $request->input('purchase_id'))->where('sku_id', $sku->id)->count();
-            if ($check_po_details == 1) {
+            $check_po_details = Purchase_order_details::select('freight','unit_cost')->where('purchase_order_id', $request->input('purchase_id'))->where('sku_id', $sku->id)->first();
+            if ($check_po_details) {
                 $check_draft = Receiving_draft::where('sku_id', $sku->id)->where('session_id', $request->input('session_id'))->count();
                 if ($check_draft == 0) {
                     $new_draft = new Receiving_draft([
                         'sku_id' => $sku->id,
                         'session_id' => $request->input('session_id'),
                         'user_id' => auth()->user()->id,
+                        'unit_cost' => $check_po_details->unit_cost,
+                        'freight' => $check_po_details->freight,
                     ]);
 
                     $new_draft->save();
@@ -57,7 +59,7 @@ class Receiving_draft_controller extends Controller
                         ->where('purchase_order_id', $request->input('purchase_id'))
                         ->update(['scanned_remarks' => 'scanned']);
 
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id','unit_cost','freight')->where('session_id', $request->input('session_id'))->get();
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive')->where('purchase_order_id', $request->input('purchase_id'))->get();
 
@@ -69,7 +71,7 @@ class Receiving_draft_controller extends Controller
                         'check_po_details' => $check_po_details,
                     ])->with('session_id', $request->input('session_id'));
                 } else {
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id')->where('session_id', $request->input('session_id'))->get();
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id','unit_cost','freight')->where('session_id', $request->input('session_id'))->get();
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive')->where('purchase_order_id', $request->input('purchase_id'))->get();
 

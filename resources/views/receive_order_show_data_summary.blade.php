@@ -1,51 +1,47 @@
 <form id="receive_order_data_final_summary">
-    <center>
-        <div class="row">
-            <div class="col-md-3">
-                <label for="">BO Allowance:</label>
-                <select class="form-control" name="bo_allowance_discount_selected" style="width:100%;" required>
-                    <option value="" default>Select</option>
-                    @foreach ($select_principal_discount as $data)
-                        <option value="{{ $data->total_bo_allowance_discount }}">
-                            BO Allowance - {{ $data->total_bo_allowance_discount }}%</option>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="">BO Allowance Selected:</label>
+            <select class="form-control" name="bo_allowance_discount_selected" style="width:100%;" required>
+                <option value="{{ $purchase_order->bo_allowance_discount_rate }}" selected>BO Allowance Selected
+                    {{ $purchase_order->bo_allowance_discount_rate }}</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="">Discount Type Selected:</label>
+            <select name="discount_type" class="form-control" required>
+                @if ($purchase_order->discount_type == 'type_a')
+                    <option value="{{ $purchase_order->discount_type }}" selected>Type A(Total & BO Discount)</option>
+                @else
+                    {{ $purchase_order->discount_type }}
+                    <option value="{{ $purchase_order->discount_type }}" selected>Type B(Cascade Discount)</option>
+                @endif
+            </select>
+        </div>
+        <div class="col-md-12">
+            <label for="">Discounts Selected:</label>
+            <select class="form-control select2" name="discount_selected[]" multiple="multiple" required
+                style="width:100%;">
+                <option value="" default>Select</option>
+                @foreach ($purchase_order->purchase_order_discount_details as $data)
+                    <option value="{{ $data->id }}" selected>{{ $data->discount_name }} - {{ $data->discount_rate }}%</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">Less Other Discounts:</label>
+                <select class="form-control select2" name="less_other_discount_selected[]" multiple="multiple"
+                    style="width:100%;">
+                    @foreach ($purchase_order->purchase_order_other_discount_details as $data)
+                        <option value="" selected>{{ $data->discount_name }} - {{ $data->discount_rate }}%
+                        </option>
                     @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="">Discounts:</label>
-                <select class="form-control select2" name="discount_selected[]" multiple="multiple" style="width:100%;" required>
-                    @foreach ($select_principal_discount as $data)
-                        @foreach ($data->principal_discount_details as $details)
-                            <option value="{{ $details->id }}">
-                                {{ $details->discount_name . ' - ' . $details->discount_rate }}%</option>
-                        @endforeach
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="">Less Other Discounts:</label>
-                    <select class="form-control select2" name="less_other_discount_selected[]" multiple="multiple"
-                        style="width:100%;">
-                        @foreach ($select_principal_discount as $data)
-                            @foreach ($data->principal_discount_details as $details)
-                                <option value="{{ $details->id }}">
-                                    {{ $details->discount_name . ' - ' . $details->discount_rate }}%</option>
-                            @endforeach
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <label for="">Discount Type</label>
-                <select name="discount_type" class="form-control" required>
-                    <option value="" default>Select</option>
-                    <option value="type_a">Type A(Total & BO Discount)</option>
-                    <option value="type_b">Type B(Cascade Discount)</option>
                 </select>
             </div>
         </div>
-    </center>
+
+    </div>
     <br />
 
     <div class="table-responsive">
@@ -80,7 +76,7 @@
             <table class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
-                        <th colspan="2">Purchase Ordered To Principal <span
+                        <th colspan="2">Confirmed Purchase Order From <span
                                 style="color:red">{{ $principal_name }}</span></th>
                     </tr>
                     <tr>
@@ -94,7 +90,7 @@
                             <td><span style="color:green;font-weight:bold;">{{ $data->sku->sku_code }}</span> -
                                 {{ $data->sku->description }}
                             </td>
-                            <td>{{ $data->quantity }}</td>
+                            <td>{{ $data->confirmed_quantity }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -111,8 +107,8 @@
                         <tr>
                             <th>Description</th>
                             <th>Qty</th>
-                            <th>Freight</th>
                             <th>Unit Cost(VAT EX)</th>
+                            <th>Freight</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -130,12 +126,13 @@
                                         onkeypress="return isNumberKey(event)" value="{{ $data->quantity }}"
                                         name="received_quantity[{{ $data->sku->id }}]" required min="0">
                                 <td><input style="text-align: right" type="text" class="form-control form-control-sm"
-                                        onkeypress="return isNumberKey(event)" value="0"
+                                        onkeypress="return isNumberKey(event)" name="unit_cost[{{ $data->sku->id }}]"
+                                        value="{{ $data->unit_cost }}"></td>
+                                <td><input style="text-align: right" type="text" class="form-control form-control-sm"
+                                        onkeypress="return isNumberKey(event)" value="{{ $data->freight }}"
                                         name="freight[{{ $data->sku->id }}]" required>
                                 </td>
-                                <td><input style="text-align: right" type="text" class="form-control form-control-sm"
-                                        onkeypress="return isNumberKey(event)" name="unit_cost[{{ $data->sku->id }}]"
-                                        value="{{ $data->sku->sku_price_details_one->unit_cost }}"></td>
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -149,7 +146,7 @@
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="branch" value="{{ $branch }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
-    <input type="hidden" name="purchase_order_id" value="{{ $purchase_order_id }}">
+    <input type="text" name="purchase_order_id" value="{{ $purchase_order_id }}">
     <input type="hidden" name="courier" value="{{ $courier }}">
     <input type="hidden" name="truck_number" value="{{ $truck_number }}">
     <input type="hidden" name="dr_si" value="{{ $dr_si }}">

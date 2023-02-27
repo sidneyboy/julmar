@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddUserIdToPrincipalLedger extends Migration
+class AddBoAllowanceDiscountRateToPurchaseOrder extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddUserIdToPrincipalLedger extends Migration
      */
     public function up()
     {
-        Schema::table('Principal_ledgers', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->nullable()->index();
-            $table->foreign('user_id')->references('id')->on('users');
+        Schema::table('Purchase_orders', function (Blueprint $table) {
+            $table->double('bo_allowance_discount_rate',3,2)->nullable();
         });
     }
 
@@ -26,8 +25,8 @@ class AddUserIdToPrincipalLedger extends Migration
      */
     public function down()
     {
-        Schema::table('Principal_ledgers', function (Blueprint $table) {
-            //
+        Schema::table('Purchase_orders', function (Blueprint $table) {
+            $table->dropColumn('bo_allowance_discount_rate');
         });
     }
 }

@@ -14,9 +14,10 @@ use App\Sku_add_details;
 use App\Receiving_draft;
 use App\Receiving_draft_main;
 use App\Sku_ledger;
-use App\Sku_price_details;
 use App\Received_discount_details;
 use App\Received_other_discount_details;
+use App\Purchase_order_discount_details;
+
 use DB;
 use App\User;
 use Illuminate\Http\Request;
@@ -57,18 +58,21 @@ class Receive_controller extends Controller
         $principal_name = $variable_explode[2];
         $purchase_id = $variable_explode[3];
         $principal_id = $variable_explode[4];
-        $purchase_order_details = Purchase_order_details::where('purchase_order_id', $purchase_order_id)
-            ->whereColumn('receive', '!=', 'quantity')
+
+
+        $purchase_order = Purchase_order::select('id','discount_type','bo_allowance_discount_rate')->find($purchase_order_id);
+
+        $purchase_order_details = Purchase_order_details::select('id','sku_id','confirmed_quantity')->where('purchase_order_id', $purchase_order_id)
             ->orderBy('sku_id')
             ->get();
 
-        $select_principal_discount = Principal_discount::select('id', 'total_bo_allowance_discount', 'total_discount')->where('principal_id', $principal_id)->get();
+       
 
-        $draft = Receiving_draft::where('session_id', $session_id)->orderBy('sku_id')->get();
+        $draft = Receiving_draft::select('sku_id','unit_cost','freight','user_id','quantity')->where('session_id', $session_id)->orderBy('sku_id')->get();
 
         return view('receive_order_show_data_summary', [
+            'purchase_order' => $purchase_order,
             'purchase_order_details' => $purchase_order_details,
-            'select_principal_discount' => $select_principal_discount,
             'draft' => $draft
         ])->with('dr_si', $request->input('dr_si'))
             ->with('truck_number', $request->input('truck_number'))
@@ -87,7 +91,7 @@ class Receive_controller extends Controller
 
         //return $request->input();
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
-        $discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
+        $discount_selected = Purchase_order_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
         $check_less_other_discounts = $request->input('less_other_discount_selected');
         if (isset($check_less_other_discounts)) {
             $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();

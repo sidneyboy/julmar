@@ -12,6 +12,8 @@ class Receiving_draft extends Model
         'remarks',
         'session_id',
         'user_id',
+        'freight',
+        'unit_cost',
     ];
 
     public function sku()

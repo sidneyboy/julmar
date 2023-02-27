@@ -106,6 +106,7 @@ class Purchase_order_confirmation_controller extends Controller
                 'total_final_cost' => $request->input('total_final_cost'),
                 'total_less_other_discount' => $request->input('total_less_other_discount'),
                 'net_payable' => $request->input('net_payable'),
+                'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
             ]);
 
         $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
@@ -215,6 +216,7 @@ class Purchase_order_confirmation_controller extends Controller
                 ->update([
                     'confirmed_quantity' => $request->input('confirmed_quantity')[$data],
                     'freight' => $request->input('freight_per_sku')[$data],
+                    'unit_cost' => $request->input('unit_cost')[$data],
                     'final_unit_cost' => $request->input('final_unit_cost')[$data],
                 ]);
         }
