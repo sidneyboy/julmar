@@ -1,14 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use Exception;
-use App\Sku_add;
-use App\Sku_principal;
 use Session;
-use Response;
 use App\Purchase_order;
 use App\Purchase_order_details;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 
 class Purchase_order_report_controller extends Controller
@@ -35,7 +32,7 @@ class Purchase_order_report_controller extends Controller
         $date_to = date('Y-m-d', strtotime($var[1]));
 
 
-        $purchase_order_data = Purchase_order::whereBetween('date', [$date_from, $date_to])->get();
+        $purchase_order_data = Purchase_order::whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
         $counter = count($purchase_order_data);
         return view('purchase_order_report_show_list', [
             'purchase_order_data' => $purchase_order_data,
@@ -63,6 +60,7 @@ class Purchase_order_report_controller extends Controller
         foreach ($purchase_order_details_data as $key => $value) {
             $quantity_array[] = $value->quantity;
         }
+
         return view('purchase_order_report_show_details', [
             'purchase_order_details_data' => $purchase_order_details_data
         ])->with('date', $date)

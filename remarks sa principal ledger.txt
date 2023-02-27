@@ -8,3 +8,10 @@ bodega in
 bodega out
 transfer to branch
 
+
+remarks sa purchase order
+null
+confirmed
+drafted
+completed
+

@@ -2,7 +2,7 @@
     <table class="table table-bordered table-hover table-sm" id="example1">
         <thead>
             <tr>
-                <th>Transacted</th>
+                <th>Transacted By</th>
                 <th>Date</th>
                 <th>Principal</th>
                 <th>#</th>
@@ -18,6 +18,7 @@
         <tbody>
             @foreach ($principal_ledger as $data)
                 <tr>
+                    <td>{{ $data->user->name }}</td>
                     <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
                     <td>{{ $data->principal->principal }}</td>
                     <td style="text-align: center;">

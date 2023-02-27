@@ -371,10 +371,12 @@ class Receive_controller extends Controller
             if ($check_purchase_order_details > 0) {
                 $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
                 $update_purchase_order->remarks = 'staggered';
+                $update_purchase_order->status = 'completed';
                 $update_purchase_order->save();
             } else {
                 $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
                 $update_purchase_order->remarks = 'received';
+                $update_purchase_order->status = 'completed';
                 $update_purchase_order->save();
             }
         }
