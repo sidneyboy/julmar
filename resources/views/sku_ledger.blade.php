@@ -38,19 +38,23 @@
                             </div>
                         </div>
                         <div class="col-md-4">
+                            <label for="">Principal</label>
+                            <select name="principal_id" class="form-control" required>
+                                <option value="" default>Select</option>
+                                @foreach ($sku_principal as $data)
+                                    <option value="{{ $data->id }}">{{ $data->principal }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label>Select SKU Type:</label>
+                                <label>SKU Type:</label>
                                 <select class="form-control select2bs4" name="sku_type" required style="width:100%;">
                                     <option value="" default>Select</option>
                                     <option value="Case">Case</option>
                                     <option value="Butal">Butal</option>
+                                    <option value="All">All</option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Search For:</label>
-                                <input type="text" name="search_for" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-12">

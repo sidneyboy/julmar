@@ -138,6 +138,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega out',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
+                'sku_type' => $request->input('sku_type'),
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
@@ -150,6 +151,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega out',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
+                'sku_type' => $request->input('sku_type'),
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
@@ -170,6 +172,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega in',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
+                'sku_type' => $request->input('sku_type'),
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();
@@ -182,6 +185,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega in',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
+                'sku_type' => $request->input('sku_type'),
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();

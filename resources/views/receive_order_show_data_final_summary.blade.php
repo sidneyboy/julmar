@@ -870,6 +870,7 @@
     <input type="hidden" value="{{ $freight }}" name="freight">
     <input type="hidden" value="{{ $total_final_cost }}" name="total_final_cost">
     <input type="hidden" value="{{ $draft_session_id }}" name="draft_session_id">
+    <input type="hidden" value="{{ $sku_type }}" name="sku_type">
     <button class="btn btn-sm float-right btn-success" type="submit">Submit Transaction</button>
 </form>
 

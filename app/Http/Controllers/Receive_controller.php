@@ -333,6 +333,7 @@ class Receive_controller extends Controller
                     'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
                     'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $request->input('sku_type'),
                 ]);
 
                 $new_sku_ledger->save();
@@ -345,6 +346,7 @@ class Receive_controller extends Controller
                     'transaction_type' => 'received',
                     'all_id' => $new_received_purchase_orders->id,
                     'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $request->input('sku_type'),
                 ]);
 
                 $new_sku_ledger->save();

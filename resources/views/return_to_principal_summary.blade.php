@@ -824,6 +824,7 @@
     <input type="hidden" value="{{ $vat }}" name="vat">
     <input type="hidden" value="{{ $freight }}" name="freight">
     <input type="hidden" value="{{ $total_final_cost }}" name="total_final_cost">
+    <input type="hidden" value="{{ $sku_type }}" name="sku_type">
 
 
     {{-- <input type="hidden" value="{{ $grand_total_final_cost }}" name="total_amount_return">

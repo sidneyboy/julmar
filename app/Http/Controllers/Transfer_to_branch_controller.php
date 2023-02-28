@@ -55,7 +55,8 @@ class Transfer_to_branch_controller extends Controller
             ->with('transfer_to_branch', $request->input('transfer_to_branch'))
             ->with('principal_id', $principal_id)
             ->with('dr_si', $dr_si)
-            ->with('branch', $branch);
+            ->with('branch', $branch)
+            ->with('sku_type',$request->input('sku_type'));
     }
 
     public function transfer_to_branch_saved(Request $request)
@@ -97,6 +98,7 @@ class Transfer_to_branch_controller extends Controller
                 'transaction_type' => 'transfer to branch',
                 'all_id' => $transfer_to_branch_save->id,
                 'principal_id' => $request->input('principal_id'),
+                'sku_type' => $request->input('sku_type'),
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();

@@ -191,6 +191,7 @@ class Return_to_principal_controller extends Controller
                     'transaction_type' => 'returned',
                     'all_id' => $return_to_principal_save->id,
                     'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $request->input('sku_type'),
                 ]);
 
                 $new_sku_ledger->save();
@@ -203,6 +204,7 @@ class Return_to_principal_controller extends Controller
                     'transaction_type' => 'returned',
                     'all_id' => $return_to_principal_save->id,
                     'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $request->input('sku_type'),
                 ]);
 
                 $new_sku_ledger->save();

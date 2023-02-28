@@ -87,6 +87,7 @@
     <input type="hidden" name="transfer_from_branch" value="{{ $received_purchase_order->branch }}">
     <input type="hidden" name="principal_name" value="{{ $received_purchase_order->principal->principal }}
 	">
+    <input type="text" name="sku_type" value="{{ $sku_type }}">
     <button class="btn btn-success btn-sm float-right" type="submit">Submit</button>
 </form>
 

@@ -18,7 +18,7 @@ class Sku_ledger_controller extends Controller
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $sku_category = Sku_category::select('id', 'category')->get();
-            $sku_principal = Sku_principal::select('id', 'principal')->get();
+            $sku_principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('sku_ledger', [
                 'user' => $user,
                 'sku_category' => $sku_category,
@@ -39,16 +39,30 @@ class Sku_ledger_controller extends Controller
         $date_to = date('Y-m-d', strtotime($var[1]));
         //return $request->input();
 
-        $check_principal = Sku_add::select('id')->where('sku_type', $request->input('sku_type'))->where('sku_code', $request->input('search_for'))->first();
-        if ($check_principal) {
-            $sku_ledger = Sku_ledger::where('sku_id', $check_principal->id)->get();
 
-            return view('sku_ledger_show_data',[
-                'sku_ledger' => $sku_ledger,
-            ]);
-        } else {
-            return 'no_data';
-        }
+        
+
+        return $messages = Sku_ledger::select(DB::raw('t.*'))
+            ->from(DB::raw('(SELECT * FROM sku_ledgers ORDER BY created_at DESC) t'))
+            ->where('principal_id',$request->input('principal_id'))
+            ->where('sku_type', $request->input('sku_type'))
+            ->groupBy('t.sku_id')
+            ->get();
+       
+        // return $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE principal_id = '$principal_id' ORDER BY id DESC LIMIT 1)AS sku_id GROUP BY sku_id"));
+
+        //select * from (select * from flights ORDER BY effective_from DESC) AS x GROUP BY
+
+        // $check_principal = Sku_add::select('id')->where('sku_type', $request->input('sku_type'))->where('sku_code', $request->input('search_for'))->first();
+        // if ($check_principal) {
+        //     $sku_ledger = Sku_ledger::where('sku_id', $check_principal->id)->get();
+
+        //     return view('sku_ledger_show_data',[
+        //         'sku_ledger' => $sku_ledger,
+        //     ]);
+        // } else {
+        //     return 'no_data';
+        // }
     }
 
     public function sku_ledger_show_sku_details($id)
