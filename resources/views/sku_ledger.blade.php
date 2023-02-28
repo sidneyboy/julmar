@@ -53,7 +53,7 @@
                                     <option value="" default>Select</option>
                                     <option value="Case">Case</option>
                                     <option value="Butal">Butal</option>
-                                    <option value="All">All</option>
+                                    <option value="all">All</option>
                                 </select>
                             </div>
                         </div>

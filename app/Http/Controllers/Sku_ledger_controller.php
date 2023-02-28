@@ -37,32 +37,30 @@ class Sku_ledger_controller extends Controller
         $var = explode('-', $request->input('date_as_of'));
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
-        //return $request->input();
 
+        $principal_id = $request->input('principal_id');
+        $sku_type = $request->input('sku_type');
+        if ($sku_type == 'all') {
+            $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
+            WHERE principal_id = '$principal_id' GROUP BY sku_id)");
+        }else{
+            $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
+            WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)");
+        }
 
-        
+     
+        for ($i=0; $i < count($sku_ledger); $i++) { 
+            $description[] = Sku_add::select('sku_code','description','sku_type')->find($sku_ledger[$i]->sku_id); 
+            $name[] = User::select('name')->find($sku_ledger[$i]->user_id);
+        }
 
-        return $messages = Sku_ledger::select(DB::raw('t.*'))
-            ->from(DB::raw('(SELECT * FROM sku_ledgers ORDER BY created_at DESC) t'))
-            ->where('principal_id',$request->input('principal_id'))
-            ->where('sku_type', $request->input('sku_type'))
-            ->groupBy('t.sku_id')
-            ->get();
-       
-        // return $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE principal_id = '$principal_id' ORDER BY id DESC LIMIT 1)AS sku_id GROUP BY sku_id"));
+        //return $description;
 
-        //select * from (select * from flights ORDER BY effective_from DESC) AS x GROUP BY
-
-        // $check_principal = Sku_add::select('id')->where('sku_type', $request->input('sku_type'))->where('sku_code', $request->input('search_for'))->first();
-        // if ($check_principal) {
-        //     $sku_ledger = Sku_ledger::where('sku_id', $check_principal->id)->get();
-
-        //     return view('sku_ledger_show_data',[
-        //         'sku_ledger' => $sku_ledger,
-        //     ]);
-        // } else {
-        //     return 'no_data';
-        // }
+        return view('sku_ledger_show_data', [
+            'sku_ledger' => $sku_ledger,
+            'description' => $description,
+            'name' => $name,
+        ]);
     }
 
     public function sku_ledger_show_sku_details($id)
