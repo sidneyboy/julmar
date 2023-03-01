@@ -21,6 +21,17 @@
             <span style="font-weight: bold;font-size:18px;text-transform: uppercase;">{{ $bodega_out->remarks }} #:
                 {{ $bodega_out->id }} ({{ $bodega_out->principal->principal }}) </span><br />
             <span style="font-size:15px;">
+                <br />
+                @php
+                    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+                @endphp
+
+
+                <center>
+                    {!! $generator->getBarcode($bodega_out->id, $generator::TYPE_CODE_128) !!}
+                    <p>{{ $bodega_out->id }}</p>
+                </center>
+
     </div>
 </div>
 <br />

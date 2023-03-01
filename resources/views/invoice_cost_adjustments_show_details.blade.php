@@ -18,6 +18,16 @@
             <span style="font-weight: bold;font-size:18px;">INVOICE COST ADJUSTMENT DETAILED REPORT REPORT: </span><br />
         </center>
         <br />
+        @php
+            $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+        @endphp
+
+
+        <center>
+            {!! $generator->getBarcode($invoice_cost_adjustment->id, $generator::TYPE_CODE_128) !!}
+            <p>{{ $invoice_cost_adjustment->id }}</p>
+        </center>
+
     </div>
 </div>
 @if ($invoice_cost_adjustment->received_purchase_order->discount_type == 'type_a')

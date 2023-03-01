@@ -25,7 +25,18 @@
                     <span style="font-weight: bold;font-size:18px;">BO ALLOWANCE ADJUSTMENTS #:
                         ({{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }})
                     </span><br />
-                    <span style="font-size:15px;">
+                </center>
+                <br />
+                @php
+                    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+                @endphp
+
+
+                <center>
+                    {!! $generator->getBarcode($bo_adjustments_details[0]->bo_allowance_adjustment->id, $generator::TYPE_CODE_128) !!}
+                    <p>{{ $bo_adjustments_details[0]->bo_allowance_adjustment->id }}</p>
+                </center>
+
             </div>
         </div>
         <!-- /.row -->
@@ -37,7 +48,8 @@
                 <table class="table table-bordered table-hover table-sm">
                     <thead>
                         <tr>
-                            <th colspan="8">Particulars: {{ $bo_adjustments_details[0]->bo_allowance_adjustment->particulars }}</th>
+                            <th colspan="8">Particulars:
+                                {{ $bo_adjustments_details[0]->bo_allowance_adjustment->particulars }}</th>
                         </tr>
                         <tr>
                             <th>Code</th>
@@ -53,8 +65,10 @@
                     <tbody>
                         @foreach ($bo_adjustments_details as $data)
                             <tr>
-                                <td style="text-transform: uppercase;text-align: center;">{{ $data->sku->sku_code }}</td>
-                                <td style="text-transform: uppercase;text-align: center;">{{ $data->sku->description }}</td>
+                                <td style="text-transform: uppercase;text-align: center;">{{ $data->sku->sku_code }}
+                                </td>
+                                <td style="text-transform: uppercase;text-align: center;">{{ $data->sku->description }}
+                                </td>
                                 <td style="text-transform: uppercase;text-align: center;">
                                     {{ $data->sku->unit_of_measurement }}</td>
                                 <td style="text-align: center;">{{ $data->quantity }}</td>
@@ -92,51 +106,55 @@
                     </tbody>
                 </table>
                 <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
-                      <tr>
-                          <td style="font-weight: bold; text-align: left;width:50%;">SUMMARY OF DEDUCTION:</td>
-                          <td></td>
-                      </tr>
-                      <tr>
-                          <td style="font-weight: bold;">BO ALLOWANCE</td>
-                          <td style="font-weight: bold; text-align: right;font-size: 15px;">
+                    <tr>
+                        <td style="font-weight: bold; text-align: left;width:50%;">SUMMARY OF DEDUCTION:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">BO ALLOWANCE</td>
+                        <td style="font-weight: bold; text-align: right;font-size: 15px;">
 
-                              {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->bo_allowance_deduction, 2, '.', ',') }}
+                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->bo_allowance_deduction, 2, '.', ',') }}
 
-                          </td>
-                      </tr>
-                      <tr>
-                          <td style="font-weight: bold;">NET DEDUCTION</td>
-                          <td
-                              style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
-                              {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
-                          </td>
-                      </tr>
-                  </table>
-                  <table class="table table-bordered table-hovered table-sm">
-                      <thead>
-                          <tr>
-                              <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
-                              <th style="text-align: center;">DR</th>
-                              <th style="text-align: center;">CR</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr>
-                              <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
-                              <td></td>
-                              <td style="font-weight: bold;text-align: center;">
-                                  {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}</td>
-                              <td></td>
-                          </tr>
-                          <tr>
-                              <td></td>
-                              <td style="text-align: center;">INVENTORY - {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
-                              <td></td>
-                              <td style="font-weight: bold;text-align: center;">
-                                  {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}</td>
-                          </tr>
-                      </tbody>
-                  </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">NET DEDUCTION</td>
+                        <td
+                            style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
+                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                        </td>
+                    </tr>
+                </table>
+                <table class="table table-bordered table-hovered table-sm">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                            <th style="text-align: center;">DR</th>
+                            <th style="text-align: center;">CR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">ACCOUNTS PAYABLE -
+                                {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">INVENTORY -
+                                {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- /.col -->

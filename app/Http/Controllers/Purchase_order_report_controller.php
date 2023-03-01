@@ -53,16 +53,17 @@ class Purchase_order_report_controller extends Controller
         $purchase_id = $explode_data[5];
         $user_name = $explode_data[6];
         $sales_order_number = $explode_data[7];
-
+        
 
         $prepared_by = User::select('name')->where('id', auth()->user()->id)->first();
-        $purchase_order_details_data = Purchase_order_details::where('purchase_order_id', $purchase_order_id)->get();
-        foreach ($purchase_order_details_data as $key => $value) {
-            $quantity_array[] = $value->quantity;
-        }
+        $purchase_order = Purchase_order::find($purchase_order_id);
+        //$purchase_order_details_data = Purchase_order_details::where('purchase_order_id', $purchase_order_id)->get();
+        // foreach ($purchase_order_details_data as $key => $value) {
+        //     $quantity_array[] = $value->quantity;
+        // }
 
         return view('purchase_order_report_show_details', [
-            'purchase_order_details_data' => $purchase_order_details_data
+            'purchase_order' => $purchase_order
         ])->with('date', $date)
             ->with('principal_name', $principal_name)
             ->with('principal_contact_number', $principal_contact_number)
@@ -70,7 +71,6 @@ class Purchase_order_report_controller extends Controller
             ->with('payment_term', $purchase_order_payment_term)
             ->with('purchase_order_id', $purchase_order_id)
             ->with('purchase_id', $purchase_id)
-            ->with('quantity_array', array_sum($quantity_array))
             ->with('user_name', $user_name)
             ->with('prepared_by', $prepared_by->name)
             ->with('sales_order_number', $sales_order_number);

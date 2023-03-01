@@ -1,24 +1,35 @@
 <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/adminlte.min.css') }}">
 <div class="row">
-  <div class="col-12">
-      <center>
-          <h2 class="page-header">
-              JULMAR COMMERCIAL. INC,
-          </h2>
-      </center>
-  </div>
+    <div class="col-12">
+        <center>
+            <h2 class="page-header">
+                JULMAR COMMERCIAL. INC,
+            </h2>
+        </center>
+    </div>
 
-  <div class="col-sm-12 invoice-col">
-      <center>
-          <h5>St Ignatius St., Brgy. Kauswagan <br /> Cagayan de Oro City, Misamis Oriental</h5>
-          <h6 style="font-family: verdana;">TELEPHONE NO: 881-9973 / 09177058232</h6>
-      </center>
-      <br />
-      <center>
-          <span style="font-weight: bold;font-size:18px;">RETURN TO PRINCIPAL DETAILED REPORT: </span><br />
-      </center>
-      <br />
-  </div>
+    <div class="col-sm-12 invoice-col">
+        <center>
+            <h5>St Ignatius St., Brgy. Kauswagan <br /> Cagayan de Oro City, Misamis Oriental</h5>
+            <h6 style="font-family: verdana;">TELEPHONE NO: 881-9973 / 09177058232</h6>
+        </center>
+        <br />
+        <center>
+            <span style="font-weight: bold;font-size:18px;">RETURN TO PRINCIPAL DETAILED REPORT: </span><br />
+        </center>
+        <br />
+
+        @php
+            $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+        @endphp
+
+
+        <center>
+            {!! $generator->getBarcode($return_to_principal->id, $generator::TYPE_CODE_128) !!}
+            <p>{{ $return_to_principal->id }}</p>
+        </center>
+
+    </div>
 </div>
 @if ($return_to_principal->received_purchase_order->discount_type == 'type_a')
     <div class="table table-responsive">
@@ -221,18 +232,18 @@
                     <td style="text-align:left">
                         {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
                     </td>
-                @php
-                    $discount_value_holder_dummy = $discount_value_holder;
-                    $less_percentage_by = $data_discount->discount_rate / 100;
-                    
-                    // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
-                    $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                    $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                    
-                    $less_discount_value_holder_history[] = $less_discount_rate_answer;
-                    $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                @endphp
-                <td style="text-align:right;">
+                    @php
+                        $discount_value_holder_dummy = $discount_value_holder;
+                        $less_percentage_by = $data_discount->discount_rate / 100;
+                        
+                        // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
+                        $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        
+                        $less_discount_value_holder_history[] = $less_discount_rate_answer;
+                        $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                    @endphp
+                    <td style="text-align:right;">
                         {{ number_format($less_discount_rate_answer, 2, '.', ',') }}
                     </td>
                 </tr>
@@ -255,7 +266,7 @@
                         $net_payable = $total_final_cost - array_sum($less_discount_value_holder_history);
                     @endphp
                     {{ number_format($net_payable, 2, '.', ',') }}
-                    
+
                 </td>
             </tr>
         </table>
@@ -308,7 +319,7 @@
                         $less_discount = array_sum($sum_discount);
                     @endphp
                     {{ number_format($less_discount, 2, '.', ',') }}
-                    
+
                 </td>
             </tr>
             <tr>
@@ -585,7 +596,7 @@
                 }
             @endphp
             <tr>
-                
+
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
@@ -677,7 +688,7 @@
                         $net_payable = $total_final_cost - array_sum($less_discount_value_holder_history);
                     @endphp
                     {{ number_format($net_payable, 2, '.', ',') }}
-                    
+
                 </td>
             </tr>
         </table>
@@ -746,7 +757,7 @@
                 }
             @endphp
             <tr>
-                
+
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php

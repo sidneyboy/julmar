@@ -76,6 +76,17 @@
 </div>
 
 <br />
+@php
+    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+@endphp
+
+
+<center>
+    {!! $generator->getBarcode($received_purchase_order->id, $generator::TYPE_CODE_128) !!}
+    <p>{{ $received_purchase_order->id }}</p>
+</center>
+
+
 @if ($received_purchase_order->discount_type == 'type_a')
     <div class="table table-responsive">
         <table class="table table-bordered table-sm table-hover">

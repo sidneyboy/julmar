@@ -144,7 +144,15 @@ function isNumberKey(evt) {
 
 
 
+@php
+    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+@endphp
 
+
+<center>
+    {!! $generator->getBarcode($purchase_order->purchase_id, $generator::TYPE_CODE_128) !!}
+    <p>{{ $purchase_order->purchase_id }}</p>
+</center>
 
 
 

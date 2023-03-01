@@ -38,7 +38,18 @@
                   <center>
                       <span style="font-weight: bold;font-size:18px;text-transform: uppercase;">TRANSFER TO BRANCH #:
                           {{ $id }} ({{ $principal_name }}) </span><br />
-                      <span style="font-size:15px;">
+
+                      <br />
+                      @php
+                          $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+                      @endphp
+
+
+                      <center>
+                          {!! $generator->getBarcode($id, $generator::TYPE_CODE_128) !!}
+                          <p>{{ $id }}</p>
+                      </center>
+
               </div>
           </div>
           <!-- /.row -->
