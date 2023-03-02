@@ -146,12 +146,12 @@
     <input type="hidden" name="principal_name" value="{{ $principal_name }}">
     <input type="hidden" name="branch" value="{{ $branch }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
-    <input type="text" name="purchase_order_id" value="{{ $purchase_order_id }}">
+    <input type="hidden" name="purchase_order_id" value="{{ $purchase_order_id }}">
     <input type="hidden" name="courier" value="{{ $courier }}">
     <input type="hidden" name="truck_number" value="{{ $truck_number }}">
     <input type="hidden" name="dr_si" value="{{ $dr_si }}">
     <input type="hidden" name="purchase_id" value="{{ $purchase_id }}">
-    <input type="hidden" name="sku_type[{{ $data->sku->id }}]" value="{{ $data->sku->sku_type }}">
+    <input type="hidden" name="sku_type" value="{{ $data->sku->sku_type }}">
     <input type="hidden" name="invoice_date" value="{{ $invoice_date }}">
     <input type="hidden" name="scanned_by" value="{{ $draft[0]->user_id }}">
     <input type="hidden" name="draft_session_id" value="{{ $draft[0]->session_id }}">

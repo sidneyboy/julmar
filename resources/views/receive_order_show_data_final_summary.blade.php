@@ -660,9 +660,9 @@
                 @endphp
                 @foreach ($less_other_discount_selected as $data_discount)
                     {{-- <tr>
-                            <td style="text-align:left">
-                                {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
-                            </td> --}}
+                               <td style="text-align:left">
+                                   {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
+                               </td> --}}
                     @php
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
@@ -675,13 +675,13 @@
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
                     {{-- <td style="text-align:right;">
-                                {{ number_format($less_discount_rate_answer, 2, '.', ',') }} --}}
+                                   {{ number_format($less_discount_rate_answer, 2, '.', ',') }} --}}
                     <input type="hidden" name="less_other_discount_selected_name[]"
                         value="{{ $data_discount->discount_name }}">
                     <input type="hidden" name="less_other_discount_selected_rate[]"
                         value="{{ $data_discount->discount_rate }}">
                     {{-- </td>
-                        </tr> --}}
+                           </tr> --}}
                 @endforeach
                 <tr>
                     <td style="text-align: left;width:50%;">TOTAL OTHER DISCOUNT:</td>
@@ -823,7 +823,7 @@
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
-
+       
                         <th style="text-align: center;">DR</th>
                         <th style="text-align: center;">CR</th>
                     </tr>
@@ -854,7 +854,6 @@
 
     <input type="hidden" value="{{ $discount_type }}" name="discount_type">
     <input type="hidden" value="{{ $branch }}" name="branch">
-    {{-- <input type="hidden" value="{{ $selected_discount_allocation->id }}" name="discount_id"> --}}
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $dr_si }}" name="dr_si">
     <input type="hidden" value="{{ $truck_number }}" name="truck_number">
@@ -862,7 +861,7 @@
     <input type="hidden" value="{{ $invoice_date }}" name="invoice_date">
     <input type="hidden" value="{{ $scanned_by }}" name="scanned_by">
     <input type="hidden" value="{{ $bo_allowance_discount_selected }}" name="bo_allowance_discount_rate">
-    <input type="text" value="{{ $purchase_order_id }}" name="purchase_order_id">
+    <input type="hidden" value="{{ $purchase_order_id }}" name="purchase_order_id">
     <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
     <input type="hidden" value="{{ $bo_discount }}" name="bo_discount">
     <input type="hidden" value="{{ $vatable_purchase }}" name="vatable_purchase">

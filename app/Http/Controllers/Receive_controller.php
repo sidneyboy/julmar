@@ -68,8 +68,9 @@ class Receive_controller extends Controller
 
        
 
-        $draft = Receiving_draft::select('sku_id','unit_cost','freight','user_id','quantity')->where('session_id', $session_id)->orderBy('sku_id')->get();
+        $draft = Receiving_draft::select('sku_id','unit_cost','freight','user_id','quantity','session_id')->where('session_id', $session_id)->orderBy('sku_id')->get();
 
+       
         return view('receive_order_show_data_summary', [
             'purchase_order' => $purchase_order,
             'purchase_order_details' => $purchase_order_details,
@@ -89,7 +90,7 @@ class Receive_controller extends Controller
     public function receive_order_data_final_summary(Request $request)
     {
 
-        //return $request->input();
+        //return $request->input('draft_session_id');
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
         $discount_selected = Purchase_order_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
         $check_less_other_discounts = $request->input('less_other_discount_selected');

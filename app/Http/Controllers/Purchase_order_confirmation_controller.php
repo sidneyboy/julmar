@@ -9,7 +9,6 @@ use App\Principal_discount;
 use App\Principal_discount_details;
 use App\Purchase_order_other_discount_details;
 use App\Purchase_order_discount_details;
-use App\Principal_ledger;
 use Illuminate\Http\Request;
 
 class Purchase_order_confirmation_controller extends Controller
@@ -120,84 +119,6 @@ class Purchase_order_confirmation_controller extends Controller
                 ]);
 
                 $new_received_purchase_order_other_discount->save();
-            }
-
-
-            if ($request->input('payment_term') == "cash with order") {
-                $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-                if ($principal_ledger_latest) {
-                    $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                    $principal_ledger_saved = new Principal_ledger([
-                        'principal_id' => $request->input('principal_id'),
-                        'user_id' => auth()->user()->id,
-                        'date' => $date,
-                        'all_id' => $request->input('purchase_order_id'),
-                        'transaction' => 'cash with order',
-                        'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                        'received' => 0,
-                        'returned' => 0,
-                        'adjustment' => 0,
-                        'payment' =>  $request->input('net_payable'),
-                        'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('net_payable'),
-                    ]);
-
-                    $principal_ledger_saved->save();
-                } else {
-                    $principal_ledger_saved = new Principal_ledger([
-                        'principal_id' => $request->input('principal_id'),
-                        'user_id' => auth()->user()->id,
-                        'date' => $date,
-                        'all_id' => $request->input('purchase_order_id'),
-                        'transaction' => 'cash with order',
-                        'accounts_payable_beginning' => 0,
-                        'received' => 0,
-                        'returned' => 0,
-                        'adjustment' => 0,
-                        'payment' => $request->input('net_payable'),
-                        'accounts_payable_end' => $request->input('net_payable') * -1,
-                    ]);
-
-                    $principal_ledger_saved->save();
-                }
-            }
-        } else {
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-
-            if ($request->input('payment_term') == 'cash with order') {
-                if ($principal_ledger_latest) {
-                    $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                    $principal_ledger_saved = new Principal_ledger([
-                        'principal_id' => $request->input('principal_id'),
-                        'user_id' => auth()->user()->id,
-                        'date' => $date,
-                        'all_id' => $request->input('purchase_order_id'),
-                        'transaction' => 'cash with order',
-                        'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                        'received' => 0,
-                        'returned' => 0,
-                        'adjustment' => 0,
-                        'payment' => $request->input('total_final_cost'),
-                        'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('total_final_cost'),
-                    ]);
-
-                    $principal_ledger_saved->save();
-                } else {
-                    $principal_ledger_saved = new Principal_ledger([
-                        'principal_id' => $request->input('principal_id'),
-                        'user_id' => auth()->user()->id,
-                        'date' => $date,
-                        'all_id' => $request->input('purchase_order_id'),
-                        'transaction' => 'cash with order',
-                        'accounts_payable_beginning' => 0,
-                        'received' => 0,
-                        'returned' => 0,
-                        'adjustment' => 0,
-                        'payment' => $request->input('total_final_cost'),
-                        'accounts_payable_end' => $request->input('total_final_cost') * -1,
-                    ]);
-
-                    $principal_ledger_saved->save();
-                }
             }
         }
 

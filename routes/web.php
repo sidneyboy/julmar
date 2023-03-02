@@ -676,3 +676,10 @@ Route::get('/invoice_out', 'Invoice_out_controller@index')->name('invoice_out');
 Route::post('/invoice_out_proceed', 'Invoice_out_controller@invoice_out_proceed')->name('invoice_out_proceed');
 Route::post('/invoice_out_final_summary', 'Invoice_out_controller@invoice_out_final_summary')->name('invoice_out_final_summary');
 Route::post('/invoice_out_saved', 'Invoice_out_controller@invoice_out_saved')->name('invoice_out_saved');
+
+
+Route::get('/disbursement', 'Disbursement_controller@index')->name('disbursement');
+Route::post('/disbursement_proceed', 'Disbursement_controller@disbursement_proceed')->name('disbursement_proceed');
+Route::post('/disbursement_final_summary', 'Disbursement_controller@disbursement_final_summary')->name('disbursement_final_summary');
+Route::post('/disbursement_saved', 'Disbursement_controller@disbursement_saved')->name('disbursement_saved');
+

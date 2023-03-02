@@ -134,8 +134,13 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
-                            <!-- Add icons to the links using the .nav-icon class
-                                                                                       with font-awesome or any other icon font library -->
+                            <li class="nav-item">
+                                <a href="{{ url('/disbursement') }}"
+                                    class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
+                                    <i class="fas fa-plus-circle nav-icon"></i>
+                                    <p>Disbursement</p>
+                                </a>
+                            </li>
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
@@ -538,6 +543,8 @@
                                     </li>
                                 </ul>
                             </li>
+
+
 
                             {{-- <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
