@@ -36,7 +36,10 @@ class Sku_barcode_controller extends Controller
 
     public function sku_barcode_save(Request $request)
     {
-        $sku = Sku_add::select('id')->where('sku_code',$request->input('sku_code'))->get();
+        $sku = Sku_add::select('id','sku_type')
+                    ->where('sku_code',$request->input('sku_code'))
+                    ->where('sku_type',$request->input('sku_type'))
+                    ->get();
 
         foreach ($sku as $key => $data) {
             Sku_add::where('id', $data->id)

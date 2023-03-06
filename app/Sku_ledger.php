@@ -15,6 +15,8 @@ class Sku_ledger extends Model
       'all_id',
       'principal_id',
       'sku_type',
+      'remarks',
+      'adjustments',
     ];
 
     public function sku()

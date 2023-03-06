@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->

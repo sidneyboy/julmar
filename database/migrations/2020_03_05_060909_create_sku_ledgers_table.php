@@ -17,8 +17,8 @@ class CreateSkuLedgersTable extends Migration
             $table->bigIncrements('id');
             $table->integer('sku_id')->unsigned()->index();
             $table->foreign('sku_id')->references('id')->on('sku_adds');
-            $table->integer('quantity');
-            $table->integer('running_balance');
+            $table->integer('quantity')->nullable();
+            $table->integer('running_balance')->nullable();
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

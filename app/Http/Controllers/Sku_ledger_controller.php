@@ -42,19 +42,16 @@ class Sku_ledger_controller extends Controller
         $sku_type = $request->input('sku_type');
         if ($sku_type == 'all') {
             $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
-            WHERE principal_id = '$principal_id' GROUP BY sku_id)");
+            WHERE principal_id = '$principal_id' AND created_at between '$date_from' and '$date_to' GROUP BY sku_id)");
         }else{
             $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
-            WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)");
+            WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' AND created_at between '$date_from' and '$date_to' GROUP BY sku_id)");
         }
 
-     
         for ($i=0; $i < count($sku_ledger); $i++) { 
             $description[] = Sku_add::select('sku_code','description','sku_type')->find($sku_ledger[$i]->sku_id); 
             $name[] = User::select('name')->find($sku_ledger[$i]->user_id);
         }
-
-        //return $description;
 
         return view('sku_ledger_show_data', [
             'sku_ledger' => $sku_ledger,

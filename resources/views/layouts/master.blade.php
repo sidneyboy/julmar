@@ -387,6 +387,13 @@
                                             <p>ICA - Report</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('/inventory_adjustments') }}"
+                                            class="nav-link {{ $active_tab == 'inventory_adjustments' ? 'active' : '' }}">
+                                            <i class="nav-icon fas fa-file-invoice"></i>
+                                            <p>Inventory Adj</p>
+                                        </a>
+                                    </li>
                                     {{-- <li class="nav-item">
                                         <a href="{{ url('/bo_allowance_total') }}"
                                             class="nav-link {{ $active_tab == 'bo_allowance_total' ? 'active' : '' }}">
@@ -527,6 +534,13 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
+                                        <a href="{{ url('upload_raw_data') }}"
+                                            class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>Upload Raw Data</p>
+                                        </a>
+                                    </li>
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('walkin_sales_order') }}"
                                             class="nav-link {{ $active_tab == 'walkin_sales_order' ? 'active' : '' }}">
                                             <i class="fas fa-user-plus nav-icon"></i>
@@ -540,13 +554,11 @@
                                             <i class="fas fa-user-plus nav-icon"></i>
                                             <p>Invoice Out</p>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
 
-
-
-                            {{-- <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
+                            <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -710,7 +722,42 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li> --}}
+                            </li>
+
+                            <li class="nav-item {{ $main_tab == 'manage_custodian_main_tab' ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ $sub_tab == 'manage_custodian_sub_tab' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Warehouse Custodian
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_releasing') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>Releasing</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_releasing') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>RGS 404</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_releasing') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>BO 404</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

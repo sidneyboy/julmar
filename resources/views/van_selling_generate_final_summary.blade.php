@@ -97,12 +97,6 @@
                                 value="{{ $amount_per_sku }}">
                         </td>
                     </tr>
-                    {{-- @else
-					@php
-						$sum_quantity[] = 0;
-						$sum_amount_per_sku[] = 0;
-					@endphp
-				@endif --}}
                 @endforeach
             </tbody>
             <tfoot>
@@ -122,38 +116,6 @@
             </tfoot>
         </table>
     </div>
-
-    {{-- <table class="table table-bordered table-sm table-hover">
-		<thead>
-			<tr>
-				<th>Vatable Amount</th>
-				<th>
-					@php
-		                $vatable_amount =  array_sum($sum_amount_per_sku) / 1.12;
-		            @endphp 
-		            {{ number_format($vatable_amount,2,".",",") }}
-		            <input type="hidden" name="vatable_amount" value="{{ $vatable_amount }}">
-				</th>
-			</tr>
-			<tr>
-				<th>Vat Amount</th>
-				<th>
-					  @php
-		                $vat_amount = $vatable_amount * 0.12;
-		              @endphp
-		              {{ number_format($vat_amount,2,".",",") }}
-		              <input type="hidden" name="vat_amount" value="{{ $vat_amount }}">
-				</th>
-			</tr>
-			<tr>
-				<th>Total Dr Amount</th>
-				@php
-	              $total_vatable_dr_amount = $vatable_amount + $vat_amount;
-	            @endphp
-	            {{ number_format($total_vatable_dr_amount,2,".",",") }}
-			</tr>
-		</thead>
-	</table> --}}
 
     <div class="form-group">
         <input type="hidden" name="price_level" value="{{ $price_level }}">

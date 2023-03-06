@@ -16,3 +16,10 @@ drafted
 completed
 paid
 
+position type
+admin
+staff
+custodian
+bo incharge
+rgs incharge
+

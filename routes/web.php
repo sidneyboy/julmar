@@ -683,3 +683,24 @@ Route::post('/disbursement_proceed', 'Disbursement_controller@disbursement_proce
 Route::post('/disbursement_final_summary', 'Disbursement_controller@disbursement_final_summary')->name('disbursement_final_summary');
 Route::post('/disbursement_saved', 'Disbursement_controller@disbursement_saved')->name('disbursement_saved');
 
+Route::get('/upload_raw_data', 'Upload_raw_data_controller@index')->name('upload_raw_data');
+Route::post('/upload_raw_data_saved', 'Upload_raw_data_controller@upload_raw_data_saved')->name('upload_raw_data_saved');
+
+
+Route::get('/inventory_adjustments', 'Inventory_adjustments_controller@index')->name('inventory_adjustments');
+Route::post('/inventory_adjustments_proceed', 'Inventory_adjustments_controller@inventory_adjustments_proceed')->name('inventory_adjustments_proceed');
+Route::post('/inventory_adjustments_proceed_to_final_summary', 'Inventory_adjustments_controller@inventory_adjustments_proceed_to_final_summary')->name('inventory_adjustments_proceed_to_final_summary');
+Route::post('/inventory_adjustments_saved', 'Inventory_adjustments_controller@inventory_adjustments_saved')->name('inventory_adjustments_saved');
+
+
+
+Route::get('/warehouse_releasing', 'Releasing_controller@index')->name('warehouse_releasing');
+Route::post('/warehouse_proceed', 'Releasing_controller@warehouse_proceed')->name('warehouse_proceed');
+Route::post('/warehouse_final_summary', 'Releasing_controller@warehouse_final_summary')->name('warehouse_final_summary');
+Route::post('/warehouse_saved', 'Releasing_controller@warehouse_saved')->name('warehouse_saved');
+
+
+
+
+
+

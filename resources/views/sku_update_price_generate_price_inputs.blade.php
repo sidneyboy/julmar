@@ -1,68 +1,104 @@
 <form id="update_sku_price">
-    <table class="table table-bordered table-hover" id="example2">
-        <thead>
-            <tr>
-                <th>CODE</th>
-                <th>DESCRIPTION</th>
-                <th>TYPE</th>
-                <th>U/C</th>
-                <th>P1</th>
-                <th>P2</th>
-                <th>P3</th>
-                <th>P4</th>
-                <th>P5</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($sku as $data)
+    <div class="table table-responsive">
+        <table class="table table-bordered table-hover table-sm" id="example2">
+            <thead>
                 <tr>
-                    <td>
-                        {{-- 					{{ $data->id }} --}}
-                        {{ $data->sku_code }}
-                        {{-- 
-						{{ $data->sku_price_details_one->id }} --}}
-                        <input type="hidden" name="sku_id[]" value="{{ $data->id }}">
-                        <input type="hidden" name="sku_code[{{ $data->id }}]" value="{{ $data->sku_code }}">
-
-                    </td>
-                    <td>{{ $data->description }}</td>
-                    <td>
-                        @if ($data->sku_type == 'CASE' or $data->sku_type == 'Case')
-                            <span style="font-weight:bold;color:green">{{ $data->sku_type }}</span>
-                        @else
-                            <span style="font-weight:bold;color:red">{{ $data->sku_type }}</span>
-                        @endif
-                        <input type="hidden" name="sku_type[{{ $data->id }}]" value="{{ $data->sku_type }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="unit_cost[{{ $data->id }}]"
-                            value="{{ $data->sku_price_details_one->unit_cost }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="price_1[{{ $data->id }}]" value="{{ $data->sku_price_details_one->price_1 }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="price_2[{{ $data->id }}]" value="{{ $data->sku_price_details_one->price_2 }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="price_3[{{ $data->id }}]" value="{{ $data->sku_price_details_one->price_3 }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="price_4[{{ $data->id }}]" value="{{ $data->sku_price_details_one->price_4 }}">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control" style="text-align: center;"
-                            name="price_5[{{ $data->id }}]" value="{{ $data->sku_price_details_one->price_5 }}">
-                    </td>
+                    <th>Code</th>
+                    <th>Desc</th>
+                    <th>Type</th>
+                    <th>U/C(VAT EX)</th>
+                    <th>P1</th>
+                    <th>P2</th>
+                    <th>P3</th>
+                    <th>P4</th>
+                    <th>P5</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($sku as $data)
+                    <tr>
+                        <td>
+                            {{ $data->sku_code }}
+                            <input type="hidden" name="sku_id[]" value="{{ $data->id }}">
+                            <input type="hidden" name="sku_code[{{ $data->id }}]" value="{{ $data->sku_code }}">
+
+                        </td>
+                        <td>{{ $data->description }}</td>
+                        <td>
+                            @if ($data->sku_type == 'CASE' or $data->sku_type == 'Case')
+                                <span style="font-weight:bold;color:green">{{ $data->sku_type }}</span>
+                            @else
+                                <span style="font-weight:bold;color:red">{{ $data->sku_type }}</span>
+                            @endif
+                            <input type="hidden" name="sku_type[{{ $data->id }}]" value="{{ $data->sku_type }}">
+                        </td>
+                        <td>
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="unit_cost[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->unit_cost }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="unit_cost[{{ $data->id }}]" value="0">
+                            @endif
+                        </td>
+                        <td>
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_1[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->price_1 }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_1[{{ $data->id }}]" value="0">
+                            @endif
+                        </td>
+                        <td>
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_2[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->price_2 }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_2[{{ $data->id }}]" value="0">
+                            @endif
+                        </td>
+                        <td>
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_3[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->price_3 }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_3[{{ $data->id }}]" value="0">
+                            @endif
+
+                        </td>
+                        <td>
+
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_4[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->price_4 }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_4[{{ $data->id }}]" value="0">
+                            @endif
+                        </td>
+                        <td>
+                            @if ($data->sku_price_details_one)
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_5[{{ $data->id }}]"
+                                    value="{{ $data->sku_price_details_one->price_5 }}">
+                            @else
+                                <input type="text" class="form-control" style="text-align: center;"
+                                    name="price_5[{{ $data->id }}]" value="0">
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
