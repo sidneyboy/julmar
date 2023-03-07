@@ -22,5 +22,7 @@ class Invoice_raw extends Model
         'user_id',
         'final_quantity',
         'sku_id',
+        'rgs',
+        'bo',
     ];
 }

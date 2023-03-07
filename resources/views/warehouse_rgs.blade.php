@@ -8,11 +8,11 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">Releasing</h3>
+                <h3 class="card-title" style="font-weight: bold;">RETURN GOOD STOCK</h3>
             </div>
             <div class="card-body">
                 @if (count($invoice_raw) != 0)
-                    <form id="warehouse_proceed">
+                    <form id="warehouse_rgs_proceed">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -42,14 +42,14 @@
                 @endif
             </div>
             <div class="card-footer">
-                <div id="warehouse_proceed_page"></div>
+                <div id="warehouse_rgs_proceed_page"></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header" style="font-weight: bold;">FINAL SUMMARY</div>
+            <div class="card-header" style="font-weight: bold">FINAL SUMMARY</div>
             <div class="card-body">
-                <div id="warehouse_final_summar_page"></div>
+                <div id="warehouse_rgs_final_summary_page"></div>
             </div>
         </div>
     </section>
@@ -65,12 +65,12 @@
         });
 
 
-        $("#warehouse_proceed").on('submit', (function(e) {
+        $("#warehouse_rgs_proceed").on('submit', (function(e) {
             e.preventDefault();
             //$('.loading').show();
             $('#hide_if_trigger').hide();
             $.ajax({
-                url: "warehouse_proceed",
+                url: "warehouse_rgs_proceed",
                 type: "POST",
                 data: new FormData(this),
                 contentType: false,
@@ -84,7 +84,7 @@
                             'error'
                         )
                     } else {
-                        $('#warehouse_proceed_page').html(data);
+                        $('#warehouse_rgs_proceed_page').html(data);
                     }
                 },
                 error: function(error) {

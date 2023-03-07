@@ -1,9 +1,9 @@
-<form id="warehouse_final_summary">
+<form id="warehouse_rgs_final_summary">
     <div class="table table-responsive">
         <table class="table table-bordered table-sm">
             <thead>
                 <tr>
-                    <th colspan="5">INVOICE</th>
+                    <th colspan="5">ORIGINAL INVOICE</th>
                 </tr>
                 <tr>
                     <th>
@@ -23,35 +23,32 @@
                     <th>Code</th>
                     <th>Desc</th>
                     <th>Sku Type</th>
-                    <th>Quantity</th>
+                    <th>Quantity Served</th>
                     <th>Available Quantity</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($invoice as $data)
-                    @if ($data->remarks == 'scanned')
+                    @if ($data->rgs == 'scanned')
                         <tr style="background: #97e47e">
                             <td>{{ $data->sku_code }}</td>
                             <td>{{ $data->description }}</td>
                             <td>{{ $data->sku_type }}</td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
-                            <td><input style="text-align: right" type="text" placeholder="Available Quantity"
-                                    name="final_quantity[{{ $data->id }}]" onkeypress="return isNumberKey(event)"
+                            <td style="text-align: right">{{ $data->final_quantity }}</td>
+                            <td><input style="text-align: right" type="text" placeholder="Returned Quantity"
+                                    name="returned_quantity[{{ $data->id }}]" onkeypress="return isNumberKey(event)"
                                     class="form-control form-control-sm" required>
                                 <input type="hidden" name="id[]" value="{{ $data->id }}">
                             </td>
                         </tr>
                     @else
-                        <tr style="background:red;">
+                        <tr>
                             <td>{{ $data->sku_code }}</td>
                             <td>{{ $data->description }}</td>
                             <td>{{ $data->sku_type }}</td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
-                            <td style="text-align: right"><input style="text-align: right" type="hidden" placeholder="Available Quantity"
-                                name="final_quantity[{{ $data->id }}]" onkeypress="return isNumberKey(event)"
-                                class="form-control form-control-sm" value="0" required>
+                            <td style="text-align: right">{{ $data->final_quantity }}</td>
+                            <td style="text-align: right">
                                 <input type="text" disabled class="form-control form-control-sm">
-                                <input type="hidden" name="id[]" value="{{ $data->id }}">
                             </td>
                         </tr>
                     @endif
@@ -73,17 +70,17 @@
         return true;
     }
 
-    $("#warehouse_final_summary").on('submit', (function(e) {
+    $("#warehouse_rgs_final_summary").on('submit', (function(e) {
         e.preventDefault();
         $.ajax({
-            url: "warehouse_final_summary",
+            url: "warehouse_rgs_final_summary",
             type: "POST",
             data: new FormData(this),
             contentType: false,
             cache: false,
             processData: false,
             success: function(data) {
-                $('#warehouse_final_summar_page').html(data);
+                $('#warehouse_rgs_final_summary_page').html(data);
             },
             error: function(error) {
                 Swal.fire(

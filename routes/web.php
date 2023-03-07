@@ -701,6 +701,17 @@ Route::post('/warehouse_saved', 'Releasing_controller@warehouse_saved')->name('w
 
 
 
+Route::get('/warehouse_bo', 'Warehouse_rgs_controller@index')->name('warehouse_rgs');
+Route::post('/warehouse_rgs_proceed', 'Warehouse_rgs_controller@warehouse_rgs_proceed')->name('warehouse_rgs_proceed');
+Route::post('/warehouse_rgs_final_summary', 'Warehouse_rgs_controller@warehouse_rgs_final_summary')->name('warehouse_rgs_final_summary');
+Route::post('/warehouse_rgs_saved', 'Warehouse_rgs_controller@warehouse_rgs_saved')->name('warehouse_rgs_saved');
+
+Route::get('/warehouse_bo', 'Warehouse_bo_controller@index')->name('warehouse_bo');
+Route::post('/warehouse_bo_proceed', 'Warehouse_bo_controller@warehouse_bo_proceed')->name('warehouse_bo_proceed');
+Route::post('/warehouse_bo_final_summary', 'Warehouse_bo_controller@warehouse_bo_final_summary')->name('warehouse_bo_final_summary');
+Route::post('/warehouse_bo_saved', 'Warehouse_bo_controller@warehouse_bo_saved')->name('warehouse_bo_saved');
+
+
 
 
 

@@ -742,17 +742,17 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ url('warehouse_releasing') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
+                                        <a href="{{ url('warehouse_rgs') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_rgs' ? 'active' : '' }}">
                                             <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>RGS 404</p>
+                                            <p>RGS</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ url('warehouse_releasing') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
+                                        <a href="{{ url('warehouse_bo') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_bo' ? 'active' : '' }}">
                                             <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>BO 404</p>
+                                            <p>BO</p>
                                         </a>
                                     </li>
                                 </ul>

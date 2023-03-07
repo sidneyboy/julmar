@@ -39,8 +39,8 @@ class Releasing_controller extends Controller
             return view('warehouse_releasing', [
                 'user' => $user,
                 'invoice_raw' => $invoice_raw,
-                'main_tab' => 'manage_sku_main_tab',
-                'sub_tab' => 'manage_sku_sub_tab',
+                'main_tab' => 'manage_custodian_main_tab',
+                'sub_tab' => 'manage_custodian_sub_tab',
                 'active_tab' => 'warehouse_releasing',
             ]);
         } else {

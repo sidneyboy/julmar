@@ -1,9 +1,9 @@
-<form id="warehouse_saved">
+<form id="warehouse_rgs_saved">
     <div class="table table-responsive">
         <table class="table table-bordered table-sm">
             <thead>
                 <tr>
-                    <th colspan="5">INVOICE</th>
+                    <th colspan="5">RETURN GOOD STOCK</th>
                 </tr>
                 <tr>
                     <th>
@@ -29,8 +29,8 @@
             </thead>
             <tbody>
                 @foreach ($invoice as $data)
-                    @if ($final_quantity[$data->id] == 0)
-                        <tr style="background:red;">
+                    @if ($returned_quantity[$data->id] == 0)
+                        <tr>
                             <td>{{ $data->sku_code }}</td>
                             <td>{{ $data->description }}</td>
                             <td>{{ $data->sku_type }}</td>
@@ -40,20 +40,22 @@
                                     $quantity_sum[] = $data->quantity;
                                 @endphp
                             </td>
-                            <td style="text-align: right">{{ $final_quantity[$data->id] }}
+                            <td style="text-align: right">{{ $returned_quantity[$data->id] }}
                                 @php
-                                    $final_quantity_sum[] = $final_quantity[$data->id];
+                                    $final_quantity_sum[] = $returned_quantity[$data->id];
                                 @endphp
                                 <input type="hidden" name="id[]" value="{{ $data->id }}">
-                                <input type="hidden" name="sku_type[{{ $data->id }}]" value="{{ $data->sku_type }}">
-                                <input type="hidden" name="delivery_receipt[{{ $data->id }}]" value="{{ $data->delivery_receipt }}">
+                                <input type="hidden" name="sku_type[{{ $data->id }}]"
+                                    value="{{ $data->sku_type }}">
+                                <input type="hidden" name="delivery_receipt[{{ $data->id }}]"
+                                    value="{{ $data->delivery_receipt }}">
                                 <input type="hidden" name="sku_id[{{ $data->id }}]" value="{{ $data->sku_id }}">
-                                <input type="hidden" name="final_quantity[{{ $data->id }}]"
-                                    value="{{ $final_quantity[$data->id] }}">
+                                <input type="hidden" name="returned_quantity[{{ $data->id }}]"
+                                    value="{{ $returned_quantity[$data->id] }}">
                             </td>
                         </tr>
                     @else
-                        <tr style="background:#97e47e">
+                        <tr>
                             <td>{{ $data->sku_code }}</td>
                             <td>{{ $data->description }}</td>
                             <td>{{ $data->sku_type }}</td>
@@ -63,16 +65,18 @@
                                     $quantity_sum[] = $data->quantity;
                                 @endphp
                             </td>
-                            <td style="text-align: right">{{ $final_quantity[$data->id] }}
+                            <td style="text-align: right">{{ $returned_quantity[$data->id] }}
                                 @php
-                                    $final_quantity_sum[] = $final_quantity[$data->id];
+                                    $final_quantity_sum[] = $returned_quantity[$data->id];
                                 @endphp
                                 <input type="hidden" name="id[]" value="{{ $data->id }}">
-                                <input type="hidden" name="sku_type[{{ $data->id }}]" value="{{ $data->sku_type }}">
-                                <input type="hidden" name="delivery_receipt[{{ $data->id }}]" value="{{ $data->delivery_receipt }}">
+                                <input type="hidden" name="sku_type[{{ $data->id }}]"
+                                    value="{{ $data->sku_type }}">
+                                <input type="hidden" name="delivery_receipt[{{ $data->id }}]"
+                                    value="{{ $data->delivery_receipt }}">
                                 <input type="hidden" name="sku_id[{{ $data->id }}]" value="{{ $data->sku_id }}">
-                                <input type="hidden" name="final_quantity[{{ $data->id }}]"
-                                    value="{{ $final_quantity[$data->id] }}">
+                                <input type="hidden" name="returned_quantity[{{ $data->id }}]"
+                                    value="{{ $returned_quantity[$data->id] }}">
                             </td>
                         </tr>
                     @endif
@@ -97,15 +101,18 @@
         </table>
     </div>
     <input type="hidden" value="{{ $principal->id }}" name="principal_id">
+    <input type="hidden" value="{{ $invoice[0]->delivery_receipt }}" name="delivery_receipt_main">
+    <input type="hidden" value="{{ $invoice[0]->sku_type }}" name="sku_type_main">
+    <input type="hidden" value="{{ $principal->id }}" name="principal_id">
     <button class="btn btn-sm float-right btn-success">Submit</button>
 
 </form>
 
 <script>
-    $("#warehouse_saved").on('submit', (function(e) {
+    $("#warehouse_rgs_saved").on('submit', (function(e) {
         e.preventDefault();
         $.ajax({
-            url: "warehouse_saved",
+            url: "warehouse_rgs_saved",
             type: "POST",
             data: new FormData(this),
             contentType: false,
