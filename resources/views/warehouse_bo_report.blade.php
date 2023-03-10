@@ -9,10 +9,10 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">RETURN GOOD STOCK REPORT</h3>
+                <h3 class="card-title" style="font-weight: bold;">BAD ORDER REPORT</h3>
             </div>
             <div class="card-body">
-                <form id="warehouse_rgs_report_proceed">
+                <form id="warehouse_bo_report_proceed">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="input-group">
@@ -43,7 +43,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-                <div id="warehouse_rgs_report_proceed_page"></div>
+                <div id="warehouse_bo_report_proceed_page"></div>
             </div>
             <!-- /.card-footer-->
         </div>
@@ -61,10 +61,10 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $("#warehouse_rgs_report_proceed").on('submit', (function(e) {
+        $("#warehouse_bo_report_proceed").on('submit', (function(e) {
             e.preventDefault();
             $.ajax({
-                url: "warehouse_rgs_report_proceed",
+                url: "warehouse_bo_report_proceed",
                 type: "POST",
                 data: new FormData(this),
                 contentType: false,
@@ -72,7 +72,7 @@
                 processData: false,
                 success: function(data) {
                     console.log(data);
-                    $('#warehouse_rgs_report_proceed_page').html(data);
+                    $('#warehouse_bo_report_proceed_page').html(data);
                 },
                 error: function(error) {
                     Swal.fire(

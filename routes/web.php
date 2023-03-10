@@ -712,6 +712,12 @@ Route::post('/warehouse_bo_final_summary', 'Warehouse_bo_controller@warehouse_bo
 Route::post('/warehouse_bo_saved', 'Warehouse_bo_controller@warehouse_bo_saved')->name('warehouse_bo_saved');
 
 
+Route::get('/warehouse_rgs_report', 'Warehouse_rgs_report_controller@index')->name('warehouse_rgs_report');
+Route::post('/warehouse_rgs_report_proceed', 'Warehouse_rgs_report_controller@warehouse_rgs_report_proceed')->name('warehouse_rgs_report_proceed');
+
+Route::get('/warehouse_bo_report', 'Warehouse_bo_report_controller@index')->name('warehouse_bo_report');
+Route::post('/warehouse_bo_report_proceed', 'Warehouse_bo_report_controller@warehouse_bo_report_proceed')->name('warehouse_bo_report_proceed');
+
 
 
 

@@ -12,4 +12,9 @@ class Return_good_stock_details extends Model
         'quantity',
         'unit_price',
     ];
+
+    public function sku()
+    {
+        return $this->belongsTo('App\Sku_add', 'sku_id');
+    }
 }

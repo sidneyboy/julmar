@@ -12,4 +12,19 @@ class Bad_order extends Model
         'principal_id',
         'sku_type',
     ];
+
+    public function bad_order_details()
+    {
+        return $this->hasMany('App\Bad_order_details', 'bad_order_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo('App\Agent', 'agent_id');
+    }
+
+    public function principal()
+    {
+        return $this->belongsTo('App\Sku_principal', 'principal_id');
+    }
 }

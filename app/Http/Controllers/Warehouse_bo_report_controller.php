@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
 use App\User;
-use App\Return_good_stock;
+use App\Bad_order;
 use App\Sku_principal;
 use DB;
 use Illuminate\Http\Request;
 
-class Warehouse_rgs_report_controller extends Controller
+class Warehouse_bo_report_controller extends Controller
 {
     public function index()
     {
@@ -17,31 +18,31 @@ class Warehouse_rgs_report_controller extends Controller
             $principals = Sku_principal::select('id', 'principal')
                 ->where('principal', '!=', 'none')
                 ->get();
-            return view('warehouse_rgs_report', [
+            return view('warehouse_bo_report', [
                 'user' => $user,
                 'principals' => $principals,
                 'main_tab' => 'manage_booking_main_tab',
                 'sub_tab' => 'manage_booking_sub_tab',
-                'active_tab' => 'warehouse_rgs_report',
+                'active_tab' => 'warehouse_bo_report',
             ]);
         } else {
             return redirect('auth.login')->with('error', 'Session Expired. Please Login');
         }
     }
 
-    public function warehouse_rgs_report_proceed(Request $request)
+    public function warehouse_bo_report_proceed(Request $request)
     {
         //return $request->input();
         $var = explode('-', $request->input('date'));
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
 
-        $rgs = Return_good_stock::where('principal_id', $request->input('principal'))
+        $bo = Bad_order::where('principal_id', $request->input('principal'))
                         ->whereBetween(DB::raw('DATE(created_at)'), [$date_from, $date_to])
                         ->get();
 
-        return view('warehouse_rgs_report_proceed', [
-            'rgs' => $rgs,
+        return view('warehouse_bo_report_proceed', [
+            'bo' => $bo,
         ]);
     }
 }

@@ -540,6 +540,23 @@
                                             <p>Upload Raw Data</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_rgs_report') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>RGS Report</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_bo_report') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_bo_report' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>BO Report</p>
+                                        </a>
+                                    </li>
+
+
                                     {{-- <li class="nav-item">
                                         <a href="{{ url('walkin_sales_order') }}"
                                             class="nav-link {{ $active_tab == 'walkin_sales_order' ? 'active' : '' }}">
@@ -748,13 +765,7 @@
                                             <p>RGS</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_rgs_report') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>RGS Report</p>
-                                        </a>
-                                    </li>
+                                   
                                     <li class="nav-item">
                                         <a href="{{ url('warehouse_bo') }}"
                                             class="nav-link {{ $active_tab == 'warehouse_bo' ? 'active' : '' }}">
