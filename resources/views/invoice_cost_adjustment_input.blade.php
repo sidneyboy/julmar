@@ -27,14 +27,12 @@
                             <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $data->unit_cost }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
-                            name="unit_cost_adjustment[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"
-                            required></td>
+                            name="unit_cost_adjustment[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"></td>
                         <td style="text-align: right">{{ $data->freight }}
                             <input type="hidden" name="freight[{{ $data->sku->id }}]" value="{{ $data->freight }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
-                            name="new_freight[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"
-                            required></td>
+                            name="new_freight[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"></td>
                         <td>
                             <center>
                                 <input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"

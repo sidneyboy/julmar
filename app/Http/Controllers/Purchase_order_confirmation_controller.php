@@ -65,7 +65,7 @@ class Purchase_order_confirmation_controller extends Controller
                 ->with('purchase_order_id', $request->input('purchase_order_id'))
                 ->with('delivery_term', $request->input('delivery_term'))
                 ->with('payment_term', $request->input('payment_term'))
-                ->with('sales_order_number', $request->input('sales_order_number'));
+                ->with('van_number', $request->input('van_number'));
         } else {
             return view('purchase_order_confirmation_final_summary', [
                 'discount_selected' => $discount_selected,
@@ -79,7 +79,7 @@ class Purchase_order_confirmation_controller extends Controller
                 ->with('purchase_order_id', $request->input('purchase_order_id'))
                 ->with('delivery_term', $request->input('delivery_term'))
                 ->with('payment_term', $request->input('payment_term'))
-                ->with('sales_order_number', $request->input('sales_order_number'));
+                ->with('van_number', $request->input('van_number'));
         }
     }
 
@@ -93,7 +93,7 @@ class Purchase_order_confirmation_controller extends Controller
             ->update([
                 'payment_term' => $request->input('payment_term'),
                 'delivery_term' => $request->input('delivery_term'),
-                'sales_order_number' => $request->input('sales_order_number'),
+                'van_number' => $request->input('van_number'),
                 'status' => 'confirmed',
                 'discount_type' => $request->input('discount_type'),
                 'gross_purchase' => $request->input('gross_purchases'),

@@ -5,7 +5,8 @@
             <select name="sku_id" class="form-control select2bs4" style="width:100%;" required>
                 <option value="" default>Select</option>
                 @foreach ($sku as $data)
-                    <option value="{{ $data->id }}">{{ $data->sku_code }} - {{ $data->description }} - {{ $data->sku_type }}</option>
+                    <option value="{{ $data->id }}">{{ $data->sku_code }} - {{ $data->description }} -
+                        {{ $data->sku_type }}</option>
                 @endforeach
             </select>
         </div>
@@ -27,7 +28,6 @@
 
     $("#inventory_adjustments_proceed_to_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "inventory_adjustments_proceed_to_final_summary",
@@ -37,7 +37,17 @@
             cache: false,
             processData: false,
             success: function(data) {
-                $('#inventory_adjustments_proceed_to_final_summary_page').html(data);
+
+
+                if (data == 'no_quantity') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'SKU no beginning quantity!',
+                        'error'
+                    )
+                } else {
+                    $('#inventory_adjustments_proceed_to_final_summary_page').html(data);
+                }
             },
             error: function(error) {
                 Swal.fire(

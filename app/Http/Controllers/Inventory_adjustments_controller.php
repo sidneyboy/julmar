@@ -42,20 +42,24 @@ class Inventory_adjustments_controller extends Controller
     public function inventory_adjustments_proceed_to_final_summary(Request $request)
     {
         //return $request->input();
-        $ledger = Sku_ledger::select('sku_id', 'running_balance','principal_id','sku_type')->where('sku_id', $request->input('sku_id'))
+        $ledger = Sku_ledger::select('sku_id', 'running_balance', 'principal_id', 'sku_type')->where('sku_id', $request->input('sku_id'))
             ->orderBy('id', 'desc')
             ->limit(1)
             ->first();
 
-        return view('inventory_adjustments_proceed_to_final_summary', [
-            'ledger' => $ledger,
-        ])->with('quantity', $request->input('quantity'));
+        if ($ledger) {
+            return view('inventory_adjustments_proceed_to_final_summary', [
+                'ledger' => $ledger,
+            ])->with('quantity', $request->input('quantity'));
+        }else{
+            return 'no_quantity';
+        }
     }
 
     public function inventory_adjustments_saved(Request $request)
     {
         //return $request->input();
-        $ledger = Sku_ledger::select('sku_id', 'running_balance','principal_id','sku_type')->where('sku_id', $request->input('sku_id'))
+        $ledger = Sku_ledger::select('sku_id', 'running_balance', 'principal_id', 'sku_type')->where('sku_id', $request->input('sku_id'))
             ->orderBy('id', 'desc')
             ->limit(1)
             ->first();

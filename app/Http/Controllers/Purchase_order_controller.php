@@ -7,7 +7,6 @@ use App\Sku_principal;
 use Cart;
 use App\Purchase_order;
 use App\Purchase_order_details;
-use App\Principal_discount;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -59,7 +58,7 @@ class Purchase_order_controller extends Controller
             'id' => $description->id,
             'name' => $description->description,
             'quantity' => $request->input('quantity'),
-            'price' => $description->sku_price_details_one->unit_cost,
+            'price' => 0,
             'attributes' => array($description->sku_code, $description->sku_type),
         ]);
 

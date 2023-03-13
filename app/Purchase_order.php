@@ -12,7 +12,7 @@ class Purchase_order extends Model
     'user_id',
     'payment_term',
     'delivery_term',
-    'sales_order_number',
+    'van_number',
     'particulars',
     'po_confirmation_image',
     'remarks',

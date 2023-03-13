@@ -12,8 +12,8 @@
             <input type="text" class="form-control" required name="delivery_term">
         </div>
         <div class="col-md-3">
-            <label for="">Sales Order #:</label>
-            <input type="text" class="form-control" required name="sales_order_number">
+            <label for="">Van #:</label>
+            <input type="text" class="form-control" required name="van_number">
         </div>
         <div class="col-md-3">
             <label for="">Discount Type:</label>

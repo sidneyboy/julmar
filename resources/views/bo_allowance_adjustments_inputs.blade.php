@@ -25,7 +25,7 @@
                             {{ $quantity }}
                         </td>
                         <td style="text-align: right;">{{ number_format($data->unit_cost, 2, '.', ',') }}</td>
-                        <td><input type="text" class="form-control" onkeypress="return isNumberKey(event)" required
+                        <td><input type="text" class="form-control" onkeypress="return isNumberKey(event)"
                                 name="unit_cost_adjustment[{{ $data->sku->id }}]">
                         </td>
                         <td>

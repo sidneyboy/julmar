@@ -14,7 +14,7 @@ class AddColumntToPurchaseOrderSalesOrderNumber extends Migration
     public function up()
     {
         Schema::table('Purchase_orders', function (Blueprint $table) {
-            $table->string('sales_order_number')->nullable();
+            $table->string('van_number')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddColumntToPurchaseOrderSalesOrderNumber extends Migration
     public function down()
     {
         Schema::table('Purchase_orders', function (Blueprint $table) {
-            $table->dropColumn('sales_order_number')->nullable();
+            $table->dropColumn('van_number')->nullable();
         });
     }
 }

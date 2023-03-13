@@ -31,8 +31,10 @@
                             <td><span style="color:green;font-weight:bold;">{{ $code[$data] }}</span>-
                                 {{ $description[$data] }}
                                 <input type="hidden" value="{{ $data }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity[$data] }}" name="quantity_return[{{ $data }}]">
-                                <input type="hidden" value="{{ $unit_cost[$data] }}" name="unit_cost[{{ $data }}]">
+                                <input type="hidden" value="{{ $quantity[$data] }}"
+                                    name="quantity_return[{{ $data }}]">
+                                <input type="hidden" value="{{ $unit_cost[$data] }}"
+                                    name="unit_cost[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
                             <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
@@ -77,7 +79,8 @@
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
-                                <input type="hidden" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
+                                <input type="hidden" value="{{ $freight_per_sku }}"
+                                    name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -401,8 +404,10 @@
                                 {{ $description[$data] }}
 
                                 <input type="hidden" value="{{ $data }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity[$data] }}" name="quantity_return[{{ $data }}]">
-                                <input type="hidden" value="{{ $unit_cost[$data] }}" name="unit_cost[{{ $data }}]">
+                                <input type="hidden" value="{{ $quantity[$data] }}"
+                                    name="quantity_return[{{ $data }}]">
+                                <input type="hidden" value="{{ $unit_cost[$data] }}"
+                                    name="unit_cost[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
                             <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
@@ -463,7 +468,8 @@
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
-                                <input type="hidden" value="{{ $freight_per_sku }}" name="freight_per_sku[{{ $data }}]">
+                                <input type="hidden" value="{{ $freight_per_sku }}"
+                                    name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -633,9 +639,9 @@
                 @endphp
                 @foreach ($received_purchase_order->received_other_discount_details as $data_discount)
                     {{-- <tr>
-                        <td style="text-align:left">
-                            {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
-                        </td> --}}
+                    <td style="text-align:left">
+                        {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
+                    </td> --}}
                     @php
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
@@ -648,9 +654,9 @@
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
                     {{-- <td style="text-align:right;">
-                            {{ number_format($less_discount_rate_answer, 2, '.', ',') }}
-                        </td>
-                    </tr> --}}
+                        {{ number_format($less_discount_rate_answer, 2, '.', ',') }}
+                    </td>
+                </tr> --}}
                 @endforeach
                 <tr>
                     <td style="text-align: left;width:50%;">TOTAL OTHER DISCOUNT:</td>
@@ -824,12 +830,7 @@
     <input type="hidden" value="{{ $vat }}" name="vat">
     <input type="hidden" value="{{ $freight }}" name="freight">
     <input type="hidden" value="{{ $total_final_cost }}" name="total_final_cost">
-    <input type="hidden" value="{{ $sku_type }}" name="sku_type">
-
-
-    {{-- <input type="hidden" value="{{ $grand_total_final_cost }}" name="total_amount_return">
-    <input type="hidden" value="{{ $net_discount }}" name="return_vatable_purchase">
-    <input type="hidden" value="{{ $net_discount }}" name="return_net_discount"> --}}
+    <input type="hidden" value="{{ $received_purchase_order->purchase_order->sku_type }}" name="sku_type">
 
     <button class="btn btn-success btn-sm float-right" type="submit">Submit</button>
 
