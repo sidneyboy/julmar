@@ -20,7 +20,7 @@ class Receiving_draft_controller extends Controller
             $time = date('his');
             $session_id = $date . "" . $time;
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $purchase_order = Purchase_order::select('id', 'purchase_id')->where('status', 'confirmed')->orderBy('id', 'desc')->get();
+            $purchase_order = Purchase_order::select('id', 'purchase_id')->where('status', 'confirmed')->orWhere('status','paid')->orderBy('id', 'desc')->get();
             return view('receiving_draft', [
                 'user' => $user,
                 'purchase_order' => $purchase_order,
