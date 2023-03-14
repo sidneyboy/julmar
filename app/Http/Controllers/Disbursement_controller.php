@@ -15,16 +15,27 @@ class Disbursement_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
+            // $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('disbursement', [
                 'user' => $user,
-                'principal' => $principal,
+                // 'principal' => $principal,
                 'main_tab' => '',
                 'sub_tab' => '',
                 'active_tab' => 'disbursement',
             ]);
         } else {
             return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+        }
+    }
+
+    public function disbursement_show_selection(Request $request)
+    {
+        if ($request->input('disbursement') == 'payment to principal') {
+            $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
+
+            return view('disbursement_show_selection',[
+                'principal' => $principal,
+            ])->with('disbursement',$request->input('disbursement'));
         }
     }
 

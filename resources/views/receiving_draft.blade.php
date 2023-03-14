@@ -22,11 +22,11 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="">Purchase Order</label>
+                            <label for="">Purchase Order/Van #</label>
                             <select name="purchase_id" class="form-control" required>
                                 <option value="" default>Select</option>
                                 @foreach ($purchase_order as $data)
-                                    <option value="{{ $data->id }}">{{ $data->purchase_id }}</option>
+                                    <option value="{{ $data->id }}">{{ $data->purchase_id }}/{{ $data->van_number }}</option>
                                 @endforeach
                             </select>
                         </div>

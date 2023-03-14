@@ -19,14 +19,14 @@
                                     <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                         -
                                         {{ $po_data->sku->description }}</td>
-                                    <td>{{ $po_data->quantity - $po_data->receive }}</td>
+                                    <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
                                 </tr>
                             @else
                                 <tr>
                                     <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                         -
                                         {{ $po_data->sku->description }}</td>
-                                    <td>{{ $po_data->quantity }}</td>
+                                    <td>{{ $po_data->confirmed_quantity }}</td>
                                 </tr>
                             @endif
                         @endforeach

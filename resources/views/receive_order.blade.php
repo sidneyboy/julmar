@@ -38,7 +38,7 @@
                                  @foreach ($draft as $data)
                                      <option
                                          value="{{ $data->session_id . '=' . $data->purchase_order->id . '=' . $data->purchase_order->skuPrincipal->principal . '=' . $data->purchase_order->purchase_id . '=' . $data->purchase_order->skuPrincipal->id }}">
-                                         {{ $data->purchase_order->purchase_id . ' - Draft' }}</option>
+                                         {{ $data->purchase_order->purchase_id ."/". $data->purchase_order->van_number . ' - Draft' }}</option>
                                  @endforeach
                              </select>
                          </div>

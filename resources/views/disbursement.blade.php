@@ -27,19 +27,14 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="">Disbursement:</label>
-                                        <select name="disbursement" class="form-control" required>
+                                        <select name="disbursement" id="disbursement" class="form-control" required>
                                             <option value="" default>Select</option>
                                             <option value="payment to principal">Payment to Principal</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="">Principal:</label>
-                                        <select name="principal_id" class="form-control" required>
-                                            <option value="" default>Select</option>
-                                            @foreach ($principal as $data)
-                                                <option value="{{ $data->id }}">{{ $data->principal }}</option>
-                                            @endforeach
-                                        </select>
+                                        
+                                        <div id="disbursement_show_selection"></div>
                                     </div>
                                     <div class="col-md-12">
                                         <br />
@@ -96,7 +91,22 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        
+
+        $("#disbursement").change(function() {
+            var disbursement = $(this).val();
+            $.post({
+                type: "POST",
+                url: "/disbursement_show_selection",
+                data: 'disbursement=' + disbursement,
+                success: function(data) {
+                    $('#disbursement_show_selection').html(data);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
         $("#disbursement_proceed").on('submit', (function(e) {
             e.preventDefault();
             //$('.loading').show();

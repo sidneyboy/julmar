@@ -28,7 +28,7 @@ class Receive_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $received_purchase_order_id = Received_purchase_order::select('id')->orderBy('id', 'desc')->first();
+            $received_purchase_order_id = Received_purchase_order::select('id')->orderBy('id', 'desc','van_number')->first();
             if ($received_purchase_order_id == NULL) {
                 $id = 1;
             } else {
@@ -60,17 +60,17 @@ class Receive_controller extends Controller
         $principal_id = $variable_explode[4];
 
 
-        $purchase_order = Purchase_order::select('id','discount_type','bo_allowance_discount_rate')->find($purchase_order_id);
+        $purchase_order = Purchase_order::select('id', 'discount_type', 'bo_allowance_discount_rate')->find($purchase_order_id);
 
-        $purchase_order_details = Purchase_order_details::select('id','sku_id','confirmed_quantity')->where('purchase_order_id', $purchase_order_id)
+        $purchase_order_details = Purchase_order_details::select('id', 'sku_id', 'confirmed_quantity')->where('purchase_order_id', $purchase_order_id)
             ->orderBy('sku_id')
             ->get();
 
-       
 
-        $draft = Receiving_draft::select('sku_id','unit_cost','freight','user_id','quantity','session_id')->where('session_id', $session_id)->orderBy('sku_id')->get();
 
-       
+        $draft = Receiving_draft::select('sku_id', 'unit_cost', 'freight', 'user_id', 'quantity', 'session_id')->where('session_id', $session_id)->orderBy('sku_id')->get();
+
+
         return view('receive_order_show_data_summary', [
             'purchase_order' => $purchase_order,
             'purchase_order_details' => $purchase_order_details,
@@ -353,10 +353,10 @@ class Receive_controller extends Controller
                 $new_sku_ledger->save();
             }
 
-            $update_purchase_order_details = Purchase_order_details::select('id', 'quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
+            $update_purchase_order_details = Purchase_order_details::select('id', 'confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
 
             $update_received = $update_purchase_order_details->receive + $request->input('received_quantity')[$data];
-            if ($update_received == $update_purchase_order_details->quantity) {
+            if ($update_received == $update_purchase_order_details->confirmed_quantity) {
                 $update_purchase_order_details->receive = $update_received;
                 $update_purchase_order_details->remarks = 'received';
                 $update_purchase_order_details->scanned_remarks = null;
@@ -367,21 +367,21 @@ class Receive_controller extends Controller
                 $update_purchase_order_details->scanned_remarks = null;
                 $update_purchase_order_details->save();
             }
+        }
 
-            $check_purchase_order_details = Purchase_order_details::whereColumn('receive', '<>', 'quantity')
-                ->where('purchase_order_id', $request->input('purchase_order_id'))->count();
+        $check_purchase_order_details = Purchase_order_details::whereColumn('receive', '<>', 'confirmed_quantity')
+            ->where('purchase_order_id', $request->input('purchase_order_id'))->count();
 
-            if ($check_purchase_order_details > 0) {
-                $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
-                $update_purchase_order->remarks = 'staggered';
-                $update_purchase_order->status = 'completed';
-                $update_purchase_order->save();
-            } else {
-                $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
-                $update_purchase_order->remarks = 'received';
-                $update_purchase_order->status = 'completed';
-                $update_purchase_order->save();
-            }
+        if ($check_purchase_order_details > 0) {
+            $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
+            $update_purchase_order->remarks = 'staggered';
+            $update_purchase_order->status = 'completed';
+            $update_purchase_order->save();
+        } else {
+            $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
+            $update_purchase_order->remarks = 'received';
+            $update_purchase_order->status = 'completed';
+            $update_purchase_order->save();
         }
 
         Receiving_draft_main::where('session_id', $request->input('draft_session_id'))
