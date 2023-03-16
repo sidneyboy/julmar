@@ -33,9 +33,9 @@ class Disbursement_controller extends Controller
         if ($request->input('disbursement') == 'payment to principal') {
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
 
-            return view('disbursement_show_selection',[
+            return view('disbursement_show_selection', [
                 'principal' => $principal,
-            ])->with('disbursement',$request->input('disbursement'));
+            ])->with('disbursement', $request->input('disbursement'));
         }
     }
 
@@ -76,13 +76,20 @@ class Disbursement_controller extends Controller
         $date = date('Y-m-d');
 
         $new = new Disbursement([
-            'purchase_order_id' => $request->input('purchase_order_id'),
             'user_id' => auth()->user()->id,
             'disbursement' => $request->input('disbursement'),
             'bank' => $request->input('bank'),
             'check_deposit_slip' => $request->input('check_deposit_slip'),
             'principal_id' => $request->input('principal_id'),
             'amount' => $request->input('amount'),
+            'payee' => $request->input('payee'),
+            'amount_in_words' => $request->input('amount_in_words'),
+            'title' => $request->input('title'),
+            'debit' => $request->input('debit'),
+            'credit' => $request->input('credit'),
+            'particulars' => $request->input('particulars'),
+            'cv_number' => $request->input('cv_number'),
+            'remarks' => $request->input('remarks'),
         ]);
 
         $new->save();
@@ -123,13 +130,8 @@ class Disbursement_controller extends Controller
             $principal_ledger_saved->save();
         }
 
-        $file = $request->file('file');
-        $file_name = 'file-' . time() . '.' . $file->getClientOriginalExtension();
-        $path_file = $file->storeAs('public', $file_name);
-
         Purchase_order::where('id', $request->input('purchase_order_id'))
             ->update([
-                'po_confirmation_image' => $file_name,
                 'status' => 'paid',
             ]);
 

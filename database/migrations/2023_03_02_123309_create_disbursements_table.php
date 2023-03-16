@@ -15,8 +15,6 @@ class CreateDisbursementsTable extends Migration
     {
         Schema::create('disbursements', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('purchase_order_id')->unsigned()->index();
-            $table->foreign('purchase_order_id')->references('id')->on('purchase_orders');
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('disbursement',100);
