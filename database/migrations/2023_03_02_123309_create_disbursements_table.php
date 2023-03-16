@@ -20,7 +20,7 @@ class CreateDisbursementsTable extends Migration
             $table->string('disbursement',100);
             $table->string('bank');
             $table->string('check_deposit_slip');
-            $table->string('principal_id');
+            $table->string('principal_id')->nullable();
             $table->double('amount',15,4);
             $table->timestamps();
         });

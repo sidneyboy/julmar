@@ -22,4 +22,9 @@ class Disbursement extends Model
         'cv_number',
         'remarks',
     ];
+
+    public function user()
+    {
+    	return $this->belongsTo('App\User', 'user_id');
+    }
 }

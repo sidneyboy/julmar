@@ -141,6 +141,13 @@
                                     <p>Disbursement</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ url('/disbursement_report') }}"
+                                    class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
+                                    <i class="fas fa-plus-circle nav-icon"></i>
+                                    <p>Disbursement Report</p>
+                                </a>
+                            </li>
                             <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
