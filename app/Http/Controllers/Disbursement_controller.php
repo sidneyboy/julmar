@@ -41,21 +41,29 @@ class Disbursement_controller extends Controller
 
     public function disbursement_proceed(Request $request)
     {
-        $purchase_order = Purchase_order::select('id', 'purchase_id')->where('principal_id', $request->input('principal_id'))->where('status', '!=', 'paid')->orderBy('id', 'desc')->get();
-        return view('disbursement_proceed', [
-            'purchase_order' => $purchase_order,
-        ])->with('disbursement', $request->input('disbursement'))
+        // $purchase_order = Purchase_order::select('id', 'purchase_id')->where('principal_id', $request->input('principal_id'))->where('status', '!=', 'paid')->orderBy('id', 'desc')->get();
+        return view('disbursement_proceed')->with('disbursement', $request->input('disbursement'))
             ->with('principal_id', $request->input('principal_id'));
     }
 
     public function disbursement_final_summary(Request $request)
     {
-        $purchase_order = Purchase_order::select('id', 'total_final_cost', 'total_less_other_discount', 'net_payable', 'principal_id', 'purchase_id')->find($request->input('purchase_id'));
-        return view('disbursement_final_summary', [
-            'purchase_order' => $purchase_order,
-        ])->with('amount', str_replace(',', '', $request->input('amount')))
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+
+        return view('disbursement_final_summary')->with('amount', str_replace(',', '', $request->input('amount')))
             ->with('bank', $request->input('bank'))
+            ->with('payee', $request->input('payee'))
+            ->with('particulars', $request->input('particulars'))
+            ->with('amount', $request->input('amount'))
+            ->with('amount_in_words', $request->input('amount_in_words'))
+            ->with('credit', $request->input('credit'))
+            ->with('cv_number', $request->input('cv_number'))
+            ->with('debit', $request->input('debit'))
+            ->with('remarks', $request->input('remarks'))
+            ->with('title', $request->input('title'))
             ->with('check_deposit_slip', $request->input('check_deposit_slip'))
+            ->with('date', $date)
             ->with('disbursement', $request->input('disbursement'))
             ->with('principal_id', $request->input('principal_id'))
             ->with('purchase_id', $request->input('purchase_id'));

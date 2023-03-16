@@ -2,6 +2,10 @@
     @if ($disbursement == 'payment to principal')
         <div class="row">
             <div class="col-md-3">
+                <label for="">Title</label>
+                <input type="text" class="form-control" required name="title">
+            </div>
+            {{-- <div class="col-md-3">
                 <label for="">Purchase Order</label>
                 <select name="purchase_id" class="form-control select2bs4" required style="width:100%;">
                     <option value="" default>Select</option>
@@ -9,14 +13,16 @@
                         <option value="{{ $data->id }}">{{ $data->purchase_id }}</option>
                     @endforeach
                 </select>
-            </div>
+            </div> --}}
             <div class="col-md-3">
                 <label for="">Bank</label>
                 <select name="bank" class="form-control" required style="width:100%;">
                     <option value="" default>Select</option>
                     <option value="BDO">BDO</option>
                     <option value="BPI">BPI</option>
-                    <option value="">UG UBAN PA</option>
+                    <option value="METRO BANK">METRO BANK</option>
+                    <option value="FIRST VALLEY BANK">FIRST VALLEY BANK</option>
+                    <option value="OTHERS">OTHERS</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -24,10 +30,39 @@
                 <input type="text" class="form-control" name="check_deposit_slip" required>
             </div>
             <div class="col-md-3">
+                <label for="">CV #</label>
+                <input type="text" class="form-control" required name="cv_number" required>
+            </div>
+            <div class="col-md-3">
                 <label for="">Amount</label>
                 <input type="text" class="form-control" required name="amount"
                     onkeypress="return isNumberKey(event)">
             </div>
+            <div class="col-md-3">
+                <label for="">Amount in Words</label>
+                <input type="text" class="form-control" required name="amount_in_words" required>
+            </div>
+            <div class="col-md-3">
+                <label for="">Payee</label>
+                <input type="text" class="form-control" required name="payee" required>
+            </div>
+            <div class="col-md-3">
+                <label for="">Debit</label>
+                <input type="text" class="form-control" required name="debit" required>
+            </div>
+            <div class="col-md-3">
+                <label for="">Credit</label>
+                <input type="text" class="form-control" required name="credit" required>
+            </div>
+            <div class="col-md-3">
+                <label for="">Particulars</label>
+                <input type="text" class="form-control" required name="particulars" required>
+            </div>
+            <div class="col-md-3">
+                <label for="">Remarks</label>
+                <input type="text" class="form-control" required name="remarks" required>
+            </div>
+
         </div>
 
         <br />
