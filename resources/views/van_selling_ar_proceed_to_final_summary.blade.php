@@ -9,17 +9,17 @@
                 </tr>
                 </tr>
                 <tr>
-                    <th>RUNNING BALANCE</th>
-                    <th>ACTUAL STOCKS ON HAND</th>
-                    <th>OVER/SHORT</th>
-                    <th>OUTSTANDING BALANCE</th>
+                    <th>Running Balance</th>
+                    <th>Actual Stocks  on Hand</th>
+                    <th>Over/Short</th>
+                    <th>Outstanding Balance</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ number_format($running_balance, 2, '.', ',') }}</td>
-                    <td>{{ number_format($actual_stocks_on_hand, 2, '.', ',') }}</td>
-                    <td>
+                    <td style="text-align: right;">{{ number_format($running_balance, 2, '.', ',') }}</td>
+                    <td style="text-align: right;">{{ number_format($actual_stocks_on_hand, 2, '.', ',') }}</td>
+                    <td style="text-align: right;">
 
                         @php
                             $over_short = $running_balance - $actual_stocks_on_hand;
@@ -34,7 +34,7 @@
                             @endphp
                         @endif
                     </td>
-                    <td>
+                    <td style="text-align: right;">
                         @php
                             echo number_format($actual_stocks_on_hand + $over_short, 2, '.', ',');
                         @endphp
@@ -50,7 +50,7 @@
                         <input type="hidden" name="over_short" value="{{ $over_short }}">
                         <input type="hidden" name="outstanding_balance"
                             value="{{ $actual_stocks_on_hand + $over_short }}">
-                        <button type="submit" class="btn btn-sm float-right btn-success">SUBMIT</button>
+                        <button type="submit" class="btn btn-sm float-right btn-success">Submit</button>
                     </td>
                 </tr>
             </tfoot>

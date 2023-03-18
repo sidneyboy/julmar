@@ -139,19 +139,23 @@
             processData: false,
             success: function(res) {
 
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
 
-                location.reload();
+                // location.reload();
 
             },
             error: function(res) {
-                alert(res + 'dddd');
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
             }
         });
     }));
