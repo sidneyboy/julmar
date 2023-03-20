@@ -7,27 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Van_selling_ar_ledger extends Model
 {
       protected $fillable = [
-        'customer_id',
-        'van_selling_print_id',
-        'van_selling_pcm_id',
-        'van_selling_payment_id',
-        'adjustments',
-        'sku_price_adjustments',
-        'cm_amount',
-        'price_update',
-        'actual_stocks_on_hand',
-        'charge_payment',
-        'amount',
-        'collection',
-        'over_short',
-        'running_balance',
-        'should_be',
-        'principal_id',
-        'user_id',
-        'date',
-        'remarks',
-        'outstanding_balance',
-        'vs_inv_adj_id'
+       'customer_id',
+       'user_id',
+       'principal_id',
+       'transaction',
+       'all_id',
+       'running_balance',
+       'amount',
+       'short',
+       'outstanding_balance',
+       'remarks',
     ];
 
     public function customer()

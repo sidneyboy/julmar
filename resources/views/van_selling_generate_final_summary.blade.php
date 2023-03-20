@@ -1,6 +1,6 @@
 <form id="van_selling_save">
     <div class="table table-responsive">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover table-sm">
             <thead>
                 <tr>
                     <th colspan="7" style="text-align: center">
@@ -122,7 +122,7 @@
         <input type="hidden" name="customer_id" value="{{ $customer->id }}">
         <input type="hidden" name="principal" value="{{ $principal }}">
         <input type="hidden" name="dr_sku_type" value="{{ $sku_type }}">
-        <button type="submit" class="btn btn-success btn-block">SUBMIT VAN LOAD</button>
+        <button type="submit" class="btn btn-success btn-sm float-right">Submit</button>
     </div>
 </form>
 
@@ -139,15 +139,15 @@
             processData: false,
             success: function(res) {
 
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // })
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
 
-                // location.reload();
+                location.reload();
 
             },
             error: function(res) {

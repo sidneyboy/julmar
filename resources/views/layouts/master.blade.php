@@ -592,7 +592,7 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_dashboard') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_dashboard' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
@@ -647,15 +647,15 @@
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>VS Customers</p>
                                         </a>
-                                    </li>
-                                    <li class="nav-item">
+                                    </li> --}}
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_ar') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_ar' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>VS AR Beginning</p>
+                                            <p>Beginning AR</p>
                                         </a>
-                                    </li>
-                                    <li class="nav-item">
+                                    </li> --}}
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_inventory_adjustments') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
@@ -668,15 +668,15 @@
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>VS Actual Stocks on Hand</p>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="nav-item">
                                         <a href="{{ url('van_selling_withdrawal') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Load Withdrawal</p>
+                                            <p>Withdrawal</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_invoice') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
@@ -779,7 +779,7 @@
                                             <i class="fas fa-user-plus nav-icon"></i>
                                             <p>BO</p>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
 

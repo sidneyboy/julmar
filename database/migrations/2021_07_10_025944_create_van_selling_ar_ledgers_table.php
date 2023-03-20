@@ -19,15 +19,8 @@ class CreateVanSellingArLedgersTable extends Migration
             $table->foreign('customer_id')->references('id')->on('customers');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->BigInteger('van_selling_print_id')->unsigned()->index();
-            $table->foreign('van_selling_print_id')->references('id')->on('van_selling_printeds')->nullable();
-            $table->BigInteger('vs_inv_adj_id')->unsigned()->index();
-            $table->foreign('vs_inv_adj_id')->references('id')->on('van_selling_printeds');
-            $table->BigInteger('van_selling_payment_id')->unsigned()->index();
-            $table->foreign('van_selling_payment_id')->references('id')->on('van_selling_payments');
             $table->integer('principal_id')->unsigned()->index()->nullable();
             $table->foreign('principal_id')->references('id')->on('sku_principals');
-            $table->date('date')->index();
             $table->timestamps();
         });
     }
