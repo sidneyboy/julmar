@@ -9,18 +9,18 @@
   <!-- Default box -->
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title" style="font-weight: bold;">VAN SELLING REPORT DATE RANGE</h3>
+      <h3 class="card-title" style="font-weight: bold;">VAN SELLING INVENTORY LEDGER</h3>
     </div>
     <div class="card-body">
       <form id="van_selling_report_date_range_generate_data">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label>SALESMAN:</label>
-              <select class="form-control select2bs4" name="customer" style="width:100%;" required>
+              <label>Salesman:</label>
+              <select class="form-control select2bs4" name="customer_id" style="width:100%;" required>
                 <option value="" default>SELECT SALESMAN</option>
                 @foreach($customer as $data)
-                  <option value="{{ $data->id ."-". $data->store_name  }}">{{ $data->store_name }}</option>
+                  <option value="{{ $data->id }}">{{ $data->store_name }}</option>
                 @endforeach
               </select>
             </div>

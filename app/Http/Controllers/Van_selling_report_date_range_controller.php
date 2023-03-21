@@ -11,7 +11,7 @@ use App\Van_selling_ar_ledger;
 use App\Van_selling_transfer_inventory;
 use App\Van_selling_transfer_inventory_details;
 use App\Van_selling_inventory_clearing;
-use App\Sku_principal;
+use App\Vs_inventory_ledger;
 use DB;
 use Illuminate\Http\Request;
 
@@ -38,98 +38,103 @@ class Van_selling_report_date_range_controller extends Controller
 
     public function van_selling_report_date_range_generate_data(Request $request)
     {
-        //return $request->input();
-
-
         $data_range = explode('-', $request->input('date_range'));
         $date_from = date('Y-m-d', strtotime($data_range[0]));
         $date_to = date('Y-m-d', strtotime($data_range[1]));
-        $customer_data = explode('-', $request->input('customer'));
-        $customer_id = $customer_data[0];
-        $store_name = $customer_data[1];
+        $customer_id = $request->input('customer_id');
 
-        $van_selling_beginning_check = Van_selling_beginning::select('id')->where('customer_id', $customer_id)->latest()
-            ->first();
 
-        if ($van_selling_beginning_check) {
-            $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
-                ->select(
-                    'id',
-                    'principal',
-                    'sku_code',
-                    'unit_of_measurement',
-                    'description',
-                    'beg',
-                    'butal_equivalent',
-                    'reference',
-                    'customer_id',
-                    'sku_type',
-                    DB::raw('SUM(sales) as total_sales'),
-                    DB::raw('SUM(van_load) as total_van_load'),
-                    DB::raw('SUM(pcm) as total_pcm'),
-                    DB::raw('SUM(inventory_adjustments) as total_inventory_adjustments')
-                )
-                ->whereBetween('date', [$date_from, $date_to])
-                ->where('customer_id', $customer_id)
-                ->groupBy('sku_code')
-                ->orderBy('principal')
-                ->orderBy('sku_code')
-                ->get();
-        } else {
-            $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
-                ->select(
-                    'id',
-                    'principal',
-                    'sku_code',
-                    'unit_of_measurement',
-                    'description',
-                    'beg',
-                    'butal_equivalent',
-                    'reference',
-                    'customer_id',
-                    'sku_type',
-                    DB::raw('SUM(sales) as total_sales'),
-                    DB::raw('SUM(van_load) as total_van_load'),
-                    DB::raw('SUM(pcm) as total_pcm'),
-                    DB::raw('SUM(inventory_adjustments) as total_inventory_adjustments')
-                )
-                ->where('customer_id', $customer_id)
-                ->groupBy('sku_code')
-                ->orderBy('principal')
-                ->orderBy('sku_code')
-                ->get();
+        $sku_ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
+        WHERE customer_id = '$customer_id' GROUP BY sku_id)");
+
+        foreach ($sku_ledger as $key => $value) {
+            echo $value->sku->sku_id;
         }
+        
 
-        if (count($van_selling_ledger) != 0) {
-            foreach ($van_selling_ledger as $key => $data) {
-                $van_selling_ledger_latest = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$data->sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-                $unit_price[$data->sku_code] = $van_selling_ledger_latest[0]->unit_price;
-                $ending_balance[$data->sku_code] = $van_selling_ledger_latest[0]->end;
-                $running_balance[$data->sku_code] = $van_selling_ledger_latest[0]->running_balance;
-                $van_selling_ledger_latest_id[$data->sku_code] = $van_selling_ledger_latest[0]->id;
-            }
-        } else {
-            $van_selling_ledger_latest = '';
-            $unit_price = '';
-            $ending_balance = '';
-            $running_balance = '';
-            $van_selling_ledger_latest_id = '';
-        }
 
-        $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'NONE')->get();
+        // $van_selling_beginning_check = Van_selling_beginning::select('id')->where('customer_id', $customer_id)->latest()
+        //     ->first();
 
-        return view('van_selling_report_date_range_generate_data_page', [
-            'van_selling_ledger' => $van_selling_ledger,
-            'van_selling_ledger_latest' => $van_selling_ledger_latest,
-            'unit_price' => $unit_price,
-            'principal' => $principal,
-            'ending_balance' => $ending_balance,
-            'running_balance' => $running_balance,
-            'van_selling_ledger_latest_id' => $van_selling_ledger_latest_id,
-        ])->with('customer_id', $customer_id)
-            ->with('store_name', $store_name)
-            ->with('date_from', $date_from)
-            ->with('date_to', $date_to);
+        // if ($van_selling_beginning_check) {
+        //     $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
+        //         ->select(
+        //             'id',
+        //             'principal',
+        //             'sku_code',
+        //             'unit_of_measurement',
+        //             'description',
+        //             'beg',
+        //             'butal_equivalent',
+        //             'reference',
+        //             'customer_id',
+        //             'sku_type',
+        //             DB::raw('SUM(sales) as total_sales'),
+        //             DB::raw('SUM(van_load) as total_van_load'),
+        //             DB::raw('SUM(pcm) as total_pcm'),
+        //             DB::raw('SUM(inventory_adjustments) as total_inventory_adjustments')
+        //         )
+        //         ->whereBetween('date', [$date_from, $date_to])
+        //         ->where('customer_id', $customer_id)
+        //         ->groupBy('sku_code')
+        //         ->orderBy('principal')
+        //         ->orderBy('sku_code')
+        //         ->get();
+        // } else {
+        //     $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
+        //         ->select(
+        //             'id',
+        //             'principal',
+        //             'sku_code',
+        //             'unit_of_measurement',
+        //             'description',
+        //             'beg',
+        //             'butal_equivalent',
+        //             'reference',
+        //             'customer_id',
+        //             'sku_type',
+        //             DB::raw('SUM(sales) as total_sales'),
+        //             DB::raw('SUM(van_load) as total_van_load'),
+        //             DB::raw('SUM(pcm) as total_pcm'),
+        //             DB::raw('SUM(inventory_adjustments) as total_inventory_adjustments')
+        //         )
+        //         ->where('customer_id', $customer_id)
+        //         ->groupBy('sku_code')
+        //         ->orderBy('principal')
+        //         ->orderBy('sku_code')
+        //         ->get();
+        // }
+
+        // if (count($van_selling_ledger) != 0) {
+        //     foreach ($van_selling_ledger as $key => $data) {
+        //         $van_selling_ledger_latest = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$data->sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+        //         $unit_price[$data->sku_code] = $van_selling_ledger_latest[0]->unit_price;
+        //         $ending_balance[$data->sku_code] = $van_selling_ledger_latest[0]->end;
+        //         $running_balance[$data->sku_code] = $van_selling_ledger_latest[0]->running_balance;
+        //         $van_selling_ledger_latest_id[$data->sku_code] = $van_selling_ledger_latest[0]->id;
+        //     }
+        // } else {
+        //     $van_selling_ledger_latest = '';
+        //     $unit_price = '';
+        //     $ending_balance = '';
+        //     $running_balance = '';
+        //     $van_selling_ledger_latest_id = '';
+        // }
+
+        // $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'NONE')->get();
+
+        // return view('van_selling_report_date_range_generate_data_page', [
+        //     'van_selling_ledger' => $van_selling_ledger,
+        //     'van_selling_ledger_latest' => $van_selling_ledger_latest,
+        //     'unit_price' => $unit_price,
+        //     'principal' => $principal,
+        //     'ending_balance' => $ending_balance,
+        //     'running_balance' => $running_balance,
+        //     'van_selling_ledger_latest_id' => $van_selling_ledger_latest_id,
+        // ])->with('customer_id', $customer_id)
+        //     ->with('store_name', $store_name)
+        //     ->with('date_from', $date_from)
+        //     ->with('date_to', $date_to);
     }
 
     public function van_selling_report_date_range_itemized(Request $request, $data)

@@ -7,15 +7,15 @@ use App\Customer;
 use App\Sku_add;
 use App\Sku_principal;
 use App\Van_selling_printed;
-use App\Van_selling_upload_ledger;
-use App\Customer_ledger;
+
 use App\Location;
-use DB;
-use App\Sku_ledger;
-use App\Van_selling_printed_details;
+use App\Van_selling_ar_ledger;
+use App\Vs_withdrawal;
+use App\Vs_withdrawal_details;
 use App\Customer_principal_price;
 use App\Customer_principal_code;
-use App\Van_selling_ar_ledger;
+use App\Vs_inventory_ledger;
+use DB;
 use Illuminate\Http\Request;
 
 class Van_selling_widthdrawal_controller extends Controller
@@ -136,28 +136,62 @@ class Van_selling_widthdrawal_controller extends Controller
 
     public function van_selling_save(Request $request)
     {
-
-        $customer_principal_price = Customer_principal_price::select('price_level')->where('customer_id', $request->input('customer_id'))->where('principal_id', $request->input('principal'))->first();
-
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
-
-
-        $van_selling_printed_save = new Van_selling_printed([
+        //return $request->input();
+        $new_withdrawal_saved = new Vs_withdrawal([
+            'user_id' => auth()->user()->id,
             'customer_id' => $request->input('customer_id'),
             'principal_id' => $request->input('principal'),
-            'sales_order_number' => $request->input('sales_order_number'),
-            'mode_of_transaction' => 'VAN SELLING WITHDRAWAL',
             'delivery_receipt' => $request->input('delivery_receipt'),
-            'price_level' => $customer_principal_price->price_level,
-            'date_paid_or_cancelled' => 'n/a',
-            'date' => $date,
-            'sku_type' => $request->input('dr_sku_type'),
             'total_amount' => $request->input('total_customer_payable_amount'),
-            'remarks' => '',
-
         ]);
-        $van_selling_printed_save->save();
+
+        $new_withdrawal_saved->save();
+
+        foreach ($request->input('sku') as $key => $data) {
+            $new_details = new Vs_withdrawal_details([
+                'vs_withdrawal_id' => $new_withdrawal_saved->id,
+                'sku_id' => $data,
+                'quantity' => $request->input('quantity')[$data],
+                'unit_price' => $request->input('sku_price')[$data],
+                'sku_type' => $request->input('sku_type')[$data],
+            ]);
+
+            $new_details->save();
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $count_ledger_row = count($ledger_results);
+
+            if ($count_ledger_row > 0) {
+                 $new_inventory_ledger = new Vs_inventory_ledger([
+                    'user_id' => auth()->user()->id,
+                    'customer_id' => $request->input('customer_id'),
+                    'principal_id' => $request->input('principal'),
+                    'transaction' => 'withdrawal',
+                    'sku_id' => $data,
+                    'beginning_inventory' => $ledger_results[0]->ending_inventory,
+                    'quantity' => $request->input('quantity')[$data],
+                    'ending_inventory' => $ledger_results[0]->ending_inventory + $request->input('quantity')[$data],
+                    'unit_price' => $request->input('sku_price')[$data],
+                    'all_id' => $new_withdrawal_saved->id,
+                ]);
+                $new_inventory_ledger->save();
+            } else {
+                $new_inventory_ledger = new Vs_inventory_ledger([
+                    'user_id' => auth()->user()->id,
+                    'customer_id' => $request->input('customer_id'),
+                    'principal_id' => $request->input('principal'),
+                    'transaction' => 'withdrawal',
+                    'sku_id' => $data,
+                    'beginning_inventory' => 0,
+                    'quantity' => $request->input('quantity')[$data],
+                    'ending_inventory' => $request->input('quantity')[$data],
+                    'unit_price' => $request->input('sku_price')[$data],
+                    'all_id' => $new_withdrawal_saved->id,
+                ]);
+                $new_inventory_ledger->save();
+            }
+        }
+
 
         $ar_checker = Van_selling_ar_ledger::where('customer_id', $request->input('customer_id'))->orderBy('id', 'desc')->limit(1)->first();
 
@@ -169,7 +203,7 @@ class Van_selling_widthdrawal_controller extends Controller
                 'user_id' => auth()->user()->id,
                 'principal_id' => $request->input('principal'),
                 'transaction' => 'withdrawal',
-                'all_id' => $van_selling_printed_save->id,
+                'all_id' => $new_withdrawal_saved->id,
                 'running_balance' => $running_balance,
                 'amount' => $request->input('total_customer_payable_amount'),
                 'short' => 0,
@@ -184,7 +218,7 @@ class Van_selling_widthdrawal_controller extends Controller
                 'user_id' => auth()->user()->id,
                 'principal_id' => $request->input('principal'),
                 'transaction' => 'withdrawal',
-                'all_id' => $van_selling_printed_save->id,
+                'all_id' => $new_withdrawal_saved->id,
                 'running_balance' => 0,
                 'amount' => $request->input('total_customer_payable_amount'),
                 'short' => 0,
@@ -194,193 +228,5 @@ class Van_selling_widthdrawal_controller extends Controller
 
             $van_selling_ledger_save->save();
         }
-
-        foreach ($request->input('sku') as $key => $data) {
-            $explode = explode(',', $data);
-            $sku_id = $explode[0];
-
-            //echo $request->input('final_amount_per_sku')[$sku_id];
-            $van_selling_printed_details = new Van_selling_printed_details([
-                'van_selling_printed_id' => $van_selling_printed_save->id,
-                'customer_id' => $request->input('customer_id'),
-                'sales_order_number' => $request->input('sales_order_number'),
-                'sku_id' => $sku_id,
-                'quantity' => $request->input('quantity')[$sku_id],
-                'butal_quantity' => $request->input('equivalent_butal_pcs')[$sku_id],
-                'price' => $request->input('sku_price')[$sku_id],
-                'amount_per_sku' => $request->input('final_amount_per_sku')[$sku_id],
-                'remarks' => '',
-            ]);
-
-            $van_selling_printed_details->save();
-        }
-
-
-
-
-        // foreach ($request->input('sku') as $key => $data) {
-        //     $explode = explode(',', $data);
-        //     $sku_id = $explode[0];
-        //     $sku_code = $explode[1];
-
-        //     // $$van_selling_ledger_result = Van_selling_upload_ledger::where('customer_id',$request->input('customer_id'))->where('sku_code',$sku_code)->latest()->first();
-        //     $customer_id = $request->input('customer_id');
-        //     $van_selling_ledger_result = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-        //     $counter = count($van_selling_ledger_result);
-
-        //     if ($counter != 0) {
-        //         if ($request->input('sku_type')[$sku_id] == 'Case' or $request->input('sku_type')[$sku_id] == 'CASE') {
-        //             $van_load = $request->input('quantity')[$sku_id] * $request->input('equivalent_butal_pcs')[$sku_id];
-        //             $total_price_case = $request->input('sku_price')[$sku_id] * $van_load;
-        //             $unit_price = $request->input('sku_price')[$sku_id];
-
-        //             $total = $van_load * $unit_price;
-        //             $running_balance = $van_selling_ledger_result[0]->running_balance + $total;
-        //             $van_selling_upload_ledger = new Van_selling_upload_ledger([
-        //                 'van_selling_printed_id' => $van_selling_printed_save_last_id,
-        //                 'customer_id' => $request->input('customer_id'),
-        //                 'principal' => $request->input('principal_name'),
-        //                 'sku_code' => $sku_code,
-        //                 'description' => $request->input('description')[$sku_id],
-        //                 'unit_of_measurement' => $request->input('unit_of_measurement')[$sku_id],
-        //                 'sku_type' => $request->input('sku_type')[$sku_id],
-        //                 'butal_equivalent' => $request->input('equivalent_butal_pcs')[$sku_id],
-        //                 'reference' => $request->input('delivery_receipt'),
-        //                 'beg' => $van_selling_ledger_result[0]->end,
-        //                 'van_load' => $van_load,
-        //                 'sales' => 0,
-        //                 'end' => $van_load + $van_selling_ledger_result[0]->end,
-        //                 'unit_price' => $unit_price,
-        //                 'total' => $total,
-        //                 'running_balance' => $running_balance,
-        //                 'remarks' => $employee_name->name,
-        //                 'date' => $date,
-        //             ]);
-
-        //             $van_selling_upload_ledger->save();
-        //         } else {
-        //             $running_balance = $request->input('quantity')[$sku_id] * $request->input('sku_price')[$sku_id] + $van_selling_ledger_result[0]->running_balance;
-        //             $van_selling_upload_ledger = new Van_selling_upload_ledger([
-        //                 'van_selling_printed_id' => $van_selling_printed_save_last_id,
-        //                 'customer_id' => $request->input('customer_id'),
-        //                 'principal' => $request->input('principal_name'),
-        //                 'sku_code' => $sku_code,
-        //                 'description' => $request->input('description')[$sku_id],
-        //                 'unit_of_measurement' => $request->input('unit_of_measurement')[$sku_id],
-        //                 'sku_type' => $request->input('sku_type')[$sku_id],
-        //                 'butal_equivalent' => $request->input('equivalent_butal_pcs')[$sku_id],
-        //                 'reference' => $request->input('delivery_receipt'),
-        //                 'beg' => $van_selling_ledger_result[0]->end,
-        //                 'van_load' => $request->input('quantity')[$sku_id],
-        //                 'sales' => 0,
-        //                 'end' => $request->input('quantity')[$sku_id] + $van_selling_ledger_result[0]->end,
-        //                 'unit_price' => $request->input('sku_price')[$sku_id],
-        //                 'total' => $request->input('quantity')[$sku_id] * $request->input('sku_price')[$sku_id],
-        //                 'running_balance' => $running_balance,
-        //                 'remarks' => $employee_name->name,
-        //                 'date' => $date,
-        //             ]);
-
-        //             $van_selling_upload_ledger->save();
-        //         }
-        //     } else {
-        //         if ($request->input('sku_type')[$sku_id] == 'Case' or $request->input('sku_type')[$sku_id] == 'CASE') {
-        //             $van_load = $request->input('quantity')[$sku_id] * $request->input('equivalent_butal_pcs')[$sku_id];
-        //             $total_price_case = $request->input('sku_price')[$sku_id] * $van_load;
-        //             $unit_price = $request->input('sku_price')[$sku_id];
-
-        //             $van_selling_upload_ledger = new Van_selling_upload_ledger([
-        //                 'van_selling_printed_id' => $van_selling_printed_save_last_id,
-        //                 'customer_id' => $request->input('customer_id'),
-        //                 'principal' => $request->input('principal_name'),
-        //                 'sku_code' => $sku_code,
-        //                 'description' => $request->input('description')[$sku_id],
-        //                 'unit_of_measurement' => $request->input('unit_of_measurement')[$sku_id],
-        //                 'sku_type' => $request->input('sku_type')[$sku_id],
-        //                 'butal_equivalent' => $request->input('equivalent_butal_pcs')[$sku_id],
-        //                 'reference' => $request->input('delivery_receipt'),
-        //                 'beg' => 0,
-        //                 'van_load' => $van_load,
-        //                 'sales' => 0,
-        //                 'end' => $van_load,
-        //                 'unit_price' => $unit_price,
-        //                 'total' => $van_load * $unit_price,
-        //                 'running_balance' => $van_load * $unit_price,
-        //                 'remarks' => $employee_name->name,
-        //                 'date' => $date,
-        //             ]);
-
-        //             $van_selling_upload_ledger->save();
-        //         } else {
-        //             $van_selling_upload_ledger = new Van_selling_upload_ledger([
-        //                 'van_selling_printed_id' => $van_selling_printed_save_last_id,
-        //                 'customer_id' => $request->input('customer_id'),
-        //                 'principal' => $request->input('principal_name'),
-        //                 'sku_code' => $sku_code,
-        //                 'description' => $request->input('description')[$sku_id],
-        //                 'unit_of_measurement' => $request->input('unit_of_measurement')[$sku_id],
-        //                 'sku_type' => $request->input('sku_type')[$sku_id],
-        //                 'butal_equivalent' => $request->input('equivalent_butal_pcs')[$sku_id],
-        //                 'reference' => $request->input('delivery_receipt'),
-        //                 'beg' => 0,
-        //                 'van_load' => $request->input('quantity')[$sku_id],
-        //                 'sales' => 0,
-        //                 'end' => $request->input('quantity')[$sku_id],
-        //                 'unit_price' => $request->input('sku_price')[$sku_id],
-        //                 'total' => $request->input('quantity')[$sku_id] * $request->input('sku_price')[$sku_id],
-        //                 'running_balance' => $request->input('quantity')[$sku_id] * $request->input('sku_price')[$sku_id],
-        //                 'remarks' => $employee_name->name,
-        //                 'date' => $date,
-        //             ]);
-
-        //             $van_selling_upload_ledger->save();
-        //         }
-        //     }
-
-        //     // $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-        //     // $ledger_running_balance = $ledger_results[0]->running_balance - $request->input('quantity')[$sku_id];
-        //     // $ledger_total_cost = $request->input('quantity')[$sku_id] * $ledger_results[0]->final_unit_cost;
-        //     // $ledger_running_total_cost = $ledger_results[0]->running_total_cost - $ledger_total_cost;
-        //     // $ledger_final_unit_cost = $ledger_running_total_cost / $ledger_running_balance;
-
-        //     // $ledger_add_save = new Sku_ledger([
-        //     //     'sku_id' => $sku_id,
-        //     //     'category_id' => $request->input('category_id')[$sku_id],
-        //     //     'sku_type' => $request->input('sku_type')[$sku_id],
-        //     //     'principal_id' => $request->input('principal_id_per_sku')[$sku_id],
-        //     //     'in_out_adjustments' => 'VS withdrawal',
-        //     //     'rr_dr' => $request->input('delivery_receipt'),
-        //     //     'sales_order_number' => $request->input('sales_order_number'),
-        //     //     'principal_invoice' => '',
-        //     //     'quantity' => ($request->input('quantity')[$sku_id]) * -1,
-        //     //     'running_balance' => $ledger_running_balance,
-        //     //     'unit_cost' => $ledger_results[0]->final_unit_cost,
-        //     //     'total_cost' => ($ledger_total_cost) * -1,
-        //     //     'adjustments' => 0,
-        //     //     'running_total_cost' => $ledger_running_total_cost,
-        //     //     'final_unit_cost' => $ledger_final_unit_cost,
-        //     //     'transaction_date' => $date,
-        //     //     'user_id' => auth()->user()->id
-        //     // ]);
-
-        //     // $ledger_add_save->save();
-
-        //     $van_selling_printed_details = new Van_selling_printed_details([
-        //         'van_selling_printed_id' => $van_selling_printed_save_last_id,
-        //         'customer_id' => $request->input('customer_id'),
-        //         'sales_order_number' => $request->input('sales_order_number'),
-        //         'sku_id' => $sku_id,
-        //         'quantity' => $request->input('quantity')[$sku_id],
-        //         'butal_quantity' => $request->input('equivalent_butal_pcs')[$sku_id],
-        //         'price' => $request->input('sku_price')[$sku_id],
-        //         'amount_per_sku' => $request->input('final_amount_per_sku')[$sku_id],
-        //         'remarks' => '',
-        //     ]);
-
-        //     $van_selling_printed_details->save();
-        // }
-
-        // return 'saved';
     }
 }

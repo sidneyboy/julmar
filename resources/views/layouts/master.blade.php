@@ -676,6 +676,13 @@
                                             <p>Withdrawal</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_report_date_range') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Inventory Ledger</p>
+                                        </a>
+                                    </li>
                                     {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_invoice') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">

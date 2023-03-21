@@ -38,16 +38,10 @@
                     <tr>
                         <td>
                             {{ $data->sku_code }}
-                            <input type="hidden" name="sku[]" value="{{ $data->id . ',' . $data->sku_code }}">
-                            <input type="hidden" name="principal_id_per_sku[{{ $data->id }}]"
-                                value="{{ $data->principal_id }}">
-                            <input type="hidden" name="category_id[{{ $data->id }}]"
-                                value="{{ $data->category_id }}">
+                            <input type="hidden" name="sku[]" value="{{ $data->id }}">
                         </td>
                         <td>
                             {{ $data->description }}
-                            <input type="hidden" name="description[{{ $data->id }}]"
-                                value="{{ $data->description }}">
                         </td>
                         <td style="text-transform: uppercase;">
                             {{ $data->sku_type }}
