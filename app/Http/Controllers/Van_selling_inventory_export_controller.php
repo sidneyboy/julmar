@@ -14,6 +14,8 @@ use App\Customer_principal_price;
 use App\Sku_add;
 use App\Sku_price_details;
 use App\Van_selling_upload_ledger;
+
+use App\Vs_withdrawal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -81,51 +83,21 @@ class Van_selling_inventory_export_controller extends Controller
                 return 'NO_DATA_FOUND';
             }
         } else if ($request->input('search_for') == 'admin_export') {
-            $van_selling_printed = Van_selling_printed::select('id')->where('customer_id', $request->input('customer_id'))->where('remarks', 'printed')->get();
-            $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
-                ->select('id', 'principal', 'sku_code', 'unit_of_measurement', 'description', 'beg', 'butal_equivalent', 'reference', 'customer_id', 'sku_type', DB::raw('SUM(sales) as total_sales'), DB::raw('SUM(van_load) as total_van_load'), DB::raw('SUM(adjustments) as total_adjustments'), DB::raw('SUM(pcm) as total_pcm'), DB::raw('SUM(inventory_adjustments) as total_inventory_adjustments'))
-                ->where('customer_id', $request->input('customer_id'))
-                ->groupBy('sku_code')
-                ->get();
-            $counter = count($van_selling_ledger);
+            $customer_id = $request->input('customer_id');
+            $customer = Customer::select('id','store_name')->find($request->input('customer_id'));
+            $ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
+            WHERE customer_id = '$customer_id' GROUP BY sku_id)");
 
-            $customer_data = Customer::find($request->input('customer_id'));
-
-            if ($counter != 0) {
-                foreach ($van_selling_ledger as $key => $data) {
-                    $customer_id = $data->customer_id;
-                    $new_query_for_van_selling_ledger = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$data->sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-                    $sku_code_array[] = $data->sku_code;
-                    $butal_equivalent_array[] = $new_query_for_van_selling_ledger[0]->butal_equivalent;
-                    $unit_of_measurement_array[] = $new_query_for_van_selling_ledger[0]->unit_of_measurement;
-                    $unit_price_array[] = $new_query_for_van_selling_ledger[0]->unit_price;
-                    $running_balance_array[] = $new_query_for_van_selling_ledger[0]->running_balance;
-                    $ending_array[] = $new_query_for_van_selling_ledger[0]->end;
-                    $sku_type_array[] = $new_query_for_van_selling_ledger[0]->sku_type;
-                }
-
-                //return $ending_array;
-
-
-
-                return view('van_selling_inventory_export_admin_export', [
-                    'van_selling_ledger' => $van_selling_ledger,
-                    'ending_array' => $ending_array,
-                    'van_selling_printed' => $van_selling_printed,
-                    'sku_code_array' => $sku_code_array,
-                    'butal_equivalent_array' => $butal_equivalent_array,
-                    'unit_price_array' => $unit_price_array,
-                    'running_balance_array' => $running_balance_array,
-                    'unit_of_measurement_array' => $unit_of_measurement_array,
-                    'sku_type_array' => $sku_type_array,
-                ])->with('counter', $counter)
-                    ->with('date', $date)
-                    ->with('time', $time)
-                    ->with('customer_data', $customer_data);
-            } else {
-                return 'NO_DATA_FOUND';
+            foreach ($ledger as $key => $data) {
+                $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->find($data->sku_id);
             }
+
+            return view('van_selling_inventory_export_admin_export', [
+                'customer' => $customer,
+                'ledger' => $ledger,
+                'sku' => $sku,
+            ])->with('date', $date)
+                ->with('time', $time);
         }
     }
 

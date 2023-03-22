@@ -15,8 +15,8 @@
       <form id="van_selling_invoice_generate">
         <div class="row">
           <div class="col-md-12">
-             <label>VAN SELLING DR:</label>
-             <select class="form-control select2bs4" name="van_selling_id" required style="width:100%;">
+             <label>Delivery Receipt:</label>
+             <select class="form-control select2bs4" name="vs_withdrawal_id" required style="width:100%;">
                <option value="" default>SELECT</option>
                @foreach($van_selling as $data)
                 <option value="{{ $data->id }}">{{ $data->delivery_receipt ." - [". $data->customer->store_name ."]" }}</option>

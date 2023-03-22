@@ -517,10 +517,16 @@ Route::post('/van_selling_pcm_post_save', 'Van_selling_pcm_post_controller@van_s
 Route::get('/van_selling_cm_report', 'Van_selling_cm_report_controller@index')->name('van_selling_cm_report');
 Route::post('/van_selling_cm_report_generate', 'Van_selling_cm_report_controller@van_selling_cm_report_generate')->name('van_selling_cm_report_generate');
 
-Route::get('/van_selling_ar', 'Van_selling_ar_controller@index')->name('van_selling_ar');
-Route::post('/van_selling_ar_generate', 'Van_selling_ar_controller@van_selling_ar_generate')->name('van_selling_ar_generate');
-Route::post('/van_selling_ar_proceed_to_final_summary', 'Van_selling_ar_controller@van_selling_ar_proceed_to_final_summary')->name('van_selling_ar_proceed_to_final_summary');
-Route::post('/van_selling_ar_save', 'Van_selling_ar_controller@van_selling_ar_save')->name('van_selling_ar_save');
+// Route::get('/van_selling_ar', 'Van_selling_ar_controller@index')->name('van_selling_ar');
+// Route::post('/van_selling_ar_generate', 'Van_selling_ar_controller@van_selling_ar_generate')->name('van_selling_ar_generate');
+// Route::post('/van_selling_ar_proceed_to_final_summary', 'Van_selling_ar_controller@van_selling_ar_proceed_to_final_summary')->name('van_selling_ar_proceed_to_final_summary');;
+// Route::post('/van_selling_ar_save', 'Van_selling_ar_controller@van_selling_ar_save')->name('van_selling_ar_save');
+
+
+Route::get('/van_selling_ar_ledger', 'Vs_ar_ledger_controller@index')->name('van_selling_ar_ledger');
+Route::post('/van_selling_ar_ledger_generate_data', 'Vs_ar_ledger_controller@van_selling_ar_ledger_generate_data')->name('van_selling_ar_ledger_generate_data');
+
+
 
 Route::get('/van_selling_price_difference', 'Van_selling_price_difference_controller@index')->name('van_selling_price_difference');
 Route::post('/van_selling_price_difference_generate_sku', 'Van_selling_price_difference_controller@van_selling_price_difference_generate_sku')->name('van_selling_price_difference_generate_sku');

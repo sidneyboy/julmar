@@ -36,6 +36,7 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/summernote/summernote-bs4.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -677,12 +678,34 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ url('van_selling_invoice') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Print Invoice</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_inventory_export') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Inventory Export</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('van_selling_report_date_range') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Inventory Ledger</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_ar_ledger') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_ar_ledger' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>AR Ledger</p>
+                                        </a>
+                                    </li>
+                                    
                                     {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_invoice') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">

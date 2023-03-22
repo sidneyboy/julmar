@@ -26,9 +26,9 @@
              <label>SEARCH FOR:</label>
              <select class="form-control select2bs4" name="search_for" required style="width:100%;">
                <option value="" default>SEARCH FOR</option>
-               <option value="van_load_export">NEW VAN LOAD EXPORT</option>
-               <option value="inventory_adjustment_export">INVENTORY ADJUSTMENT EXPORT(EVERY CUT OFF)</option>
-               <option value="admin_export">ADMIN EXPORT</option>
+               {{-- <option value="van_load_export">NEW VAN LOAD EXPORT</option>
+               <option value="inventory_adjustment_export">INVENTORY ADJUSTMENT EXPORT(EVERY CUT OFF)</option> --}}
+               <option value="admin_export" selected>ADMIN EXPORT</option>
              </select>
           </div>
           <div class="col-md-12">

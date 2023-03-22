@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Van_selling_printed;
-use App\Van_selling_printed_details;
+use App\Vs_withdrawal;
+use App\Vs_withdrawal_details;
 use App\Sku_principal;
 use App\Location;
 use App\Customer;
@@ -17,7 +17,10 @@ class Van_selling_invoice_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $van_selling = Van_selling_printed::where('remarks', '!=', 'printed')->where('remarks', '!=', 'exported')->where('remarks', '!=', 'CANCELLED')->orderBy('id', 'Desc')->get();
+            $van_selling = Vs_withdrawal::select('id','delivery_receipt','customer_id')
+                            ->where('status',null)
+                            ->orderBy('id','desc')
+                            ->get();
             return view('van_selling_invoice', [
                 'user' => $user,
                 'van_selling' => $van_selling,
@@ -36,7 +39,7 @@ class Van_selling_invoice_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        $van_selling = Van_selling_printed::find($request->input('van_selling_id'));
+        $van_selling = Vs_withdrawal::find($request->input('vs_withdrawal_id'));
         $customer_principal_code = Customer_principal_code::select('store_code')->where('customer_id', $van_selling->customer_id)->where('principal_id', $van_selling->principal_id)->first();
 
 
@@ -53,12 +56,12 @@ class Van_selling_invoice_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        $van_selling = Van_selling_printed::find($request->input('van_selling_id'));
+        $van_selling = Vs_withdrawal::find($request->input('vs_withdrawal_id'));
         $customer_principal_code = Customer_principal_code::select('store_code')->where('customer_id', $van_selling->customer_id)->where('principal_id', $van_selling->principal_id)->first();
         $employee_name = User::select('id', 'name')->where('id', auth()->user()->id)->first();
 
-        Van_selling_printed::where('id', $request->input('van_selling_id'))
-            ->update(['remarks' => 'printed']);
+        Vs_withdrawal::where('id', $request->input('vs_withdrawal_id'))
+            ->update(['status' => 'printed']);
 
         return view('van_selling_invoice_print_page', [
             'van_selling' => $van_selling,

@@ -23,4 +23,14 @@ class Vs_inventory_ledger extends Model
     {
         return $this->belongsTo('App\Sku_add','sku_id');
     }
+
+    public function principal()
+    {
+        return $this->belongsTo('App\Sku_principal','principal_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo('App\Customer','customer_id');
+    }
 }

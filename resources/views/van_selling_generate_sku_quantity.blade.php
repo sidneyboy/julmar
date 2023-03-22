@@ -35,38 +35,46 @@
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $running_balance = $data->sku_ledger_quantity->running_balance;
+                                $running_balance = $data->sku_ledger_latest->running_balance;
                             @endphp
-                            {{ number_format($data->sku_ledger_quantity->running_balance) }}
+                            {{ number_format($data->sku_ledger_latest->running_balance) }}
                             <input type="hidden" name="running_balance[{{ $data->id }}]"
                                 value="{{ $running_balance }}">
                         </td>
                         <td><input style="text-align: center;" type="number" min=0 value="0"
-                                name="quantity[{{ $data->id }}]" class="form-control form-control-sm" required></td>
+                                name="quantity[{{ $data->id }}]" class="form-control form-control-sm" required>
+                        </td>
                         <td style="text-align: right;">
-                            @if ($customer_principal_price->price_level == 'price_1')
-                                @php
-                                    $price_butal = $data->sku_price_details_one->price_1;
-                                @endphp
-                            @elseif($customer_principal_price->price_level == 'price_2')
-                                @php
-                                    $price_butal = $data->sku_price_details_one->price_2;
-                                @endphp
-                            @elseif($customer_principal_price->price_level == 'price_3')
-                                @php
-                                    $price_butal = $data->sku_price_details_one->price_3;
-                                @endphp
-                            @elseif($customer_principal_price->price_level == 'price_4')
-                                @php
-                                    $price_butal = $data->sku_price_details_one->price_4;
-                                @endphp
+                            @if ($customer_principal_price->price_level)
+                                @if ($customer_principal_price->price_level == 'price_1')
+                                    @php
+                                        $price_butal = $data->sku_price_details_one->price_1;
+                                    @endphp
+                                @elseif($customer_principal_price->price_level == 'price_2')
+                                    @php
+                                        $price_butal = $data->sku_price_details_one->price_2;
+                                    @endphp
+                                @elseif($customer_principal_price->price_level == 'price_3')
+                                    @php
+                                        $price_butal = $data->sku_price_details_one->price_3;
+                                    @endphp
+                                @elseif($customer_principal_price->price_level == 'price_4')
+                                    @php
+                                        $price_butal = $data->sku_price_details_one->price_4;
+                                    @endphp
+                                @else
+                                    @php
+                                        $price_butal = $data->sku_price_details_one->price_5;
+                                    @endphp
+                                @endif
                             @else
                                 @php
-                                    $price_butal = $data->sku_price_details_one->price_5;
+                                    $price_butal = 0;
                                 @endphp
                             @endif
-                            <input type="text" style="text-align: right" class="form-control form-control-sm" name="price_butal[{{ $data->id }}]"
-                                value="{{ $price_butal }}" onkeypress="return isNumberKey(event)">
+                            <input type="text" style="text-align: right" class="form-control form-control-sm"
+                                name="price_butal[{{ $data->id }}]" value="{{ $price_butal }}"
+                                onkeypress="return isNumberKey(event)">
                             <input type="hidden" name="equivalent_butal_pcs[{{ $data->id }}]"
                                 value="{{ $data->equivalent_butal_pcs }}">
                         </td>
