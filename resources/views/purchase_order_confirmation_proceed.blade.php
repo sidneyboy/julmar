@@ -30,9 +30,9 @@
                 @foreach ($principal_discount as $data)
                     <option value="{{ $data->id }}">
                         @foreach ($data->principal_discount_details as $details)
-                            {{ $details->discount_name }} - {{ $details->discount_rate }}% -
+                            {{ $details->discount_name }} - {{ $details->discount_rate }}% |
                         @endforeach
-                        BO - {{ $data->total_bo_allowance_discount }}%
+                        BO - {{ $data->total_bo_allowance_discount }}% | CWO - {{ $data->cash_with_order_discount }}%
                     </option>
                 @endforeach
             </select>

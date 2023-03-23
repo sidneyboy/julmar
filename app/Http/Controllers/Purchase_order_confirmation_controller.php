@@ -44,18 +44,19 @@ class Purchase_order_confirmation_controller extends Controller
 
     public function purchase_order_confirmation_final_summary(Request $request)
     {
-        //return $request->input();
+        //return array_filter($request->input('quantity_confirmed'));
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
         $freight = str_replace(',', '', $request->input('freight'));
         $discount_selected = Principal_discount::find($request->input('discount_id'));
         $check_less_other_discounts = $request->input('less_other_discount_selected');
+        //$quantity_confirmed = array_filter($request->input('quantity_confirmed'));
         if (isset($check_less_other_discounts)) {
             $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();
 
             return view('purchase_order_confirmation_final_summary', [
                 'discount_selected' => $discount_selected,
                 'less_other_discount_selected' => $less_other_discount_selected,
-                'sku_id' => $request->input('sku_id'),
+                'sku_id' => array_filter($request->input('sku_id')),
                 'quantity_confirmed' => $request->input('quantity_confirmed'),
                 'sku_code' => $request->input('sku_code'),
                 'description' => $request->input('description'),

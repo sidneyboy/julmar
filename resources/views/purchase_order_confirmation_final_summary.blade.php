@@ -18,8 +18,10 @@
                             @endforeach
                             ({{ array_sum($sum_discount_selected) }}%)
                         </th>
-                        <th style="text-align: center">BO Allowance
+                        <th style="text-align: center">BO
                             ({{ $discount_selected->total_bo_allowance_discount }}%)</th>
+                        <th style="text-align: center">CWO
+                            ({{ $discount_selected->cash_with_order_discount }}%)</th>
                         <th style="text-align: center">T.Discount<br /></th>
                         <th>VAT</th>
                         <th>Freight</th>
@@ -28,22 +30,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sku_id as $data)
+                    @foreach (array_filter($quantity_confirmed) as $key => $data)
                         <tr>
                             <td>
-                                <span style="color:green;font-weight:bold;">{{ $sku_code[$data] }}</span>-
-                                {{ $description[$data] }}
-                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity_confirmed[$data] }}"
-                                    name="confirmed_quantity[{{ $data }}]">
-                                <input type="hidden" value="{{ $unit_cost[$data] }}"
-                                    name="unit_cost[{{ $data }}]">
+                                <span style="color:green;font-weight:bold;">{{ $sku_code[$key] }}</span>-
+                                {{ $description[$key] }}
+                                <input type="hidden" value="{{ $key }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $quantity_confirmed[$key] }}"
+                                    name="confirmed_quantity[{{ $key }}]">
+                                <input type="hidden" value="{{ $unit_cost[$key] }}"
+                                    name="unit_cost[{{ $key }}]">
                             </td>
-                            <td style="text-align: right">{{ $quantity_confirmed[$data] }}</td>
-                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $quantity_confirmed[$key] }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$key], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $quantity_confirmed[$data] * $unit_cost[$data];
+                                    $total_amount = $quantity_confirmed[$key] * $unit_cost[$key];
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -64,7 +66,14 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $total_discount = $discount + $bo_allowance_discount;
+                                    $cwo_discount = $total_amount * ($discount_selected->cash_with_order_discount / 100);
+                                    $sum_cwo_discount[] = $cwo_discount;
+                                    echo number_format($cwo_discount, 2, '.', ',');
+                                @endphp
+                            </td>
+                            <td style="text-align: right">
+                                @php
+                                    $total_discount = $discount + $bo_allowance_discount + 4;
                                     $sum_total_discount[] = $total_discount;
                                     echo number_format($total_discount, 2, '.', ',');
                                 @endphp
@@ -78,7 +87,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $freight[$data] * $quantity_confirmed[$data];
+                                    $freight_per_sku = $freight[$key] * $quantity_confirmed[$key];
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
@@ -92,14 +101,14 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost = $final_total_cost / $quantity_confirmed[$data];
+                                    $final_unit_cost = $final_total_cost / $quantity_confirmed[$key];
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
                                 {{ number_format($final_unit_cost, 2, '.', ',') }}
-                                <input type="hidden" name="final_unit_cost[{{ $data }}]"
+                                <input type="hidden" name="final_unit_cost[{{ $key }}]"
                                     value="{{ $final_unit_cost }}">
-                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
-                                    value="{{ $freight[$data] }}">
+                                <input type="hidden" name="freight_per_sku[{{ $key }}]"
+                                    value="{{ $freight[$key] }}">
                             </td>
                         </tr>
                     @endforeach
@@ -413,23 +422,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sku_id as $data)
+                    @foreach (array_filter($quantity_confirmed) as $key => $data)
                         <tr>
                             <td>
-                                <span style="color:green;font-weight:bold;">{{ $sku_code[$data] }}</span>-
-                                {{ $description[$data] }}
-                                <input type="hidden" value="{{ $data }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity_confirmed[$data] }}"
-                                    name="confirmed_quantity[{{ $data }}]">
-                                <input type="hidden" value="{{ $unit_cost[$data] }}"
-                                    name="unit_cost[{{ $data }}]">
+                                <span style="color:green;font-weight:bold;">{{ $sku_code[$key] }}</span>-
+                                {{ $description[$key] }}
+                                <input type="hidden" value="{{ $key }}" name="sku_id[]">
+                                <input type="hidden" value="{{ $quantity_confirmed[$key] }}"
+                                    name="confirmed_quantity[{{ $key }}]">
+                                <input type="hidden" value="{{ $unit_cost[$key] }}"
+                                    name="unit_cost[{{ $key }}]">
 
                             </td>
-                            <td style="text-align: right">{{ $quantity_confirmed[$data] }}</td>
-                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $quantity_confirmed[$key] }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$key], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $quantity_confirmed[$data] * $unit_cost[$data];
+                                    $total_amount = $quantity_confirmed[$key] * $unit_cost[$key];
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -480,7 +489,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $freight[$data] * $quantity_confirmed[$data];
+                                    $freight_per_sku = $freight[$key] * $quantity_confirmed[$key];
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
@@ -495,14 +504,14 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity_confirmed[$data];
+                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity_confirmed[$key];
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
-                                <input type="hidden" name="final_unit_cost[{{ $data }}]"
+                                <input type="hidden" name="final_unit_cost[{{ $key }}]"
                                     value="{{ $final_unit_cost_per_sku }}">
-                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
-                                    value="{{ $freight[$data] }}">
+                                <input type="hidden" name="freight_per_sku[{{ $key }}]"
+                                    value="{{ $freight[$key] }}">
                             </td>
                         </tr>
                     @endforeach
@@ -697,7 +706,8 @@
                         @endphp
                         {{ number_format($net_payable, 2, '.', ',') }}
                         <input type="hidden" value="{{ $net_payable }}" name="net_payable">
-                        <input type="hidden" name="total_less_other_discount" value="{{ $total_other_discounts }}">
+                        <input type="hidden" name="total_less_other_discount"
+                            value="{{ $total_other_discounts }}">
                     </td>
                 </tr>
             </table>
@@ -879,15 +889,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 Swal.fire(

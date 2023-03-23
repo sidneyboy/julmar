@@ -11,6 +11,7 @@ class Principal_discount extends Model
     	'principal_id',
     	'total_discount',
     	'total_bo_allowance_discount',
+        'cash_with_order_discount',
     ];
 
     public function principal_discount_details()

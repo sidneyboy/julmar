@@ -44,6 +44,7 @@ class Principal_discount_controller extends Controller
         $principal_discount_save = new Principal_discount([
             'user_id'    => auth()->user()->id,
             'principal_id' => $request->get('principal_id'),
+            'cash_with_order_discount' => str_replace(',','',$request->input('cash_with_order_discount')),
         ]);
         $principal_discount_save->save();
         $principal_discount_save_last_id = $principal_discount_save->id;

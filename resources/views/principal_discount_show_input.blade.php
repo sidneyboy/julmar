@@ -3,11 +3,19 @@
     <div class="row">
         <input type="hidden" name="number_of_discounts" value="{{ $number_of_discounts }}">
         <input type="hidden" name="principal_id" value="{{ $principal_id }}">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label>Bo Allowance Discount:</label>
-                <input type="text" name="bo_allowance_discount" placeholder="INPUT BO ALLOWANCE FIRST"
-                    onkeypress="return isNumberKey(event)" class="form-control" onkeypress="return isNumberKey(event)"
+                <input type="text" name="bo_allowance_discount" placeholder="BO Allowance Discount"
+                    onkeypress="return isNumberKey(event)" class="form-control" 
+                    required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Cash w/ Order Discount:</label>
+                <input type="text" name="cash_with_order_discount" placeholder="Cash with order discount"
+                     class="form-control" onkeypress="return isNumberKey(event)"
                     required>
             </div>
         </div>
