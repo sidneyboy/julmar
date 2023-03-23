@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
-use App\Van_selling_upload_ledger;
+use App\Vs_inventory_ledger;
 use App\Van_selling_upload;
-use App\Van_selling_sales;
+use App\Vs_sales;
 use DB;
 use Illuminate\Http\Request;
 
@@ -58,60 +59,44 @@ class Van_selling_import_data_controller extends Controller
 
 
                 $counter = count($csv);
+                //return $csv;
 
                 for ($i = 4; $i < $counter; $i++) {
                     $customer_id = $csv[1][1];
                     $sku_code = $csv[$i][3];
-                    $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+                    $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-                    $running_balance = $ledger_results[0]->running_balance - ($csv[$i][5] * $csv[$i][6]);
-                    $beg = $ledger_results[0]->end;
-                    $end = $beg - $csv[$i][5];
+                    $new_vs_inventory_ledger = new Vs_inventory_ledger([
+                        'user_id' => auth()->user()->id,
+                        'customer_id' => $customer_id,
+                        'principal_id' => $ledger_results[0]->principal_id,
+                        'transaction' => 'sales',
+                        'sku_id' => $ledger_results[0]->sku_id,
+                        'beginning_inventory' => $ledger_results[0]->ending_inventory,
+                        'quantity' => ($csv[$i][5]) * -1,
+                        'ending_inventory' => $ledger_results[0]->ending_inventory - $csv[$i][5],
+                        'unit_price' => $csv[$i][6],
+                        'all_id' => $csv[$i][2],
+                        'sku_code' => $sku_code,
+                    ]);
 
+                    $new_vs_inventory_ledger->save();
 
-                    $van_selling_sales = new Van_selling_sales([
-                        'customer_id' => $csv[1][1],
-                        'store_name' => $csv[$i][1],
-                        'vs_upload_id' => $van_selling_upload_save_last_id,
-                        'principal' => $ledger_results[0]->principal,
-                        'sku_code' => $csv[$i][3],
-                        'description' => $ledger_results[0]->description,
-                        'unit_of_measurement' => $ledger_results[0]->unit_of_measurement,
-                        'sku_type' => $ledger_results[0]->sku_type,
-                        'butal_equivalent' => $ledger_results[0]->butal_equivalent,
+                    $new_vs_sales = new Vs_sales([
+                        'user_id' => auth()->user()->id,
+                        'customer_id' => $customer_id,
+                        'principal_id' => $ledger_results[0]->principal_id,
+                        'customer_store_name' => $csv[$i][1],
                         'reference' => $csv[$i][2],
-                        'sales' => $csv[$i][5],
+                        'sku_id' => $ledger_results[0]->sku_id,
+                        'quantity' => $csv[$i][5],
                         'unit_price' => $csv[$i][6],
-                        'total' => $csv[$i][5] * $csv[$i][6],
-                        'date' => $date,
+                        'area' => $csv[$i][8],
+                        // 'location' => $csv[$i][9],
                         'date_sold' => $csv[$i][0],
-                        'location' => $csv[$i][8],
                     ]);
 
-                    $van_selling_sales->save();
-
-                    $van_selling_upload_ledger = new Van_selling_upload_ledger([
-                        'customer_id' => $csv[1][1],
-                        'vs_upload_id' => $van_selling_upload_save_last_id,
-                        'principal' => $ledger_results[0]->principal,
-                        'sku_code' => $csv[$i][3],
-                        'description' => $ledger_results[0]->description,
-                        'unit_of_measurement' => $ledger_results[0]->unit_of_measurement,
-                        'sku_type' => $ledger_results[0]->sku_type,
-                        'butal_equivalent' => $ledger_results[0]->butal_equivalent,
-                        'reference' => $csv[$i][1],
-                        'beg' => $beg,
-                        'van_load' => 0,
-                        'sales' => $csv[$i][5],
-                        'end' => $end,
-                        'unit_price' => $csv[$i][6],
-                        'total' => $csv[$i][5] * $csv[$i][6],
-                        'running_balance' => $running_balance,
-                        'date' => $date,
-                        'remarks' => $csv[$i][0],
-                    ]);
-
-                    $van_selling_upload_ledger->save();
+                    $new_vs_sales->save();
                 }
             }
         } else {

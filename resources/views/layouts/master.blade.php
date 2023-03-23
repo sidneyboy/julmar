@@ -671,6 +671,20 @@
                                         </a>
                                     </li> --}}
                                     <li class="nav-item">
+                                        <a href="{{ url('van_selling_import_data') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Upload Sales</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_inventory_adjustments') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Inventory Adjustments</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('van_selling_withdrawal') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>

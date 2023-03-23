@@ -137,6 +137,7 @@ class Van_selling_widthdrawal_controller extends Controller
     public function van_selling_save(Request $request)
     {
         //return $request->input();
+        $customer_id = $request->input('customer_id');
         $new_withdrawal_saved = new Vs_withdrawal([
             'user_id' => auth()->user()->id,
             'customer_id' => $request->input('customer_id'),
@@ -154,15 +155,18 @@ class Van_selling_widthdrawal_controller extends Controller
                 'quantity' => $request->input('quantity')[$data],
                 'unit_price' => $request->input('sku_price')[$data],
                 'sku_type' => $request->input('sku_type')[$data],
+                'sku_code' => $request->input('sku_code')[$data],
             ]);
 
             $new_details->save();
 
-            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+            $ledger_results =  DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$data' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
             $count_ledger_row = count($ledger_results);
 
+
             if ($count_ledger_row > 0) {
-                 $new_inventory_ledger = new Vs_inventory_ledger([
+                $new_inventory_ledger = new Vs_inventory_ledger([
                     'user_id' => auth()->user()->id,
                     'customer_id' => $request->input('customer_id'),
                     'principal_id' => $request->input('principal'),
@@ -173,6 +177,7 @@ class Van_selling_widthdrawal_controller extends Controller
                     'ending_inventory' => $ledger_results[0]->ending_inventory + $request->input('quantity')[$data],
                     'unit_price' => $request->input('sku_price')[$data],
                     'all_id' => $new_withdrawal_saved->id,
+                    'sku_code' => $request->input('sku_code')[$data],
                 ]);
                 $new_inventory_ledger->save();
             } else {
@@ -187,6 +192,7 @@ class Van_selling_widthdrawal_controller extends Controller
                     'ending_inventory' => $request->input('quantity')[$data],
                     'unit_price' => $request->input('sku_price')[$data],
                     'all_id' => $new_withdrawal_saved->id,
+                    'sku_code' => $request->input('sku_code')[$data],
                 ]);
                 $new_inventory_ledger->save();
             }

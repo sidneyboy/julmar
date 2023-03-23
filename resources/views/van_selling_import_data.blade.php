@@ -9,7 +9,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">VAN SELLING IMPORT</h3>
+                <h3 class="card-title" style="font-weight: bold;">VAN SELLING UPLOAD SALES</h3>
             </div>
             <div class="card-body">
                 @if (session('error'))
@@ -31,6 +31,7 @@
                 @endif
 
                 <form action="{{ route('van_selling_import_data_save') }}" enctype="multipart/form-data" method="post">
+                {{-- <form id="van_selling_import_data_save"> --}}
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -79,36 +80,36 @@
         //         processData: false,
         //         success: function(data) {
         //             console.log(data);
-        //             if (data == 'existing_file') {
-        //                 Swal.fire(
-        //                     'Existing file, Cannot Proceed!!',
-        //                     '',
-        //                     'error'
-        //                 )
-        //                 $('.loading').hide();
-        //             } else if (data == 'incorrect_file') {
-        //                 Swal.fire(
-        //                     'Incorrect_file, Cannot Proceed!!',
-        //                     '',
-        //                     'error'
-        //                 )
-        //                 $('.loading').hide();
-        //             } else if (data == 'saved') {
-        //                 Swal.fire(
-        //                     'Data Uploaded Successfully',
-        //                     'Success',
-        //                     'success'
-        //                 )
-        //                 $('.loading').hide();
-        //                 document.getElementById("van_selling_import_data_save").reset();
-        //             } else {
-        //                 Swal.fire(
-        //                     'Incorrect_file, Cannot Proceed!!',
-        //                     '',
-        //                     'error'
-        //                 )
-        //                 $('.loading').hide();
-        //             }
+        //             // if (data == 'existing_file') {
+        //             //     Swal.fire(
+        //             //         'Existing file, Cannot Proceed!!',
+        //             //         '',
+        //             //         'error'
+        //             //     )
+        //             //     $('.loading').hide();
+        //             // } else if (data == 'incorrect_file') {
+        //             //     Swal.fire(
+        //             //         'Incorrect_file, Cannot Proceed!!',
+        //             //         '',
+        //             //         'error'
+        //             //     )
+        //             //     $('.loading').hide();
+        //             // } else if (data == 'saved') {
+        //             //     Swal.fire(
+        //             //         'Data Uploaded Successfully',
+        //             //         'Success',
+        //             //         'success'
+        //             //     )
+        //             //     $('.loading').hide();
+        //             //     document.getElementById("van_selling_import_data_save").reset();
+        //             // } else {
+        //             //     Swal.fire(
+        //             //         'Incorrect_file, Cannot Proceed!!',
+        //             //         '',
+        //             //         'error'
+        //             //     )
+        //             //     $('.loading').hide();
+        //             // }
         //         },
         //     });
         // }));

@@ -1,96 +1,53 @@
 <form id="van_selling_inventory_adjustments_generate_final_summary">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="table table-responsive">
-                <table class="table table-bordered table-sm table-hover">
-                    <thead>
-                        <tr>
-                            <th colspan="9" style="text-align: center">NEGATIVE QUANTITY(FOR INVENTORY ADJUSTMENTS)</th>
-                        </tr>
-                        <tr>
-                            <th>PRINCIPAL</th>
-                            <th>CODE</th>
-                            <th>DESCRIPTION</th>
-                            <th>UOM</th>
-                            <th>ENDING BALANCE</th>
-                            <th>INVENTORY ADJUSTMENTS</th>
-                            <th>FINAL QTY</th>
-                            <th>U/P</th>
-                            <th>REMARKS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sku as $data)
-                            @if ($data->attributes->quantity_adjustments < 0)
-                                <tr>
-                                    <td>{{ $data->attributes->principal }}</td>
-                                    <td>{{ $data->id }}</td>
-                                    <td>{{ $data->name }}</td>
-                                    <td>{{ $data->attributes->unit_of_measurement }}</td>
-                                    <td style="text-align: right;">{{ $data->attributes->ending_balance }}</td>
-                                    <td style="text-align: right">{{ $data->attributes->quantity_adjustments }}</td>
-                                    <td style="text-align: right;">{{ $data->attributes->final_quantity }}</td>
-                                    <td style="text-align: right;">{{ $data->price }}</td>
-                                    <td>{{ $data->attributes->remarks }}</td>
-                                </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="table table-responsive">
-                <table class="table table-bordered table-sm table-hover">
-                    <thead>
-                        <tr>
-                            <th colspan="9" style="text-align: center">POSITIVE QUANTITY(FOR INVENTORY VAN LOAD)</th>
-                        </tr>
-                        <tr>
-                            <th>PRINCIPAL</th>
-                            <th>CODE</th>
-                            <th>DESCRIPTION</th>
-                            <th>UOM</th>
-                            <th>ENDING BALANCE</th>
-                            <th>INVENTORY ADJUSTMENTS</th>
-                            <th>FINAL QTY</th>
-                            <th>U/P</th>
-                            <th>REMARKS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sku as $data)
-                            @if ($data->attributes->quantity_adjustments > 0)
-                                <tr>
-                                    <td>{{ $data->attributes->principal }}</td>
-                                    <td>{{ $data->id }}</td>
-                                    <td>{{ $data->name }}</td>
-                                    <td>{{ $data->attributes->unit_of_measurement }}</td>
-                                    <td style="text-align: center;">{{ $data->attributes->ending_balance }}</td>
-                                    <td style="text-align: right">{{ $data->attributes->quantity_adjustments }}</td>
-                                    <td style="text-align: right;">{{ $data->attributes->final_quantity }}</td>
-                                    <td style="text-align: right;">{{ $data->price }}</td>
-                                    <td>{{ $data->attributes->remarks }}</td>
-                                </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <label>Remarks</label>
-            <input type="text" class="form-control" required name="remarks"> 
-        </div>
+    <div class="table table-responsive">
+        <table class="table table-bordered table-hover table-sm" id="example1">
+            <thead>
+                <tr>
+                    <th>Desc</th>
+                    <th>Ending Inventory</th>
+                    <th>Adjustment</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sku_ledger as $data)
+                    <tr>
+                        <td><span style="color:green;font-weight:bold">{{ $data->sku_code }}</span> -
+                            {{ $sku[$data->sku_id]->description }}
+                        </td>
+                        <td style="text-align: right">{{ $data->ending_inventory }}</td>
+                        <td><input type="number" value="0" name="confirmed_quantity[{{ $data->id }}]"
+                                class="form-control form-control-sm" style="text-align: center"></td>
+                        <td><input type="text" class="form-control form-control-sm"
+                                name="remarks[{{ $data->id }}]">
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-    <br />
     <input type="hidden" name="customer_id" value="{{ $customer_id }}">
-    <button type="submit" class="btn btn-info btn-block">PROCEE TO FINAL SUMMARY</button>
+    <button class="btn btn-sm float-right btn-info" type="submit">Generate Summary</button>
 </form>
-<script type="text/javascript">
+
+
+<script>
+    $('#example1').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": true,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false,
+        "responsive": false,
+    });
+
+
+
     $("#van_selling_inventory_adjustments_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
         //$('.loading').show();
+        $('#hide_if_trigger').hide();
         $.ajax({
             url: "van_selling_inventory_adjustments_generate_final_summary",
             type: "POST",
@@ -99,19 +56,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                if (data == 'NO_DATA') {
-                    Swal.fire(
-                        'NO DATA FOUND',
-                        'NO DR FOR THE MOMENT',
-                        'error'
-                    )
-                    $('.loading').hide();
-                } else {
-                    $('.loading').hide();
-                    $('#van_selling_inventory_adjustments_generate_final_summary_page').html(
-                        data);
-                }
+                $('#van_selling_inventory_adjustments_generate_final_summary_page').html(data);
             },
+            error: function(error) {
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

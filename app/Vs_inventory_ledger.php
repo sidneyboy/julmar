@@ -17,6 +17,7 @@ class Vs_inventory_ledger extends Model
         'ending_inventory',
         'unit_price',
         'all_id',
+        'sku_code',
     ];
 
     public function sku()

@@ -67,6 +67,7 @@
                                         $price_butal = $data->sku_price_details_one->price_5;
                                     @endphp
                                 @endif
+                                
                             @else
                                 @php
                                     $price_butal = 0;

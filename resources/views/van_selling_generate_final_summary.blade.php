@@ -39,6 +39,7 @@
                         <td>
                             {{ $data->sku_code }}
                             <input type="hidden" name="sku[]" value="{{ $data->id }}">
+                            <input type="hidden" name="sku_code[{{ $data->id }}]" value="{{ $data->sku_code }}">
                         </td>
                         <td>
                             {{ $data->description }}
