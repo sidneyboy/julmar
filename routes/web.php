@@ -374,9 +374,7 @@ Route::post('/van_selling_export_updated_price_generate_data', 'Van_selling_expo
 
 Route::get('/van_selling_payment', 'Van_selling_payment_controller@index');
 Route::post('/van_selling_payment_search_store_code', 'Van_selling_payment_controller@van_selling_payment_search_store_code')->name('van_selling_payment_search_store_code');
-Route::post('/van_selling_payment_generate_summary', 'Van_selling_payment_controller@van_selling_payment_generate_summary')->name('van_selling_payment_generate_summary');
 Route::post('/van_selling_payment_save', 'Van_selling_payment_controller@van_selling_payment_save')->name('van_selling_payment_save');
-
 
 Route::get('/van_selling_actual_stocks_on_hand', 'Van_selling_actual_stocks_on_hand_controller@index');
 Route::post('/van_selling_actual_stocks_on_hand_proceed', 'Van_selling_actual_stocks_on_hand_controller@van_selling_actual_stocks_on_hand_proceed')->name('van_selling_actual_stocks_on_hand_proceed');

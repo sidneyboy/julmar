@@ -1,5 +1,5 @@
-<div class="table table-responsive">
-    <table class="table table->bordered table-sm table-hover" id="example1">
+<div style="width:100%;">
+    <table class="table table-sm table-hover table-bordered table-striped" id="example1">
         <thead>
             <tr>
                 <th>Principal</th>
@@ -56,28 +56,20 @@
 </div>
 
 <script>
-    $("#example1").DataTable({
-        "responsive": false,
-        "lengthChange": false,
-        "autoWidth": false,
-        "paging": false,
-        "fixedHeader": true,
-        "buttons": [{
-                extend: 'copyHtml5',
-                footer: true
-            },
-            {
-                extend: 'excelHtml5',
-                footer: true
-            },
-            {
-                extend: 'csvHtml5',
-                footer: true
-            },
-            {
-                extend: 'print',
-                footer: true
-            }
-        ]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $(document).ready(function() {
+        var table = $('#example1').DataTable({
+            responsive: true,
+            paging: false,
+            ordering: true,
+            info: false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
+        });
+        new $.fn.dataTable.FixedHeader(table);
+    });
 </script>

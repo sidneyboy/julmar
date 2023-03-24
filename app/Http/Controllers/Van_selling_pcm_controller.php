@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\User;
-use App\Van_selling_pcm;
-use App\Van_selling_pcm_details;
 use App\Sku_add;
 use App\Sku_principal;
-use App\Van_selling_upload_ledger;
+use App\Vs_pcm;
+use App\Vs_pcm_details;
+use App\Vs_inventory_ledger;
 use App\Customer_principal_price;
 use DB;
 use Cart;
@@ -40,24 +40,15 @@ class Van_selling_pcm_controller extends Controller
     public function van_selling_pcm_generate_sku_per_principal(Request $request)
     {
         //return $request->input();
-        $explode = explode('-', $request->input('salesman_data'));
-        $salesman_id = $explode[0];
-        $salesman_name = $explode[1];
-
-        $explode_principal = explode('-', $request->input('principal'));
-        $principal_name = $explode_principal[0];
-        $principal_id = $explode_principal[1];
 
         if ($request->input('pcm_type') == 'customer') {
-            $van_selling_ledger = Sku_add::where('principal_id', $principal_id)
+            $van_selling_ledger = Sku_add::where('principal_id', $request->input('principal_id'))
                 ->where('sku_type', 'BUTAL')
                 ->get();
         } else {
-            $van_selling_ledger = DB::table('Van_selling_upload_ledgers')
-                ->select('id', 'principal', 'sku_code', 'unit_of_measurement', 'description', 'beg', 'butal_equivalent', 'reference', 'customer_id', 'sku_type')
-                ->where('customer_id', $salesman_id)
-                ->where('principal', $principal_name)
-                ->groupBy('sku_code')
+            $van_selling_ledger = Vs_inventory_ledger::where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->groupBy('sku_id')
                 ->get();
         }
 
@@ -73,12 +64,10 @@ class Van_selling_pcm_controller extends Controller
         $sku_code = $explode[0];
         $description = $explode[1];
         $sku_id = $explode[2];
-        $principal = $explode[3];
-        $principal_id = $explode[4];
+        $principal_id = $explode[3];
 
-        $explode_sales = explode('-', $request->input('salesman'));
-        $salesman_id = $explode_sales[0];
-        $salesman_name = $explode_sales[1];
+
+        $salesman_id = $request->input('salesman');
 
 
         $check = Cart::session(auth()->user()->id)->get($sku_code);
@@ -87,7 +76,7 @@ class Van_selling_pcm_controller extends Controller
 
 
         if ($request->input('pcm_type') != 'customer') {
-            $van_selling_ledger_result = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$salesman_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $van_selling_ledger_result = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$salesman_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
             $unit_price = $van_selling_ledger_result[0]->unit_price;
         } else {
             $customer_principal_price = Customer_principal_price::select('id', 'price_level')->where('customer_id', $salesman_id)->where('principal_id', $principal_id)->first();
@@ -108,72 +97,70 @@ class Van_selling_pcm_controller extends Controller
 
         if ($request->input('pcm_type') == 'customer') {
             if ($check) {
-                \Cart::update($sku_code, array(
+                \Cart::update($sku_id, array(
                     'price' => $unit_price,
                     'quantity' => array(
                         'relative' => false,
                         'value' => $quantity,
                     ),
                     'attributes' => array(
-                        'principal' => $principal,
                         'remarks' => $request->input('remarks'),
+                        'sku_code' => $sku_code,
                     ),
                 ));
             } else {
                 \Cart::session(auth()->user()->id)->add(array(
-                    'id' => $sku_code,
+                    'id' => $sku_id,
                     'name' => $description,
                     'quantity' => $quantity,
                     'price' => $unit_price,
                     'attributes' => array(
-                        'principal' => $principal,
                         'remarks' => $request->input('remarks'),
+                        'sku_code' => $sku_code,
                     ),
                 ));
             }
         } else {
             if ($check) {
-                \Cart::update($sku_code, array(
+                \Cart::update($sku_id, array(
                     'price' => $unit_price,
                     'quantity' => array(
                         'relative' => false,
                         'value' => $quantity,
                     ),
                     'attributes' => array(
-                        'principal' => $principal,
                         'remarks' => $request->input('remarks'),
+                        'sku_code' => $sku_code,
                     ),
                 ));
             } else {
                 \Cart::session(auth()->user()->id)->add(array(
-                    'id' => $sku_code,
+                    'id' => $sku_id,
                     'name' => $description,
                     'quantity' => $quantity,
                     'price' => $unit_price,
                     'attributes' => array(
-                        'principal' => $principal,
                         'remarks' => $request->input('remarks'),
+                        'sku_code' => $sku_code,
                     ),
                 ));
             }
         }
 
         $van_selling_pcm_data = \Cart::session(auth()->user()->id)->getContent();
-        $customer = Customer::select('id', 'store_name', 'location_id')->where('kind_of_business', 'VAN SELLING')->get();
-
         return view('van_selling_pcm_generate_pcm_data', [
             'van_selling_pcm_data' => $van_selling_pcm_data,
-            'customer' => $customer,
+            'customer_id' => $salesman_id,
+            'principal_id' => $principal_id,
         ])->with('salesman_id', $salesman_id)
-            ->with('pcm_type', $request->input('pcm_type'))
-            ->with('salesman_name', $salesman_name);
+            ->with('pcm_type', $request->input('pcm_type'));
     }
 
 
     public function van_selling_pcm_generate_final_summary(Request $request)
     {
         //return $request->input();
-        $check_pcm_number = Van_selling_pcm::select('id')->where('pcm_number', $request->input('pcm_number'))->first();
+        $check_pcm_number = Vs_pcm::select('id')->where('reference', $request->input('pcm_number'))->first();
 
 
         if ($check_pcm_number) {
@@ -183,8 +170,8 @@ class Van_selling_pcm_controller extends Controller
             return view('van_selling_pcm_generate_final_summary_page', [
                 'van_selling_pcm_data' => $van_selling_pcm_data,
             ])->with('store_name', $request->input('store_name'))
-                ->with('agent_id', $request->input('agent_id'))
-                ->with('agent_name', $request->input('agent_name'))
+                ->with('customer_id', $request->input('customer_id'))
+                ->with('principal_id', $request->input('principal_id'))
                 ->with('price', $request->input('price'))
                 ->with('remitted_by', $request->input('remitted_by'))
                 ->with('pcm_number', $request->input('pcm_number'))
@@ -196,57 +183,32 @@ class Van_selling_pcm_controller extends Controller
     {
 
         //return $request->input();
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
-        $van_selling_pcm_data = \Cart::session(auth()->user()->id)->getContent();
-        $van_selling_pcm_save = new Van_selling_pcm([
-            'pcm_number' => $request->input('pcm_number'),
-            'customer_id' => $request->input('agent_id'),
-            'remitted_by' => $request->input('remitted_by'),
-            'store_name' => $request->input('store_name'),
+
+        $new = new Vs_pcm([
             'user_id' => auth()->user()->id,
-            'date' => $date,
-            'remarks' => 'to_be_posted',
+            'customer_id' => $request->input('customer_id'),
+            'principal_id' => $request->input('principal_id'),
+            'total_amount' => $request->input('amount'),
+            'reference' => $request->input('pcm_number'),
             'pcm_type' => $request->input('pcm_type'),
-            'amount' => $request->input('amount'),
-            'created_at' => $date,
+            'store_name' => $request->input('store_name'),
+            'remitted_by' => $request->input('remitted_by'),
         ]);
 
-        $van_selling_pcm_save->save();
-        $van_selling_pcm_save_last_id = $van_selling_pcm_save->id;
+        $new->save();
 
-        if ($request->input('pcm_type') != 'customer') {
-            foreach ($van_selling_pcm_data as $key => $data) {
-                $van_selling_pcm_details_save = new Van_selling_pcm_details([
-                    'van_selling_pcm_id' => $van_selling_pcm_save_last_id,
-                    'sku_code' => $data->id,
-                    'principal' => $data->attributes->principal,
-                    'description' => $data->name,
-                    'quantity' => $data->quantity,
-                    'unit_price' => $request->input('price')[$data->id],
-                    'remarks' => $data->attributes->remarks,
-                    'created_at' => $date,
-                ]);
+        $van_selling_pcm_data = \Cart::session(auth()->user()->id)->getContent();
 
-                $van_selling_pcm_details_save->save();
-            }
-        } else {
-            foreach ($van_selling_pcm_data as $key => $data) {
-                $van_selling_pcm_details_save = new Van_selling_pcm_details([
-                    'van_selling_pcm_id' => $van_selling_pcm_save_last_id,
-                    'sku_code' => $data->id,
-                    'principal' => $data->attributes->principal,
-                    'description' => $data->name,
-                    'quantity' => $data->quantity,
-                    'unit_price' => $request->input('price')[$data->id],
-                    'remarks' => $data->attributes->remarks,
-                    'created_at' => $date,
-                ]);
+        foreach ($van_selling_pcm_data as $key => $data) {
+            $details = new Vs_pcm_details([
+                'vs_pcm_id' => $new->id,
+                'sku_id' => $data->id,
+                'quantity' => $data->quantity,
+                'unit_price' => $data->price,
+                'remarks' => $data->attributes->remarks,
+            ]);
 
-                $van_selling_pcm_details_save->save();
-            }
+            $details->save();
         }
-
-        return 'saved';
     }
 }

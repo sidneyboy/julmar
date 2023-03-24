@@ -43,7 +43,7 @@
                                   <label>Select Principal</label>
                                   <select class="form-control select2bs4" required name="principal" style="width:100%;">
                                       <option value="" default>Select</option>
-                                      <option value="all">All</option>
+                                      {{-- <option value="all">All</option> --}}
                                       @foreach ($principal as $data)
                                           <option value="{{ $data->id }}">{{ $data->principal }}</option>
                                       @endforeach

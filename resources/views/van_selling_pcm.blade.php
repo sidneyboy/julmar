@@ -9,7 +9,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">PCM VAN SELLING</h3>
+                <h3 class="card-title" style="font-weight: bold;">VAN SELLING PCM</h3>
             </div>
             <div class="card-body">
                 <form id="van_selling_pcm_generate_pcm_data" method="post">
@@ -18,23 +18,22 @@
                          <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select PCM Type</label>
-                                <select name="pcm_type" id="pcm_type" class="form-control select2bs4" required
+                                <select name="pcm_type" id="pcm_type" class="form-control" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     <option value="panel">PANEL</option>
                                     <option value="customer">CUSTOMER</option>
-                                    <option value="rgs">RGS</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select Salesman</label>
-                                <select name="salesman" id="salesman" class="form-control select2bs4" required
+                                <select name="salesman" id="customer_id" class="form-control select2bs4" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     @foreach ($customer as $data)
-                                        <option value="{{ $data->id . '-' . $data->store_name }}">
+                                        <option value="{{ $data->id }}">
                                             {{ $data->store_name }}</option>
                                     @endforeach
                                 </select>
@@ -43,11 +42,11 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Select Principal</label>
-                                <select name="principal" id="principal" class="form-control select2bs4" required
+                                <select name="principal_id" id="principal_id" class="form-control" required
                                     style="width:100%;">
                                     <option value="" default>SELECT</option>
                                     @foreach ($principal as $data)
-                                        <option value="{{ $data->principal ."-". $data->id }}">
+                                        <option value="{{ $data->id }}">
                                             {{ $data->principal }}</option>
                                     @endforeach
                                 </select>
@@ -93,15 +92,15 @@
             }
         });
 
-        $("#principal").change(function() {
-            var principal = $(this).val();
-            var salesman_data = $('#salesman').val();
+        $("#principal_id").change(function() {
+            var principal_id = $(this).val();
+            var customer_id = $('#customer_id').val();
             var pcm_type = $('#pcm_type').val();
             $('.loading').show();
             $.post({
                 type: "POST",
                 url: "/van_selling_pcm_generate_sku_per_principal",
-                data: 'principal=' + principal + '&salesman_data=' + salesman_data + '&pcm_type=' + pcm_type,
+                data: 'principal_id=' + principal_id + '&customer_id=' + customer_id + '&pcm_type=' + pcm_type,
                 success: function(data) {
 
                     //console.log(data);

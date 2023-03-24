@@ -36,11 +36,17 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/summernote/summernote-bs4.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="{{ asset('adminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('adminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
+    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.3.2/css/fixedHeader.dataTables.min.css"> --}}
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.3.2/css/fixedHeader.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 
 
 </head>
@@ -671,6 +677,13 @@
                                         </a>
                                     </li> --}}
                                     <li class="nav-item">
+                                        <a href="{{ url('van_selling_payment') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_payment' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Collection</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('van_selling_import_data') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
@@ -699,6 +712,20 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ url('van_selling_pcm') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>PCM</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('van_selling_pcm_post') }}"
+                                            class="nav-link {{ $active_tab == 'van_selling_pcm_post' ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>PCM Posting</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('van_selling_inventory_export') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
@@ -719,7 +746,7 @@
                                             <p>AR Ledger</p>
                                         </a>
                                     </li>
-                                    
+
                                     {{-- <li class="nav-item">
                                         <a href="{{ url('van_selling_invoice') }}"
                                             class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
@@ -910,19 +937,32 @@
 
 
 
-        <script src="{{ asset('adminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+        {{-- <script src="{{ asset('adminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script> --}}
         <script src="{{ asset('adminLTE/plugins/jszip/jszip.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/pdfmake/pdfmake.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/pdfmake/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+        {{-- <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
         <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-        <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+        <script src="{{ asset('adminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script> --}}
         <script src="{{ asset('adminLTE/plugins/select2/js/select2.full.min.js') }}"></script>
+        {{-- <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script> --}}
+
+
+
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             $(function() {
@@ -934,21 +974,23 @@
 
                 $('#reservation').daterangepicker()
 
-                $("#example1").DataTable({
-                    "responsive": true,
-                    "lengthChange": false,
-                    "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
+             
+
+                // $("#example1").DataTable({
+                //     "responsive": true,
+                //     "lengthChange": false,
+                //     "autoWidth": false,
+                //     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                // }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                // $('#example2').DataTable({
+                //     "paging": true,
+                //     "lengthChange": false,
+                //     "searching": true,
+                //     "ordering": true,
+                //     "info": true,
+                //     "autoWidth": false,
+                //     "responsive": true,
+                // });
             });
         </script>
     @show

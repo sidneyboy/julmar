@@ -34,7 +34,14 @@ function isNumberKey(evt) {
     
 <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
 
+$customer_id = $request->input('customer_id');
 
+$sku_ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
+WHERE customer_id = '$customer_id' GROUP BY sku_id)");
+
+foreach ($sku_ledger as $key => $data) {
+    $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type','principal_id')->find($data->sku_id);
+}
 
 
 

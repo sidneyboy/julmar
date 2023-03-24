@@ -1,25 +1,25 @@
-<div class="table table-responsive">
-    <table class="table table-bordered table-hover table-sm" id="example1">
+<div style="width:100%;">
+    <table class="table table-bordered table-hover table-sm table-striped" style="width:100%;" id="example1">
         <thead>
             <tr>
-                <th>Transacted By</th>
                 <th>Date</th>
+                <th>Transacted</th>
                 <th>Principal</th>
                 <th>#</th>
                 <th>Transaction</th>
-                <th>AP / Beg</th>
+                <th>Beg</th>
                 <th>Received</th>
                 <th>Returned</th>
                 <th>Adjustment</th>
                 <th>Payment</th>
-                <th>AP / End</th>
+                <th>End</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($principal_ledger as $data)
                 <tr>
-                    <td>{{ $data->user->name }}</td>
                     <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                    <td>{{ $data->user->name }}</td>
                     <td>{{ $data->principal->principal }}</td>
                     <td style="text-align: center;">
                         @if ($data->transaction == 'received')
@@ -75,27 +75,20 @@
 </div>
 
 <script>
-    $("#example1").DataTable({
-        "responsive": false,
-        "lengthChange": false,
-        "autoWidth": false,
-        "paging": false,
-        "buttons": [{
-                extend: 'copyHtml5',
-                footer: true
-            },
-            {
-                extend: 'excelHtml5',
-                footer: true
-            },
-            {
-                extend: 'csvHtml5',
-                footer: true
-            },
-            {
-                extend: 'print',
-                footer: true
-            }
-        ]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $(document).ready(function() {
+        var table = $('#example1').DataTable({
+            responsive: true,
+            paging: false,
+            ordering: true,
+            info: false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
+        });
+        new $.fn.dataTable.FixedHeader(table);
+    });
 </script>
