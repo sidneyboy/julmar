@@ -1,6 +1,6 @@
 <form id="bo_allowance_adjustments_save">
     <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
                     <th colspan="8">Particulars: {{ $particulars }}</th>
@@ -68,7 +68,7 @@
     <input type="hidden" value="{{ $particulars }}" name="particulars">
 
 
-    <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+    <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
         <tr>
             <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
             </td>
@@ -98,7 +98,7 @@
             </td>
         </tr>
     </table>
-    <table class="table table-bordered table-hover table-sm">
+    <table class="table table-bordered table-hover table-striped table-sm">
         <thead>
             <tr>
                 <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -111,6 +111,7 @@
                 <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $principal_name }}</td>
                 <td></td>
                 <td style="font-weight: bold;text-align: center;">{{ number_format($net_deduction, 2, '.', ',') }}</td>
+                <td></td>
 
             </tr>
             <tr>

@@ -1,7 +1,7 @@
 <form id="return_to_principal_save">
     @if ($received_purchase_order->discount_type == 'type_a')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -123,7 +123,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -248,7 +248,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -274,7 +274,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -346,7 +346,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -375,7 +375,7 @@
         @endif
     @elseif($received_purchase_order->discount_type == 'type_b')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -387,8 +387,8 @@
                                 ({{ $data->discount_rate }}%)
                             </th>
                         @endforeach
-                        <th style="text-align: center">BO Allowance
-                            ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th>
+                        {{-- <th style="text-align: center">BO Allowance
+                            ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th> --}}
                         <th style="text-align: center">T.Discount<br /></th>
                         <th>VAT</th>
                         <th style="text-align: center">Freight</th>
@@ -399,7 +399,7 @@
                 <tbody>
                     @foreach ($checkbox_entry as $data)
                         <tr>
-                            <td>
+                            <td style="font-size:10px;">
                                 <span style="color:green;font-weight:bold;">{{ $code[$data] }}</span>-
                                 {{ $description[$data] }}
 
@@ -438,14 +438,14 @@
                                     echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
                                 }
                             @endphp
-                            <td style="text-align: right">
+                            {{-- <td style="text-align: right"> --}}
                                 @php
-                                    $bo_allowance = end($discount_value_holder_history_for_bo_allowance) - end($discount_value_holder_history_for_bo_allowance) * ($received_purchase_order->bo_allowance_discount_rate / 100);
+                                    $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
                                     $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                     $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                                 @endphp
-                                {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
-                            </td>
+                                {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
+                            </td> --}}
 
                             <td style="text-align: right;">
                                 @php
@@ -514,10 +514,10 @@
                                 echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
                             }
                         @endphp
-                        <th style="text-align: right;">
+                        {{-- <th style="text-align: right;">
                             {{ number_format(array_sum($sum_bo_allowance_per_sku), 2, '.', ',') }}
 
-                        </th>
+                        </th> --}}
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
 
@@ -544,7 +544,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -580,17 +580,17 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-                <tr>
+                {{-- <tr> --}}
                     <input type="hidden" name="total_less_discount"
                         value="{{ array_sum($less_discount_value_holder_history) }}">
-                    <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                    {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
                         @php
                             $bo_discount = array_sum($sum_bo_allowance_per_sku);
                         @endphp
-                        {{ number_format($bo_discount, 2, '.', ',') }}
+                        {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -680,7 +680,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -707,7 +707,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -743,17 +743,17 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-                <tr>
+                {{-- <tr> --}}
                     <input type="hidden" name="total_less_discount"
                         value="{{ array_sum($less_discount_value_holder_history) }}">
-                    <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                    {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
                         @php
                             $bo_discount = array_sum($sum_bo_allowance_per_sku);
                         @endphp
-                        {{ number_format($bo_discount, 2, '.', ',') }}
+                        {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -792,7 +792,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -848,15 +848,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 console.log(error);

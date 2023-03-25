@@ -2,7 +2,7 @@
     <table class="table table-bordered table-hover table-sm table-striped" id="example1">
         <thead>
             <tr>
-                <th>Date</th>
+                <th>#</th>
                 <th>Gross Purchase</th>
                 <th>Less Discount</th>
                 <th>BO Discount</th>
@@ -12,7 +12,7 @@
                 <th>Final Cost Returned</th>
                 <th>Other Discount</th>
                 <th>Net Amount Returned</th>
-                <th>#</th>
+                <th>Date</th>
                 <th>Principal</th>
                 <th>Received #</th>
                 <th>Driver</th>
@@ -21,7 +21,8 @@
         <tbody>
             @foreach ($return_to_principal_data as $data)
                 <tr>
-                    <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                    <td style="font-size:20px;text-align:right"><a target="_blank"
+                        href="{{ route('return_to_principal_show_list_details', $data->id) }}">{{ $data->id }}</a>
                     <td style="text-align:right">
                         {{ number_format($data->gross_purchase, 2, '.', ',') }}
                         @php
@@ -69,8 +70,8 @@
                             $sum_net_payable[] = $data->net_payable;
                         @endphp
                     </td>
-                    <td><a target="_blank"
-                            href="{{ route('return_to_principal_show_list_details', $data->id) }}">{{ $data->id }}</a>
+                    <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                    
                     </td>
                     <td text-transform: uppercase;">{{ $data->principal->principal }}</td>
                     <td><a href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"

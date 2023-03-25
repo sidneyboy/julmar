@@ -1,6 +1,6 @@
 <form id="purchase_order_save">
     <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="4">PO #:{{ $po_id }}</th>
@@ -29,10 +29,10 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="text-align: right">{{ array_sum($sum_quantity) }}</td>
+                    <th>Total</th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: right">{{ array_sum($sum_quantity) }}</th>
                 </tr>
             </tfoot>
         </table>

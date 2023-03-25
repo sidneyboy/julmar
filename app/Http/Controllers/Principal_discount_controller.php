@@ -18,8 +18,8 @@ class Principal_discount_controller extends Controller
             return view('principal_discount', [
                 'user' => $user,
                 'principals' => $principals,
-                'main_tab' => 'manage_sku_main_tab',
-                'sub_tab' => 'manage_sku_sub_tab',
+                'main_tab' => 'manage_principal_main_tab',
+                'sub_tab' => 'manage_principal_sub_tab',
                 'active_tab' => 'principal_discount',
             ]);
         } else {
@@ -60,13 +60,24 @@ class Principal_discount_controller extends Controller
             $principal_discount_details_save->save();
         }
 
-        //return $sum_array;
-
         $principal_discount_update = Principal_discount::find($principal_discount_save_last_id);
         $principal_discount_update->total_discount = array_sum($sum_array);
         $principal_discount_update->total_bo_allowance_discount = $total_bo_allowance_discount;
         $principal_discount_update->save();
 
+        $principal_discount_details_bo_save = new Principal_discount_details([
+            'principal_discount_id'    => $principal_discount_save_last_id,
+            'discount_name' => 'BO',
+            'discount_rate' => $total_bo_allowance_discount,
+        ]);
+        $principal_discount_details_bo_save->save();
+
+        $principal_discount_details_cwo_save = new Principal_discount_details([
+            'principal_discount_id'    => $principal_discount_save_last_id,
+            'discount_name' => 'CWO',
+            'discount_rate' => str_replace(',','',$request->input('cash_with_order_discount')),
+        ]);
+        $principal_discount_details_cwo_save->save();
 
 
         return 'saved';

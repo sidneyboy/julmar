@@ -32,14 +32,14 @@
                         @foreach ($data->principal_discount_details as $details)
                             {{ $details->discount_name }} - {{ $details->discount_rate }}% |
                         @endforeach
-                        BO - {{ $data->total_bo_allowance_discount }}% | CWO - {{ $data->cash_with_order_discount }}%
+                        {{-- BO - {{ $data->total_bo_allowance_discount }}% | CWO - {{ $data->cash_with_order_discount }}% --}}
                     </option>
                 @endforeach
             </select>
         </div>
         <div class="col-md-12">
             <label for="">Less Other Discounts:</label>
-            <select class="form-control select2" name="less_other_discount_selected[]" multiple="multiple"
+            <select class="form-control select2bs4" name="less_other_discount_selected[]" multiple="multiple"
                 style="width:100%;">
                 @foreach ($principal_discount as $data)
                     @foreach ($data->principal_discount_details as $details)
@@ -52,7 +52,7 @@
     </div>
     <br />
     <div class="table table-responsive">
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
                     <th>Desc</th>
@@ -74,8 +74,10 @@
                                 required value="0" name="unit_cost[{{ $data->sku_id }}]"
                                 onkeypress="return isNumberKey(event)">
                             <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
-                            <input type="hidden" name="sku_code[{{ $data->sku_id }}]" value="{{ $data->sku->sku_code }}">
-                            <input type="hidden" name="description[{{ $data->sku_id }}]" value="{{ $data->sku->description }}">
+                            <input type="hidden" name="sku_code[{{ $data->sku_id }}]"
+                                value="{{ $data->sku->sku_code }}">
+                            <input type="hidden" name="description[{{ $data->sku_id }}]"
+                                value="{{ $data->sku->description }}">
                         </td>
                         <td><input style="text-align: right" type="text" class="form-control form-control-sm"
                                 required value="0" name="freight[{{ $data->sku_id }}]"
@@ -103,7 +105,10 @@
         return true;
     }
 
-    $('.select2').select2();
+
+    $('.select2bs4').select2({
+        theme: 'bootstrap4'
+    })
 
 
     $("#purchase_order_confirmation_final_summary").on('submit', (function(e) {

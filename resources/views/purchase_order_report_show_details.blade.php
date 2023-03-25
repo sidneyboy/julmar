@@ -80,7 +80,7 @@
 <br />
 
 @if ($purchase_order->discount_type == 'type_a')
-    <table class="table table-bordered table-sm table-hover">
+    <table class="table table-bordered table-sm table-hover table-striped">
         <thead>
             <tr>
                 <th>Desc</th>
@@ -109,7 +109,7 @@
         <tbody>
             @foreach ($purchase_order->purchase_order_details as $data)
                 <tr>
-                    <td>
+                    <td style="font-size:10px;">
                         <span style="color:green;font-weight:bold;">{{ $data->sku->sku_code }}</span>-
                         {{ $data->sku->description }}
                     </td>
@@ -458,8 +458,8 @@
         </table>
     @endif
 @elseif($purchase_order->discount_type == 'type_b')
-    <div class="table table-responsive" style="font-size:10px;">
-        <table class="table table-bordered table-sm table-hover">
+    <div class="table table-responsive">
+        <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
                     <th>Desc</th>
@@ -471,8 +471,8 @@
                             ({{ $data->discount_rate }}%)
                         </th>
                     @endforeach
-                    <th style="text-align: center">BO Allowance
-                        ({{ $purchase_order->bo_allowance_discount_rate }}%)</th>
+                    {{-- <th style="text-align: center">BO Allowance
+                        ({{ $purchase_order->bo_allowance_discount_rate }}%)</th> --}}
                     <th style="text-align: center">T.Discount<br /></th>
                     <th>VAT</th>
                     <th style="text-align: center">Freight</th>
@@ -483,7 +483,7 @@
             <tbody>
                 @foreach ($purchase_order->purchase_order_details as $data)
                     <tr>
-                        <td>
+                        <td style="font-size:10px;">
                             <span style="color:green;font-weight:bold;">{{ $data->sku->sku_code }}</span>-
                             {{ $data->sku->description }}
                         </td>
@@ -516,14 +516,14 @@
                                 echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
                             }
                         @endphp
-                        <td style="text-align: right">
+                        {{-- <td style="text-align: right"> --}}
                             @php
-                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance) - end($discount_value_holder_history_for_bo_allowance) * ($purchase_order->bo_allowance_discount_rate / 100);
+                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
                                 $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
-                            {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
-                        </td>
+                            {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
+                        </td> --}}
 
                         <td style="text-align: right;">
                             @php
@@ -590,10 +590,10 @@
                             echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
                         }
                     @endphp
-                    <th style="text-align: right;">
+                    {{-- <th style="text-align: right;">
                         {{ number_format(array_sum($sum_bo_allowance_per_sku), 2, '.', ',') }}
 
-                    </th>
+                    </th> --}}
                     <th style="text-align: right;">
                         {{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
 
@@ -620,7 +620,7 @@
     </div>
 
     @if ($purchase_order->total_less_other_discount != 0)
-        <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+        <table class="table table-bordered table-hover table-sm float-right table-striped" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -656,17 +656,17 @@
                     echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                 }
             @endphp
-            <tr>
+            {{-- <tr>
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
                     @php
                         $bo_discount = array_sum($sum_bo_allowance_per_sku);
                     @endphp
-                    {{ number_format($bo_discount, 2, '.', ',') }}
+                    {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -756,7 +756,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -783,7 +783,7 @@
             </tbody>
         </table>
     @else
-        <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+        <table class="table table-bordered table-hover table-sm float-right table-striped" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -819,17 +819,17 @@
                     echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                 }
             @endphp
-            <tr>
+            {{-- <tr>
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
                     @php
                         $bo_discount = array_sum($sum_bo_allowance_per_sku);
                     @endphp
-                    {{ number_format($bo_discount, 2, '.', ',') }}
+                    {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -870,7 +870,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>

@@ -17,7 +17,7 @@ class Purchase_order_confirmation_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $purchase_order = Purchase_order::select('id', 'purchase_id')->where('status', null)->orderBy('id', 'desc')->get();
+            $purchase_order = Purchase_order::select('id', 'purchase_id','sku_type')->where('status', null)->orderBy('id', 'desc')->get();
             return view('purchase_order_confirmation', [
                 'user' => $user,
                 'purchase_order' => $purchase_order,
@@ -44,7 +44,7 @@ class Purchase_order_confirmation_controller extends Controller
 
     public function purchase_order_confirmation_final_summary(Request $request)
     {
-        //return array_filter($request->input('quantity_confirmed'));
+        //return $request->input();
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
         $freight = str_replace(',', '', $request->input('freight'));
         $discount_selected = Principal_discount::find($request->input('discount_id'));

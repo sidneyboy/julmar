@@ -18,7 +18,7 @@
     <input type="hidden" value="{{ $received_id }}" name="received_id">
 
     <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th>Code</th>
@@ -37,8 +37,8 @@
                         <td>{{ $data->sku->description }}</td>
                         <td>{{ $data->sku->sku_type }}</td>
                         <td>{{ $data->quantity }}</td>
-                        <td><input type="number" name="quantity[{{ $data->sku_id }}]" class="form-control">
-                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}" class="form-control">
+                        <td><input type="number" name="quantity[{{ $data->sku_id }}]" class="form-control form-control-sm">
+                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}" class="form-control form-control-sm">
                         </td>
                         <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $data->unit_cost }}">{{ number_format($data->unit_cost, 2, '.', ',') }}

@@ -23,7 +23,7 @@
         <tbody>
             @foreach ($received_purchase_order as $data)
                 <tr>
-                    <td><a target="_blank"
+                    <td style="font-size:20px;text-align:right"><a target="_blank"
                             href="{{ url('received_order_report_show_details', ['id' => $data->id]) }}">{{ $data->id }}</a>
                     </td>
                     <td style="text-align: right">{{ number_format($data->gross_purchase, 2, '.', ',') }}

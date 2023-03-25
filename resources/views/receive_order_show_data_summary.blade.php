@@ -45,7 +45,7 @@
     <br />
 
     <div class="table-responsive">
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="6">Purchase Order Details</th>
@@ -73,7 +73,7 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2">Confirmed Purchase Order From <span
@@ -98,7 +98,7 @@
         </div>
         <div class="col-md-8">
             <div class="table table-responsive">
-                <table class="table table-sm table-bordered table-hover">
+                <table class="table table-sm table-bordered table-hover table-striped">
                     <thead>
                         <tr>
                             <th colspan="4">Purchase Order Draft By Warehouse Custodian (<span
