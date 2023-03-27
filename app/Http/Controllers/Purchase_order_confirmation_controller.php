@@ -107,6 +107,8 @@ class Purchase_order_confirmation_controller extends Controller
                 'total_less_other_discount' => $request->input('total_less_other_discount'),
                 'net_payable' => $request->input('net_payable'),
                 'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
+                'cwo_discount_rate' => $request->input('cash_with_order_discount_rate'),
+                'cwo_discount' => $request->input('cwo_discount'),
             ]);
 
         $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');

@@ -99,6 +99,8 @@
                 </th>
                 <th style="text-align: center">BO Allowance
                     ({{ $purchase_order->bo_allowance_discount_rate }}%)</th>
+                <th style="text-align: center">CWO
+                    ({{ $purchase_order->cwo_discount_rate }}%)</th>
                 <th style="text-align: center">T.Discount<br /></th>
                 <th>VAT</th>
                 <th>Freight</th>
@@ -138,7 +140,14 @@
                     </td>
                     <td style="text-align: right">
                         @php
-                            $total_discount = $discount + $bo_allowance_discount;
+                            $cwo_discount = $total_amount * ($purchase_order->cash_with_order_discount / 100);
+                            $sum_cwo_discount[] = $cwo_discount;
+                            echo number_format($cwo_discount, 2, '.', ',');
+                        @endphp
+                    </td>
+                    <td style="text-align: right">
+                        @php
+                            $total_discount = $discount + $bo_allowance_discount + $cwo_discount;
                             $sum_total_discount[] = $total_discount;
                             echo number_format($total_discount, 2, '.', ',');
                         @endphp
@@ -181,6 +190,8 @@
                 <th style="text-align: right;">{{ number_format(array_sum($sum_discount), 2, '.', ',') }}</th>
                 <th style="text-align: right;">
                     {{ number_format(array_sum($sum_bo_allowance_discount), 2, '.', ',') }}</th>
+                <th style="text-align: right;">
+                    {{ number_format(array_sum($sum_cwo_discount), 2, '.', ',') }}</th>
                 <th style="text-align: right;">{{ number_format(array_sum($sum_total_discount), 2, '.', ',') }}
                 </th>
                 <th style="text-align: right;">{{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
@@ -200,7 +211,7 @@
 
 
     @if ($purchase_order->total_less_other_discount != 0)
-        <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+        <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -235,10 +246,19 @@
                 </td>
             </tr>
             <tr>
+                <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                    @php
+                        $cwo_discount_lower = array_sum($sum_cwo_discount);
+                    @endphp
+                    {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                </td>
+            </tr>
+            <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
-                        $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                        $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount_lower;
                     @endphp
                     {{ number_format($vatable_purchase, 2, '.', ',') }}
                 </td>
@@ -329,7 +349,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -356,7 +376,7 @@
             </tbody>
         </table>
     @else
-        <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+        <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -391,10 +411,19 @@
                 </td>
             </tr>
             <tr>
+                <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                    @php
+                        $cwo_discount_lower = array_sum($sum_cwo_discount);
+                    @endphp
+                    {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                </td>
+            </tr>
+            <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
-                        $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                        $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount;
                     @endphp
                     {{ number_format($vatable_purchase, 2, '.', ',') }}
                 </td>
@@ -430,7 +459,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -517,12 +546,12 @@
                             }
                         @endphp
                         {{-- <td style="text-align: right"> --}}
-                            @php
-                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
-                                $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
-                                $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
-                            @endphp
-                            {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
+                        @php
+                            $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
+                            $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
+                            $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
+                        @endphp
+                        {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
                         </td> --}}
 
                         <td style="text-align: right;">
@@ -661,10 +690,10 @@
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-                    @php
-                        $bo_discount = array_sum($sum_bo_allowance_per_sku);
-                    @endphp
-                    {{-- {{ number_format($bo_discount, 2, '.', ',') }}
+            @php
+                $bo_discount = array_sum($sum_bo_allowance_per_sku);
+            @endphp
+            {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
             </tr> --}}
             <tr>
@@ -824,10 +853,10 @@
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-                    @php
-                        $bo_discount = array_sum($sum_bo_allowance_per_sku);
-                    @endphp
-                    {{-- {{ number_format($bo_discount, 2, '.', ',') }}
+            @php
+                $bo_discount = array_sum($sum_bo_allowance_per_sku);
+            @endphp
+            {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
             </tr> --}}
             <tr>

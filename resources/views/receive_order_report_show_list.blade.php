@@ -6,6 +6,7 @@
                 <th>Gross Purchase</th>
                 <th>Discount</th>
                 <th>BO Discount</th>
+                <th>CWO Discount</th>
                 <th>Vatable Purchase</th>
                 <th>Vat</th>
                 <th>Freight</th>
@@ -39,6 +40,11 @@
                     <td style="text-align: right">{{ number_format($data->bo_discount, 2, '.', ',') }}
                         @php
                             $sum_bo_discount[] = $data->bo_discount;
+                        @endphp
+                    </td>
+                    <td style="text-align: right">{{ number_format($data->cwo_discount, 2, '.', ',') }}
+                        @php
+                            $sum_cwo_discount[] = $data->cwo_discount;
                         @endphp
                     </td>
                     <td style="text-align: right">{{ number_format($data->vatable_purchase, 2, '.', ',') }}
@@ -88,6 +94,7 @@
                 <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount), 2, '.', ',') }}
                 </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_bo_discount), 2, '.', ',') }} </th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_cwo_discount), 2, '.', ',') }} </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vatable_purchase), 2, '.', ',') }} </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vat), 2, '.', ',') }} </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_freight), 2, '.', ',') }} </th>

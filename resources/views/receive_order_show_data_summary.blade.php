@@ -1,13 +1,20 @@
 <form id="receive_order_data_final_summary">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label for="">BO Allowance Selected:</label>
             <select class="form-control" name="bo_allowance_discount_selected" style="width:100%;" required>
-                <option value="{{ $purchase_order->bo_allowance_discount_rate }}" selected>BO Allowance Selected
-                    {{ $purchase_order->bo_allowance_discount_rate }}</option>
+                <option value="{{ $purchase_order->bo_allowance_discount_rate }}" selected>
+                    {{ $purchase_order->bo_allowance_discount_rate }}%</option>
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <label for="">CWO Selected:</label>
+            <select class="form-control" name="cwo_discount_selected" style="width:100%;" required>
+                <option value="{{ $purchase_order->cwo_discount_rate }}" selected>
+                    {{ $purchase_order->cwo_discount_rate }}%</option>
+            </select>
+        </div>
+        <div class="col-md-4">
             <label for="">Discount Type Selected:</label>
             <select name="discount_type" class="form-control" required>
                 @if ($purchase_order->discount_type == 'type_a')

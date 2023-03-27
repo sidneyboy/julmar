@@ -29,6 +29,8 @@ class Purchase_order extends Model
     'net_payable',
     'discount_type',
     'bo_allowance_discount_rate',
+    'cwo_discount_rate',
+    'cwo_discount',
   ];
 
   public function purchaseOrderDetails()

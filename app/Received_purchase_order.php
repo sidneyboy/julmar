@@ -30,6 +30,8 @@ class Received_purchase_order extends Model
       'total_final_cost',
       'total_less_other_discount',
       'net_payable',
+      'cwo_discount_rate',
+      'cwo_discount',
     ];
 
     public function purchase_order()

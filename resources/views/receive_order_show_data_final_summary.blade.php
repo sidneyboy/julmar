@@ -3,7 +3,7 @@
 
     @if ($discount_type == 'type_a')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -22,6 +22,8 @@
                         </th>
                         <th style="text-align: center">BO Allowance
                             ({{ $bo_allowance_discount_selected }}%)</th>
+                        <th style="text-align: center">CWO
+                            ({{ $cwo_discount_selected }}%)</th>
                         <th style="text-align: center">T.Discount<br /></th>
                         <th>VAT</th>
                         <th>Freight</th>
@@ -32,7 +34,7 @@
                 <tbody>
                     @foreach ($sku_id as $data)
                         <tr>
-                            <td>
+                            <td style="font-size:10px;">
                                 <span style="color:green;font-weight:bold;">{{ $sku_code[$data] }}</span>-
                                 {{ $description[$data] }}
                                 <input type="hidden" value="{{ $data }}" name="sku_id[]">
@@ -66,7 +68,14 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $total_discount = $discount + $bo_allowance_discount;
+                                    $cwo_discount = $total_amount * ($cwo_discount_selected / 100);
+                                    $sum_cwo_discount[] = $cwo_discount;
+                                    echo number_format($cwo_discount, 2, '.', ',');
+                                @endphp
+                            </td>
+                            <td style="text-align: right">
+                                @php
+                                    $total_discount = $discount + $bo_allowance_discount + $cwo_discount;
                                     $sum_total_discount[] = $total_discount;
                                     echo number_format($total_discount, 2, '.', ',');
                                 @endphp
@@ -112,6 +121,8 @@
                         <th style="text-align: right;">{{ number_format(array_sum($sum_discount), 2, '.', ',') }}</th>
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_bo_allowance_discount), 2, '.', ',') }}</th>
+                        <th style="text-align: right;">
+                            {{ number_format(array_sum($sum_cwo_discount), 2, '.', ',') }}</th>
                         <th style="text-align: right;">{{ number_format(array_sum($sum_total_discount), 2, '.', ',') }}
                         </th>
                         <th style="text-align: right;">{{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
@@ -131,7 +142,7 @@
 
 
         @if (isset($less_other_discount_selected))
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -166,10 +177,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                        @php
+                            $cwo_discount_lower = array_sum($sum_cwo_discount);
+                        @endphp
+                        {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount_lower;
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -212,29 +232,22 @@
                     $less_discount_value_holder_history_for_bo_allowance = [];
                 @endphp
                 @foreach ($less_other_discount_selected as $data_discount)
-                    {{-- <tr>
-                            <td style="text-align:left">
-                                {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
-                            </td> --}}
                     @php
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                         
-                        // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                         
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
-                    {{-- <td style="text-align:right;"> --}}
+
                     {{ number_format($less_discount_rate_answer, 2, '.', ',') }}
                     <input type="hidden" name="less_other_discount_selected_name[]"
                         value="{{ $data_discount->discount_name }}">
                     <input type="hidden" name="less_other_discount_selected_rate[]"
                         value="{{ $data_discount->discount_rate }}">
-                    {{-- </td>
-                        </tr> --}}
                 @endforeach
                 <tr>
                     <td style="text-align: left;width:50%;">TOTAL OTHER DISCOUNT:</td>
@@ -260,7 +273,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -287,7 +300,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -322,10 +335,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                        @php
+                            $cwo_discount_lower = array_sum($sum_cwo_discount);
+                        @endphp
+                        {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount_lower;
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -361,7 +383,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -458,12 +480,12 @@
                                 }
                             @endphp
                             {{-- <td style="text-align: right"> --}}
-                                @php
-                                    $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
-                                    $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
-                                    $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
-                                @endphp
-                                {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }} --}}
+                            @php
+                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
+                                $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
+                                $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
+                            @endphp
+                            {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }} --}}
                             {{-- </td> --}}
 
                             <td style="text-align: right;">
@@ -533,6 +555,8 @@
                                 $discount_value_holder_history[] = $discount_rate_answer;
                                 echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
                             }
+                            $cwo_discount_lower = end($discount_value_holder_history);
+                            $bo_discount = prev($discount_value_holder_history);
                         @endphp
                         {{-- <th style="text-align: right;">
                             {{ number_format(array_sum($sum_bo_allowance_per_sku), 2, '.', ',') }}
@@ -601,21 +625,19 @@
                     }
                 @endphp
                 {{-- <tr> --}}
-                    <input type="text" name="total_less_discount"
-                        value="{{ array_sum($less_discount_value_holder_history) }}">
-                    {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                <input type="text" name="total_less_discount"
+                    value="{{ array_sum($less_discount_value_holder_history) }}">
+                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-                        @php
-                            $bo_discount = array_sum($sum_bo_allowance_per_sku);
-                        @endphp
-                        {{-- {{ number_format($bo_discount, 2, '.', ',') }}
+
+                {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
                 </tr> --}}
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history) - $bo_discount;
+                            $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history);
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -768,21 +790,19 @@
                     }
                 @endphp
                 {{-- <tr> --}}
-                    <input type="text" name="total_less_discount"
-                        value="{{ array_sum($less_discount_value_holder_history) }}">
-                    {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                <input type="hidden" name="total_less_discount"
+                    value="{{ array_sum($less_discount_value_holder_history) }}">
+                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-                        @php
-                            $bo_discount = array_sum($sum_bo_allowance_per_sku);
-                        @endphp
-                        {{-- {{ number_format($bo_discount, 2, '.', ',') }}
+               
+                {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
                 </tr> --}}
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history) - $bo_discount;
+                            $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history);
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -822,7 +842,7 @@
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
-       
+
                         <th style="text-align: center;">DR</th>
                         <th style="text-align: center;">CR</th>
                     </tr>
@@ -860,9 +880,11 @@
     <input type="hidden" value="{{ $invoice_date }}" name="invoice_date">
     <input type="hidden" value="{{ $scanned_by }}" name="scanned_by">
     <input type="hidden" value="{{ $bo_allowance_discount_selected }}" name="bo_allowance_discount_rate">
+    <input type="hidden" value="{{ $cwo_discount_selected }}" name="cwo_discount_rate">
+    <input type="text" value="{{ $cwo_discount_lower }}" name="cwo_discount">
     <input type="hidden" value="{{ $purchase_order_id }}" name="purchase_order_id">
     <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
-    <input type="hidden" value="{{ $bo_discount }}" name="bo_discount">
+    <input type="text" value="{{ $bo_discount }}" name="bo_discount">
     <input type="hidden" value="{{ $vatable_purchase }}" name="vatable_purchase">
     <input type="hidden" value="{{ $vat }}" name="vat">
     <input type="hidden" value="{{ $freight }}" name="freight">

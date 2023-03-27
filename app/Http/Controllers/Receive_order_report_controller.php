@@ -21,7 +21,7 @@ class Receive_order_report_controller extends Controller
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
 
-            $principals = Sku_principal::select('id', 'contact_number', 'principal')->get();
+            $principals = Sku_principal::select('id', 'contact_number', 'principal')->where('principal','!=','none')->get();
             return view('receive_order_report', [
                 'user' => $user,
                 'principals' => $principals,

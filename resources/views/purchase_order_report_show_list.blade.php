@@ -4,13 +4,14 @@
             <tr>
                 <th>Discount Type</th>
                 <th>Gross Purchase</th>
-                <th>Total Discount Amount</th>
-                <th>Bo Discount Amount</th>
+                <th>Total Discount</th>
+                <th>Bo Discount</th>
+                <th>CWO Discount</th>
                 <th>Vatabable Purchase</th>
                 <th>Vat</th>
                 <th>Freight</th>
                 <th>Total Final Cost</th>
-                <th>Other Discount Amount</th>
+                <th>Other Discount</th>
                 <th>Net Payable</th>
                 <th>Transacted By</th>
                 <th>Transacted</th>
@@ -41,6 +42,11 @@
                         <td style="text-align:right">{{ number_format($data->bo_discount, 2, '.', ',') }}
                             @php
                                 $sum_bo_discount[] = $data->bo_discount;
+                            @endphp
+                        </td>
+                        <td style="text-align:right">{{ number_format($data->cwo_discount, 2, '.', ',') }}
+                            @php
+                                $sum_cwo_discount[] = $data->cwo_discount;
                             @endphp
                         </td>
                         <td style="text-align:right">{{ number_format($data->vatable_purchase, 2, '.', ',') }}
@@ -97,6 +103,7 @@
                 <th style="text-align: right">{{ number_format(array_sum($sum_gross_purchase),2,".",",") }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount),2,".",",") }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_bo_discount),2,".",",") }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_cwo_discount),2,".",",") }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vatable_purchase),2,".",",") }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vat),2,".",",") }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_freight),2,".",",") }}</th>

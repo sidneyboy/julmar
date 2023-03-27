@@ -28,7 +28,7 @@ class Receive_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $received_purchase_order_id = Received_purchase_order::select('id')->orderBy('id', 'desc','van_number')->first();
+            $received_purchase_order_id = Received_purchase_order::select('id')->orderBy('id', 'desc', 'van_number')->first();
             if ($received_purchase_order_id == NULL) {
                 $id = 1;
             } else {
@@ -60,7 +60,7 @@ class Receive_controller extends Controller
         $principal_id = $variable_explode[4];
 
 
-        $purchase_order = Purchase_order::select('id', 'discount_type', 'bo_allowance_discount_rate')->find($purchase_order_id);
+        $purchase_order = Purchase_order::select('id', 'discount_type', 'bo_allowance_discount_rate', 'cwo_discount_rate')->find($purchase_order_id);
 
         $purchase_order_details = Purchase_order_details::select('id', 'sku_id', 'confirmed_quantity')->where('purchase_order_id', $purchase_order_id)
             ->orderBy('sku_id')
@@ -90,7 +90,7 @@ class Receive_controller extends Controller
     public function receive_order_data_final_summary(Request $request)
     {
 
-        //return $request->input('draft_session_id');
+        //return $request->input('cwo_discount_selected');
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
         $discount_selected = Purchase_order_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
         $check_less_other_discounts = $request->input('less_other_discount_selected');
@@ -101,6 +101,7 @@ class Receive_controller extends Controller
                 ->with('sku_id', $request->input('sku_id'))
                 ->with('discount_type', $request->input('discount_type'))
                 ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
                 ->with('less_other_discount_selected', $less_other_discount_selected)
                 ->with('discount_selected', $discount_selected)
                 ->with('sku_type', $request->input('sku_type'))
@@ -130,6 +131,7 @@ class Receive_controller extends Controller
                 ->with('sku_id', $request->input('sku_id'))
                 ->with('discount_type', $request->input('discount_type'))
                 ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
                 ->with('discount_selected', $discount_selected)
                 ->with('sku_type', $request->input('sku_type'))
                 ->with('received_quantity', $request->input('received_quantity'))
@@ -187,6 +189,8 @@ class Receive_controller extends Controller
             'total_less_other_discount' => $request->input('total_less_other_discount'),
             'net_payable' => $request->input('net_payable'),
             'invoice_image' => 'No Sales Invoice Yet',
+            'cwo_discount_rate' => $request->input('cwo_discount_rate'),
+            'cwo_discount' => $request->input('cwo_discount'),
         ]);
 
         $new_received_purchase_orders->save();

@@ -96,6 +96,7 @@ class Return_to_principal_controller extends Controller
             'gross_purchase' => $request->input('gross_purchases'),
             'total_less_discount' => $request->input('total_less_discount'),
             'bo_discount' => $request->input('bo_discount'),
+            'cwo_discount' => $request->input('cwo_discount'),
             'vatable_purchase' => $request->input('vatable_purchase'),
             'vat' => $request->input('vat'),
             'freight' => $request->input('freight'),
