@@ -25,8 +25,8 @@ class Receiving_draft_controller extends Controller
                 'user' => $user,
                 'purchase_order' => $purchase_order,
                 'session_id' => $session_id,
-                'main_tab' => 'receiving_and_purchases_main_tab',
-                'sub_tab' => 'receiving_and_purchases_sub_tab',
+                'main_tab' => 'manage_warehouse_main_tab',
+                'sub_tab' => 'manage_warehouse_sub_tab',
                 'active_tab' => 'receiving_draft',
             ]);
         } else {

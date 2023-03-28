@@ -206,6 +206,34 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="nav-item {{ $main_tab == 'manage_warehouse_main_tab' ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Manage Warehouse
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ url('/receiving_draft') }}"
+                                            class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
+                                            <i class="fas fa-plus-circle nav-icon"></i>
+                                            <p>Received as Draft</p>
+                                        </a>
+                                    </li>
+
+                                    
+                                    <li class="nav-item">
+                                        <a href="{{ url('invoice_out') }}"
+                                            class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>Invoice Out</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
                                 <a href="#"
                                     class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
@@ -320,14 +348,6 @@
                                             class="nav-link {{ $active_tab == 'purchase_order_report' ? 'active' : '' }}">
                                             <i class="fas fa-plus-circle nav-icon"></i>
                                             <p>PO Report</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/receiving_draft') }}"
-                                            class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Received as Draft</p>
                                         </a>
                                     </li>
 
@@ -569,23 +589,6 @@
                                             <p>BO Report</p>
                                         </a>
                                     </li>
-
-
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('walkin_sales_order') }}"
-                                            class="nav-link {{ $active_tab == 'walkin_sales_order' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Invoice Draft</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('invoice_out') }}"
-                                            class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Invoice Out</p>
-                                        </a>
-                                    </li> --}}
                                 </ul>
                             </li>
 
@@ -974,7 +977,7 @@
 
                 $('#reservation').daterangepicker()
 
-             
+
 
                 // $("#example1").DataTable({
                 //     "responsive": true,

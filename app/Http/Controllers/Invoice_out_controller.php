@@ -20,8 +20,8 @@ class Invoice_out_controller extends Controller
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,
-                'main_tab' => 'manage_booking_main_tab',
-                'sub_tab' => 'manage_booking_sub_tab',
+                'main_tab' => 'manage_warehouse_main_tab',
+                'sub_tab' => 'manage_warehouse_sub_tab',
                 'active_tab' => 'invoice_out',
             ]);
         } else {

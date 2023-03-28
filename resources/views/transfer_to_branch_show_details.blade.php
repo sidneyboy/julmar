@@ -56,7 +56,7 @@
           <br />
           <!-- Table row -->
           <div class="container">
-              <table class="table table-bordered table-hover table-sm">
+              <table class="table table-bordered table-hover table-striped table-sm">
                   <thead>
                       <tr>
                           <th style="text-transform: uppercase;text-align: center">Code</th>
