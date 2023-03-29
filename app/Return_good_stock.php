@@ -11,6 +11,10 @@ class Return_good_stock extends Model
         'user_id',
         'principal_id',
         'sku_type',
+        'total_amount',
+        'pcm_number',
+        'customer_id',
+        'agent_id',
     ];
 
     public function return_good_stock_details()

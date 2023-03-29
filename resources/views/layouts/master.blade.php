@@ -575,13 +575,19 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ url('booking_pcm') }}"
+                                            class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>PCM</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('warehouse_rgs_report') }}"
                                             class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
                                             <i class="fas fa-user-plus nav-icon"></i>
                                             <p>RGS Report</p>
                                         </a>
                                     </li>
-
                                     <li class="nav-item">
                                         <a href="{{ url('warehouse_bo_report') }}"
                                             class="nav-link {{ $active_tab == 'warehouse_bo_report' ? 'active' : '' }}">

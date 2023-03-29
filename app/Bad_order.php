@@ -11,6 +11,9 @@ class Bad_order extends Model
         'user_id',
         'principal_id',
         'sku_type',
+        'total_amount',
+        'pcm_number',
+        'customer_id',
     ];
 
     public function bad_order_details()
