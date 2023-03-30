@@ -232,6 +232,14 @@
                                             <p>Invoice Out</p>
                                         </a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('warehouse_pcm') }}"
+                                            class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
+                                            <i class="fas fa-user-plus nav-icon"></i>
+                                            <p>PCM</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">

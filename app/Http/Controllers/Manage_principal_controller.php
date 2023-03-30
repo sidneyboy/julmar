@@ -45,7 +45,7 @@ class Manage_principal_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal = Sku_principal::where('principal','!=','none')->get();
+            $principal = Sku_principal::select('id','principal')->where('principal','!=','none')->get();
             $category = Sku_category::get();
 
             return view('new_principal_categories', [

@@ -26,4 +26,9 @@ class Return_good_stock extends Model
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
+
+    public function agent()
+    {
+        return $this->belongsTo('App\Agent', 'agent_id');
+    }
 }

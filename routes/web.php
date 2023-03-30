@@ -736,4 +736,7 @@ Route::post('/booking_pcm_proceed', 'Booking_pcm_controller@booking_pcm_proceed'
 Route::post('/booking_pcm_proceed_final_summary', 'Booking_pcm_controller@booking_pcm_proceed_final_summary')->name('booking_pcm_proceed_final_summary');
 Route::post('/booking_pcm_save', 'Booking_pcm_controller@booking_pcm_save')->name('booking_pcm_save');
 
+Route::get('/warehouse_pcm', 'Warehouse_pcm_controller@index')->name('warehouse_pcm');
+Route::get('/warehouse_pcm_proceed', 'Warehouse_pcm_controller@warehouse_pcm_proceed')->name('warehouse_pcm_proceed');
+
 

@@ -100,15 +100,21 @@
                         @foreach ($category as $category)
                             <tr>
                                 <td>{{ $category->id }}</td>
-                                <td>{{ $category->principal->principal }}</td>
+                                <td>
+                                    @if ($category->principal)
+                                        {{ $category->principal->principal }}
+                                    @else
+                                        None
+                                    @endif
+                                </td>
                                 <td>{{ $category->category }}</td>
                                 <td>
-                                    
+
                                     <button type="button" class="btn btn-sm btn-block btn-dark" data-toggle="modal"
                                         data-target="#exampleModal{{ $category->id }}">
                                         <i class="bi bi-pencil-square"></i> EDIT
                                     </button>
-                                    
+
                                     <div class="modal fade" id="exampleModal{{ $category->id }}" tabindex="-1"
                                         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
@@ -121,9 +127,10 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
-                                                <form action="{{ route('new_principal_categories_update', $category->id) }}"
+                                                <form
+                                                    action="{{ route('new_principal_categories_update', $category->id) }}"
                                                     method="POST">
-                                                    
+
                                                     @csrf
                                                     <div class="modal-body">
 
@@ -146,13 +153,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    
+
                                     <button type="button" class="btn btn-sm btn-primary btn-block" data-toggle="modal"
                                         data-target="#exampleModaladdsubcategory{{ $category->id }}">
                                         <i class="bi bi-plus-square"></i> SUB CATEGORY
                                     </button>
 
-                                    
+
                                     <div class="modal fade" id="exampleModaladdsubcategory{{ $category->id }}"
                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                                         aria-hidden="true">
@@ -187,13 +194,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    
+
                                     <button type="button" class="btn btn-info btn-sm btn-block" data-toggle="modal"
                                         data-target="#exampleModal">
                                         <i class="bi bi-eye-fill"></i> View
                                     </button>
 
-                                    
+
                                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
