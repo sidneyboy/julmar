@@ -14,6 +14,7 @@ class Bad_order extends Model
         'total_amount',
         'pcm_number',
         'customer_id',
+        'status',
     ];
 
     public function bad_order_details()

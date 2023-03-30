@@ -11,6 +11,10 @@ class Return_good_stock_details extends Model
         'sku_id',
         'quantity',
         'unit_price',
+        'confirmed_quantity',
+        'remarks',
+        'scanned_by',
+        'user_id',
     ];
 
     public function sku()

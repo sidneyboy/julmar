@@ -27,6 +27,23 @@
                             </td>
                         </tr>
                     @endforeach
+                @else
+                    @foreach ($pcm->bad_order_details as $data)
+                        <tr>
+                            <td>[<span style="color:green">{{ $data->sku->sku_code }}</span>] -
+                                {{ $data->sku->description }}
+                            </td>
+                            <td style="text-align: right">{{ $data->quantity }}</td>
+                            <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
+                            <td style="text-align: right">
+                                @php
+                                    $total = $data->quantity * $data->unit_price;
+                                    $sum_total[] = $total;
+                                    echo number_format($data->unit_price, 2, '.', ',');
+                                @endphp
+                            </td>
+                        </tr>
+                    @endforeach
                 @endif
             </tbody>
             <tfoot>
@@ -37,17 +54,25 @@
             </tfoot>
         </table>
     </div>
-    <label for="">Barcode:</label>
-    <input type="text" class="form-control" required name="barcode" autofocus>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="">Quantity:</label>
+            <input type="text" class="form-control" required name="quantity" id="quantity">
+        </div>
+        <div class="col-md-6">
+            <label for="">Barcode:</label>
+            <input type="text" class="form-control" required name="barcode" id="barcode">
+        </div>
+    </div>
     <input type="hidden" value="{{ $type }}" name="type">
     <input type="hidden" value="{{ $id }}" name="id">
+    <br />
+    <button class="btn btn-sm float-right btn-info">Proceed</button>
 </form>
 
 <script>
     $("#warehouse_pcm_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
         $.ajax({
             url: "warehouse_pcm_final_summary",
             type: "POST",
@@ -56,8 +81,18 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
-                $('#warehouse_pcm_final_summary_page').html(data);
+                if (data == 'invalid') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Invalid Bardcode',
+                        'error'
+                    )
+                } else {
+                    $('#quantity').val('');
+                    $('#barcode').val('');
+                    $('#quantity').focus();
+                    $('#warehouse_pcm_final_summary_page').html(data);
+                }
             },
             error: function(error) {
                 Swal.fire(

@@ -11,6 +11,9 @@ class Bad_order_details extends Model
         'sku_id',
         'quantity',
         'unit_price',
+        'confirmed_quantity',
+        'remarks',
+        'user_id',
     ];
 
     public function sku()

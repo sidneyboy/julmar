@@ -37,10 +37,10 @@
                         <a href="{{ route('transfer_to_branch_show_details', $sku_ledger[$i]->all_id . '=' . $sku_ledger[$i]->principal->principal) }}"
                             target="_blank">{{ $sku_ledger[$i]->all_id }}</a>
                     @elseif($sku_ledger[$i]->transaction_type == 'releasing')
-                        {{-- <a href="{{ route('transfer_to_branch_show_details', $sku_ledger[$i]->all_id . '=' . $sku_ledger[$i]->principal->principal) }}"
-                            target="_blank">{{ $sku_ledger[$i]->all_id }}</a> --}}
                         {{ $sku_ledger[$i]->all_id }}
-                    @elseif($sku_ledger[$i]->transaction_type == 'vs credit memo')
+                    @elseif($sku_ledger[$i]->transaction_type == 'van cm')
+                        {{ $sku_ledger[$i]->all_id }}
+                    @elseif($sku_ledger[$i]->transaction_type == 'booking cm')
                         {{ $sku_ledger[$i]->all_id }}
                     @endif
                 </td>
@@ -63,8 +63,10 @@
                         (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
                     @elseif($sku_ledger[$i]->transaction_type == 'releasing')
                         (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
-                    @elseif($sku_ledger[$i]->transaction_type == 'vs credit memo')
-                        (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
+                    @elseif($sku_ledger[$i]->transaction_type == 'van cm')
+                    <span style="color:green">{{ $sku_ledger[$i]->quantity }}</span>
+                    @elseif($sku_ledger[$i]->transaction_type == 'booking cm')
+                        <span style="color:green">{{ $sku_ledger[$i]->quantity }}</span>
                     @else
                         0
                     @endif
