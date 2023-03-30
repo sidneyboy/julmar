@@ -29,6 +29,29 @@ class Warehouse_pcm_controller extends Controller
 
     public function warehouse_pcm_proceed(Request $request)
     {
-        return $request->input();
+        $explode = explode('-',$request->input('pcm_id'));
+        $type = $explode[0];
+        $id = $explode[1];
+
+        if ($type == 'rgs') {
+            $pcm = Return_good_stock::find($id);
+        }else if($type == 'bo'){
+            $pcm = Bad_order::find($id);
+        }
+
+        return view('warehouse_pcm_proceed',[
+            'pcm' => $pcm
+        ])->with('type',$type)
+        ->with('id',$id);
+    }
+
+
+    public function warehouse_pcm_final_summary(Request $request)
+    {
+        if ($type == 'rgs') {
+            $pcm = Return_good_stock::find($id);
+        }else if($type == 'bo'){
+            $pcm = Bad_order::find($id);
+        }
     }
 }

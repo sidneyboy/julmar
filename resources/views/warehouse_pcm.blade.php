@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="">PCM #</label>
-                            <select name="pcm_id" class="form-control select2bs4" required>
+                            <select name="pcm_id" class="form-control select2bs4" style="width: 100%;" required>
                                 <option value="" default>Select</option>
                                 @foreach ($bo as $bo_data)
                                     <option value="{{ 'bo-' . $bo_data->id }}"><span style="text-transform: uppercase">
@@ -44,7 +44,7 @@
         <div class="card">
             <div class="card-header" style="font-weight: bold">FINAL SUMMARY</div>
             <div class="card-body">
-                <div id="warehouse_bo_final_summary_page"></div>
+                <div id="warehouse_pcm_final_summary_page"></div>
             </div>
         </div>
     </section>

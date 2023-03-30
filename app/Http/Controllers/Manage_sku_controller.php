@@ -74,7 +74,7 @@ class Manage_sku_controller extends Controller
                 // 'equivalent_sku_entryNo' => ,
                 'equivalent_butal_pcs' => 1,
                 'barcode' => $request->input('barcode_case'),
-                'weight' => $request->input('weight_case'),
+                // 'weight' => $request->input('weight_case'),
             ]);
 
             $new_1->save();
@@ -133,7 +133,7 @@ class Manage_sku_controller extends Controller
                 // 'equivalent_sku_entryNo' => $new_1->id,
                 // 'equivalent_butal_pcs' => $request->input('butal_equivalent'),
                 'barcode' => $request->input('barcode_butal'),
-                'weight' => $request->input('weight_butal'),
+                // 'weight' => $request->input('weight_butal'),
             ]);
 
             $new_2->save();
