@@ -63,7 +63,7 @@
                 <tr>
                     <td>{{ $sku_add->sku_code }}</td>
                     <td>{{ $sku_add->description }}</td>
-                    <td>{{ $sku_add->equivalent_butal_pcs }}</td>
+                    <td>{{ $sku_add->equivalent_butal_pcs *  $convert}}</td>
                     <td>Butal
                         <input type="hidden" name="out_from_sku_id" value="{{ $sku_add->id }}">
                         <input type="hidden" name="out_from_quantity" value="{{ $convert}}">
@@ -94,6 +94,7 @@
                 </tr>
             </tbody>
         </table>
+        <input type="hidden" name="remarks" value="out from butal">
     @endif
     
     <input type="hidden" name="sku_type" value="{{ $sku_type }}">

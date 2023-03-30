@@ -13,18 +13,14 @@
             <form id="invoice_out_proceed">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label for="">Delivery Receipt:</label>
-                            <select class="form-control" required name="invoice_id">
+                            <select class="form-control select2bs4" style="width:100%;" required name="delivery_receipt">
                                 <option value="" default>Select</option>
                                 @foreach ($invoice_draft as $data)
-                                    <option value="{{ $data->id }}">{{ $data->delivery_receipt }}</option>
+                                    <option value="{{ $data->delivery_receipt }}">{{ $data->delivery_receipt }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="">Scan Barcode:</label>
-                            <input type="text" class="form-control" id="barcode" required name="barcode">
                         </div>
                     </div>
                 </div>

@@ -78,9 +78,6 @@ class Bodega_out_controller extends Controller
             $equivalents = Sku_add::find($sku_add->equivalent_sku_entryNo);
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-
-
-
             $count_ledger_counter = count($ledger_results);
 
             return view('bodega_out_final_summary')
@@ -101,8 +98,6 @@ class Bodega_out_controller extends Controller
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-
-        //return $request->input();
 
         $new_bodega_out = new Bodega_out([
             'principal_id' => $request->input('principal_id'),
@@ -128,6 +123,8 @@ class Bodega_out_controller extends Controller
         $out_from_sku_ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$out_from_sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
         $out_from_sku_count_ledger_row = count($out_from_sku_ledger_results);
 
+        $sku_type_data_first = Sku_add::select('sku_type')->find($out_from_sku_id);
+
         if ($out_from_sku_count_ledger_row > 0) {
             $out_from_sku_running_balance = $out_from_sku_ledger_results[0]->running_balance - $request->input('out_from_quantity');
             $out_from_sku_ledger_new_sku_ledger = new Sku_ledger([
@@ -138,7 +135,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega out',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
-                'sku_type' => $request->input('sku_type'),
+                'sku_type' => $sku_type_data_first->sku_type,
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
@@ -151,7 +148,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega out',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
-                'sku_type' => $request->input('sku_type'),
+                'sku_type' => $sku_type_data_first->sku_type,
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
@@ -161,6 +158,8 @@ class Bodega_out_controller extends Controller
 
         $in_to_sku_ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$in_to_sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
         $in_to_sku_count_ledger_row = count($in_to_sku_ledger_results);
+
+        $sku_type_data_second = Sku_add::select('sku_type')->find($in_to_sku_id);
 
         if ($in_to_sku_count_ledger_row > 0) {
             $in_to_sku_running_balance = $in_to_sku_ledger_results[0]->running_balance + $request->input('in_to_quantity');
@@ -172,7 +171,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega in',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
-                'sku_type' => $request->input('sku_type'),
+                'sku_type' => $sku_type_data_second->sku_type,
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();
@@ -185,7 +184,7 @@ class Bodega_out_controller extends Controller
                 'transaction_type' => 'bodega in',
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
-                'sku_type' => $request->input('sku_type'),
+                'sku_type' => $sku_type_data_second->sku_type,
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();

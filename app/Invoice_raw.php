@@ -25,4 +25,9 @@ class Invoice_raw extends Model
         'rgs',
         'bo',
     ];
+
+    public function sku()
+    {
+    	return $this->belongsTo('App\Sku_add', 'sku_id');
+    }
 }
