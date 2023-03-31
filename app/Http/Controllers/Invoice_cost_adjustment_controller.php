@@ -75,7 +75,7 @@ class Invoice_cost_adjustment_controller extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-        //return $request->input();
+       // return $request->input();
 
         $new_invoice_cost_adjustment = new Invoice_cost_adjustments([
             'principal_id' => $request->input('principal_id'),
@@ -90,6 +90,7 @@ class Invoice_cost_adjustment_controller extends Controller
             'total_final_cost' => $request->input('total_final_cost'),
             'total_less_other_discount' => $request->input('total_less_other_discount'),
             'net_payable' => $request->input('net_payable'),
+            'cwo_discount' => $request->input('cwo_discount'),
             'user_id' => auth()->user()->id,
         ]);
 
@@ -101,7 +102,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'sku_id' => $data,
                 'original_unit_cost' => $request->input('unit_cost')[$data],
                 'adjusted_amount' => $request->input('unit_cost_adjustment')[$data],
-                'adjustments' =>  $request->input('unit_cost')[$data] -  $request->input('unit_cost_adjustment')[$data],
+                'adjustments' =>  $request->input('difference_of_new_and_old_unit_cost')[$data],
                 'quantity' => $request->input('quantity')[$data],
                 'freight' => $request->input('freight_per_sku')[$data],
             ]);

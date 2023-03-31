@@ -611,7 +611,7 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected->principal_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate .'%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
@@ -760,7 +760,7 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected->principal_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate.'%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
@@ -880,15 +880,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 Swal.fire(

@@ -314,62 +314,64 @@ class Receive_controller extends Controller
         }
 
         foreach ($request->input('sku_id') as $key => $data) {
-            $new_received_purchase_order_details = new Received_purchase_order_details([
-                'received_id' => $new_received_purchase_orders->id,
-                'sku_id' => $data,
-                'quantity' => $request->input('received_quantity')[$data],
-                'unit_cost' => $request->input('unit_cost')[$data],
-                'freight' => str_replace('', '', $request->input('freight_per_sku')[$data]),
-                'final_unit_cost' => $request->input('final_unit_cost')[$data],
-            ]);
-
-            $new_received_purchase_order_details->save();
-
-            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-            $count_ledger_row = count($ledger_results);
-
-            if ($count_ledger_row > 0) {
-                $running_balance = $ledger_results[0]->running_balance + $request->input('received_quantity')[$data];
-                $new_sku_ledger = new Sku_ledger([
+            if ($request->input('received_quantity')[$data] != 0) {
+                $new_received_purchase_order_details = new Received_purchase_order_details([
+                    'received_id' => $new_received_purchase_orders->id,
                     'sku_id' => $data,
                     'quantity' => $request->input('received_quantity')[$data],
-                    'running_balance' => $running_balance,
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'received',
-                    'all_id' => $new_received_purchase_orders->id,
-                    'principal_id' => $request->input('principal_id'),
-                    'sku_type' => $request->input('sku_type'),
+                    'unit_cost' => $request->input('unit_cost')[$data],
+                    'freight' => str_replace('', '', $request->input('freight_per_sku')[$data]),
+                    'final_unit_cost' => $request->input('final_unit_cost')[$data],
                 ]);
 
-                $new_sku_ledger->save();
-            } else {
-                $new_sku_ledger = new Sku_ledger([
-                    'sku_id' => $data,
-                    'quantity' => $request->input('received_quantity')[$data],
-                    'running_balance' => $request->input('received_quantity')[$data],
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'received',
-                    'all_id' => $new_received_purchase_orders->id,
-                    'principal_id' => $request->input('principal_id'),
-                    'sku_type' => $request->input('sku_type'),
-                ]);
+                $new_received_purchase_order_details->save();
 
-                $new_sku_ledger->save();
-            }
+                $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+                $count_ledger_row = count($ledger_results);
 
-            $update_purchase_order_details = Purchase_order_details::select('id', 'confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
+                if ($count_ledger_row > 0) {
+                    $running_balance = $ledger_results[0]->running_balance + $request->input('received_quantity')[$data];
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('received_quantity')[$data],
+                        'running_balance' => $running_balance,
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'received',
+                        'all_id' => $new_received_purchase_orders->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => $request->input('sku_type'),
+                    ]);
 
-            $update_received = $update_purchase_order_details->receive + $request->input('received_quantity')[$data];
-            if ($update_received == $update_purchase_order_details->confirmed_quantity) {
-                $update_purchase_order_details->receive = $update_received;
-                $update_purchase_order_details->remarks = 'received';
-                $update_purchase_order_details->scanned_remarks = null;
-                $update_purchase_order_details->save();
-            } else {
-                $update_purchase_order_details->receive = $update_received;
-                $update_purchase_order_details->remarks = 'staggered';
-                $update_purchase_order_details->scanned_remarks = null;
-                $update_purchase_order_details->save();
+                    $new_sku_ledger->save();
+                } else {
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('received_quantity')[$data],
+                        'running_balance' => $request->input('received_quantity')[$data],
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'received',
+                        'all_id' => $new_received_purchase_orders->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => $request->input('sku_type'),
+                    ]);
+
+                    $new_sku_ledger->save();
+                }
+
+                $update_purchase_order_details = Purchase_order_details::select('id', 'confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))->where('sku_id', $data)->first();
+
+                $update_received = $update_purchase_order_details->receive + $request->input('received_quantity')[$data];
+                if ($update_received == $update_purchase_order_details->confirmed_quantity) {
+                    $update_purchase_order_details->receive = $update_received;
+                    $update_purchase_order_details->remarks = 'received';
+                    $update_purchase_order_details->scanned_remarks = null;
+                    $update_purchase_order_details->save();
+                } else {
+                    $update_purchase_order_details->receive = $update_received;
+                    $update_purchase_order_details->remarks = 'staggered';
+                    $update_purchase_order_details->scanned_remarks = null;
+                    $update_purchase_order_details->save();
+                }
             }
         }
 

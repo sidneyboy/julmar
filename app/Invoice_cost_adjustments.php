@@ -20,7 +20,7 @@ class Invoice_cost_adjustments extends Model
     'total_less_other_discount',
     'net_payable',
     'user_id',
-
+    'cwo_discount',
 
   ];
 

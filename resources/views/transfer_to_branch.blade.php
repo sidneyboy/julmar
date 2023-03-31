@@ -54,7 +54,7 @@
                          </div>
                      </div>
                      <br />
-                     <input type="text" name="sku_type" value="{{ $received[0]->purchase_order->sku_type }}">
+                     <input type="hidden" name="sku_type" value="{{ $received[0]->purchase_order->sku_type }}">
                      <button class="btn btn-sm float-right btn-info">Proceed</button>
                  </form>
              </div>

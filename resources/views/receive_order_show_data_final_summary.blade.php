@@ -460,33 +460,52 @@
                                 {{ number_format($total_amount, 2, '.', ',') }}
                             </td>
                             @php
-                                $total = $total_amount;
+                                if ($total_amount != 0) {
+                                    $total = $total_amount;
                                 
-                                $discount_value_holder = $total;
-                                $discount_value_holder_history = [];
-                                $discount_value_holder_history_for_bo_allowance = [];
-                                $totalArray = [];
-                                $percent = [];
-                                foreach ($discount_selected as $data_discount) {
-                                    $discount_value_holder_dummy = $discount_value_holder;
-                                    $less_percentage_by = $data_discount->discount_rate / 100;
+                                    $discount_value_holder = $total;
+                                    $discount_value_holder_history = [];
+                                    $discount_value_holder_history_for_bo_allowance = [];
+                                    $totalArray = [];
+                                    $percent = [];
+                                    foreach ($discount_selected as $data_discount) {
+                                        $discount_value_holder_dummy = $discount_value_holder;
+                                        $less_percentage_by = $data_discount->discount_rate / 100;
                                 
-                                    $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                    $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                        $discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                                 
-                                    $discount_value_holder_history[] = $discount_rate_answer;
-                                    $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                    echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                        $discount_value_holder_history[] = $discount_rate_answer;
+                                        $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                                        echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                    }
+                                } else {
+                                    $total = $total_amount;
+                                
+                                    $discount_value_holder = $total;
+                                    $discount_value_holder_history = [];
+                                    $discount_value_holder_history_for_bo_allowance = [];
+                                    $totalArray = [];
+                                    $percent = [];
+                                    foreach ($discount_selected as $data_discount) {
+                                        $discount_value_holder_dummy = $discount_value_holder;
+                                        $less_percentage_by = $data_discount->discount_rate / 100;
+                                
+                                        $discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                
+                                        $discount_value_holder_history[] = 0;
+                                        $discount_value_holder_history_for_bo_allowance[] = 0;
+                                        echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                    }
                                 }
+                                
                             @endphp
-                            {{-- <td style="text-align: right"> --}}
                             @php
                                 $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
                                 $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
-                            {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }} --}}
-                            {{-- </td> --}}
 
                             <td style="text-align: right;">
                                 @php
@@ -519,7 +538,12 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $received_quantity[$data];
+                                    if ($received_quantity[$data] == 0) {
+                                        $final_unit_cost_per_sku = 0;
+                                    } else {
+                                        $final_unit_cost_per_sku = $final_total_cost_per_sku / $received_quantity[$data];
+                                    }
+                                    
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
@@ -548,7 +572,7 @@
                                 $discount_value_holder_dummy = $discount_value_holder;
                                 $less_percentage_by = $data_discount->discount_rate / 100;
                             
-                                // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
+                               
                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                 $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                             
@@ -558,10 +582,7 @@
                             $cwo_discount_lower = end($discount_value_holder_history);
                             $bo_discount = prev($discount_value_holder_history);
                         @endphp
-                        {{-- <th style="text-align: right;">
-                            {{ number_format(array_sum($sum_bo_allowance_per_sku), 2, '.', ',') }}
-
-                        </th> --}}
+                       
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
 
@@ -624,15 +645,8 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-                {{-- <tr> --}}
                 <input type="text" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
-                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-
-                {{-- {{ number_format($bo_discount, 2, '.', ',') }}
-                    </td>
-                </tr> --}}
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -680,29 +694,23 @@
                     $less_discount_value_holder_history_for_bo_allowance = [];
                 @endphp
                 @foreach ($less_other_discount_selected as $data_discount)
-                    {{-- <tr>
-                               <td style="text-align:left">
-                                   {{ Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . ')' }}
-                               </td> --}}
                     @php
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                         
-                        // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
+                        
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                         
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
-                    {{-- <td style="text-align:right;">
-                                   {{ number_format($less_discount_rate_answer, 2, '.', ',') }} --}}
+                   
                     <input type="hidden" name="less_other_discount_selected_name[]"
                         value="{{ $data_discount->discount_name }}">
                     <input type="hidden" name="less_other_discount_selected_rate[]"
                         value="{{ $data_discount->discount_rate }}">
-                    {{-- </td>
-                           </tr> --}}
+                   
                 @endforeach
                 <tr>
                     <td style="text-align: left;width:50%;">TOTAL OTHER DISCOUNT:</td>
@@ -780,7 +788,7 @@
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
-                        // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
+                     
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                     
@@ -789,15 +797,10 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-                {{-- <tr> --}}
+               
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
-                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
-                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-               
-                {{-- {{ number_format($bo_discount, 2, '.', ',') }}
-                    </td>
-                </tr> --}}
+              
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -881,10 +884,10 @@
     <input type="hidden" value="{{ $scanned_by }}" name="scanned_by">
     <input type="hidden" value="{{ $bo_allowance_discount_selected }}" name="bo_allowance_discount_rate">
     <input type="hidden" value="{{ $cwo_discount_selected }}" name="cwo_discount_rate">
-    <input type="text" value="{{ $cwo_discount_lower }}" name="cwo_discount">
+    <input type="hidden" value="{{ $cwo_discount_lower }}" name="cwo_discount">
     <input type="hidden" value="{{ $purchase_order_id }}" name="purchase_order_id">
     <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
-    <input type="text" value="{{ $bo_discount }}" name="bo_discount">
+    <input type="hidden" value="{{ $bo_discount }}" name="bo_discount">
     <input type="hidden" value="{{ $vatable_purchase }}" name="vatable_purchase">
     <input type="hidden" value="{{ $vat }}" name="vat">
     <input type="hidden" value="{{ $freight }}" name="freight">
@@ -897,8 +900,6 @@
 <script>
     $("#received_order_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
         $.ajax({
             url: "received_order_save",
             type: "POST",
@@ -907,15 +908,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 Swal.fire(

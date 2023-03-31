@@ -27,7 +27,7 @@
                         <input type="text" name="discount_name[]" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Discount:</label>
+                        <label>Discount Rate:</label>
                         <input type="text" name="discount_rate[]" class="form-control"
                             onkeypress="return isNumberKey(event)" required>
                     </div>

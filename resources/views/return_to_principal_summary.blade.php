@@ -859,7 +859,6 @@
 <script>
     $("#return_to_principal_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
         $.ajax({
             url: "return_to_principal_save",
             type: "POST",
@@ -868,15 +867,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 console.log(error);

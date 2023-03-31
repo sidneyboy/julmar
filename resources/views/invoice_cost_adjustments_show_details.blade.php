@@ -32,7 +32,7 @@
 </div>
 @if ($invoice_cost_adjustment->received_purchase_order->discount_type == 'type_a')
     <div class="table table-responsive">
-        <table class="table table-bordered table-sm table-hover">
+        <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
                     <th>Desc</th>
@@ -154,7 +154,7 @@
 
 
     @if ($invoice_cost_adjustment->received_purchase_order->total_less_other_discount != 0)
-        <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+        <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -277,7 +277,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -304,7 +304,7 @@
             </tbody>
         </table>
     @else
-        <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+        <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -375,7 +375,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -404,7 +404,7 @@
     @endif
 @elseif($invoice_cost_adjustment->received_purchase_order->discount_type == 'type_b')
     <div class="table table-responsive">
-        <table class="table table-bordered table-sm table-hover">
+        <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
                     <th>Desc</th>
@@ -418,8 +418,6 @@
                         <input type="hidden" name="discount_selected_name[]" value="{{ $data->discount_name }}">
                         <input type="hidden" name="discount_selected_rate[]" value="{{ $data->discount_rate }}">
                     @endforeach
-                    <th style="text-align: center">BO Allowance
-                        ({{ $invoice_cost_adjustment->received_purchase_order->bo_allowance_discount_rate }}%)</th>
                     <th style="text-align: center">T.Discount<br /></th>
                     <th>VAT</th>
                     <th style="text-align: center">Freight</th>
@@ -437,7 +435,7 @@
                         <td style="text-align: right">{{ $data->quantity }}</td>
                         <td style="text-align: right">
                             @php
-                                $difference_of_new_and_old_unit_cost = $data->original_unit_cost - $data->adjusted_amount;
+                                $difference_of_new_and_old_unit_cost = $data->adjustments;
                                 echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                             @endphp
                         </td>
@@ -468,14 +466,14 @@
                                 echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
                             }
                         @endphp
-                        <td style="text-align: right">
+                        {{-- <td style="text-align: right"> --}}
                             @php
-                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance) - end($discount_value_holder_history_for_bo_allowance) * ($invoice_cost_adjustment->received_purchase_order->bo_allowance_discount_rate / 100);
+                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
                                 $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
-                            {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
-                        </td>
+                            {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
+                        </td> --}}
 
                         <td style="text-align: right;">
                             @php
@@ -493,7 +491,12 @@
                         </td>
                         <td style="text-align: right">
                             @php
-                                $freight_per_sku = $data->freight * $data->quantity;
+                                if ($total_amount > 0) {
+                                    $freight_per_sku = $data->freight * $data->quantity;
+                                } else {
+                                    $freight_per_sku = ($data->freight * $data->quantity)*-1;
+                                }
+                                
                                 $sum_freight_per_sku[] = $freight_per_sku;
                             @endphp
                             {{ number_format($freight_per_sku, 2, '.', ',') }}
@@ -542,10 +545,10 @@
                             echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
                         }
                     @endphp
-                    <th style="text-align: right;">
+                    {{-- <th style="text-align: right;">
                         {{ number_format(array_sum($sum_bo_allowance_per_sku), 2, '.', ',') }}
 
-                    </th>
+                    </th> --}}
                     <th style="text-align: right;">
                         {{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
 
@@ -572,7 +575,7 @@
     </div>
 
     @if ($invoice_cost_adjustment->received_purchase_order->total_less_other_discount != 0)
-        <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+        <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -588,7 +591,6 @@
             </tr>
             @php
                 $total = $gross_purchases;
-                
                 $discount_value_holder = $total;
                 $discount_value_holder_history = [];
                 $less_discount_value_holder_history_for_bo_allowance = [];
@@ -608,22 +610,22 @@
                     echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                 }
             @endphp
-            <tr>
+            {{-- <tr> --}}
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
-                <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
                         $bo_discount = array_sum($sum_bo_allowance_per_sku);
                     @endphp
                     {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
-                        $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history) - $bo_discount;
+                        $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history);
                     @endphp
                     {{ number_format($vatable_purchase, 2, '.', ',') }}
                 </td>
@@ -707,7 +709,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -734,7 +736,7 @@
             </tbody>
         </table>
     @else
-        <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+        <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
             <tr>
                 <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                 </td>
@@ -770,22 +772,22 @@
                     echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                 }
             @endphp
-            <tr>
+            {{-- <tr> --}}
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
-                <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
+                {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
                         $bo_discount = array_sum($sum_bo_allowance_per_sku);
                     @endphp
                     {{ number_format($bo_discount, 2, '.', ',') }}
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                 <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                     @php
-                        $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history) - $bo_discount;
+                        $vatable_purchase = $gross_purchases - array_sum($less_discount_value_holder_history);
                     @endphp
                     {{ number_format($vatable_purchase, 2, '.', ',') }}
                 </td>
@@ -821,7 +823,7 @@
             </tr>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
                     <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
