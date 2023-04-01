@@ -111,6 +111,8 @@
                                     value="{{ $final_unit_cost }}">
                                 <input type="hidden" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $freight[$data] }}">
+                                <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
+                                    value="{{ $final_total_cost }}">
                             </td>
                         </tr>
                     @endforeach
@@ -551,6 +553,8 @@
                                     value="{{ $final_unit_cost_per_sku }}">
                                 <input type="hidden" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $freight[$data] }}">
+                                <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
+                                    value="{{ $final_total_cost_per_sku }}">
                             </td>
                         </tr>
                     @endforeach
@@ -572,7 +576,6 @@
                                 $discount_value_holder_dummy = $discount_value_holder;
                                 $less_percentage_by = $data_discount->discount_rate / 100;
                             
-                               
                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                 $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                             
@@ -582,7 +585,7 @@
                             $cwo_discount_lower = end($discount_value_holder_history);
                             $bo_discount = prev($discount_value_holder_history);
                         @endphp
-                       
+
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
 
@@ -698,19 +701,17 @@
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                         
-                        
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                         
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
-                   
+
                     <input type="hidden" name="less_other_discount_selected_name[]"
                         value="{{ $data_discount->discount_name }}">
                     <input type="hidden" name="less_other_discount_selected_rate[]"
                         value="{{ $data_discount->discount_rate }}">
-                   
                 @endforeach
                 <tr>
                     <td style="text-align: left;width:50%;">TOTAL OTHER DISCOUNT:</td>
@@ -729,7 +730,8 @@
                         @endphp
                         {{ number_format($net_payable, 2, '.', ',') }}
                         <input type="hidden" value="{{ $net_payable }}" name="net_payable">
-                        <input type="hidden" name="total_less_other_discount" value="{{ $total_other_discounts }}">
+                        <input type="hidden" name="total_less_other_discount"
+                            value="{{ $total_other_discounts }}">
                     </td>
                 </tr>
             </table>
@@ -788,7 +790,6 @@
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
-                     
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                     
@@ -797,10 +798,10 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-               
+
                 <input type="hidden" name="total_less_discount"
                     value="{{ array_sum($less_discount_value_holder_history) }}">
-              
+
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -908,15 +909,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 Swal.fire(

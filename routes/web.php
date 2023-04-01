@@ -742,3 +742,12 @@ Route::post('/warehouse_pcm_final_summary', 'Warehouse_pcm_controller@warehouse_
 Route::post('/warehouse_pcm_save', 'Warehouse_pcm_controller@warehouse_pcm_save')->name('warehouse_pcm_save');
 
 
+
+Route::get('/sku_withdrawal', 'Sku_withdrawal_controller@index')->name('sku_withdrawal');
+Route::post('/sku_withdrawal_proceed', 'Sku_withdrawal_controller@sku_withdrawal_proceed')->name('sku_withdrawal_proceed');
+Route::post('/sku_withdrawal_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_final_summary')->name('sku_withdrawal_final_summary');
+Route::post('/sku_withdrawal_very_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_very_final_summary')->name('sku_withdrawal_very_final_summary');
+Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_save')->name('sku_withdrawal_save');
+
+
+

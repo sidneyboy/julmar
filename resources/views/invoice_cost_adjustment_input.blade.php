@@ -32,7 +32,7 @@
                             <input type="hidden" name="freight[{{ $data->sku->id }}]" value="{{ $data->freight }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
-                            name="new_freight[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"></td>
+                            name="new_freight[{{ $data->sku->id }}]" value="0" onkeypress="return isNumberKey(event)"></td>
                         <td>
                             <center>
                                 <input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"

@@ -161,7 +161,7 @@ class Receive_controller extends Controller
 
     public function received_order_save(Request $request)
     {
-        //return $request->input();
+       // return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -331,6 +331,7 @@ class Receive_controller extends Controller
 
                 if ($count_ledger_row > 0) {
                     $running_balance = $ledger_results[0]->running_balance + $request->input('received_quantity')[$data];
+                    $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,
                         'quantity' => $request->input('received_quantity')[$data],
@@ -340,6 +341,8 @@ class Receive_controller extends Controller
                         'all_id' => $new_received_purchase_orders->id,
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => $request->input('sku_type'),
+                        'amount' => $request->input('final_unit_cost')[$data],
+                        'running_amount' => $running_amount,
                     ]);
 
                     $new_sku_ledger->save();
@@ -353,6 +356,8 @@ class Receive_controller extends Controller
                         'all_id' => $new_received_purchase_orders->id,
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => $request->input('sku_type'),
+                        'amount' => $request->input('final_unit_cost')[$data],
+                        'running_amount' => $request->input('final_total_cost_per_sku')[$data],
                     ]);
 
                     $new_sku_ledger->save();

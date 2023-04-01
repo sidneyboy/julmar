@@ -104,6 +104,11 @@
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
                                 {{ number_format($final_unit_cost, 2, '.', ',') }}
+
+                                <input type="hidden" value="{{ $final_unit_cost }}"
+                                    name="final_unit_cost_per_sku[{{ $data }}]">
+                                <input type="text" value="{{ $final_total_cost }}"
+                                    name="final_total_cost_per_sku[{{ $data }}]">
                             </td>
                         </tr>
                     @endforeach
@@ -504,6 +509,10 @@
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
+                                <input type="hidden" value="{{ $final_unit_cost_per_sku }}"
+                                    name="final_unit_cost_per_sku[{{ $data }}]">
+                                <input type="text" value="{{ $final_total_cost_per_sku }}"
+                                    name="final_total_cost_per_sku[{{ $data }}]">
                             </td>
                         </tr>
                     @endforeach
@@ -608,7 +617,7 @@
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-                
+
                 {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
                 </tr> --}}
@@ -769,7 +778,7 @@
                     value="{{ array_sum($less_discount_value_holder_history) }}">
                 {{-- <td style="text-align: left;width:50%;">BO DISCOUNTS:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;"> --}}
-              
+
                 {{-- {{ number_format($bo_discount, 2, '.', ',') }}
                     </td>
                 </tr> --}}

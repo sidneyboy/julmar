@@ -29,16 +29,8 @@ class Sku_extract_inventory_controller extends Controller
 
     public function extract_sku_inventory_generate_data(Request $request)
     {
-
-        if ($request->input('extract_for') == 'VAN SELLING') {
-            $sku = Sku_add::where('principal_id', $request->input('principal'))
-                ->where('sku_type', 'BUTAL')
-                ->where('sku_type', 'Butal')
-                ->where('sku_type', 'butal')
-                ->get();
-        } else {
-            $sku = Sku_add::where('principal_id', $request->input('principal'))->get();
-        }
+        // return $request->input();
+        $sku = Sku_add::where('principal_id',$request->input('principal'))->get();
         return view('extract_sku_inventory_generate_data', [
             'sku' => $sku,
         ])->with('extract_for', $request->input('extract_for'));
@@ -46,6 +38,7 @@ class Sku_extract_inventory_controller extends Controller
 
     public function extract_sku_inventory_generate_export_data(Request $request)
     {
+        return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
         $time = date('His');

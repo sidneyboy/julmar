@@ -375,6 +375,14 @@
                                             <p>Received Report</p>
                                         </a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('/sku_withdrawal') }}"
+                                            class="nav-link {{ $active_tab == 'sku_withdrawal' ? 'active' : '' }}">
+                                            <i class="fas fa-plus-circle nav-icon"></i>
+                                            <p>SKU Withdrawal</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">

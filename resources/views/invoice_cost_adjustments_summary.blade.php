@@ -48,7 +48,8 @@
                                     $difference_of_new_and_old_unit_cost = $unit_cost_adjustment[$data] - $unit_cost[$data];
                                     echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                                 @endphp
-                                 <input type="text" name="difference_of_new_and_old_unit_cost[{{ $data }}]" value="{{ $difference_of_new_and_old_unit_cost }}">
+                                <input type="text" name="difference_of_new_and_old_unit_cost[{{ $data }}]"
+                                    value="{{ $difference_of_new_and_old_unit_cost }}">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -112,10 +113,13 @@
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
                                 {{ number_format($final_unit_cost, 2, '.', ',') }}
-                                <input type="hidden" name="final_unit_cost[{{ $data }}]"
+
+                                <input type="hidden" name="final_unit_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_unit_cost }}">
-                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
-                                    value="{{ $freight[$data] }}">
+                                <input type="text" name="freight_per_sku[{{ $data }}]"
+                                    value="{{ $new_freight[$data] }}">
+                                <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
+                                    value="{{ $final_unit_cost }}">
                             </td>
                         </tr>
                     @endforeach
@@ -420,8 +424,6 @@
                             <input type="hidden" name="discount_selected_rate[]"
                                 value="{{ $data->discount_rate }}">
                         @endforeach
-                        {{-- <th style="text-align: center">BO Allowance
-                            ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th> --}}
                         <th style="text-align: center">T.Discount<br /></th>
                         <th>VAT</th>
                         <th style="text-align: center">Freight</th>
@@ -450,7 +452,8 @@
                                     echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                                 @endphp
 
-                                <input type="text" name="difference_of_new_and_old_unit_cost[{{ $data }}]" value="{{ $difference_of_new_and_old_unit_cost }}">
+                                <input type="hidden" name="difference_of_new_and_old_unit_cost[{{ $data }}]"
+                                    value="{{ $difference_of_new_and_old_unit_cost }}">
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -527,10 +530,12 @@
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
-                                <input type="hidden" name="final_unit_cost[{{ $data }}]"
+                                <input type="hidden" name="final_unit_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_unit_cost_per_sku }}">
-                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
+                                <input type="text" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $new_freight[$data] }}">
+                                <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
+                                    value="{{ $final_total_cost_per_sku }}">
                             </td>
                         </tr>
                     @endforeach
@@ -615,7 +620,7 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($received_purchase_order->received_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate. '%) </td>';
+                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate . '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
@@ -872,7 +877,7 @@
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
     <input type="hidden" value="{{ $bo_discount }}" name="bo_discount">
-    <input type="text" value="{{ $cwo_discount_lower }}" name="cwo_discount">
+    <input type="hidden" value="{{ $cwo_discount_lower }}" name="cwo_discount">
     <input type="hidden" value="{{ $vatable_purchase }}" name="vatable_purchase">
     <input type="hidden" value="{{ $vat }}" name="vat">
     <input type="hidden" value="{{ $freight }}" name="freight">

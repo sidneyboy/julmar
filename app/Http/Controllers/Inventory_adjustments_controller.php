@@ -59,11 +59,13 @@ class Inventory_adjustments_controller extends Controller
     public function inventory_adjustments_saved(Request $request)
     {
         //return $request->input();
-        $ledger = Sku_ledger::select('sku_id', 'running_balance', 'principal_id', 'sku_type')->where('sku_id', $request->input('sku_id'))
+       $ledger = Sku_ledger::select('sku_id', 'running_balance', 'principal_id', 'sku_type','amount','running_amount')->where('sku_id', $request->input('sku_id'))
             ->orderBy('id', 'desc')
             ->limit(1)
             ->first();
 
+        $total = $request->input('adjustments') * $ledger->amount;
+        $running_amount = $ledger->running_amount + $total;
         $new = new Sku_ledger([
             'sku_id' => $request->input('sku_id'),
             'quantity' => 0,
@@ -74,6 +76,8 @@ class Inventory_adjustments_controller extends Controller
             'remarks' => $request->input('remarks'),
             'adjustments' => $request->input('adjustments'),
             'running_balance' => $ledger->running_balance + $request->input('adjustments'),
+            'amount' => $ledger->amount,
+            'running_amount' => $running_amount,
         ]);
 
         $new->save();

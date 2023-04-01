@@ -2,48 +2,18 @@
     <thead>
         <tr>
             <th>Date</th>
-            <th>Transacted</th>
-            <th>Transaction</th>
-            <th>#</th>
             <th>Desc</th>
             <th>Type</th>
             <th>Quantity</th>
             <th>Adjustment</th>
-            <th>Running</th>
+            <th>Running Inventory</th>
+            <th>Running Amount</th>
         </tr>
     </thead>
     <tbody>
         @for ($i = 0; $i < count($sku_ledger); $i++)
             <tr>
                 <td>{{ date('F j, Y', strtotime($sku_ledger[$i]->created_at)) }}</td>
-                <td>{{ $name[$i]->name }}</td>
-                <td>{{ Str::ucfirst($sku_ledger[$i]->transaction_type) }}</td>
-                <td>
-                    @if ($sku_ledger[$i]->transaction_type == 'received')
-                        <a target="_blank"
-                            href="{{ url('received_order_report_show_details', ['id' => $sku_ledger[$i]->all_id]) }}">{{ $sku_ledger[$i]->all_id }}</a>
-                    @elseif($sku_ledger[$i]->transaction_type == 'returned')
-                        <a target="_blank"
-                            href="{{ route('return_to_principal_show_list_details', $sku_ledger[$i]->all_id) }}">{{ $sku_ledger[$i]->all_id }}</a>
-                    @elseif($sku_ledger[$i]->transaction_type == 'out from warehouse')
-                        {{ $sku_ledger[$i]->all_id }}
-                    @elseif($sku_ledger[$i]->transaction_type == 'bodega out')
-                        <a href="{{ route('bodega_out_show_details', $sku_ledger[$i]->all_id) }}"
-                            target="_blank">{{ $sku_ledger[$i]->all_id }}</a>
-                    @elseif($sku_ledger[$i]->transaction_type == 'bodega in')
-                        <a href="{{ route('bodega_out_show_details', $sku_ledger[$i]->all_id) }}"
-                            target="_blank">{{ $sku_ledger[$i]->all_id }}</a>
-                    @elseif($sku_ledger[$i]->transaction_type == 'transfer to branch')
-                        <a href="{{ route('transfer_to_branch_show_details', $sku_ledger[$i]->all_id . '=' . $sku_ledger[$i]->principal->principal) }}"
-                            target="_blank">{{ $sku_ledger[$i]->all_id }}</a>
-                    @elseif($sku_ledger[$i]->transaction_type == 'releasing')
-                        {{ $sku_ledger[$i]->all_id }}
-                    @elseif($sku_ledger[$i]->transaction_type == 'van cm')
-                        {{ $sku_ledger[$i]->all_id }}
-                    @elseif($sku_ledger[$i]->transaction_type == 'booking cm')
-                        {{ $sku_ledger[$i]->all_id }}
-                    @endif
-                </td>
                 <td>{{ $description[$i]->sku_code }} - {{ $description[$i]->description }}</td>
                 <td>
                     {{ $description[$i]->sku_type }}
@@ -67,6 +37,8 @@
                         <span style="color:green">{{ $sku_ledger[$i]->quantity }}</span>
                     @elseif($sku_ledger[$i]->transaction_type == 'booking cm')
                         <span style="color:green">{{ $sku_ledger[$i]->quantity }}</span>
+                    @elseif($sku_ledger[$i]->transaction_type == 'invoice cost adjustment')
+                        <span style="color:orange">{{ $sku_ledger[$i]->quantity }}</span>
                     @else
                         0
                     @endif
@@ -95,7 +67,7 @@
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModal{{ $sku_ledger[$i]->id }}" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-dialog modal-lg mw-100" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">{{ $description[$i]->sku_code }}
@@ -114,7 +86,10 @@
                                                 <th>Transaction</th>
                                                 <th>Quantity</th>
                                                 <th>Adjustment</th>
-                                                <th>Running</th>
+                                                <th>Running Inventory</th>
+                                                <th>Amount</th>
+                                                <th>Sub-Total</th>
+                                                <th>Running Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -125,32 +100,26 @@
                                                     <td>{{ Str::ucfirst($details->transaction_type) }}</td>
                                                     <td style="text-align: right">
                                                         @if ($details->transaction_type == 'received')
-                                                            <span
-                                                                style="color:green">{{ $details->quantity }}</span>
+                                                            <span style="color:green">{{ $details->quantity }}</span>
                                                         @elseif($details->transaction_type == 'returned')
-                                                            (<span
-                                                                style="color:red">{{ $details->quantity }}</span>)
+                                                            (<span style="color:red">{{ $details->quantity }}</span>)
                                                         @elseif($details->transaction_type == 'out from warehouse')
-                                                            (<span
-                                                                style="color:red">{{ $details->quantity }}</span>)
+                                                            (<span style="color:red">{{ $details->quantity }}</span>)
                                                         @elseif($details->transaction_type == 'bodega in')
-                                                            <span
-                                                                style="color:green">{{ $details->quantity }}</span>
+                                                            <span style="color:green">{{ $details->quantity }}</span>
                                                         @elseif($details->transaction_type == 'bodega out')
-                                                            (<span
-                                                                style="color:red">{{ $details->quantity }}</span>)
+                                                            (<span style="color:red">{{ $details->quantity }}</span>)
                                                         @elseif($details->transaction_type == 'transfer to branch')
-                                                            (<span
-                                                                style="color:red">{{ $details->quantity }}</span>)
+                                                            (<span style="color:red">{{ $details->quantity }}</span>)
                                                         @elseif($details->transaction_type == 'releasing')
-                                                            (<span
-                                                                style="color:red">{{ $details->quantity }}</span>)
+                                                            (<span style="color:red">{{ $details->quantity }}</span>)
                                                         @elseif($details->transaction_type == 'van cm')
-                                                            <span
-                                                                style="color:green">{{ $details->quantity }}</span>
+                                                            <span style="color:green">{{ $details->quantity }}</span>
                                                         @elseif($details->transaction_type == 'booking cm')
+                                                            <span style="color:green">{{ $details->quantity }}</span>
+                                                        @elseif($details->transaction_type == 'invoice cost adjustment')
                                                             <span
-                                                                style="color:green">{{ $details->quantity }}</span>
+                                                                style="color:orange">{{ $details->quantity }}</span>
                                                         @else
                                                             0
                                                         @endif
@@ -161,9 +130,7 @@
                                                         @else
                                                             @if ($details->adjustments < 0)
                                                                 (<span style="color:red">
-                                                                    @php
-                                                                        echo str_replace('-', '', $details->adjustments);
-                                                                    @endphp
+                                                                    {{ $details->adjustments }}
                                                                 </span>)
                                                             @else
                                                                 <span
@@ -172,6 +139,14 @@
                                                         @endif
                                                     </td>
                                                     <td style="text-align: right">{{ $details->running_balance }}</td>
+                                                    <td style="text-align: right">{{ number_format($details->amount,2,".",",") }}</td>
+                                                    <td style="text-align: right">
+                                                        @php
+                                                            $details_total = $details->quantity + $details->adjustments*$details->amount;
+                                                            echo number_format($details_total,2,".",",");
+                                                        @endphp
+                                                    </td>
+                                                    <td style="text-align: right">{{ number_format($details->running_amount,2,".",",") }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -181,6 +156,7 @@
                         </div>
                     </div>
                 </td>
+                <td style="text-align:right">{{ number_format($sku_ledger[$i]->running_amount,2,".",",") }}</td>
             </tr>
         @endfor
     </tbody>

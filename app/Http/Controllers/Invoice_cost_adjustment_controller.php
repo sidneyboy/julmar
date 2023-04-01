@@ -75,7 +75,7 @@ class Invoice_cost_adjustment_controller extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-       // return $request->input();
+        //return $request->input();
 
         $new_invoice_cost_adjustment = new Invoice_cost_adjustments([
             'principal_id' => $request->input('principal_id'),
@@ -107,6 +107,25 @@ class Invoice_cost_adjustment_controller extends Controller
                 'freight' => $request->input('freight_per_sku')[$data],
             ]);
             $invoice_cost_details_save->save();
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+            $running_balance = $ledger_results[0]->running_balance;
+            $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
+            $new_sku_ledger = new Sku_ledger([
+                'sku_id' => $data,
+                'quantity' => $request->input('quantity')[$data],
+                'running_balance' => $running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => 'invoice cost adjustment',
+                'all_id' => $new_invoice_cost_adjustment->id,
+                'principal_id' => $request->input('principal_id'),
+                'sku_type' => $ledger_results[0]->sku_type,
+                'amount' => $request->input('final_unit_cost_per_sku')[$data],
+                'running_amount' => $running_amount,
+            ]);
+
+            $new_sku_ledger->save();
         }
 
         if (isset($check_less_other_discount_selected_name)) {
