@@ -67,7 +67,7 @@
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModal{{ $sku_ledger[$i]->id }}" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-dialog modal-lg mw-100" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">{{ $description[$i]->sku_code }}
@@ -78,7 +78,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-bordered table-sm table-striped" style="font-size:12px;">
+                                    <table class="table table-bordered table-sm table-striped" style="font-size:11;">
                                         <thead>
                                             <tr>
                                                 <th>Date</th>

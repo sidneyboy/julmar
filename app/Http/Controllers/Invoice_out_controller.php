@@ -19,7 +19,7 @@ class Invoice_out_controller extends Controller
         if (Auth()->user()->id) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $invoice_draft = Invoice_raw::select('id', 'delivery_receipt')->where('status', null)->groupBy('delivery_receipt')->orderBy('id', 'desc')->get();
+            $invoice_draft = Invoice_raw::select('id', 'sales_representative')->where('status', null)->groupBy('sales_representative')->orderBy('id', 'desc')->get();
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,
@@ -34,33 +34,22 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_proceed(Request $request)
     {
-        $invoice_draft = Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))->get();
+        $invoice_draft = Invoice_raw::select('id', 'customer', 'sales_representative')
+            ->where('sales_representative', $request->input('sales_representative'))
+            ->groupBy('customer')
+            ->get();
         return view('invoice_out_proceed', [
             'invoice_draft' => $invoice_draft,
-        ])->with('delivery_receipt', $request->input('delivery_receipt'));
-
-        // $sku = Sku_add::select('id')->where('barcode', $request->input('barcode'))->where('sku_type', $invoice_draft->sku_type)->first();
-
-        // if ($sku) {
-        //     Invoice_draft_details::where('sku_id', $sku->id)
-        //         ->where('invoice_draft_id', $request->input('invoice_id'))
-        //         ->update(['scanned_remarks' => 'scanned']);
-
-        //     $invoice_draft_details = Invoice_draft_details::where('invoice_draft_id', $request->input('invoice_id'))->get();
-
-        //     return view('invoice_out_proceed', [
-        //         'invoice_draft_details' => $invoice_draft_details,
-        //     ])->with('invoice_id', $request->input('invoice_id'));
-        // } else {
-        //     return 'Non Existing SKU Barcode';
-        // }
+        ])->with('sales_representative', $request->input('sales_representative'));
     }
 
     public function invoice_out_final_summary(Request $request)
     {
-        $invoice_raw = Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))
-            ->where('barcode', $request->input('barcode'))
-            ->first();
+        $data = DB::table('invoice_raws')
+            ->select('sku_id', DB::raw('sum(quantity) as total'))
+            ->whereIn('customer',$request->input('checkbox_entry'))
+            ->groupBy('sku_id')
+            ->get();
 
         if ($invoice_raw) {
             Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))

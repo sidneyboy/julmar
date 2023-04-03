@@ -24,6 +24,8 @@ class Invoice_raw extends Model
         'sku_id',
         'rgs',
         'bo',
+        'date',
+        'unit_price',
     ];
 
     public function sku()

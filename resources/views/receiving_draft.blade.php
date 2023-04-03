@@ -26,7 +26,8 @@
                             <select name="purchase_id" class="form-control" required>
                                 <option value="" default>Select</option>
                                 @foreach ($purchase_order as $data)
-                                    <option value="{{ $data->id }}">{{ $data->purchase_id }}/{{ $data->van_number }}</option>
+                                    <option value="{{ $data->id }}">{{ $data->purchase_id }}/{{ $data->van_number }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -104,6 +105,12 @@
                         Swal.fire(
                             'Cannot Proceed',
                             'Scanned SKU Cannot be found in PO or SKU already received',
+                            'error'
+                        )
+                    } else if (data == 'sku_received') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'SKU Already Received!',
                             'error'
                         )
                     } else {

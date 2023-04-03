@@ -15,10 +15,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="">Delivery Receipt:</label>
-                            <select class="form-control select2bs4" style="width:100%;" required name="delivery_receipt">
+                            <select class="form-control select2bs4" style="width:100%;" required name="sales_representative">
                                 <option value="" default>Select</option>
                                 @foreach ($invoice_draft as $data)
-                                    <option value="{{ $data->delivery_receipt }}">{{ $data->delivery_receipt }}</option>
+                                    <option value="{{ $data->sales_representative }}">{{ $data->sales_representative }}</option>
                                 @endforeach
                             </select>
                         </div>

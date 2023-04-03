@@ -14,20 +14,22 @@
                     </thead>
                     <tbody>
                         @foreach ($purchase_order_details as $po_data)
-                            @if ($po_data->scanned_remarks == 'scanned')
-                                <tr style="background: #97e47e">
-                                    <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
-                                        -
-                                        {{ $po_data->sku->description }}</td>
-                                    <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
-                                        -
-                                        {{ $po_data->sku->description }}</td>
-                                    <td>{{ $po_data->confirmed_quantity }}</td>
-                                </tr>
+                            @if ($po_data->confirmed_quantity - $po_data->receive != 0)
+                                @if ($po_data->scanned_remarks == 'scanned')
+                                    <tr style="background: #97e47e">
+                                        <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
+                                            -
+                                            {{ $po_data->sku->description }}</td>
+                                        <td>{{$po_data->confirmed_quantity - $po_data->receive }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
+                                            -
+                                            {{ $po_data->sku->description }}</td>
+                                        <td>{{ $po_data->confirmed_quantity }}</td>
+                                    </tr>
+                                @endif
                             @endif
                         @endforeach
                     </tbody>
@@ -54,10 +56,10 @@
                             <tr>
                                 <td><span style="color:red;font-weight:bold">{{ $draft_data->sku->sku_code }}</span>
                                     {{ $draft_data->sku->description }}</td>
-                                <td style="text-align: right">{{ number_format($draft_data->unit_cost,2,".",",")  }}</td>
-                                <td style="text-align: right">{{ number_format($draft_data->freight,2,".",",")  }}</td>
+                                <td style="text-align: right">{{ number_format($draft_data->unit_cost, 2, '.', ',') }}</td>
+                                <td style="text-align: right">{{ number_format($draft_data->freight, 2, '.', ',') }}</td>
                                 <td><input type="number" min="0" class="form-control form-control-sm"
-                                    name="quantity_received[{{ $draft_data->id }}]"></td>
+                                        name="quantity_received[{{ $draft_data->id }}]"></td>
                                 <td>
                                     <select name="remarks[{{ $draft_data->id }}]" class="form-control form-control-sm"
                                         required>
