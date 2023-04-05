@@ -25,8 +25,8 @@
         </table>
     </div>
     <br />
-    <input type="text" name="sales_representative" value="{{ $sales_representative }}">
-    <button class="btn btn-sm float-right btn-info">Proceed to final summary</button>
+    <input type="hidden" name="sales_representative" value="{{ $sales_representative }}">
+    <button class="btn btn-sm float-right btn-info">Proceed</button>
 </form>
 
 <script>

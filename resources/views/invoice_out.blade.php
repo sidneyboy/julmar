@@ -10,33 +10,32 @@
             <div class="card-header">
                 <h3 class="card-title" style="font-weight: bold;">INVOICE OUT</h3>
             </div>
-            <form id="invoice_out_proceed">
-                <div class="card-body">
+
+            <div class="card-body">
+                <form id="invoice_out_proceed">
                     <div class="row">
                         <div class="col-md-12">
                             <label for="">Delivery Receipt:</label>
-                            <select class="form-control select2bs4" style="width:100%;" required name="sales_representative">
+                            <select class="form-control select2bs4" style="width:100%;" required
+                                name="sales_representative">
                                 <option value="" default>Select</option>
                                 @foreach ($invoice_draft as $data)
-                                    <option value="{{ $data->sales_representative }}">{{ $data->sales_representative }}</option>
+                                    <option value="{{ $data->sales_representative }}">{{ $data->sales_representative }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-12">
+                            <br />
+                            <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
+                        </div>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">DRAFT</h3>
+                </form>
             </div>
-            <div class="card-body">
+            <div class="card-footer">
                 <div id="invoice_out_page"></div>
             </div>
+
         </div>
 
         <div class="card">
@@ -45,6 +44,14 @@
             </div>
             <div class="card-body">
                 <div id="invoice_out_final_summary_page"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" style="font-weight: bold;">FINAL SUMMARY</h3>
+            </div>
+            <div class="card-body">
+                <div id="invoice_out_very_final_summary_page"></div>
             </div>
         </div>
     </section>

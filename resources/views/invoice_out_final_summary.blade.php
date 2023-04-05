@@ -1,108 +1,66 @@
-<form id="invoice_out_saved">
+<form id="invoice_out_very_final_summary">
+    <table class="table table-bordered table-hover table-sm table-striped">
+        <thead>
+            <tr>
+                <th>Principal</th>
+                <th>Code</th>
+                <th>Desc</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($invoice_raw as $data)
+                <tr>
+                    <td>{{ $data->principal }}</td>
+                    <td>{{ $data->sku_code }}</td>
+                    <td>{{ $data->description }}</td>
+                    <td>{{ $data->total }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <br />
     <div class="row">
         <div class="col-md-6">
-            <div class="table table-responsive">
-                <table class="table table-bordered table-hover table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th>{{ $invoice_raw->delivery_receipt }}</th>
-                            <th>{{ $invoice_raw->principal }}</th>
-                            <th>{{ $invoice_raw->customer }}</th>
-                        </tr>
-                        <tr>
-                            <th>Desc</th>
-                            <th>SKU Type</th>
-                            <th>Quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($invoice_data as $data)
-                            @if ($data->remarks == 'scanned')
-                                <tr style="background:yellowgreen">
-                                    <td>[<span style="color:green">{{ $data->sku_code }}</span>] -
-                                        {{ $data->description }}
-                                    </td>
-                                    <td>{{ $data->sku->sku_type }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td>[<span style="color:green">{{ $data->sku_code }}</span>]
-                                        -
-                                        {{ $data->description }}
-                                    </td>
-                                    <td>{{ $data->sku->sku_type }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
-                                </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <label for="">Quantity:</label>
+            <input type="number" class="form-control" required min="1" name="quantity">
         </div>
         <div class="col-md-6">
-            <div class="table table-responsive">
-                <table class="table table-bordered table-hover table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th colspan="3">Custodian Confirmation</th>
-                        </tr>
-                        <tr>
-                            <th>Desc</th>
-                            <th>SKU Type</th>
-                            <th>Final QTY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($cart as $cart_data)
-                            <tr>
-                                <td>[<span style="color:green">{{ $cart_data->associatedModel->sku_code }}</span>] -
-                                    {{ $cart_data->name }}
-                                </td>
-                                <td>{{ $cart_data->associatedModel->sku_type }}</td>
-                                <td style="text-align: right">{{ $cart_data->quantity }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <label for="">Barcode:</label>
+            <input type="text" class="form-control" required name="barcode">
         </div>
     </div>
     <br />
-    <input type="hidden" value="{{ $delivery_receipt }}" name="delivery_receipt">
-    <button class="btn btn-sm float-right btn-success" type="submit">Submit</button>
+    
+    @foreach ($customer as $customer_data)
+        <input type="hidden" value="{{ $customer_data }}" name="customer_data[]">
+    @endforeach
+
+    <input type="hidden" name="sales_representative" value="{{ $sales_representative }}">
+    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
 </form>
 
 <script>
-    $("#invoice_out_saved").on('submit', (function(e) {
+    $("#invoice_out_very_final_summary").on('submit', (function(e) {
         e.preventDefault();
         //$('.loading').show();
         $('#hide_if_trigger').hide();
         $.ajax({
-            url: "invoice_out_saved",
+            url: "invoice_out_very_final_summary",
             type: "POST",
             data: new FormData(this),
             contentType: false,
             cache: false,
             processData: false,
             success: function(data) {
-
-                if (data == 'ledger_error') {
+                if (data == 'invalid') {
                     Swal.fire(
                         'Cannot Proceed',
-                        'Please Contact IT Support',
+                        'Invalid Barcode',
                         'error'
                     )
                 } else {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-
-                    location.reload();
+                    $('#invoice_out_very_final_summary_page').html(data);
                 }
             },
             error: function(error) {

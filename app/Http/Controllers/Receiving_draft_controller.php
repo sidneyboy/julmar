@@ -68,7 +68,7 @@ class Receiving_draft_controller extends Controller
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_id'))
                         ->where('sku_id', $sku->id)
-                        ->where('remarks', '!=', 'received')
+                        ->where('remarks', null)
                         ->get();
 
                     if ($purchase_order_details) {
@@ -86,7 +86,7 @@ class Receiving_draft_controller extends Controller
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_id'))
                         ->where('sku_id', $sku->id)
-                        ->where('remarks', '!=', 'received')
+                        ->where('remarks', null)
                         ->get();
 
                     if (count($purchase_order_details) != 0) {

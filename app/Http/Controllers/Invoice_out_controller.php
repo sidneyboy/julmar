@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Invoice_draft;
-use App\Invoice_draft_details;
-use App\Sku_add;
 use App\Sku_ledger;
+use App\Load_sheet;
+use App\Load_sheet_details;
 use App\Invoice_raw;
 use DB;
 use Cart;
@@ -45,15 +44,30 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_final_summary(Request $request)
     {
-        $data = DB::table('invoice_raws')
-            ->select('sku_id', DB::raw('sum(quantity) as total'))
-            ->whereIn('customer',$request->input('checkbox_entry'))
+        //return $request->input();
+        $invoice_raw = DB::table('invoice_raws')
+            ->select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', DB::raw('sum(quantity) as total'))
+            ->whereIn('customer', $request->input('checkbox_entry'))
             ->groupBy('sku_id')
             ->get();
 
+        return view('invoice_out_final_summary', [
+            'invoice_raw' => $invoice_raw
+        ])->with('sales_representative', $request->input('sales_representative'))
+            ->with('customer', $request->input('checkbox_entry'));
+    }
+
+    public function invoice_out_very_final_summary(Request $request)
+    {
+
+        $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description')
+            ->where('sales_representative', $request->input('sales_representative'))
+            ->where('barcode', $request->input('barcode'))
+            ->first();
         if ($invoice_raw) {
-            Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))
-                ->where('barcode', $request->input('barcode'))
+            Invoice_raw::where('sales_representative', $request->input('sales_representative'))
+                ->where('sku_id', $invoice_raw->sku_id)
+                ->whereIn('customer', $request->input('customer_data'))
                 ->update(['remarks' => 'scanned']);
 
             $cart_checker = \Cart::session(auth()->user()->id)->get($invoice_raw->sku_id);
@@ -62,18 +76,18 @@ class Invoice_out_controller extends Controller
 
                 \Cart::session(auth()->user()->id)->add(array(
                     'id' => $invoice_raw->sku_id,
-                    'name' => $invoice_raw->sku->description,
+                    'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $request->input('confirmed_quantity'),
+                    'quantity' => $request->input('quantity'),
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
             } else {
                 \Cart::session(auth()->user()->id)->add(array(
                     'id' => $invoice_raw->sku_id,
-                    'name' => $invoice_raw->sku->description,
+                    'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $request->input('confirmed_quantity'),
+                    'quantity' => $request->input('quantity'),
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
@@ -81,14 +95,16 @@ class Invoice_out_controller extends Controller
 
             $cart = Cart::session(auth()->user()->id)->getContent();
 
-            $invoice_data = Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))
+            $invoice_data = Invoice_raw::where('sales_representative', $request->input('sales_representative'))
+                ->whereIn('customer', $request->input('customer_data'))
                 ->get();
 
-            return view('invoice_out_final_summary', [
+            return view('invoice_out_very_final_summary', [
                 'cart' => $cart,
                 'invoice_data' => $invoice_data,
                 'invoice_raw' => $invoice_raw,
-                'delivery_receipt' => $request->input('delivery_receipt'),
+                'sales_representative' => $request->input('sales_representative'),
+                'customer' => $request->input('customer_data'),
             ]);
         } else {
             return 'invalid';
@@ -97,38 +113,53 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_saved(Request $request)
     {
+        //return $request->input();
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        $load_sheet_id = uniqid();
+
         $cart = Cart::session(auth()->user()->id)->getContent();
-        foreach ($cart as $key => $data) {
-            Invoice_raw::where('delivery_receipt', $request->input('delivery_receipt'))
-                ->where('sku_id', $data->id)
-                ->update([
-                    'final_quantity' => $data->quantity,
-                    'user_id' => auth()->user()->id,
-                    'status' => 'complete',
-                ]);
 
-            $sku_id = $data->id;
+        foreach ($request->input('customer_data') as $key => $data) {
+            $new_load_sheet = new Load_sheet([
+                'load_sheet_id' => $load_sheet_id,
+                'agent' => $request->input('sales_representative'),
+                'customer' => $data,
+                'user_id' => auth()->user()->id,
+                'principal_id' => $request->input('principal_id')[0],
+                'date' => $date,
+            ]);
 
+            $new_load_sheet->save();
+        }
+
+        foreach ($cart as $key => $cart_data) {
+            $new_load_sheet_details = new Load_sheet_details([
+                'load_sheet_id' => $load_sheet_id,
+                'sku_id' => $cart_data->id,
+                'quantity' => $cart_data->quantity,
+                // 'unit_price',
+            ]);
+
+            $new_load_sheet_details->save();
+
+            $sku_id = $cart_data->id;
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-            $count_ledger_row = count($ledger_results);
 
-            if ($count_ledger_row > 0) {
-                $running_balance = $ledger_results[0]->running_balance - $data->quantity;
-                $new_sku_ledger = new Sku_ledger([
-                    'sku_id' => $data->id,
-                    'quantity' => $data->quantity,
-                    'running_balance' => $running_balance,
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'out from warehouse',
-                    'all_id' => $request->input('delivery_receipt'),
-                    'principal_id' => $ledger_results[0]->principal_id,
-                    'sku_type' => $ledger_results[0]->sku_type,
-                ]);
+            $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
+            
+            $new_sku_ledger = new Sku_ledger([
+                'sku_id' => $cart_data->id,
+                'quantity' => $cart_data->quantity,
+                'running_balance' => $running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => 'out from warehouse',
+                'all_id' => $load_sheet_id,
+                'principal_id' => $ledger_results[0]->principal_id,
+                'sku_type' => $ledger_results[0]->sku_type,
+            ]);
 
-                $new_sku_ledger->save();
-            } else {
-                return 'ledger_error';
-            }
+            $new_sku_ledger->save();
         }
     }
 }
