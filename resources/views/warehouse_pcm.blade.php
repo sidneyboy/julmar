@@ -62,8 +62,7 @@
 
         $("#warehouse_pcm_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
-            $('#hide_if_trigger').hide();
+            $('#loader').show();
             $.ajax({
                 url: "warehouse_pcm_proceed",
                 type: "POST",
@@ -73,6 +72,7 @@
                 processData: false,
                 success: function(data) {
                     $('#warehouse_pcm_proceed_page').html(data);
+                    $('#loader').hide();
                 },
                 error: function(error) {
                     Swal.fire(
@@ -80,6 +80,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

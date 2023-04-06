@@ -31,7 +31,8 @@
                 style="width:100%;">
                 <option value="" default>Select</option>
                 @foreach ($purchase_order->purchase_order_discount_details as $data)
-                    <option value="{{ $data->id }}" selected>{{ $data->discount_name }} - {{ $data->discount_rate }}%</option>
+                    <option value="{{ $data->id }}" selected>{{ $data->discount_name }} -
+                        {{ $data->discount_rate }}%</option>
                 @endforeach
             </select>
         </div>
@@ -188,8 +189,7 @@
 
     $("#receive_order_data_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "receive_order_data_final_summary",
             type: "POST",
@@ -198,65 +198,19 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
-
-                // $('.loading').hide();
-                // $("#principal").val('').trigger('change');
-                // $('#van_selling_transaction_show_sku_page').hide();
+                $('#loader').hide();
                 $('#show_data_final_summary').html(data);
-                // $('#hide_if_trigger').show();
             },
+            error: function(error) {
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
+            }
         });
     }));
-
-    // function generate_final_summary() {
-    //     var form = document.myform;
-    //     var dataString = $(form).serialize();
-    //     $('.loading').show();
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: '/receive_order_data_final_summary',
-    //         data: dataString,
-    //         success: function(data) {
-
-    //             console.log(data);
-    //             if (data == 'some of your sku doesnt have expiration date.') {
-    //                 Swal.fire(
-    //                     'PLEASE REVIEW EXPIRATION DATE',
-    //                     'SOME OF YOUR SKU DOESNT HAVE EXPIRATE DATE',
-    //                     'error'
-    //                 )
-    //                 $('.loading').hide();
-    //             } else if (data == 'null') {
-    //                 Swal.fire(
-    //                     'TO PROCEED',
-    //                     'SELECT DISCOUNT FIRST, THANK YOU!',
-    //                     'error'
-    //                 )
-    //                 $('.loading').hide();
-    //             } else {
-    //                 $('.loading').hide();
-    //                 $('#show_data_final_summary').html(data);
-    //                 // $('#generate_cifpi_button').prop('disabled', true);
-
-    //             }
-    //             //           	if (data == 'null') {
-    //             //           		Swal.fire(
-    //             //   'TO PROCEED',
-    //             //   'SELECT DISCOUNT FIRST, THANK YOU!',
-    //             //   'error'
-    //             // )
-    //             //           	}else{
-    //             //           		$('.loading').hide();
-    //             //            	$('#show_data_final_summary').html(data);  
-    //             //            	 // $('#generate_cifpi_button').prop('disabled', true);
-
-    //             //           	}
-
-    //         }
-    //     });
-    //     return false;
-    // }
 
     $(function() {
         $(".datepicker").datepicker();

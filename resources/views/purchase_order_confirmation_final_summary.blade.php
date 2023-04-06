@@ -13,7 +13,7 @@
                                 {{-- @php
                                     $sum_discount_selected[] = $data->discount_rate;
                                 @endphp --}}
-                                @if ($data->discount_name != 'BO' AND $data->discount_name != 'CWO')
+                                @if ($data->discount_name != 'BO' and $data->discount_name != 'CWO')
                                     <input type="hidden" name="discount_selected_name[]"
                                         value="{{ $data->discount_name }}">
                                     <input type="hidden" name="discount_selected_rate[]"
@@ -479,14 +479,14 @@
                                     echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
                                 }
                             @endphp
-                            
+
                             @php
                                 $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
                                 $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
-
+                                
                             @endphp
-                           
+
 
                             <td style="text-align: right;">
                                 @php
@@ -554,9 +554,8 @@
                             
                                 $discount_value_holder_history[] = $discount_rate_answer;
                                 echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
-                                
                             }
-
+                            
                             $cwo_discount_lower = end($discount_value_holder_history);
                             $bo_discount = prev($discount_value_holder_history);
                         @endphp
@@ -585,7 +584,7 @@
             </table>
         </div>
 
-      
+
 
         @if (isset($less_other_discount_selected))
             <table class="table table-bordered table-hover table-sm float-right table-striped" style="width:35%;">
@@ -611,11 +610,10 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected->principal_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate .'%) </td>';
+                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate . '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
-                        
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                     
@@ -625,7 +623,7 @@
                     }
                 @endphp
 
-              
+
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -760,7 +758,7 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected->principal_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate.'%) </td>';
+                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate . '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                     
@@ -773,7 +771,7 @@
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
                     }
                 @endphp
-               
+
                 <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
@@ -870,8 +868,7 @@
 <script>
     $("#purchase_order_confirmation_saved").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "purchase_order_confirmation_saved",
             type: "POST",
@@ -896,6 +893,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

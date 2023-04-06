@@ -67,7 +67,7 @@
 
         $("#show_input_form").on('submit', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "principal_discount_show_input",
                 type: "POST",
@@ -77,7 +77,7 @@
                 processData: false,
                 success: function(data) {
                     $('#principal_discount_show_input_page').html(data);
-                    $('.loading').hide();
+                    $('#loader').hide();
                 },
             });
         }));

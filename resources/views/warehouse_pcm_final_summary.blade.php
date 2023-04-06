@@ -167,8 +167,7 @@
 <script>
     $("#warehouse_pcm_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "warehouse_pcm_save",
             type: "POST",
@@ -194,6 +193,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

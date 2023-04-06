@@ -80,7 +80,7 @@
 
           $("#principal_ledger_generate_report").on('submit', (function(e) {
               e.preventDefault();
-              $('.loading').show();
+              $('#loader').show();
               $.ajax({
                   url: "principal_ledger_generate_report",
                   type: "POST",
@@ -98,9 +98,9 @@
                               showConfirmButton: false,
                               timer: 1500
                           })
-                          $('.loading').hide();
+                          $('#loader').hide();
                       } else {
-                          $('.loading').hide();
+                          $('#loader').hide();
                           $('#principal_ledger_generate_report_proceed').html(data);
                       }
                   },

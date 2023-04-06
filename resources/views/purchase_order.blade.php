@@ -87,11 +87,11 @@
             }
         });
 
-        
+
 
         $("#principal_show_inputs").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "principal_show_inputs",
@@ -102,6 +102,7 @@
                 processData: false,
                 success: function(data) {
                     $('#show_purcase_order_inputs').html(data);
+                    $('#loader').hide();
                 },
                 error: function(error) {
                     Swal.fire(
@@ -109,6 +110,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

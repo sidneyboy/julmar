@@ -26,8 +26,8 @@ class Warehouse_pcm_controller extends Controller
                 'user' => $user,
                 'bo' => $bo,
                 'rgs' => $rgs,
-                'main_tab' => 'manage_custodian_main_tab',
-                'sub_tab' => 'manage_custodian_sub_tab',
+                'main_tab' => 'manage_warehouse_main_tab',
+                'sub_tab' => 'manage_warehouse_sub_tab',
                 'active_tab' => 'warehouse_pcm',
             ]);
         } else {

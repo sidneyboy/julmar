@@ -48,8 +48,7 @@
 <script>
     $("#purchase_order_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "purchase_order_save",
             type: "POST",
@@ -74,6 +73,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

@@ -55,6 +55,7 @@
 <script>
     $("#sku_withdrawal_save").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "sku_withdrawal_save",
             type: "POST",
@@ -72,7 +73,6 @@
                 });
 
                 location.reload();
-                // $('#sku_withdrawal_very_final_summary_page').html(data);
             },
             error: function(error) {
                 Swal.fire(
@@ -80,6 +80,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

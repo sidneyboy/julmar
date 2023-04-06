@@ -114,8 +114,7 @@
 <script type="text/javascript">
     $("#update_sku_price").on('submit', (function(e) {
         e.preventDefault();
-        //alert('asdasd');
-        //$('.loading').show();
+        $('#loader').show();
         $.ajax({
             url: "sku_update_price_save",
             type: "POST",
@@ -133,10 +132,15 @@
                     timer: 1500
                 })
                 location.reload();
-                $('.loading').hide();
+                $('#loader').hide();
             },
             error: function(error) {
-                console.log(error);
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
             }
         });
     }));

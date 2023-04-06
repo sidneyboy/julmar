@@ -46,7 +46,7 @@ class Invoice_out_controller extends Controller
     {
         //return $request->input();
         $invoice_raw = DB::table('invoice_raws')
-            ->select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', DB::raw('sum(quantity) as total'))
+            ->select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', 'barcode', DB::raw('sum(quantity) as total'))
             ->whereIn('customer', $request->input('checkbox_entry'))
             ->groupBy('sku_id')
             ->get();
@@ -59,10 +59,16 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_very_final_summary(Request $request)
     {
-
+        if ($request->input('barcode') != null) {
+            $barcode = $request->input('barcode');
+            $quantity = $request->input('quantity');
+        } else if ($request->input('sku_barcode') != null) {
+            $barcode = $request->input('sku_barcode');
+            $quantity = $request->input('sku_quantity');
+        }
         $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description')
             ->where('sales_representative', $request->input('sales_representative'))
-            ->where('barcode', $request->input('barcode'))
+            ->where('barcode', $barcode)
             ->first();
         if ($invoice_raw) {
             Invoice_raw::where('sales_representative', $request->input('sales_representative'))
@@ -78,7 +84,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_raw->sku_id,
                     'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $request->input('quantity'),
+                    'quantity' => $quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
@@ -87,7 +93,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_raw->sku_id,
                     'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $request->input('quantity'),
+                    'quantity' => $quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
@@ -147,7 +153,7 @@ class Invoice_out_controller extends Controller
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
             $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
-            
+
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $cart_data->id,
                 'quantity' => $cart_data->quantity,

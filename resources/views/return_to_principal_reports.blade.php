@@ -73,7 +73,7 @@
         $('#generate').on('click', function(e) {
             var date = $('#reservation').val();
             var principal = $('#principal').val();
-            $('.loading').show();
+            $('#loader').show();
             $.post({
                 type: "POST",
                 url: "/return_to_principal_report_data",
@@ -81,12 +81,17 @@
                 success: function(data) {
 
                     console.log(data);
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#show_return_data').html(data);
 
                 },
                 error: function(error) {
-                    console.log(error);
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                    $('#loader').hide();
                 }
             });
         });

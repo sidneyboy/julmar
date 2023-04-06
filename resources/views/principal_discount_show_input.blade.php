@@ -103,8 +103,7 @@
 
     $("#save_discount_form").on('submit', (function(e) {
         e.preventDefault();
-
-        $('.loading').show();
+        $('#loader').show();
         $.ajax({
             url: "principal_discount_save",
             type: "POST",
@@ -124,26 +123,9 @@
                     });
                     location.reload();
                 } else {
-                    $('.loading').hide();
+                    $('#loader').hide();
                 }
             },
         });
     }));
-
-    // $('[class=form-control] onkeypress="return isNumberKey(event)"').maskNumber();
-    // $('[class=currency-data-attributes]').maskNumber();
-    // $('[class=currency-configuration]').maskNumber({
-    //     decimal: '_',
-    //     thousands: '*'
-    // });
-    // $('[class=integer-default]').maskNumber({
-    //     integer: true
-    // });
-    // $('[class=integer-data-attribute]').maskNumber({
-    //     integer: true
-    // });
-    // $('[class=integer-configuration]').maskNumber({
-    //     integer: true,
-    //     thousands: '_'
-    // });
 </script>

@@ -94,7 +94,7 @@
 
         $("#inventory_adjustments_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "inventory_adjustments_proceed",
@@ -106,6 +106,7 @@
                 success: function(data) {
                     console.log(data);
                     $('#inventory_adjustments_proceed_page').html(data);
+                    $('#loader').hide();
                 },
                 error: function(error) {
                     Swal.fire(
@@ -113,6 +114,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

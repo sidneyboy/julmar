@@ -106,7 +106,7 @@
 
         $("#sku_withdrawal_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "sku_withdrawal_proceed",
@@ -117,6 +117,7 @@
                 processData: false,
                 success: function(data) {
                     $('#sku_withdrawal_proceed_page').html(data);
+                    $('#loader').hide();
                 },
                 error: function(error) {
                     Swal.fire(
@@ -124,6 +125,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

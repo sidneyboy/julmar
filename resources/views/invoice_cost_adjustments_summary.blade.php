@@ -889,7 +889,7 @@
 <script>
     $("#invoice_cost_adjustments_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "invoice_cost_adjustments_save",
@@ -899,15 +899,15 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 Swal.fire(
@@ -915,6 +915,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

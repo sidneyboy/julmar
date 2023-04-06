@@ -11,7 +11,8 @@
                     <th>Adjusted Unit Cost</th>
                     <th>Original Freight</th>
                     <th>New Freight</th>
-                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" />
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -27,12 +28,14 @@
                             <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $data->unit_cost }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
-                            name="unit_cost_adjustment[{{ $data->sku->id }}]" onkeypress="return isNumberKey(event)"></td>
+                                name="unit_cost_adjustment[{{ $data->sku->id }}]"
+                                onkeypress="return isNumberKey(event)"></td>
                         <td style="text-align: right">{{ $data->freight }}
                             <input type="hidden" name="freight[{{ $data->sku->id }}]" value="{{ $data->freight }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
-                            name="new_freight[{{ $data->sku->id }}]" value="0" onkeypress="return isNumberKey(event)"></td>
+                                name="new_freight[{{ $data->sku->id }}]" value="0"
+                                onkeypress="return isNumberKey(event)"></td>
                         <td>
                             <center>
                                 <input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"
@@ -43,7 +46,7 @@
                             <input type="hidden" value="{{ $quantity }}" name="quantity[{{ $data->sku->id }}]">
                             <input type="hidden" value="{{ $data->sku->sku_code }}"
                                 name="code[{{ $data->sku->id }}]">
-                           
+
                         </td>
                     </tr>
                 @endforeach
@@ -82,7 +85,7 @@
 
     $("#invoice_cost_adjustments_show_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "invoice_cost_adjustments_show_summary",
@@ -93,42 +96,16 @@
             processData: false,
             success: function(data) {
                 $('#show_invoice_cost_adjustments_summary').html(data);
+                $('#loader').hide();
             },
             error: function(error) {
-                console.log(error);
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
             }
         });
     }));
-
-    // function generate() {
-    //     var form = document.myform;
-    //     var dataString = $(form).serialize();
-    //     //$('.loading').show();
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: '/invoice_cost_adjustments_show_summary',
-    //         data: dataString,
-    //         success: function(data) {
-
-
-    //             if (data == 'no unit_cost') {
-    //                 toastr.warning('INPUT UNIT COST ADJUSTMENT AMOUNT ON SELECTED SKU')
-    //                 $('.loading').hide();
-    //                 $('#show_invoice_cost_adjustments_summary').hide();
-    //             } else if (data == 'no particulars') {
-    //                 toastr.warning('PARTICULARS FIELD NEEDED')
-    //                 $('.loading').hide();
-    //                 $('#show_invoice_cost_adjustments_summary').hide();
-    //             } else {
-    //                 toastr.info('PROCEEDING');
-    //                 $('.loading').hide();
-    //                 $('#show_invoice_cost_adjustments_summary').show();
-    //                 $('#show_invoice_cost_adjustments_summary').html(data);
-
-    //             }
-
-    //         }
-    //     });
-    //     return false;
-    // }
 </script>

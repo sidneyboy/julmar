@@ -69,6 +69,7 @@
 
     $("#sku_withdrawal_very_final_summary").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "sku_withdrawal_very_final_summary",
             type: "POST",
@@ -77,16 +78,8 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
-
-                // location.reload();
                 $('#sku_withdrawal_very_final_summary_page').html(data);
+                $('#loader').hide();
             },
             error: function(error) {
                 Swal.fire(
@@ -94,6 +87,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

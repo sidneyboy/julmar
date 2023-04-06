@@ -73,6 +73,7 @@
 <script>
     $("#warehouse_pcm_final_summary").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "warehouse_pcm_final_summary",
             type: "POST",
@@ -87,11 +88,13 @@
                         'Invalid Bardcode',
                         'error'
                     )
+                    $('#loader').hide();
                 } else {
                     $('#quantity').val('');
                     $('#barcode').val('');
                     $('#quantity').focus();
                     $('#warehouse_pcm_final_summary_page').html(data);
+                    $('#loader').hide();
                 }
             },
             error: function(error) {
@@ -100,6 +103,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

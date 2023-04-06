@@ -69,6 +69,7 @@
 
         $("#invoice_out_proceed").on('submit', (function(e) {
             e.preventDefault();
+            $('#loader').show();
             $.ajax({
                 url: "invoice_out_proceed",
                 type: "POST",
@@ -84,28 +85,37 @@
                             'Wrong SKU Scanned',
                             'error'
                         )
+
+                        $('#loader').hide();
                     } else if (data == 'existing') {
                         Swal.fire(
                             'Cannot Proceed',
                             'SKU Already Scanned',
                             'error'
                         )
+
+                        $('#loader').hide();
                     } else if (data == 'Non Existing SKU Barcode') {
                         Swal.fire(
                             'Cannot Proceed',
                             'Invalid Barcode',
                             'error'
                         )
+
+                        $('#loader').hide();
                     } else if (data == 'Sku Not in the PO') {
                         Swal.fire(
                             'Cannot Proceed',
                             'Scanned SKU Cannot be found in PO or SKU already received',
                             'error'
                         )
+
+                        $('#loader').hide();
                     } else {
                         $('#invoice_out_page').html(data);
                         $('#barcode').val('');
                         $('#barcode').focus();
+                        $('#loader').hide();
                     }
                 },
                 error: function(error) {
@@ -114,6 +124,8 @@
                         'Please Contact IT Support',
                         'error'
                     )
+
+                    $('#loader').hide();
                 }
             });
         }));

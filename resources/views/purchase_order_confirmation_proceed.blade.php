@@ -113,6 +113,7 @@
 
     $("#purchase_order_confirmation_final_summary").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "purchase_order_confirmation_final_summary",
             type: "POST",
@@ -122,6 +123,7 @@
             processData: false,
             success: function(data) {
                 $('#purchase_order_confirmation_final_summary_page').html(data);
+                $('#loader').hide();
             },
             error: function(error) {
                 Swal.fire(
@@ -129,6 +131,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

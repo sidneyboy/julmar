@@ -901,6 +901,8 @@
 <script>
     $("#received_order_save").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
+
         $.ajax({
             url: "received_order_save",
             type: "POST",
@@ -925,6 +927,8 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
+
             }
         });
     }));

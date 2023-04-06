@@ -48,12 +48,90 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.3.2/css/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 
+    <style>
+        .center-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #202628;
+            position: fixed;
+            z-index: 9999;
+            opacity: 0.9;
+        }
 
+        .loader-circle-105 {
+            position: relative;
+            width: 150px;
+            height: 100px;
+            display: inline-block;
+        }
+
+        .loader-circle-105>div {
+            position: absolute;
+            height: 25px;
+            width: 25px;
+            border-radius: 50%;
+            animation: anm-CL-105-move 3s infinite;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .loader-circle-105>div:nth-child(1) {
+            border: 5px solid #2196f3;
+        }
+
+        .loader-circle-105>div:nth-child(2) {
+            animation-delay: 1s;
+            border: 5px solid #e91e63;
+        }
+
+        .loader-circle-105>div:nth-child(3) {
+            animation-delay: 2s;
+            border: 5px solid #cddc39;
+        }
+
+        @keyframes anm-CL-105-move {
+            0% {
+                left: 1px;
+            }
+
+            25% {
+                height: 50px;
+                width: 50px;
+            }
+
+            50% {
+                left: 150px;
+                height: 25px;
+                width: 25px;
+            }
+
+            75% {
+                height: 50px;
+                width: 50px;
+            }
+
+            100% {
+                left: 1px;
+            }
+        }
+    </style>
 </head>
+<div class="center-body" id="loader" style="display:none">
+    <div class="loader-circle-105">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
 
 <body class="hold-transition sidebar-mini sidebar-collapse sidebar-mini">
     {{-- dark-mode --}}
     {{-- sidebar-collapse --}}
+
     <div class="wrapper">
         @section('navbar')
             <!-- Preloader -->
@@ -224,7 +302,7 @@
                                         </a>
                                     </li>
 
-                                    
+
                                     <li class="nav-item">
                                         <a href="{{ url('invoice_out') }}"
                                             class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
@@ -904,6 +982,7 @@
                 <!-- Control sidebar content goes here -->
             </aside> --}}
             <!-- /.control-sidebar -->
+
         </div>
         <!-- ./wrapper -->
 

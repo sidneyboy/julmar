@@ -27,7 +27,8 @@
                     <th>Qty Received</th>
                     <th>Qty To Be Return</th>
                     <th>Cost</th>
-                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);"
+                            class="big-checkbox" /></th>
                 </tr>
             </thead>
             <tbody>
@@ -37,8 +38,10 @@
                         <td>{{ $data->sku->description }}</td>
                         <td>{{ $data->sku->sku_type }}</td>
                         <td>{{ $data->quantity }}</td>
-                        <td><input type="number" name="quantity[{{ $data->sku_id }}]" class="form-control form-control-sm">
-                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}" class="form-control form-control-sm">
+                        <td><input type="number" name="quantity[{{ $data->sku_id }}]"
+                                class="form-control form-control-sm">
+                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}"
+                                class="form-control form-control-sm">
                         </td>
                         <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $data->unit_cost }}">{{ number_format($data->unit_cost, 2, '.', ',') }}
@@ -74,7 +77,7 @@
 
     $("#return_to_principal_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "return_to_principal_summary",
@@ -87,16 +90,16 @@
                 console.log(data);
 
                 if (data == 'no_quantity') {
-                    $('.loading').hide();
+                    $('#loader').hide();
 
                 } else if (data == 'no remarks') {
-                    $('.loading').hide();
+                    $('#loader').hide();
 
                 } else if (data == 'no personnel') {
-                    $('.loading').hide();
+                    $('#loader').hide();
 
                 } else {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#show_final_summary').show(data);
                     $('#show_final_summary').html(data);
                 }
@@ -104,24 +107,4 @@
         });
     }));
 
-    // function generate_summary() {
-
-    //     var form = document.myform;
-    //     var dataString = $(form).serialize();
-    //     $('.loading').show();
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: '/return_to_principal_summary',
-    //         data: dataString,
-    //         success: function(data) {
-
-
-
-
-
-    //         }
-    //     });
-    //     return false;
-    // }
 </script>

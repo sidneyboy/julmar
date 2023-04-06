@@ -3,7 +3,8 @@
          <div class="col-md-12">
              <div class="form-group">
                  <label>Sku</label>
-                 <select style="width:100%;" class="form-control select2bs4" autofocus required name="sku" id="sku">
+                 <select style="width:100%;" class="form-control select2bs4" autofocus required name="sku"
+                     id="sku">
                      <option value="" default>Select Item</option>
                      @foreach ($sku_principal as $sku)
                          <option value="{{ $sku->id }}">
@@ -37,27 +38,9 @@
          })
      });
 
-     //  function submitData() {
-     //      var form = document.input_form;
-     //      var dataString = $(form).serialize();
-     //      $('.loading').show();
-     //      $.ajax({
-     //          type: 'POST',
-     //          url: '/purchase_order_cart',
-     //          data: dataString,
-     //          success: function(data) {
-
-     //              console.log(data);
-
-     //          }
-     //      });
-     //      return false;
-     //  }
-
      $("#purchase_order_cart").on('submit', (function(e) {
          e.preventDefault();
-         //$('.loading').show();
-         $('#hide_if_trigger').hide();
+         $('#loader').show();
          $.ajax({
              url: "purchase_order_cart",
              type: "POST",
@@ -68,7 +51,7 @@
              success: function(data) {
                  //console.log(data);
                  $('#show_data').html(data);
-                 $('.loading').hide();
+                 $('#loader').hide();
                  $('#quantity').val('');
                  $('#sku').val(null).trigger("change");
                  $('#sku').select2('open');
@@ -79,6 +62,7 @@
                      'Please Contact IT Support',
                      'error'
                  )
+                 $('#loader').hide();
              }
          });
      }));

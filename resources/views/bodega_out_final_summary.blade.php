@@ -106,8 +106,7 @@
 <script>
     $("#bodega_out_saved").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "bodega_out_saved",
             type: "POST",
@@ -132,6 +131,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

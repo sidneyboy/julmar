@@ -96,8 +96,7 @@
 <script>
     $("#transfer_to_branch_saved").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "transfer_to_branch_saved",
             type: "POST",
@@ -122,6 +121,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

@@ -51,7 +51,7 @@ Route::post('/sku_list_update_price_save', 'Sku_list_controller@sku_list_update_
 Route::post('/sku_list_update_info', 'Sku_list_controller@sku_list_update_info')->name('sku_list_update_info');
 Route::post('/search_sku_list', 'Sku_list_controller@search_sku_list')->name('search_sku_list');
 Route::post('sku_list', 'Sku_list_controller@sku_update_data')->name('update.sku.post');
-
+Route::post('/sku_list_show_data', 'Sku_list_controller@sku_list_show_data')->name('sku_list_show_data');
 
 Route::get('/principal_discount', 'Principal_discount_controller@index')->name('principal_discount');
 Route::post('/principal_discount_show_input', 'Principal_discount_controller@principal_discount_show_input')->name('principal_discount_show_input');

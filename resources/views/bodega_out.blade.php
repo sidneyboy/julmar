@@ -107,8 +107,7 @@
 
         $("#proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
-            $('#hide_if_trigger').hide();
+            $('#loader').show();
             $.ajax({
                 url: "bodega_out_show_input",
                 type: "POST",
@@ -121,14 +120,14 @@
 
 
                     if (data == 'no_input') {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         Swal.fire(
                             'CANNOT PROCEED!',
                             'PRINCIPAL AND UOM FIELD ARE NEEDED',
                             'error'
                         )
                     } else {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         $('#show_input').html(data);
                     }
                 },
@@ -138,28 +137,10 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));
-
-
-        // $('#proceed').on('click', function(e) {
-        //     var uom = $('#uom').val();
-        //     var principal = $('#principal').val();
-        //     $('.loading').show();
-        //     $.post({
-        //         type: "POST",
-        //         url: "/bodega_out_show_input",
-        //         data: 'uom=' + uom + '&principal=' + principal,
-        //         success: function(data) {
-
-
-        //         },
-        //         error: function(error) {
-        //             console.log(error);
-        //         }
-        //     });
-        // });
     </script>
     </body>
 

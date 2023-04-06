@@ -20,7 +20,7 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td>{{$po_data->confirmed_quantity - $po_data->receive }}</td>
+                                        <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
                                     </tr>
                                 @else
                                     <tr>
@@ -56,8 +56,10 @@
                             <tr>
                                 <td><span style="color:red;font-weight:bold">{{ $draft_data->sku->sku_code }}</span>
                                     {{ $draft_data->sku->description }}</td>
-                                <td style="text-align: right">{{ number_format($draft_data->unit_cost, 2, '.', ',') }}</td>
-                                <td style="text-align: right">{{ number_format($draft_data->freight, 2, '.', ',') }}</td>
+                                <td style="text-align: right">{{ number_format($draft_data->unit_cost, 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right">{{ number_format($draft_data->freight, 2, '.', ',') }}
+                                </td>
                                 <td><input type="number" min="0" class="form-control form-control-sm"
                                         name="quantity_received[{{ $draft_data->id }}]"></td>
                                 <td>
@@ -84,7 +86,7 @@
 <script>
     $("#receiving_draft_final_saved").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $.ajax({
             url: "receiving_draft_final_saved",
             type: "POST",
@@ -104,6 +106,14 @@
                     location.reload();
                 }
             },
+            error: function(error) {
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
+            }
         });
     }));
 </script>

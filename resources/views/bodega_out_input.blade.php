@@ -24,7 +24,7 @@
         <div class="col-md-5">
             <div class="form-group">
                 <label>Convert(Case Bases)</label>
-                <input type="number" required class="form-control"  name="convert">
+                <input type="number" required class="form-control" name="convert">
             </div>
         </div>
         <div class="col-md-12">
@@ -41,27 +41,31 @@
 
     $('#sku').on('change', function(e) {
         var sku = $(this).val();
+        $('#loader').show();
         $.post({
             type: "POST",
             url: "/show_equivalent",
             data: 'sku=' + sku,
             success: function(data) {
-
-                //console.log(data);
+                $('#loader').hide();
                 $('#equivalent').val(data);
                 $('#equivalent_data').val(data);
 
             },
             error: function(error) {
-                console.log(error);
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
             }
         });
     });
 
     $("#bodega_out_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "bodega_out_summary",
             type: "POST",
@@ -71,7 +75,7 @@
             processData: false,
             success: function(data) {
                 if (data == 'There is no equivalent butal for this SKU') {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     Swal.fire({
                         position: 'top-end',
                         icon: 'error',
@@ -80,7 +84,7 @@
                         timer: 1500
                     })
                 } else if (data == 'There is no equivalent case for this SKU') {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     Swal.fire({
                         position: 'top-end',
                         icon: 'error',
@@ -89,7 +93,7 @@
                         timer: 1500
                     })
                 } else {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#show_bodega_out_summary').html(data);
                 }
             },
@@ -99,6 +103,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

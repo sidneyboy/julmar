@@ -112,7 +112,7 @@
 
         $("#booking_pcm_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "booking_pcm_proceed",
@@ -122,8 +122,8 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
                     $('#booking_pcm_proceed_page').html(data);
+                    $('#loader').hide();
                 },
                 error: function(error) {
                     Swal.fire(
@@ -131,6 +131,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

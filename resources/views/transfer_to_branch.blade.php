@@ -65,25 +65,6 @@
              <!-- /.card-footer-->
          </div>
          <!-- /.card -->
-
-         {{-- <div class="card">
-             <div class="card-header">
-                 <h3 class="card-title" style="font-weight: bold;">FINAL SUMMARY</h3>
-
-                 <div class="card-tools">
-                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                         title="Collapse">
-                         <i class="fas fa-minus"></i></button>
-                     <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip"
-                         title="Remove">
-                         <i class="fas fa-times"></i></button>
-                 </div>
-             </div>
-             <div class="card-body">
-                 <div id="show_final_summary"></div>
-             </div>
-         </div> --}}
-
      </section>
      <!-- /.content -->
 
@@ -99,30 +80,9 @@
              }
          });
 
-         //  $("#received_id").change(function() {
-         //      var received_id = $(this).val();
-         //      $('.loading').show();
-         //      $.post({
-         //          type: "POST",
-         //          url: "/transfer_to_branch_show_input",
-         //          data: 'received_id=' + received_id,
-         //          success: function(data) {
-
-         //              //console.log(data);
-         //              $('.loading').hide();
-         //              $('#show_return_inputs').html(data);
-
-         //          },
-         //          error: function(error) {
-         //              console.log(error);
-         //          }
-         //      });
-         //  });
-
          $("#transfer_to_branch_show_input").on('submit', (function(e) {
              e.preventDefault();
-             //$('.loading').show();
-             $('#hide_if_trigger').hide();
+             $('#loader').show();
              $.ajax({
                  url: "transfer_to_branch_show_input",
                  type: "POST",
@@ -132,6 +92,7 @@
                  processData: false,
                  success: function(data) {
                      $('#show_return_inputs').html(data);
+                     $('#loader').hide();
                  },
                  error: function(error) {
                      Swal.fire(
@@ -139,6 +100,7 @@
                          'Please Contact IT Support',
                          'error'
                      )
+                     $('#loader').hide();
                  }
              });
          }));

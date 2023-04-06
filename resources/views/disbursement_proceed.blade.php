@@ -88,8 +88,7 @@
 
     $("#disbursement_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "disbursement_final_summary",
             type: "POST",
@@ -99,6 +98,7 @@
             processData: false,
             success: function(data) {
                 $('#disbursement_final_summary_page').html(data);
+                $('#loader').hide();
             },
             error: function(error) {
                 Swal.fire(
@@ -106,6 +106,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

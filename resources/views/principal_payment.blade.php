@@ -119,7 +119,7 @@
 
           $("#principal_payment_generate_final_summary").on('submit', (function(e) {
               e.preventDefault();
-              //$('.loading').show();
+              $('#loader').show();
               $.ajax({
                   url: "principal_payment_generate_final_summary",
                   type: "POST",
@@ -129,6 +129,7 @@
                   processData: false,
                   success: function(data) {
                       $('#principal_payment_generate_final_summary_page').html(data);
+                      $('#loader').hide();
                   },
               });
           }));

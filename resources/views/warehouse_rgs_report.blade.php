@@ -62,6 +62,7 @@
         });
         $("#warehouse_rgs_report_proceed").on('submit', (function(e) {
             e.preventDefault();
+            $('#loader').show();
             $.ajax({
                 url: "warehouse_rgs_report_proceed",
                 type: "POST",
@@ -70,7 +71,7 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
+                    $('#loader').hide();
                     $('#warehouse_rgs_report_proceed_page').html(data);
                 },
                 error: function(error) {
@@ -79,6 +80,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

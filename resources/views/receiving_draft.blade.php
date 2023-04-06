@@ -72,7 +72,7 @@
 
         $("#receiving_draft_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "receiving_draft_proceed",
                 type: "POST",
@@ -89,32 +89,38 @@
                             'Wrong SKU Scanned',
                             'error'
                         )
+                        $('#loader').hide();
                     } else if (data == 'existing') {
                         Swal.fire(
                             'Cannot Proceed',
                             'SKU Already Scanned',
                             'error'
                         )
+                        $('#loader').hide();
                     } else if (data == 'Non Existing SKU Barcode') {
                         Swal.fire(
                             'Cannot Proceed',
                             'Invalid Barcode',
                             'error'
                         )
+                        $('#loader').hide();
                     } else if (data == 'Sku Not in the PO') {
                         Swal.fire(
                             'Cannot Proceed',
                             'Scanned SKU Cannot be found in PO or SKU already received',
                             'error'
                         )
+                        $('#loader').hide();
                     } else if (data == 'sku_received') {
                         Swal.fire(
                             'Cannot Proceed',
                             'SKU Already Received!',
                             'error'
                         )
+                        $('#loader').hide();
                     } else {
                         $('#show_draft').html(data);
+                        $('#loader').hide();
                     }
                 },
             });

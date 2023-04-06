@@ -49,8 +49,7 @@
 
     $("#invoice_out_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "invoice_out_final_summary",
             type: "POST",
@@ -65,11 +64,15 @@
                         'Invalid Barcode',
                         'error'
                     )
+
+                    $('#loader').hide();
                 } else {
                     $('#confirmed_quantity').val('');
                     $('#barcode').val('');
                     $('#confirmed_quantity').focus();
                     $('#invoice_out_final_summary_page').html(data);
+
+                    $('#loader').hide();
                 }
             },
             error: function(error) {
@@ -78,6 +81,8 @@
                     'Please Contact IT Support',
                     'error'
                 )
+
+                $('#loader').hide();
             }
         });
     }));

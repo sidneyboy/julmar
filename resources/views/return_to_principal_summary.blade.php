@@ -868,6 +868,7 @@
 <script>
     $("#return_to_principal_save").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "return_to_principal_save",
             type: "POST",
@@ -887,7 +888,12 @@
                 location.reload();
             },
             error: function(error) {
-                console.log(error);
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
             }
         });
     }));

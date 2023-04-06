@@ -66,20 +66,24 @@
 
          $("#received_id").change(function() {
              var received_id = $(this).val();
-             $('.loading').show();
+             $('#loader').show();
              $.post({
                  type: "POST",
                  url: "/invoice_cost_adjustments_input",
                  data: 'received_id=' + received_id,
                  success: function(data) {
 
-                     //console.log(data);
-                     $('.loading').hide();
+                     $('#loader').hide();
                      $('#show_invoice_cost_adjustments').html(data);
 
                  },
                  error: function(error) {
-                     console.log(error);
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                     $('#loader').hide();
                  }
              });
          });

@@ -28,7 +28,7 @@ class Sku_withdrawal_controller extends Controller
                 'principal' => $principal,
                 'main_tab' => 'receiving_and_purchases_main_tab',
                 'sub_tab' => 'receiving_and_purchases_sub_tab',
-                'active_tab' => 'receive_order_report',
+                'active_tab' => 'sku_withdrawal',
             ]);
         } else {
             return redirect('auth.login')->with('error', 'Session Expired. Please Login');

@@ -103,7 +103,7 @@
 
         $("#search_sku_ledger").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "search_inventory_ledger",
                 type: "POST",
@@ -118,12 +118,20 @@
                             'NO DATA',
                             'error'
                         );
-                        $('.loading').hide();
+                        $('#loader').hide();
                     } else {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         $('#show_data').html(data);
                     }
                 },
+                error: function(error) {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                    $('#loader').hide();
+                }
             });
         }));
     </script>

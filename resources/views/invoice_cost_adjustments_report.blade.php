@@ -83,31 +83,25 @@
              }
          });
 
-         var hasSuccess = '<?php echo Session::has('success'); ?>';
-         if (hasSuccess) {
-             toastr.success('New Sku Information Saved!')
-         }
-
-         var deleteSuccess = '<?php echo Session::has('deleteSuccess'); ?>';
-         if (deleteSuccess) {
-             toastr.warning('Sku Information Deleted!')
-         }
-
          $('#generate').on('click', function(e) {
              var date = $('#reservation').val();
              var principal = $('#principal').val();
+             $('#loader').show();
              $.post({
                  type: "POST",
                  url: "/invoice_cost_adjustments_report_show_list",
                  data: 'date=' + date + '&principal=' + principal,
                  success: function(data) {
-
-                     console.log(data);
                      $('#show_report_list').html(data);
-
+                     $('#loader').hide();
                  },
                  error: function(error) {
-                     console.log(error);
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                     $('#loader').hide();
                  }
              });
          });

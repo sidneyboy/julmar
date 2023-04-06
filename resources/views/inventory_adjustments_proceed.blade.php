@@ -28,7 +28,7 @@
 
     $("#inventory_adjustments_proceed_to_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "inventory_adjustments_proceed_to_final_summary",
             type: "POST",
@@ -37,16 +37,16 @@
             cache: false,
             processData: false,
             success: function(data) {
-
-
                 if (data == 'no_quantity') {
                     Swal.fire(
                         'Cannot Proceed',
                         'SKU no beginning quantity!',
                         'error'
                     )
+                    $('#loader').hide();
                 } else {
                     $('#inventory_adjustments_proceed_to_final_summary_page').html(data);
+                    $('#loader').hide();
                 }
             },
             error: function(error) {
@@ -55,6 +55,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));

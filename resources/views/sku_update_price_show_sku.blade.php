@@ -30,8 +30,7 @@
 
     $("#generate_sku_price_inputs").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-
+        $('#loader').show();
         $.ajax({
             url: "sku_update_price_generate_price_inputs",
             type: "POST",
@@ -41,10 +40,17 @@
             processData: false,
             success: function(data) {
                 console.log(data);
-                $('.loading').hide();
-
+                $('#loader').hide();
                 $('#sku_update_price_generate_price_inputs').html(data);
             },
+            error: function(error) {
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+                $('#loader').hide();
+            }
         });
     }));
 </script>

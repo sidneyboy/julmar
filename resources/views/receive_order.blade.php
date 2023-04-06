@@ -38,7 +38,8 @@
                                  @foreach ($draft as $data)
                                      <option
                                          value="{{ $data->session_id . '=' . $data->purchase_order->id . '=' . $data->purchase_order->skuPrincipal->principal . '=' . $data->purchase_order->purchase_id . '=' . $data->purchase_order->skuPrincipal->id }}">
-                                         {{ $data->purchase_order->purchase_id ."/". $data->purchase_order->van_number . ' - Draft' }}</option>
+                                         {{ $data->purchase_order->purchase_id . '/' . $data->purchase_order->van_number . ' - Draft' }}
+                                     </option>
                                  @endforeach
                              </select>
                          </div>
@@ -145,8 +146,7 @@
 
          $("#receive_order_generate_data").on('submit', (function(e) {
              e.preventDefault();
-             //$('.loading').show();
-             $('#hide_if_trigger').hide();
+             $('#loader').show();
              $.ajax({
                  url: "receive_order_generate_data",
                  type: "POST",
@@ -155,12 +155,18 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
-                     console.log(data);
-                     $('.loading').hide();
+                     $('#loader').hide();
                      $('#show_data_summary').html(data);
-                     // $('.generate_data').prop('disabled', true);
                      $('#reload_page').show();
                  },
+                 error: function(error) {
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                     $('#loader').hide();
+                 }
              });
          }));
 

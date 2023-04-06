@@ -27,7 +27,7 @@
             @if ($counter != 0)
                 @foreach ($purchase_order_data as $data)
                     <tr>
-                       
+
                         <td>{{ Str::ucfirst($data->discount_type) }}</td>
                         <td style="text-align:right">{{ number_format($data->gross_purchase, 2, '.', ',') }}
                             @php
@@ -100,16 +100,17 @@
         <tfoot>
             <tr>
                 <th>Grand Total</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_gross_purchase),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_bo_discount),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_cwo_discount),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_vatable_purchase),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_vat),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_freight),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total_final_cost),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_other_discount),2,".",",") }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_net_payable),2,".",",") }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_gross_purchase), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_bo_discount), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_cwo_discount), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_vatable_purchase), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_vat), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_freight), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_total_final_cost), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_other_discount), 2, '.', ',') }}
+                </th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_net_payable), 2, '.', ',') }}</th>
                 <th></th>
                 <th></th>
                 <th></th>

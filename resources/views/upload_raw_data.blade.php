@@ -63,6 +63,7 @@
 
         $("#upload_raw_data_saved").on('submit', (function(e) {
             e.preventDefault();
+            $('#loader').show();
             $.ajax({
                 url: "upload_raw_data_saved",
                 type: "POST",
@@ -87,6 +88,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
+                    $('#loader').hide();
                 }
             });
         }));

@@ -37,6 +37,7 @@
 <script>
     $("#inventory_adjustments_saved").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "inventory_adjustments_saved",
             type: "POST",
@@ -61,6 +62,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
+                $('#loader').hide();
             }
         });
     }));
