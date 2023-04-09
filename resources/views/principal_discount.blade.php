@@ -79,6 +79,14 @@
                     $('#principal_discount_show_input_page').html(data);
                     $('#loader').hide();
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

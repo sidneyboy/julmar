@@ -104,17 +104,17 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
                     $('#inventory_adjustments_proceed_page').html(data);
                     $('#loader').hide();
                 },
                 error: function(error) {
+                    $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
                         'Please Contact IT Support',
                         'error'
                     )
-                    $('#loader').hide();
+                   
                 }
             });
         }));

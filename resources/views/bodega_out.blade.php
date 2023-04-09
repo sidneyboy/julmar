@@ -116,9 +116,6 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
-
-
                     if (data == 'no_input') {
                         $('#loader').hide();
                         Swal.fire(
@@ -132,12 +129,13 @@
                     }
                 },
                 error: function(error) {
+                    $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
                         'Please Contact IT Support',
                         'error'
                     )
-                    $('#loader').hide();
+                    
                 }
             });
         }));

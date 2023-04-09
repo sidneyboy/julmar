@@ -39,6 +39,7 @@
                         </div>
                     </div>
                     <div class="col-md-12">
+                        <br />
                         <button id="generate" class="btn float-right btn-info btn-sm">Generate</button>
                     </div>
                 </div>
@@ -68,17 +69,22 @@
 
         $('#generate').on('click', function(e) {
             var date = $('#reservation').val();
-            $('.loading').show();
+            $('#loader').show();
             $.post({
                 type: "POST",
                 url: "/disbursement_report_show_data",
                 data: 'date=' + date,
                 success: function(data) {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#disbursement_report_show_data').html(data);
                 },
                 error: function(error) {
-                    console.log(error);
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
                 }
             });
         });

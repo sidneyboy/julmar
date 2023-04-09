@@ -85,7 +85,7 @@
 
         $("#van_selling_report_date_range_generate_data").on('submit', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "van_selling_report_date_range_generate_data",
                 type: "POST",
@@ -95,19 +95,28 @@
                 processData: false,
                 success: function(data) {
                     if (data == 'no_data_found') {
+                        $('#loader').hide();
                         Swal.fire(
                             'NO DATA FOUND!',
                             'CANNOT PROCEED!',
                             'error'
                         )
-                        $('.loading').hide();
+                       
                     } else {
                         $('#van_selling_report_date_range_generate_data_page').html(data);
                         $('#van_selling_report_date_range_itemized_page').hide();
-                        $('.loading').hide();
+                        $('#loader').hide();
                     }
 
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

@@ -75,12 +75,13 @@
                     $('#warehouse_rgs_report_proceed_page').html(data);
                 },
                 error: function(error) {
+                    $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
                         'Please Contact IT Support',
                         'error'
                     )
-                    $('#loader').hide();
+                   
                 }
             });
         }));

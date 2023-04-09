@@ -91,19 +91,18 @@
                  url: "/bo_allowance_adjustments_generate_report",
                  data: 'date=' + date + '&principal=' + principal,
                  success: function(data) {
-
-                     console.log(data);
                      $('#loader').hide();
                      $('#show_report_list').html(data);
 
                  },
                  error: function(error) {
+                    $('#loader').hide();
                      Swal.fire(
                          'Cannot Proceed',
                          'Please Contact IT Support',
                          'error'
                      )
-                     $('#loader').hide();
+                    
                  }
              });
          });

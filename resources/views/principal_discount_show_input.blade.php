@@ -7,16 +7,14 @@
             <div class="form-group">
                 <label>Bo Allowance Discount:</label>
                 <input type="text" name="bo_allowance_discount" placeholder="BO Allowance Discount"
-                    onkeypress="return isNumberKey(event)" class="form-control" 
-                    required>
+                    onkeypress="return isNumberKey(event)" class="form-control" required>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label>Cash w/ Order Discount:</label>
                 <input type="text" name="cash_with_order_discount" placeholder="Cash with order discount"
-                     class="form-control" onkeypress="return isNumberKey(event)"
-                    required>
+                    class="form-control" onkeypress="return isNumberKey(event)" required>
             </div>
         </div>
         @if ($number_of_discounts == 1)
@@ -66,8 +64,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Discount_name:</label>
-                        <input type="text" name="discount_name[]"
-                            class="form-control" required>
+                        <input type="text" name="discount_name[]" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label>Discount:</label>
@@ -112,20 +109,24 @@
             cache: false,
             processData: false,
             success: function(data) {
-                //console.log(data);
-                if (data == 'saved') {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    location.reload();
-                } else {
-                    $('#loader').hide();
-                }
+                $('#loader').hide();
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                location.reload();
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

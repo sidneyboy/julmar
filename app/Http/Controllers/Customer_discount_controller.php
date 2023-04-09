@@ -13,7 +13,7 @@ class Customer_discount_controller extends Controller
     {
         if (Auth()->user()->id) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $select_principal = Sku_principal::select('id', 'principal')->get();
+            $select_principal = Sku_principal::select('id', 'principal')->where('principal','!=','none')->get();
             $select_store = Customer::select('id', 'store_name', 'location_id')->get();
             return view('customer_discount', [
                 'user' => $user,

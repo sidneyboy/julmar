@@ -28,8 +28,6 @@ class Van_selling_import_data_controller extends Controller
 
     public function van_selling_import_data_save(Request $request)
     {
-
-
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -45,7 +43,7 @@ class Van_selling_import_data_controller extends Controller
         if ($csv[0][3] == 'VAN SELLING EXPORT') {
             $van_selling_upload = Van_selling_upload::select('van_selling_export_code')->where('van_selling_export_code', $csv[1][3])->first();
             if ($van_selling_upload) {
-                return redirect('van_selling_import_data')->with('success', 'Existing File');
+                return 'Existing File';
             } else {
                 $van_selling_upload_save = new Van_selling_upload([
                     'van_selling_export_code' => $csv[1][3],
@@ -100,9 +98,9 @@ class Van_selling_import_data_controller extends Controller
                 }
             }
         } else {
-            return redirect('van_selling_import_data')->with('success', 'Existing File');
+            return 'Existing File';
         }
 
-        return redirect('van_selling_import_data')->with('success', 'Data Saved');
+        // return redirect('van_selling_import_data')->with('success', 'Data Saved');
     }
 }

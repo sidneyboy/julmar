@@ -19,13 +19,13 @@
                             <select name="pcm_id" class="form-control" required>
                                 <option value="" default>Select</option>
                                 @foreach ($pcm as $data)
-                                  <option value="{{ $data->id }}">{{ $data->reference }}</option>
+                                    <option value="{{ $data->id }}">{{ $data->reference }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                               <br />
+                                <br />
                                 <button class="btn btn-sm float-right btn-info">Proceed</button>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
 
         $("#van_selling_pcm_post_generate").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "van_selling_pcm_post_generate",
                 type: "POST",
@@ -64,25 +64,33 @@
                 success: function(data) {
                     console.log(data);
                     if (data == 'No_such_pcm_number') {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         Swal.fire(
                             'No Data Found!!',
                             'Cannot Proceed!',
                             'error'
                         )
                     } else if (data == 'Pcm_number_already_posted') {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         Swal.fire(
                             'Pcm_number_already_posted!',
                             'Cannot Proceed!',
                             'error'
                         )
-                        $('.loading').hide();
+                        $('#loader').hide();
                     } else {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         $('#van_selling_pcm_post_generate_page').html(data);
                     }
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

@@ -89,7 +89,7 @@
 
          $("#van_selling_ar_ledger_generate_data").on('submit', (function(e) {
              e.preventDefault();
-             //$('.loading').show();
+             $('#loader').show();
              $('#hide_if_trigger').hide();
              $.ajax({
                  url: "van_selling_ar_ledger_generate_data",
@@ -99,10 +99,11 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
-  
+                     $('#loader').hide();
                      $('#van_selling_ar_ledger_generate_data_page').html(data);
                  },
                  error: function(error) {
+                     $('#loader').hide();
                      Swal.fire(
                          'Cannot Proceed',
                          'Please Contact IT Support',

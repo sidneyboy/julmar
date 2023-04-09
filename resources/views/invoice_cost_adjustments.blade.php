@@ -72,18 +72,17 @@
                  url: "/invoice_cost_adjustments_input",
                  data: 'received_id=' + received_id,
                  success: function(data) {
-
                      $('#loader').hide();
                      $('#show_invoice_cost_adjustments').html(data);
-
                  },
                  error: function(error) {
+                     $('#loader').hide();
                      Swal.fire(
                          'Cannot Proceed',
                          'Please Contact IT Support',
                          'error'
                      )
-                     $('#loader').hide();
+
                  }
              });
          });

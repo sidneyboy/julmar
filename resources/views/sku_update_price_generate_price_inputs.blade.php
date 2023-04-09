@@ -123,7 +123,7 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -132,15 +132,16 @@
                     timer: 1500
                 })
                 location.reload();
-                $('#loader').hide();
+                
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+               
             }
         });
     }));

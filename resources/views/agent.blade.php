@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Principal:</label>
-                            <select class="form-control select2" style="width:100%;" multiple="multiple" name="principal[]">
+                            <select class="form-control select2bs4" style="width:100%;" multiple="multiple" name="principal[]">
                                 @foreach ($principal as $data)
                                     <option value="{{ $data->id }}">{{ $data->principal }}</option>
                                 @endforeach
@@ -28,7 +28,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Location:</label>
-                            <select class="form-control select2" style="width:100%;" name="location">
+                            <select class="form-control" style="width:100%;" name="location">
                                 <option value="" default>Select</option>
                                 @foreach ($location as $data)
                                     <option value="{{ $data->id }}">{{ $data->location }}</option>
@@ -110,7 +110,7 @@
 
         $("#agent_saved").on('submit', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "agent_saved",
                 type: "POST",
@@ -119,25 +119,6 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
-                    // if(data == 'saved'){
-                    //   Swal.fire({
-                    //     position: 'top-end',
-                    //     icon: 'success',
-                    //     title: 'New Agent saved!',
-                    //     showConfirmButton: false,
-                    //     timer: 1500
-                    //   })
-                    //   location.reload();
-                    //   $('.loading').hide();
-                    // }else{
-                    //   Swal.fire(
-                    //   'Something went wrong!',
-                    //   'Redo process or contact system administrator',
-                    //   'error'
-                    //   )
-                    //   $('.loading').hide();
-                    // }
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
@@ -146,8 +127,16 @@
                         timer: 1500
                     })
                     location.reload();
-                    $('.loading').hide();
+                    $('#loader').hide();
                 },
+                error: function(error) {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                    $('#loader').hide();
+                }
             });
         }));
     </script>

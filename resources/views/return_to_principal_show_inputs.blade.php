@@ -87,8 +87,6 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
-
                 if (data == 'no_quantity') {
                     $('#loader').hide();
 
@@ -104,7 +102,14 @@
                     $('#show_final_summary').html(data);
                 }
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
-
 </script>

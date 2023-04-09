@@ -6,8 +6,9 @@ use App\User;
 use App\Customer;
 use App\Sku_add;
 use App\Sku_principal;
+use App\Sku_price_details;
 use App\Van_selling_printed;
-
+use Cart;
 use App\Location;
 use App\Van_selling_ar_ledger;
 use App\Vs_withdrawal;
@@ -57,44 +58,65 @@ class Van_selling_widthdrawal_controller extends Controller
     public function van_selling_generate_sku_quantity(Request $request)
     {
         //return $request->input();
-        $explode = explode(',', $request->input('principal'));
-        $principal_id = $explode[0];
-        $principal_name = $explode[1];
+        $sku = Sku_add::find($request->input('sku'));
+        $customer = Customer_principal_price::select('price_level')->where('customer_id', $request->input('customer'))
+            ->where('principal_id', $request->input('principal'))
+            ->first();
+        $sku_price_details = Sku_price_details::select($customer->price_level)->where('sku_id', $request->input('sku'))
+            ->first();
 
-        $sku = Sku_add::select('id', 'sku_code', 'description', 'sku_type', 'principal_id', 'category_id', 'equivalent_sku_entryNo', 'equivalent_butal_pcs')->findMany($request->input('sku'));
-
-        foreach ($sku as $key => $data) {
-            $sku_butal[$data->id] = Sku_add::find($data->equivalent_sku_entryNo);
+        if ($customer->price_level == 'price_1') {
+            $unit_price = $sku_price_details->price_1;
+        } else if ($customer->price_level == 'price_2') {
+            $unit_price = $sku_price_details->price_2;
+        } else if ($customer->price_level == 'price_3') {
+            $unit_price = $sku_price_details->price_3;
+        } else if ($customer->price_level == 'price_4') {
+            $unit_price = $sku_price_details->price_4;
+        } else if ($customer->price_level == 'price_5') {
+            $unit_price = $sku_price_details->price_5;
         }
 
+        if ($sku) {
+            $cart_checker = \Cart::session(auth()->user()->id)->get($sku->id);
+            if ($cart_checker) {
+                \Cart::session(auth()->user()->id)->remove($sku->id);
 
-        $customer_principal_price = Customer_principal_price::select('id', 'price_level')->where('customer_id', $request->input('customer'))->where('principal_id', $principal_id)->first();
+                \Cart::session(auth()->user()->id)->add(array(
+                    'id' => $sku->id,
+                    'name' => $sku->description,
+                    'price' => $unit_price,
+                    'quantity' => $request->input('quantity'),
+                    'attributes' => array(),
+                    'associatedModel' => $sku,
+                ));
+            } else {
+                \Cart::session(auth()->user()->id)->add(array(
+                    'id' => $sku->id,
+                    'name' => $sku->description,
+                    'price' => $unit_price,
+                    'quantity' => $request->input('quantity'),
+                    'attributes' => array(),
+                    'associatedModel' => $sku,
+                ));
+            }
 
-        // $van_selling_ar_ledger = Van_selling_ar_ledger::where('customer_id', $request->input('customer'))->get();
+            $cart = Cart::session(auth()->user()->id)->getContent();
 
-        if (is_null($customer_principal_price)) {
-            return 'no_customer_principal_code_and_price';
-        } else {
             return view('van_selling_generate_sku_quantity', [
-                'sku' => $sku,
-                'sku_butal' => $sku_butal
-            ])
-                ->with('customer', $request->input('customer'))
-                ->with('sku_type', $request->input('sku_type'))
-                ->with('principal_id', $principal_id)
-                ->with('principal_name', $principal_name)
-                ->with('location_id', $request->input('location_id'))
-                ->with('customer_principal_price', $customer_principal_price);
+                'cart' => $cart,
+                'customer_id' => $request->input('customer'),
+                'principal_id' => $request->input('principal'),
+            ]);
+        } else {
+            return 'invalid';
         }
     }
 
     public function van_selling_generate_final_summary(Request $request)
     {
-
-
-        //return $request->input();
-        foreach ($request->input('sku') as $key => $data) {
-            if ($request->input('quantity')[$data] > $request->input('running_balance')[$data]) {
+        foreach ($request->input('quantity') as $key => $data) {
+            if ($request->input('quantity')[$key] > $request->input('running_balance')[$key]) {
                 return 'quantity_is_greater';
             }
         }
@@ -105,32 +127,27 @@ class Van_selling_widthdrawal_controller extends Controller
 
 
         $delivery_receipt = strtoupper($request->input('delivery_receipt'));
-        $dr_filter = Van_selling_printed::select('delivery_receipt')->where('delivery_receipt', $delivery_receipt)->first();
+        $dr_filter = Vs_withdrawal::select('delivery_receipt')->where('delivery_receipt', $delivery_receipt)->first();
 
         if ($dr_filter) {
             return 'existing';
         } else {
-            $sales_order_number = "VS-" . $request->input('customer_id') . "-" . $request->input('principal_id') . "-" . $date . "" . $time;
-            $customer = Customer::where('id', $request->input('customer_id'))->first();
-            $customer_principal_code = Customer_principal_code::select('store_code')->where('customer_id', $request->input('customer_id'))->where('principal_id', $request->input('principal_id'))->first();
-            $sku = Sku_add::findMany($request->input('sku'));
+            $cart_update = Cart::session(auth()->user()->id)->getContent();
+
+            foreach ($cart_update as $key => $data) {
+                \Cart::session(auth()->user()->id)->update($data->id, [
+                    'price' => $request->input('unit_price')[$data->id],
+                ]);
+            }
+
+            $cart = Cart::session(auth()->user()->id)->getContent();
+            $customer = Customer::select('store_name')->find($request->input('customer_id'));
             return view('van_selling_generate_final_summary', [
-                'sku' => $sku,
-            ])
-                ->with('customer', $customer)
-                ->with('price_level', $request->input('price_level'))
-                ->with('description', $request->input('description'))
-                ->with('sku_code', $request->input('sku_code'))
-                ->with('sku_type', $request->input('sku_type'))
-                ->with('principal', $request->input('principal_id'))
-                ->with('principal_name', $request->input('principal_name'))
-                ->with('delivery_receipt', $delivery_receipt)
-                ->with('quantity', $request->input('quantity'))
-                ->with('sales_order_number', $sales_order_number)
-                ->with('customer_principal_code', $customer_principal_code)
-                ->with('price_butal', $request->input('price_butal'))
-                ->with('price_case', $request->input('price_case'))
-                ->with('equivalent_butal_pcs', $request->input('equivalent_butal_pcs'));
+                'cart' => $cart,
+                'customer' => $customer,
+            ])->with('delivery_receipt', $delivery_receipt)
+                ->with('principal_id', $request->input('principal_id'))
+                ->with('customer_id', $request->input('customer_id'));
         }
     }
 
@@ -141,27 +158,29 @@ class Van_selling_widthdrawal_controller extends Controller
         $new_withdrawal_saved = new Vs_withdrawal([
             'user_id' => auth()->user()->id,
             'customer_id' => $request->input('customer_id'),
-            'principal_id' => $request->input('principal'),
+            'principal_id' => $request->input('principal_id'),
             'delivery_receipt' => $request->input('delivery_receipt'),
-            'total_amount' => $request->input('total_customer_payable_amount'),
+            'total_amount' => $request->input('total_amount'),
         ]);
 
         $new_withdrawal_saved->save();
 
-        foreach ($request->input('sku') as $key => $data) {
+        $cart = Cart::session(auth()->user()->id)->getContent();
+
+        foreach ($cart as $key => $data) {
             $new_details = new Vs_withdrawal_details([
                 'vs_withdrawal_id' => $new_withdrawal_saved->id,
-                'sku_id' => $data,
-                'quantity' => $request->input('quantity')[$data],
-                'unit_price' => $request->input('sku_price')[$data],
-                'sku_type' => $request->input('sku_type')[$data],
-                'sku_code' => $request->input('sku_code')[$data],
+                'sku_id' => $data->id,
+                'quantity' => $data->quantity,
+                'unit_price' => $data->price,
+                'sku_type' => $data->associatedModel->sku_type,
+                'sku_code' => $data->associatedModel->sku_code,
             ]);
 
             $new_details->save();
 
-
-            $ledger_results =  DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$data' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $sku_id = $data->id;
+            $ledger_results =  DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$sku_id' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
             $count_ledger_row = count($ledger_results);
 
 
@@ -169,30 +188,30 @@ class Van_selling_widthdrawal_controller extends Controller
                 $new_inventory_ledger = new Vs_inventory_ledger([
                     'user_id' => auth()->user()->id,
                     'customer_id' => $request->input('customer_id'),
-                    'principal_id' => $request->input('principal'),
+                    'principal_id' => $request->input('principal_id'),
                     'transaction' => 'withdrawal',
-                    'sku_id' => $data,
+                    'sku_id' => $data->id,
                     'beginning_inventory' => $ledger_results[0]->ending_inventory,
-                    'quantity' => $request->input('quantity')[$data],
-                    'ending_inventory' => $ledger_results[0]->ending_inventory + $request->input('quantity')[$data],
-                    'unit_price' => $request->input('sku_price')[$data],
+                    'quantity' => $data->quantity,
+                    'ending_inventory' => $ledger_results[0]->ending_inventory + $data->quantity,
+                    'unit_price' => $data->price,
                     'all_id' => $new_withdrawal_saved->id,
-                    'sku_code' => $request->input('sku_code')[$data],
+                    'sku_code' => $data->associatedModel->sku_code,
                 ]);
                 $new_inventory_ledger->save();
             } else {
                 $new_inventory_ledger = new Vs_inventory_ledger([
                     'user_id' => auth()->user()->id,
                     'customer_id' => $request->input('customer_id'),
-                    'principal_id' => $request->input('principal'),
+                    'principal_id' => $request->input('principal_id'),
                     'transaction' => 'withdrawal',
-                    'sku_id' => $data,
+                    'sku_id' => $data->id,
                     'beginning_inventory' => 0,
-                    'quantity' => $request->input('quantity')[$data],
-                    'ending_inventory' => $request->input('quantity')[$data],
-                    'unit_price' => $request->input('sku_price')[$data],
+                    'quantity' => $data->quantity,
+                    'ending_inventory' => $data->quantity,
+                    'unit_price' => $data->price,
                     'all_id' => $new_withdrawal_saved->id,
-                    'sku_code' => $request->input('sku_code')[$data],
+                    'sku_code' => $data->associatedModel->sku_code,
                 ]);
                 $new_inventory_ledger->save();
             }
@@ -207,11 +226,11 @@ class Van_selling_widthdrawal_controller extends Controller
             $van_selling_ledger_save = new Van_selling_ar_ledger([
                 'customer_id' => $request->input('customer_id'),
                 'user_id' => auth()->user()->id,
-                'principal_id' => $request->input('principal'),
+                'principal_id' => $request->input('principal_id'),
                 'transaction' => 'withdrawal',
                 'all_id' => $new_withdrawal_saved->id,
                 'running_balance' => $running_balance,
-                'amount' => $request->input('total_customer_payable_amount'),
+                'amount' => $request->input('total_amount'),
                 'short' => 0,
                 'outstanding_balance' => $outstanding_balance,
                 'remarks' => 'n/a',
@@ -222,13 +241,13 @@ class Van_selling_widthdrawal_controller extends Controller
             $van_selling_ledger_save = new Van_selling_ar_ledger([
                 'customer_id' => $request->input('customer_id'),
                 'user_id' => auth()->user()->id,
-                'principal_id' => $request->input('principal'),
+                'principal_id' => $request->input('principal_id'),
                 'transaction' => 'withdrawal',
                 'all_id' => $new_withdrawal_saved->id,
                 'running_balance' => 0,
-                'amount' => $request->input('total_customer_payable_amount'),
+                'amount' => $request->input('total_amount'),
                 'short' => 0,
-                'outstanding_balance' => $request->input('total_customer_payable_amount'),
+                'outstanding_balance' => $request->input('total_amount'),
                 'remarks' => 'n/a',
             ]);
 

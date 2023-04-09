@@ -6,18 +6,16 @@ use App\Principal_ledger;
 use App\Purchase_order;
 use App\Purchase_order_details;
 use App\Received_purchase_order;
-use App\Principal_discount;
 use App\Principal_discount_details;
 use App\Received_jer;
 use App\Received_purchase_order_details;
-use App\Sku_add_details;
 use App\Receiving_draft;
 use App\Receiving_draft_main;
 use App\Sku_ledger;
 use App\Received_discount_details;
 use App\Received_other_discount_details;
 use App\Purchase_order_discount_details;
-
+use App\Sku_price_details;
 use DB;
 use App\User;
 use Illuminate\Http\Request;
@@ -161,7 +159,7 @@ class Receive_controller extends Controller
 
     public function received_order_save(Request $request)
     {
-       // return $request->input();
+        //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -323,6 +321,12 @@ class Receive_controller extends Controller
                     'freight' => str_replace('', '', $request->input('freight_per_sku')[$data]),
                     'final_unit_cost' => $request->input('final_unit_cost')[$data],
                 ]);
+
+                Sku_price_details::where('sku_id', $data)
+                    ->update([
+                        'unit_cost' => $request->input('unit_cost')[$data],
+                        'final_unit_cost' => $request->input('final_unit_cost')[$data],
+                    ]);
 
                 $new_received_purchase_order_details->save();
 

@@ -911,6 +911,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -922,12 +923,13 @@
                 location.reload();
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+               
 
             }
         });

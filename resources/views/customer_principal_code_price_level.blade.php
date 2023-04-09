@@ -73,7 +73,7 @@
 
          $("#customer_principal_code_price_level_proceed").on('submit', (function(e) {
              e.preventDefault();
-             //$('.loading').show();
+             $('#loader').show();
              $.ajax({
                  url: "customer_principal_code_price_level_proceed",
                  type: "POST",
@@ -82,37 +82,17 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
+                    $('#loader').hide();
                      $('#customer_principal_code_price_level_proceed_page').html(data);
-                     // if(data != 'error'){
-                     //  Swal.fire({
-                     //     title: data,
-                     //     text: "Please send above code to agent",
-                     //     icon: 'success',
-                     //     showCancelButton: false,
-                     //     confirmButtonColor: '#3085d6',
-                     //     cancelButtonColor: '#d33',
-                     //     confirmButtonText: 'Yes, i will send it!'
-                     //   }).then((result) => {
-                     //     if (result.value) {
-                     //       Swal.fire(
-                     //         'Success',
-                     //         'Reloading Page',
-                     //         'success'
-                     //       )
-                     //       location.reload();
-                     //       $('.loading').hide();
-                     //     }
-                     //   })
-
-                     // }else{
-                     //   Swal.fire(
-                     //   'Something went wrong!',
-                     //   'Redo process or contact system administrator',
-                     //   'error'
-                     //   )
-                     //   $('.loading').hide();
-                     // }
                  },
+                 error: function(error) {
+                    $('#loader').hide();
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                 }
              });
          }));
      </script>

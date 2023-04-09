@@ -79,19 +79,18 @@
                 url: "/return_to_principal_report_data",
                 data: 'date=' + date + '&principal=' + principal,
                 success: function(data) {
-
-                    console.log(data);
                     $('#loader').hide();
                     $('#show_return_data').html(data);
 
                 },
                 error: function(error) {
+                    $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
                         'Please Contact IT Support',
                         'error'
                     )
-                    $('#loader').hide();
+                   
                 }
             });
         });

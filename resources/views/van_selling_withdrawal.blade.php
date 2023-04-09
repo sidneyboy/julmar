@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -47,7 +46,7 @@
                                     style="width:100%;">
                                     <option value="" default>SELECT PRINCIPAL</option>
                                     @foreach ($principal as $data)
-                                        <option value="{{ $data->id . ',' . $data->principal }}">{{ $data->principal }}
+                                        <option value="{{ $data->id }}">{{ $data->principal }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -120,37 +119,43 @@
 
         $("#principal").on('change', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             var principal = $('#principal').val();
             var location_id = $('#location_id').val();
             var sku_type = $('#sku_type').val();
-
             $.ajax({
                 url: "van_selling_generate_sku",
                 type: "POST",
                 data: 'principal=' + principal + '&location_id=' + location_id + '&sku_type=' +
                     sku_type,
                 success: function(data) {
-                    console.log(data);
-
                     if (data == 'no_location') {
+                        $('#loader').hide();
                         Swal.fire(
                             'INPUT ERROR',
                             'PLEASE SELECT LOCATION AND SKU TYPE',
                             'error'
                         );
-                        $('.loading').hide();
+
                     } else {
-                        $('.loading').hide();
+                        $('#loader').hide();
                         $('#van_selling_generate_sku_page').html(data);
                     }
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
 
         $("#van_selling_generate_sku_quantity").on('submit', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "van_selling_generate_sku_quantity",
                 type: "POST",
@@ -160,24 +165,36 @@
                 processData: false,
                 success: function(data) {
                     if (data == 'no_customer_principal_code_and_price') {
+                        $('#loader').hide();
                         Swal.fire(
                             'PALIHOG BUTANGI SA DAAN OG PRINCIPAL CODE AND PRICE',
                             '',
                             'error'
                         );
-                        $('.loading').hide();
+
                     } else if (data == 'no_beginning_ar_ledger') {
+                        $('#loader').hide();
                         Swal.fire(
                             'PALIHOG INPUT DAAN SA IYANG BEGINNING AR BALANCE. DAKONG SALAMAT',
                             '',
                             'error'
                         );
-                        $('.loading').hide();
+
                     } else {
-                        $('.loading').hide();
+                        $('#loader').hide();
+                        $('#quantity').val('');
+                        $("#sku").val('').trigger('change');
                         $('#van_selling_generate_sku_quantity_page').html(data);
                     }
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

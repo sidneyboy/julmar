@@ -5,79 +5,32 @@
             style="text-transform: uppercase;">
     </div>
     <div class="table table-responsive">
-        <table class="table table-hovered table-bordered table-sm" id="example2">
+        <table class="table table-hovered table-bordered table-sm table-striped" id="example2">
             <thead>
                 <tr>
-                    <th style="text-align: center;">Code</th>
-                    <th style="text-align: center;">Desc</th>
-                    <th style="text-align: center;">Type</th>
-                    <th style="text-align: center;">R-QTY</th>
-                    <th style="text-align: center;">QTY</th>
-                    <th style="text-align: right;">U/P</th>
+                    <th>Code</th>
+                    <th>Desc</th>
+                    <th>Type</th>
+                    <th>R-QTY</th>
+                    <th>QTY</th>
+                    <th>U/P</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sku as $data)
+                @foreach ($cart as $data)
                     <tr>
+                        <td>{{ $data->associatedModel->sku_code }}</td>
+                        <td>{{ $data->name }}</td>
+                        <td>{{ $data->associatedModel->sku_type }}</td>
+                        <td style="text-align: right">{{ $data->associatedModel->sku_ledger_latest->running_balance }}
+                        </td>
+                        <td style="text-align: right">{{ $data->quantity }}</td>
                         <td>
-                            {{ $data->sku_code }}
-                            <input type="hidden" name="sku[]" value="{{ $data->id }}">
-                            <input type="hidden" name="sku_code[{{ $data->id }}]" value="{{ $data->sku_code }}">
-                        </td>
-                        <td>
-                            {{ $data->description }}
-                            <input type="hidden" name="description[{{ $data->id }}]"
-                                value="{{ $data->description }}">
-                        </td>
-                        <td style="text-transform: uppercase;">
-                            {{ $data->sku_type }}
-                            <input type="hidden" name="sku_type[{{ $data->id }}]" value="{{ $data->sku_type }}">
-                        </td>
-                        <td style="text-align: right;">
-                            @php
-                                $running_balance = $data->sku_ledger_latest->running_balance;
-                            @endphp
-                            {{ number_format($data->sku_ledger_latest->running_balance) }}
+                            <input type="hidden" name="quantity[{{ $data->id }}]" value="{{ $data->quantity }}">
                             <input type="hidden" name="running_balance[{{ $data->id }}]"
-                                value="{{ $running_balance }}">
-                        </td>
-                        <td><input style="text-align: center;" type="number" min=0 value="0"
-                                name="quantity[{{ $data->id }}]" class="form-control form-control-sm" required>
-                        </td>
-                        <td style="text-align: right;">
-                            @if ($customer_principal_price->price_level)
-                                @if ($customer_principal_price->price_level == 'price_1')
-                                    @php
-                                        $price_butal = $data->sku_price_details_one->price_1;
-                                    @endphp
-                                @elseif($customer_principal_price->price_level == 'price_2')
-                                    @php
-                                        $price_butal = $data->sku_price_details_one->price_2;
-                                    @endphp
-                                @elseif($customer_principal_price->price_level == 'price_3')
-                                    @php
-                                        $price_butal = $data->sku_price_details_one->price_3;
-                                    @endphp
-                                @elseif($customer_principal_price->price_level == 'price_4')
-                                    @php
-                                        $price_butal = $data->sku_price_details_one->price_4;
-                                    @endphp
-                                @else
-                                    @php
-                                        $price_butal = $data->sku_price_details_one->price_5;
-                                    @endphp
-                                @endif
-                                
-                            @else
-                                @php
-                                    $price_butal = 0;
-                                @endphp
-                            @endif
-                            <input type="text" style="text-align: right" class="form-control form-control-sm"
-                                name="price_butal[{{ $data->id }}]" value="{{ $price_butal }}"
-                                onkeypress="return isNumberKey(event)">
-                            <input type="hidden" name="equivalent_butal_pcs[{{ $data->id }}]"
-                                value="{{ $data->equivalent_butal_pcs }}">
+                                value="{{ $data->associatedModel->sku_ledger_latest->running_balance }}">
+                            <input type="text" name="unit_price[{{ $data->id }}]" style="text-align: right" class="form-control form-control-sm"
+                                value="{{ $data->price }}" onkeypress="return isNumberKey(event)">
                         </td>
                     </tr>
                 @endforeach
@@ -85,11 +38,8 @@
         </table>
     </div>
 
+    <input type="hidden" name="customer_id" value="{{ $customer_id }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
-    <input type="hidden" name="principal_name" value="{{ $principal_name }}">
-    <input type="hidden" name="customer_id" value="{{ $customer }}">
-    <input type="hidden" name="sku_type" value="{{ $sku_type }}">
-    <input type="hidden" name="location_id" value="{{ $location_id }}">
     <button type="submit" class="btn btn-info btn-sm float-right">Final Summary</button>
 
 </form>
@@ -104,10 +54,10 @@
 
         return true;
     }
+
     $("#van_selling_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        $('.loading').show();
-
+        $('#loader').show();
         $.ajax({
             url: "van_selling_generate_final_summary",
             type: "POST",
@@ -118,52 +68,34 @@
             success: function(data) {
 
                 if (data == 'quantity_is_greater') {
+                    $('#loader').hide();
                     Swal.fire(
                         'ERROR INPUT',
                         'QUANTITY IS GREATER THAN RUNNING BALANCE',
                         'error'
                     )
-                    $('.loading').hide();
+
                 } else if (data == 'existing') {
+                    $('#loader').hide();
                     Swal.fire(
                         'CANNOT PROCEED',
                         'EXISTING DELIVERY RECEIPT',
                         'error'
                     )
-                    $('.loading').hide();
+
                 } else {
                     $('#van_selling_generate_final_summary_page').html(data);
-                    $('.loading').hide();
+                    $('#loader').hide();
                 }
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
-
-    $("#example1").DataTable();
-    $('#example2').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-    });
-
-
-    $('[class=currency-default]').maskNumber();
-    $('[class=currency-data-attributes]').maskNumber();
-    $('[class=currency-configuration]').maskNumber({
-        decimal: '_',
-        thousands: '*'
-    });
-    $('[class=integer-default]').maskNumber({
-        integer: true
-    });
-    $('[class=integer-data-attribute]').maskNumber({
-        integer: true
-    });
-    $('[class=integer-configuration]').maskNumber({
-        integer: true,
-        thousands: '_'
-    });
 </script>

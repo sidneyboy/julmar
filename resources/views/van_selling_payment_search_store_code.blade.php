@@ -48,8 +48,7 @@
 <script>
     $("#van_selling_payment_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "van_selling_payment_save",
             type: "POST",
@@ -58,6 +57,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -69,6 +69,7 @@
                 location.reload();
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',

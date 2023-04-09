@@ -97,6 +97,7 @@
             success: function(data) {
                 console.log(data);
                 if (data == 'saved') {
+                    $('#loader').hide();
                     Swal.fire(
                         'Success',
                         'Draft Successfully Saved',
@@ -107,12 +108,13 @@
                 }
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+
             }
         });
     }));

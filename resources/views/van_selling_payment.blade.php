@@ -36,23 +36,24 @@
                          </div>
                          <div class="col-md-6">
                              <label for="">Amount:</label>
-                             <input type="text" class="form-control" required name="amount" onkeypress="return isNumberKey(event)">
+                             <input type="text" class="form-control" required name="amount"
+                                 onkeypress="return isNumberKey(event)">
                          </div>
                          <div class="col-md-4">
-                            <label for="">Bank:</label>
-                            <select name="bank" class="form-control" required>
-                                <option value="" default>Select</option>
-                                <option value="BDO">BDO</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="">Reference #:</label>
-                            <input type="text" name="reference" required class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="">Remarks:</label>
-                            <input type="text" name="remarks" required class="form-control">
-                        </div>
+                             <label for="">Bank:</label>
+                             <select name="bank" class="form-control" required>
+                                 <option value="" default>Select</option>
+                                 <option value="BDO">BDO</option>
+                             </select>
+                         </div>
+                         <div class="col-md-4">
+                             <label for="">Reference #:</label>
+                             <input type="text" name="reference" required class="form-control">
+                         </div>
+                         <div class="col-md-4">
+                             <label for="">Remarks:</label>
+                             <input type="text" name="remarks" required class="form-control">
+                         </div>
 
                          <div class="col-md-12">
                              <br />
@@ -94,7 +95,7 @@
 
          $("#search_store_code_form").on('submit', (function(e) {
              e.preventDefault();
-             $('.loading').show();
+             $('#loader').show();
              $.ajax({
                  url: "van_selling_payment_search_store_code",
                  type: "POST",
@@ -103,20 +104,27 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
-
-                     console.log(data);
                      if (data == 'NO_DATA') {
+                         $('#loader').hide();
                          Swal.fire(
                              'NO DATA FOUND',
                              'NO DR FOR THE MOMENT',
                              'error'
                          )
-                         $('.loading').hide();
+
                      } else {
-                         $('.loading').hide();
+                         $('#loader').hide();
                          $('#van_selling_payment_show_accounts_receivable_page').html(data);
                      }
                  },
+                 error: function(error) {
+                     $('#loader').hide();
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                 }
              });
          }));
      </script>

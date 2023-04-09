@@ -1,5 +1,5 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-hover table-sm" id="export">
+    <table class="table table-bordered table-hover table-sm table-striped" id="export">
         <thead>
             <tr>
                 <th>{{ $customer->store_name }}</th>

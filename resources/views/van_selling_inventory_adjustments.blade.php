@@ -98,7 +98,7 @@
 
          $("#van_selling_inventory_adjustments_generate").on('submit', (function(e) {
              e.preventDefault();
-             $('.loading').show();
+             $('#loader').show();
              $.ajax({
                  url: "van_selling_inventory_adjustments_generate",
                  type: "POST",
@@ -108,27 +108,37 @@
                  processData: false,
                  success: function(data) {
                      if (data == 'NO_DATA') {
+                         $('#loader').hide();
                          Swal.fire(
                              'NO DATA FOUND',
                              'CANNOT PROCEED!!',
                              'error'
                          )
-                         $('.loading').hide();
+
                      } else if (data == 'sku_ledger_not_yet_cleared') {
+                         $('#loader').hide();
                          Swal.fire(
                              'SKU LEDGER NOT YET CLEARED!!',
                              'CANNOT PROCEED!!',
                              'error'
                          )
-                         $('.loading').hide();
+
                      } else {
-                         $('.loading').hide();
+                         $('#loader').hide();
                          $('#quantity').val('');
                          $("#sku_code").val('').trigger('change')
                          $('#van_selling_inventory_adjustments_generate_page').html(data);
                          $('#remarks').val('');
                      }
                  },
+                 error: function(error) {
+                     $('#loader').hide();
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                 }
              });
          }));
      </script>

@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -30,8 +29,8 @@
                     </div>
                 @endif
 
-                <form action="{{ route('van_selling_import_data_save') }}" enctype="multipart/form-data" method="post">
-                {{-- <form id="van_selling_import_data_save"> --}}
+                {{-- <form action="{{ route('van_selling_import_data_save') }}" enctype="multipart/form-data" method="post"> --}}
+                <form id="van_selling_import_data_save">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -68,51 +67,43 @@
         });
 
 
-        // $("#van_selling_import_data_save").on('submit', (function(e) {
-        //     e.preventDefault();
-        //     $('.loading').show();
-        //     $.ajax({
-        //         url: "van_selling_import_data_save",
-        //         type: "POST",
-        //         data: new FormData(this),
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function(data) {
-        //             console.log(data);
-        //             // if (data == 'existing_file') {
-        //             //     Swal.fire(
-        //             //         'Existing file, Cannot Proceed!!',
-        //             //         '',
-        //             //         'error'
-        //             //     )
-        //             //     $('.loading').hide();
-        //             // } else if (data == 'incorrect_file') {
-        //             //     Swal.fire(
-        //             //         'Incorrect_file, Cannot Proceed!!',
-        //             //         '',
-        //             //         'error'
-        //             //     )
-        //             //     $('.loading').hide();
-        //             // } else if (data == 'saved') {
-        //             //     Swal.fire(
-        //             //         'Data Uploaded Successfully',
-        //             //         'Success',
-        //             //         'success'
-        //             //     )
-        //             //     $('.loading').hide();
-        //             //     document.getElementById("van_selling_import_data_save").reset();
-        //             // } else {
-        //             //     Swal.fire(
-        //             //         'Incorrect_file, Cannot Proceed!!',
-        //             //         '',
-        //             //         'error'
-        //             //     )
-        //             //     $('.loading').hide();
-        //             // }
-        //         },
-        //     });
-        // }));
+        $("#van_selling_import_data_save").on('submit', (function(e) {
+            e.preventDefault();
+            $('#loader').show();
+            $.ajax({
+                url: "van_selling_import_data_save",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    // Swal.fire(
+                    //     'Data Uploaded Successfully',
+                    //     'Success',
+                    //     'success'
+                    // )
+                    $('#loader').hide();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    location.reload();
+                },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
+            });
+        }));
     </script>
     </body>
 

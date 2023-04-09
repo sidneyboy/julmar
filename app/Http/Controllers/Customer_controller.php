@@ -85,7 +85,7 @@ class Customer_controller extends Controller
         ]);
 
         if ($save_new_customer_ledger->save()) {
-            return 'save';
+            return 'saved';
         } else {
             return 'error';
         }

@@ -86,8 +86,7 @@
 
     $("#bo_allowance_adjustments_show_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "bo_allowance_adjustments_show_summary",
             type: "POST",
@@ -96,7 +95,7 @@
             cache: false,
             processData: false,
             success: function(data) {
-                $('.loading').hide();
+                $('#loader').hide();
                 $('#show_bo_allowance_adjustments_summary').show();
                 $('#show_bo_allowance_adjustments_summary').html(data);
             },

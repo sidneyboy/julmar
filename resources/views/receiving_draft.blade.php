@@ -46,14 +46,6 @@
             </div>
             <!-- /.card-footer-->
         </div>
-        {{-- <div class="card">
-            <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">DATA SUMMARY</h3>
-            </div>
-            <div class="card-body">
-                <div id="show_data_final_summary"></div>
-            </div>
-        </div> --}}
     </section>
     <!-- /.content -->
 
@@ -123,6 +115,14 @@
                         $('#loader').hide();
                     }
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

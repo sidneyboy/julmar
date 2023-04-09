@@ -89,8 +89,8 @@
                   cache: false,
                   processData: false,
                   success: function(data) {
-
                       if (data == 'no_data') {
+                          $('#loader').hide();
                           Swal.fire({
                               position: 'top-end',
                               icon: 'error',
@@ -98,12 +98,19 @@
                               showConfirmButton: false,
                               timer: 1500
                           })
-                          $('#loader').hide();
                       } else {
                           $('#loader').hide();
                           $('#principal_ledger_generate_report_proceed').html(data);
                       }
                   },
+                  error: function(error) {
+                      $('#loader').hide();
+                      Swal.fire(
+                          'Cannot Proceed',
+                          'Please Contact IT Support',
+                          'error'
+                      )
+                  }
               });
           }));
       </script>

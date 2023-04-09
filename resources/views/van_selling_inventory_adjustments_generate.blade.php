@@ -46,8 +46,7 @@
 
     $("#van_selling_inventory_adjustments_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        $('#hide_if_trigger').hide();
+        $('#loader').show();
         $.ajax({
             url: "van_selling_inventory_adjustments_generate_final_summary",
             type: "POST",
@@ -56,9 +55,11 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 $('#van_selling_inventory_adjustments_generate_final_summary_page').html(data);
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',

@@ -9,6 +9,8 @@
             <th>Type</th>
             <th>Butal Equivalent</th>
             <th>Barcode</th>
+            <th>Unit Cost</th>
+            <th>Final Unit Cost</th>
             <th>P1</th>
             <th>P2</th>
             <th>P3</th>
@@ -35,6 +37,8 @@
                 <td style="text-align: right">{{ $data->barcode }}</td>
                 @if ($data->sku_price_details)
                     @foreach ($data->sku_price_details as $details)
+                        <td style="text-align: right;">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
+                        <td style="text-align: right;">{{ number_format($details->final_unit_cost, 2, '.', ',') }}</td>
                         <td style="text-align: right;">{{ number_format($details->price_1, 2, '.', ',') }}</td>
                         <td style="text-align: right;">{{ number_format($details->price_2, 2, '.', ',') }}</td>
                         <td style="text-align: right;">{{ number_format($details->price_3, 2, '.', ',') }}</td>

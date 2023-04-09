@@ -13,7 +13,8 @@ class Sku_price_details extends Model
       'price_2',
       'price_3',
       'price_4',
-      'price_5'
+      'price_5',
+      'final_unit_cost',
     ];
 
     public function sku()

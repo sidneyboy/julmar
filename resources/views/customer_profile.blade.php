@@ -20,49 +20,48 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="customer_profile_search" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Search Store Name:</label>
-                                <select class="form-control select2bs4" required name="customer_id" style="width:100%;">
-                                    <option value="" default>SELECT</option>
-                                    @foreach ($customer as $data)
-                                        <option value="{{ $data->id }}">
-                                            {{ $data->store_name . ' - ' . $data->location->location }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Principal</label>
-                                <select class="form-control select2bs4" style="width:100%;" name="principal" required>
-                                    <option value="" default>Select Principal</option>
-                                    @foreach ($principal as $principal_data)
-                                        @if ($principal_data->principal == 'None')
-                                            <option value="{{ 'All' }}">{{ 'All' }}</option>
-                                        @else
-                                            <option value="{{ $principal_data->id }}">{{ $principal_data->principal }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-success btn-sm float-right"
-                                id="trigger">Proceed</button>
-                        </div>
-                    </div>
-                </form>
+                <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;"
+                    id="example1">
+                    <thead>
+                        <tr>
+                            <th>Store Name</th>
+                            <th>KOB</th>
+                            <th>Credit Term</th>
+                            <th>Credit Line</th>
+                            <th>Location</th>
+                            <th>Contact Person</th>
+                            <th>Contact Number</th>
+                            <th>ADDITIONAL<br />INFORMATION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($customer as $data)
+                            <tr>
+                                <td>{{ $data->store_name }}</td>
+                                <td>{{ $data->kind_of_business }}</td>
+                                <td style="text-align: right">{{ $data->credit_term }}</td>
+                                <td style="text-align: right">{{ number_format($data->credit_line_amount,2,".",",")  }}</td>
+                                <td>{{ $data->location->location }}</td>
+                                <td>
+                                    @if ($data->contact_person)
+                                        {{ $data->contact_person }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                                <td style="text-align: right">
+                                    @if ($data->contact_number)
+                                        0{{ $data->contact_number }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                                <td></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-                <div id="customer_profile_show_customer_page"></div>
-            </div>
-            <!-- /.card-footer-->
         </div>
         <!-- /.card -->
     </section>
@@ -77,37 +76,22 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
-        $("#customer_profile_search").on('submit', (function(e) {
-            e.preventDefault();
-            $('.loading').show();
-            $.ajax({
-                url: "customer_profile_search",
-                type: "POST",
-                data: new FormData(this),
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function(data) {
-                    console.log(data);
-
-
-                    if (data == 'store_name_not_found') {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Store not found!!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        $('.loading').hide();
-                    } else {
-                        $('#customer_profile_show_customer_page').html(data);
-                        $('.loading').hide();
-                    }
-                },
+        $(document).ready(function() {
+            var table = $('#example1').DataTable({
+                responsive: true,
+                paging: true,
+                ordering: true,
+                info: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
             });
-        }));
+            new $.fn.dataTable.FixedHeader(table);
+        });
     </script>
     </body>
 

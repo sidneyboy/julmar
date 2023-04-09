@@ -90,7 +90,7 @@
 <script>
     $("#van_selling_pcm_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $.ajax({
             url: "van_selling_pcm_generate_final_summary",
             type: "POST",
@@ -99,19 +99,26 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
                 if (data == 'existing_pcm_number') {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     Swal.fire(
                         'Existing Pcm Number!!',
                         'Cannot Proceed!',
                         'error'
                     )
                 } else {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#van_selling_pcm_generate_final_summary_page').html(data);
                 }
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 

@@ -43,7 +43,7 @@
 <script type="text/javascript">
     $("#customer_principal_code_price_level_saved").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $.ajax({
             url: "customer_principal_code_price_level_saved",
             type: "POST",
@@ -52,30 +52,25 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
-                if (data == 'saved') {
+                $('#loader').hide();
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Customer Principal Code & Price Saved!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
 
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Customer Principal Code & Price Saved!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-
-                    location.reload();
-                    $('.loading').hide();
-
-
-                } else {
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Redo process or contact system administrator',
-                        'error'
-                    )
-                    $('.loading').hide();
-                }
+                location.reload();
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

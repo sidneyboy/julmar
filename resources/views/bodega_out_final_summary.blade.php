@@ -115,6 +115,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -131,7 +132,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+               
             }
         });
     }));

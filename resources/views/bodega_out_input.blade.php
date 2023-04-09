@@ -53,12 +53,13 @@
 
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+               
             }
         });
     });
@@ -98,12 +99,13 @@
                 }
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
                     'error'
                 )
-                $('#loader').hide();
+               
             }
         });
     }));

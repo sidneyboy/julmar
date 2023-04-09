@@ -122,7 +122,7 @@
 <script>
     $("#van_selling_pcm_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "van_selling_pcm_save",
@@ -132,6 +132,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -143,6 +144,7 @@
                 location.reload();
             },
             error: function(error) {
+                $('#loader').hide();
                 Swal.fire(
                     'Cannot Proceed',
                     'Please Contact IT Support',
