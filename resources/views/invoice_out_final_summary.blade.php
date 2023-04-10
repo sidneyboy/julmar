@@ -28,15 +28,11 @@
     </div>
     <div class="row" id="show_sku" style="display:none">
         <div class="col-md-6">
-            <label for="">Quantity:</label>
-            <input type="number" class="form-control" min="1" id="sku_quantity" name="sku_quantity">
-        </div>
-        <div class="col-md-6">
             <label for="">SKU:</label>
             <select name="sku_barcode" id="sku_barcode" class="form-control select2bs4">
                 <option value="" default>Select</option>
                 @foreach ($invoice_raw as $data)
-                    <option value="{{ $data->barcode }}">[<span
+                    <option value="{{ $data->sku->barcode }}">[<span
                             style="font-weight: bold;color:green">{{ $data->sku_code }}</span>] -
                         {{ $data->description }}</option>
                 @endforeach
@@ -44,10 +40,6 @@
         </div>
     </div>
     <div class="row" id="show_barcode">
-        <div class="col-md-6">
-            <label for="">Quantity:</label>
-            <input type="number" class="form-control" min="1" id="quantity" name="quantity">
-        </div>
         <div class="col-md-6">
             <label for="">Barcode:</label>
             <input type="text" class="form-control" id="barcode" name="barcode">

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -749,6 +750,7 @@ Route::post('/sku_withdrawal_proceed', 'Sku_withdrawal_controller@sku_withdrawal
 Route::post('/sku_withdrawal_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_final_summary')->name('sku_withdrawal_final_summary');
 Route::post('/sku_withdrawal_very_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_very_final_summary')->name('sku_withdrawal_very_final_summary');
 Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_save')->name('sku_withdrawal_save');
+
 
 
 

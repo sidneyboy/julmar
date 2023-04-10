@@ -9,13 +9,15 @@ use App\Load_sheet_details;
 use App\Invoice_raw;
 use DB;
 use Cart;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class Invoice_out_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        
+        if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $invoice_draft = Invoice_raw::select('id', 'sales_representative')->where('status', null)->groupBy('sales_representative')->orderBy('id', 'desc')->get();
@@ -27,7 +29,7 @@ class Invoice_out_controller extends Controller
                 'active_tab' => 'invoice_out',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -45,10 +47,8 @@ class Invoice_out_controller extends Controller
     public function invoice_out_final_summary(Request $request)
     {
         //return $request->input();
-        $invoice_raw = DB::table('invoice_raws')
-            ->select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', 'barcode', DB::raw('sum(quantity) as total'))
+        $invoice_raw = Invoice_raw::select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', 'barcode', DB::raw('sum(quantity) as total'))
             ->whereIn('customer', $request->input('checkbox_entry'))
-            ->groupBy('sku_id')
             ->get();
 
         return view('invoice_out_final_summary', [
@@ -59,17 +59,21 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_very_final_summary(Request $request)
     {
+        //return $request->input();
         if ($request->input('barcode') != null) {
             $barcode = $request->input('barcode');
-            $quantity = $request->input('quantity');
         } else if ($request->input('sku_barcode') != null) {
             $barcode = $request->input('sku_barcode');
-            $quantity = $request->input('sku_quantity');
         }
-        $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description')
+
+
+        $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description', DB::raw('sum(quantity) as total_quantity'))
             ->where('sales_representative', $request->input('sales_representative'))
             ->where('barcode', $barcode)
+            ->groupBy('sku_id')
             ->first();
+
+
         if ($invoice_raw) {
             Invoice_raw::where('sales_representative', $request->input('sales_representative'))
                 ->where('sku_id', $invoice_raw->sku_id)
@@ -84,7 +88,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_raw->sku_id,
                     'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $quantity,
+                    'quantity' => $invoice_raw->total_quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
@@ -93,7 +97,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_raw->sku_id,
                     'name' => $invoice_raw->description,
                     'price' => 0,
-                    'quantity' => $quantity,
+                    'quantity' => $invoice_raw->total_quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_raw,
                 ));
@@ -101,9 +105,12 @@ class Invoice_out_controller extends Controller
 
             $cart = Cart::session(auth()->user()->id)->getContent();
 
-            $invoice_data = Invoice_raw::where('sales_representative', $request->input('sales_representative'))
+            $invoice_data = Invoice_raw::select('*', DB::raw('sum(quantity) as total_quantity'))
+                ->where('sales_representative', $request->input('sales_representative'))
                 ->whereIn('customer', $request->input('customer_data'))
+                ->groupBy('sku_id')
                 ->get();
+
 
             return view('invoice_out_very_final_summary', [
                 'cart' => $cart,
@@ -148,12 +155,17 @@ class Invoice_out_controller extends Controller
             ]);
 
             $new_load_sheet_details->save();
-
             $sku_id = $cart_data->id;
+            Invoice_raw::where('sku_id', $sku_id)
+                ->where('sales_representative', $request->input('sales_representative'))
+                ->whereIn('customer', $request->input('customer_data'))
+                ->update(['status' => 'out']);
+
+            
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
             $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
-
+            $total_amount = $ledger_results[0]->amount * $cart_data->quantity;
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $cart_data->id,
                 'quantity' => $cart_data->quantity,
@@ -163,6 +175,8 @@ class Invoice_out_controller extends Controller
                 'all_id' => $load_sheet_id,
                 'principal_id' => $ledger_results[0]->principal_id,
                 'sku_type' => $ledger_results[0]->sku_type,
+                'amount' => $ledger_results[0]->amount,
+                'running_amount' => $ledger_results[0]->running_amount - $total_amount,
             ]);
 
             $new_sku_ledger->save();

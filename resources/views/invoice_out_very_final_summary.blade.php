@@ -20,21 +20,27 @@
                                 <td>{{ $data->principal }}</td>
                                 <td>{{ $data->sku_code }}</td>
                                 <td>{{ $data->description }}</td>
-                                <td>{{ $data->quantity }}</td>
+                                <td style="text-align: right">{{ $data->total_quantity }}
+                                    <input type="hidden" name="principal_id[]"
+                                        value="{{ $data->sku->principal_id }}">
+                                </td>
                             </tr>
                         @else
                             <tr>
                                 <td>{{ $data->principal }}</td>
                                 <td>{{ $data->sku_code }}</td>
                                 <td>{{ $data->description }}</td>
-                                <td>{{ $data->quantity }}</td>
+                                <td style="text-align: right">{{ $data->total_quantity }}
+                                    <input type="hidden" name="principal_id[]"
+                                        value="{{ $data->sku->principal_id }}">
+                                </td>
                             </tr>
                         @endif
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
@@ -60,10 +66,10 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </div> --}}
     </div>
     <input type="hidden" name="sales_representative" value="{{ $sales_representative }}">
-    
+
     @foreach ($customer as $customer_data)
         <input type="hidden" name="customer_data[]" value="{{ $customer_data }}">
     @endforeach
@@ -84,16 +90,16 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
-               
+                // location.reload();
+
             },
             error: function(error) {
                 $('#loader').hide();
@@ -102,7 +108,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-               
+
             }
         });
     }));

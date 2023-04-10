@@ -21,6 +21,8 @@
                         </th>
                         <th style="text-align: center">BO Allowance
                             ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th>
+                        <th style="text-align: center">CWO
+                            ({{ $received_purchase_order->cwo_discount_rate }}%)</th>
                         <th style="text-align: center">T.Discount<br /></th>
                         <th>VAT</th>
                         <th>Freight</th>
@@ -48,7 +50,7 @@
                                     $difference_of_new_and_old_unit_cost = $unit_cost_adjustment[$data] - $unit_cost[$data];
                                     echo number_format($difference_of_new_and_old_unit_cost, 2, '.', ',');
                                 @endphp
-                                <input type="text" name="difference_of_new_and_old_unit_cost[{{ $data }}]"
+                                <input type="hidden" name="difference_of_new_and_old_unit_cost[{{ $data }}]"
                                     value="{{ $difference_of_new_and_old_unit_cost }}">
                             </td>
                             <td style="text-align: right">
@@ -70,6 +72,13 @@
                                     $bo_allowance_discount = $total_amount * ($received_purchase_order->bo_allowance_discount_rate / 100);
                                     $sum_bo_allowance_discount[] = $bo_allowance_discount;
                                     echo number_format($bo_allowance_discount, 2, '.', ',');
+                                @endphp
+                            </td>
+                            <td style="text-align: right">
+                                @php
+                                    $cwo_discount = $total_amount * ($received_purchase_order->cwo_discount_rate / 100);
+                                    $sum_cwo_discount[] = $cwo_discount;
+                                    echo number_format($cwo_discount, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
@@ -116,7 +125,7 @@
 
                                 <input type="hidden" name="final_unit_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_unit_cost }}">
-                                <input type="text" name="freight_per_sku[{{ $data }}]"
+                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $new_freight[$data] }}">
                                 <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_unit_cost }}">
@@ -130,6 +139,8 @@
                         <th style="text-align: right;">{{ number_format(array_sum($sum_discount), 2, '.', ',') }}</th>
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_bo_allowance_discount), 2, '.', ',') }}</th>
+                        <th style="text-align: right;">
+                            {{ number_format(array_sum($sum_cwo_discount), 2, '.', ',') }}</th>
                         <th style="text-align: right;">{{ number_format(array_sum($sum_total_discount), 2, '.', ',') }}
                         </th>
                         <th style="text-align: right;">{{ number_format(array_sum($sum_vat_per_sku), 2, '.', ',') }}
@@ -184,10 +195,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                        @php
+                            $cwo_discount_lower = array_sum($sum_cwo_discount);
+                        @endphp
+                        {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount_lower;
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -340,10 +360,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td style="text-align: left;width:50%;">CWO DISCOUNTS:</td>
+                    <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
+                        @php
+                            $cwo_discount_lower = array_sum($sum_cwo_discount);
+                        @endphp
+                        {{ number_format($cwo_discount_lower, 2, '.', ',') }}
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: left;width:50%;">VATABLE PURCHASE:</td>
                     <td style="text-align: right;font-size: 15px;border-bottom: solid 1px;">
                         @php
-                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount;
+                            $vatable_purchase = $gross_purchases - $less_discount - $bo_discount - $cwo_discount_lower;
                         @endphp
                         {{ number_format($vatable_purchase, 2, '.', ',') }}
                     </td>
@@ -532,7 +561,7 @@
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
                                 <input type="hidden" name="final_unit_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_unit_cost_per_sku }}">
-                                <input type="text" name="freight_per_sku[{{ $data }}]"
+                                <input type="hidden" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $new_freight[$data] }}">
                                 <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
                                     value="{{ $final_total_cost_per_sku }}">
@@ -900,15 +929,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();
@@ -917,7 +946,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                
+
             }
         });
     }));

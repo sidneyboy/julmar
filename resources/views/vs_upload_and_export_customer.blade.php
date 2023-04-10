@@ -3,7 +3,7 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    
+
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -41,7 +41,7 @@
                         </div>
                         <div class="col-md-12" style="width:100%;display:none;" id="location_id">
                             <label>Location:</label>
-                            <select name="location_id" class="form-control" >
+                            <select name="location_id" class="form-control">
                                 <option value="" default>Select Location</option>
                                 @foreach ($location as $data)
                                     <option value="{{ $data->id }}">{{ $data->location }}</option>
@@ -78,14 +78,14 @@
         $("#to_do").change(function() {
             if ($(this).val() == 'Extract Customer') {
                 $('#location_id').show();
-            }else{
+            } else {
                 $('#location_id').hide();
             }
         });
 
         $("#vs_upload_and_export_proceed").on('submit', (function(e) {
             e.preventDefault();
-            $('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "vs_upload_and_export_proceed",
                 type: "POST",
@@ -94,10 +94,17 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
+                    $('#loader').hide();
                     $('#vs_upload_and_export_proceed_page').html(data);
-                    // $('#proceed').hide();
-                    $('.loading').hide();
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>
