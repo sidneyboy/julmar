@@ -2,7 +2,7 @@
     @csrf
     @if ($received_purchase_order->discount_type == 'type_a')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover">
+            <table class="table table-bordered table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -83,7 +83,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $total_discount = $discount + $bo_allowance_discount;
+                                    $total_discount = $discount + $bo_allowance_discount + $cwo_discount;
                                     $sum_total_discount[] = $total_discount;
                                     echo number_format($total_discount, 2, '.', ',');
                                 @endphp
@@ -160,7 +160,7 @@
 
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -298,7 +298,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -325,7 +325,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover float-right table-sm table-striped" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -408,7 +408,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -437,7 +437,7 @@
         @endif
     @elseif($received_purchase_order->discount_type == 'type_b')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover">
+            <table class="table table-bordered table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -626,7 +626,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-sm table-striped float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -758,7 +758,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -785,7 +785,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-sm table-striped float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -871,7 +871,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -929,15 +929,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

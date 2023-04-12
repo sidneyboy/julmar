@@ -22,7 +22,7 @@
                 <form id="search_sku_ledger">
                     @csrf
                     <div class="row">
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <div class="form-group">
                                 <label>Date - as of:</label>
                                 <div class="input-group">
@@ -35,8 +35,8 @@
                                         name="date_as_of">
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div> --}}
+                        <div class="col-md-6">
                             <label for="">Principal</label>
                             <select name="principal_id" class="form-control" required>
                                 <option value="" default>Select</option>
@@ -45,7 +45,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>SKU Type:</label>
                                 <select class="form-control select2bs4" name="sku_type" required style="width:100%;">

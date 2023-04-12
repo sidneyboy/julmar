@@ -87,9 +87,10 @@
                                                 <th>Quantity</th>
                                                 <th>Adjustment</th>
                                                 <th>Running Inventory</th>
-                                                <th>Amount</th>
+                                                <th>Unit Cost</th>
                                                 <th>Sub-Total</th>
                                                 <th>Running Amount</th>
+                                                <th>Average Cost</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -145,11 +146,6 @@
                                                              @php
                                                                  $lower_quantity = $details->quantity;
                                                             @endphp
-                                                        @elseif($details->transaction_type == 'invoice cost adjustment')
-                                                            <span style="color:orange">{{ $details->quantity }}</span>
-                                                            @php
-                                                                 $lower_quantity = $details->quantity;
-                                                            @endphp
                                                         @else
                                                             0
                                                         @endif
@@ -164,7 +160,7 @@
                                                                 </span>)
                                                             @else
                                                                 <span
-                                                                    style="color:green">{{ $details->adjustments }}</span>
+                                                                    style="color:blue">{{ $details->adjustments }}</span>
                                                             @endif
                                                         @endif
                                                     </td>
@@ -182,6 +178,13 @@
                                                         @endphp
                                                     </td>
                                                     <td style="text-align: right">{{ number_format($details->running_amount,2,".",",") }}</td>
+                                                    <td style="text-align: right">
+                                                        @if ($details->running_balance == 0)
+                                                            0
+                                                        @else
+                                                            {{ number_format($details->running_amount / $details->running_balance,2,".",",") }}
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

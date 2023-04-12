@@ -9,18 +9,20 @@ use App\Sku_add;
 use App\Purchase_order;
 use App\Purchase_order_details;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Receiving_draft_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             date_default_timezone_set('Asia/Manila');
             $date = date('Ymd');
             $time = date('his');
             $session_id = $date . "" . $time;
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')->where('status', 'confirmed')->orWhere('status', 'paid')->orWhere('remarks', 'staggered')->orderBy('id', 'desc')->get();
+
             return view('receiving_draft', [
                 'user' => $user,
                 'purchase_order' => $purchase_order,
@@ -30,15 +32,33 @@ class Receiving_draft_controller extends Controller
                 'active_tab' => 'receiving_draft',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
+    }
+
+    public function receiving_draft_sku_selection(Request $request)
+    {
+        $purchase_order_details = Purchase_order_details::select('sku_id')
+            ->where('purchase_order_id', $request->input('purchase_id'))
+            ->get();
+
+        return view('receiving_draft_sku_selection', [
+            'purchase_order_details' => $purchase_order_details,
+        ]);
     }
 
     public function receiving_draft_proceed(Request $request)
     {
-        //return $request->input('purchase_id');
+        //return $request->input();
+        if ($request->input('barcode') != null) {
+            $barcode = $request->input('barcode');
+        } else if ($request->input('sku_barcode') != null) {
+            $barcode = $request->input('sku_barcode');
+        }
+
+
         $po_sku_type = Purchase_order::select('sku_type')->find($request->input('purchase_id'));
-        $sku = Sku_add::select('id', 'sku_type')->where('barcode', $request->input('barcode'))->where('sku_type', $po_sku_type->sku_type)->first();
+        $sku = Sku_add::select('id', 'sku_type')->where('barcode', $barcode)->where('sku_type', $po_sku_type->sku_type)->first();
 
         if ($sku) {
             $check_po_details = Purchase_order_details::select('freight', 'unit_cost')

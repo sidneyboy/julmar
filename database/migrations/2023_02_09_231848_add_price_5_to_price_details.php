@@ -14,7 +14,7 @@ class AddPrice5ToPriceDetails extends Migration
     public function up()
     {
         Schema::table('Sku_price_details', function (Blueprint $table) {
-            $table->double('price_5',15,4);
+            $table->double('price_5',15,4)->nullable();
         });
     }
 

@@ -16,11 +16,11 @@ class CreateSkuPriceDetailsTable extends Migration
         Schema::create('sku_price_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('sku_id');
-            $table->double('invoice_cost', 15,4);
-            $table->double('price_1', 15,4);
-            $table->double('price_2', 15,4);
-            $table->double('price_3', 15,4);
-            $table->double('price_4', 15,4);
+            $table->double('unit_cost', 15,4);
+            $table->double('price_1', 15,4)->nullable();
+            $table->double('price_2', 15,4)->nullable();
+            $table->double('price_3', 15,4)->nullable();
+            $table->double('price_4', 15,4)->nullable();
             $table->timestamps();
         });
     }

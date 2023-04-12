@@ -9,7 +9,8 @@
                     <th>Qty Received</th>
                     <th>Unit Cost</th>
                     <th>BO Cost Adjustment</th>
-                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" /></th>
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" />
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -25,7 +26,7 @@
                             {{ $quantity }}
                         </td>
                         <td style="text-align: right;">{{ number_format($data->unit_cost, 2, '.', ',') }}</td>
-                        <td><input type="text" class="form-control form-control-sm" onkeypress="return isNumberKey(event)"
+                        <td><input type="text" class="form-control form-control-sm"
                                 name="unit_cost_adjustment[{{ $data->sku->id }}]">
                         </td>
                         <td>
@@ -99,6 +100,14 @@
                 $('#show_bo_allowance_adjustments_summary').show();
                 $('#show_bo_allowance_adjustments_summary').html(data);
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

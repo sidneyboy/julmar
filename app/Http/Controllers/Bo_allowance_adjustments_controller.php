@@ -13,12 +13,13 @@ use App\Principal_ledger;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Bo_allowance_adjustments_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $received_data = Received_purchase_order::orderBy('id', 'desc', 'purchase_order_id', 'dr_si')->get();
             return view('bo_allowance_adjustments', [
@@ -29,7 +30,7 @@ class Bo_allowance_adjustments_controller extends Controller
                 'active_tab' => 'bo_allowance_adjustments',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -55,31 +56,18 @@ class Bo_allowance_adjustments_controller extends Controller
     public function bo_allowance_adjustments_show_summary(Request $request)
     {
         //return $request->input();
-        if (is_null($request->input('particulars'))) {
-            return 'no particulars';
-        } else {
-            foreach ($request->input('checkbox_entry') as $key => $data) {
-                if ($request->input('unit_cost_adjustment')[$data] == 0 or '') {
-                    return 'no unit cost adjustment';
-                    break;
-                }
-            }
-
-            //return $request->input();
-
-            $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
-            return view('bo_allowance_adjustments_summary')->with('received_id', $request->input('received_id'))
-                ->with('unit_cost_adjustment', $unit_cost_adjustment)
-                ->with('description', $request->input('description'))
-                ->with('quantity', $request->input('quantity'))
-                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-                ->with('sku', $request->input('checkbox_entry'))
-                ->with('code', $request->input('code'))
-                ->with('particulars', $request->input('particulars'))
-                ->with('principal_name', $request->input('principal_name'))
-                ->with('principal_id', $request->input('principal_id'))
-                ->with('unit_cost', $request->input('unit_cost'));
-        }
+        $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
+        return view('bo_allowance_adjustments_summary')->with('received_id', $request->input('received_id'))
+            ->with('unit_cost_adjustment', $unit_cost_adjustment)
+            ->with('description', $request->input('description'))
+            ->with('quantity', $request->input('quantity'))
+            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
+            ->with('sku', $request->input('checkbox_entry'))
+            ->with('code', $request->input('code'))
+            ->with('particulars', $request->input('particulars'))
+            ->with('principal_name', $request->input('principal_name'))
+            ->with('principal_id', $request->input('principal_id'))
+            ->with('unit_cost', $request->input('unit_cost'));
     }
 
     public function bo_allowance_adjustments_save(Request $request)
@@ -112,9 +100,29 @@ class Bo_allowance_adjustments_controller extends Controller
 
             $bo_allowance_adjustments_details->save();
 
-            $update_sku_add_details_unit_cost = Received_purchase_order_details::where('received_id', $request->input('received_id'))
-                ->where('sku_id', $sku)
-                ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
+            // Received_purchase_order_details::where('received_id', $request->input('received_id'))
+            //     ->where('sku_id', $sku)
+            //     ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+            $total = $request->input('adjusted_amount')[$sku] * $ledger_results[0]->running_balance;
+            $running_amount = $ledger_results[0]->running_amount + $total;
+            $new_sku_ledger = new Sku_ledger([
+                'sku_id' => $sku,
+                'quantity' => 0,
+                'adjustments' => $ledger_results[0]->running_balance,
+                'running_balance' => $ledger_results[0]->running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => 'bo allowance adjustment',
+                'all_id' => $bo_allowance_adjustments_save->id,
+                'principal_id' => $request->input('principal_id'),
+                'sku_type' => $ledger_results[0]->sku_type,
+                'amount' => $request->input('adjusted_amount')[$sku],
+                'running_amount' => $running_amount,
+            ]);
+
+            $new_sku_ledger->save();
         }
 
 

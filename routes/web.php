@@ -93,6 +93,7 @@ Route::post('purchase_order_report', 'Purchase_order_report_controller@upload_co
 
 Route::get('/receiving_draft', 'Receiving_draft_controller@index');
 Route::post('/receiving_draft_proceed', 'Receiving_draft_controller@receiving_draft_proceed')->name('receiving_draft_proceed');
+Route::post('/receiving_draft_sku_selection', 'Receiving_draft_controller@receiving_draft_sku_selection')->name('receiving_draft_sku_selection');
 Route::post('/receiving_draft_final_saved', 'Receiving_draft_controller@receiving_draft_final_saved')->name('receiving_draft_final_saved');
 
 

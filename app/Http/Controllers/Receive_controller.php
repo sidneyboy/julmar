@@ -322,13 +322,33 @@ class Receive_controller extends Controller
                     'final_unit_cost' => $request->input('final_unit_cost')[$data],
                 ]);
 
-                Sku_price_details::where('sku_id', $data)
-                    ->update([
+                $new_received_purchase_order_details->save();
+
+                $price_details_checker = Sku_price_details::select('id')
+                    ->where('sku_id', $data)
+                    ->count();
+
+                if ($price_details_checker != 0) {
+                    Sku_price_details::where('sku_id', $data)
+                        ->update([
+                            'unit_cost' => $request->input('unit_cost')[$data],
+                            'final_unit_cost' => $request->input('final_unit_cost')[$data],
+                        ]);
+                } else {
+                    $new_price_details = new Sku_price_details([
+                        'sku_id' => $data,
                         'unit_cost' => $request->input('unit_cost')[$data],
+                        'price_1' => 0,
+                        'price_2' => 0,
+                        'price_3' => 0,
+                        'price_4' => 0,
+                        'price_5' => 0,
                         'final_unit_cost' => $request->input('final_unit_cost')[$data],
                     ]);
 
-                $new_received_purchase_order_details->save();
+                    $new_price_details->save();
+                }
+
 
                 $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
                 $count_ledger_row = count($ledger_results);

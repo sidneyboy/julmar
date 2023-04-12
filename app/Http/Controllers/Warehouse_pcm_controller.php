@@ -12,16 +12,17 @@ use Cart;
 use DB;
 use App\Sku_ledger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Warehouse_pcm_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
-            $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id','desc')->get();
-            $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id','desc')->get();
+            $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id', 'desc')->get();
+            $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id', 'desc')->get();
             return view('warehouse_pcm', [
                 'user' => $user,
                 'bo' => $bo,
@@ -31,7 +32,7 @@ class Warehouse_pcm_controller extends Controller
                 'active_tab' => 'warehouse_pcm',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -43,12 +44,19 @@ class Warehouse_pcm_controller extends Controller
 
         if ($type == 'rgs') {
             $pcm = Return_good_stock::find($id);
+            $pcm_details = Return_good_stock_details::where('return_good_stock_id', $id)
+                ->get();
         } else if ($type == 'bo') {
             $pcm = Bad_order::find($id);
+            $pcm_details = Bad_order_details::where('bad_order_id', $id)
+                ->get();
         }
 
+
+
         return view('warehouse_pcm_proceed', [
-            'pcm' => $pcm
+            'pcm' => $pcm,
+            'pcm_details' => $pcm_details,
         ])->with('type', $type)
             ->with('id', $id);
     }
@@ -56,8 +64,17 @@ class Warehouse_pcm_controller extends Controller
 
     public function warehouse_pcm_final_summary(Request $request)
     {
+        if ($request->input('barcode') != null) {
+            $barcode = $request->input('barcode');
+            $quantity = $request->input('quantity');
+        } else if ($request->input('sku_barcode') != null) {
+            $barcode = $request->input('sku_barcode');
+            $quantity = $request->input('sku_quantity');
+        }
+
+
         if ($request->input('type') == 'rgs') {
-            $checker = Sku_add::select('id')->where('barcode', $request->input('barcode'))->first();
+            $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
 
             if ($checker) {
                 $pcm_details = Return_good_stock_details::where('return_good_stock_id', $request->input('id'))
@@ -83,7 +100,7 @@ class Warehouse_pcm_controller extends Controller
                             'id' => $pcm_details->sku_id,
                             'name' => $pcm_details->sku->description,
                             'price' => $pcm_details->unit_price,
-                            'quantity' => $request->input('quantity'),
+                            'quantity' => $quantity,
                             'attributes' => array(),
                             'associatedModel' => $pcm_details,
                         ));
@@ -92,7 +109,7 @@ class Warehouse_pcm_controller extends Controller
                             'id' => $pcm_details->sku_id,
                             'name' => $pcm_details->sku->description,
                             'price' => $pcm_details->unit_price,
-                            'quantity' => $request->input('quantity'),
+                            'quantity' => $quantity,
                             'attributes' => array(),
                             'associatedModel' => $pcm_details,
                         ));
@@ -112,7 +129,7 @@ class Warehouse_pcm_controller extends Controller
                 return 'invalid';
             }
         } else if ($request->input('type') == 'bo') {
-            $checker = Sku_add::select('id')->where('barcode', $request->input('barcode'))->first();
+            $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
 
             if ($checker) {
                 $pcm_details = Bad_order_details::where('bad_order_id', $request->input('id'))
@@ -138,7 +155,7 @@ class Warehouse_pcm_controller extends Controller
                             'id' => $pcm_details->sku_id,
                             'name' => $pcm_details->sku->description,
                             'price' => $pcm_details->unit_price,
-                            'quantity' => $request->input('quantity'),
+                            'quantity' => $quantity,
                             'attributes' => array(),
                             'associatedModel' => $pcm_details,
                         ));
@@ -147,7 +164,7 @@ class Warehouse_pcm_controller extends Controller
                             'id' => $pcm_details->sku_id,
                             'name' => $pcm_details->sku->description,
                             'price' => $pcm_details->unit_price,
-                            'quantity' => $request->input('quantity'),
+                            'quantity' => $quantity,
                             'attributes' => array(),
                             'associatedModel' => $pcm_details,
                         ));

@@ -31,7 +31,7 @@
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $difference = $unit_cost[$data] - $unit_cost_adjustment[$data];
+                                $difference = $unit_cost[$data] + $unit_cost_adjustment[$data];
                             @endphp
                             {{ number_format($difference, 2, '.', ',') }}
 

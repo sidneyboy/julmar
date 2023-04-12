@@ -7,6 +7,7 @@ use App\Sku_ledger;
 use App\Load_sheet;
 use App\Load_sheet_details;
 use App\Invoice_raw;
+use App\Sku_price_details;
 use DB;
 use Cart;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +17,15 @@ class Invoice_out_controller extends Controller
 {
     public function index()
     {
-        
+
         if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $invoice_draft = Invoice_raw::select('id', 'sales_representative')->where('status', null)->groupBy('sales_representative')->orderBy('id', 'desc')->get();
+            $invoice_draft = Invoice_raw::select('id', 'sales_representative')
+                                    ->where('status', null)
+                                    ->groupBy('sales_representative')
+                                    ->orderBy('id', 'desc')
+                                    ->get();
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,
@@ -37,6 +42,7 @@ class Invoice_out_controller extends Controller
     {
         $invoice_draft = Invoice_raw::select('id', 'customer', 'sales_representative')
             ->where('sales_representative', $request->input('sales_representative'))
+            ->where('status',null)
             ->groupBy('customer')
             ->get();
         return view('invoice_out_proceed', [
@@ -49,6 +55,8 @@ class Invoice_out_controller extends Controller
         //return $request->input();
         $invoice_raw = Invoice_raw::select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', 'barcode', DB::raw('sum(quantity) as total'))
             ->whereIn('customer', $request->input('checkbox_entry'))
+            ->where('status',null)
+            ->groupBy('sku_id')
             ->get();
 
         return view('invoice_out_final_summary', [
@@ -156,16 +164,19 @@ class Invoice_out_controller extends Controller
 
             $new_load_sheet_details->save();
             $sku_id = $cart_data->id;
+
+
             Invoice_raw::where('sku_id', $sku_id)
                 ->where('sales_representative', $request->input('sales_representative'))
                 ->whereIn('customer', $request->input('customer_data'))
                 ->update(['status' => 'out']);
 
-            
+
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
             $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
-            $total_amount = $ledger_results[0]->amount * $cart_data->quantity;
+            $amount = $ledger_results[0]->running_amount / $ledger_results[0]->running_balance;
+            $running_amount = $ledger_results[0]->running_amount - $amount;
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $cart_data->id,
                 'quantity' => $cart_data->quantity,
@@ -175,8 +186,8 @@ class Invoice_out_controller extends Controller
                 'all_id' => $load_sheet_id,
                 'principal_id' => $ledger_results[0]->principal_id,
                 'sku_type' => $ledger_results[0]->sku_type,
-                'amount' => $ledger_results[0]->amount,
-                'running_amount' => $ledger_results[0]->running_amount - $total_amount,
+                'amount' => $amount,
+                'running_amount' => $running_amount,
             ]);
 
             $new_sku_ledger->save();

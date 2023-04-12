@@ -7,6 +7,10 @@ WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)
 	'price' => 98.67
 ]);
 
+, DB::raw('sum(quantity) as total')
+
+use Illuminate\Support\Facades\Auth;
+
 $("#customers_select").val('').trigger('change') ;
 
 function isNumberKey(evt) {

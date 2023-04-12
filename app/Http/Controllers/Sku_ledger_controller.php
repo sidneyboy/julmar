@@ -8,14 +8,14 @@ use App\Sku_principal;
 use App\Sku_add;
 use DB;
 use App\Sku_ledger;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class Sku_ledger_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $sku_category = Sku_category::select('id', 'category')->get();
             $sku_principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
@@ -28,24 +28,20 @@ class Sku_ledger_controller extends Controller
                 'active_tab' => 'sku_ledger',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
     public function search_inventory_ledger(Request $request)
     {
-        $var = explode('-', $request->input('date_as_of'));
-        $date_from = date('Y-m-d', strtotime($var[0]));
-        $date_to = date('Y-m-d', strtotime($var[1]));
-
         $principal_id = $request->input('principal_id');
         $sku_type = $request->input('sku_type');
         if ($sku_type == 'all') {
             $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
-            WHERE principal_id = '$principal_id' AND created_at between '$date_from' and '$date_to' GROUP BY sku_id)");
+            WHERE principal_id = '$principal_id' GROUP BY sku_id)");
         }else{
             $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
-            WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' AND created_at between '$date_from' and '$date_to' GROUP BY sku_id)");
+            WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)");
         }
 
         for ($i=0; $i < count($sku_ledger); $i++) { 

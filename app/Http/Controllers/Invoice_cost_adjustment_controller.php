@@ -15,14 +15,15 @@ use App\Principal_discount;
 use App\Principal_discount_details;
 use App\Received_purchase_order_details;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Invoice_cost_adjustment_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $received_data = Received_purchase_order::orderBy('id', 'desc', 'purchase_id', 'dr_si')->get();
+            $received_data = Received_purchase_order::select('id','principal_id','purchase_order_id')->orderBy('id','desc')->get();
             return view('invoice_cost_adjustments', [
                 'user' => $user,
                 'received_data' => $received_data,
@@ -31,7 +32,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'active_tab' => 'invoice_cost_adjustments',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -110,12 +111,13 @@ class Invoice_cost_adjustment_controller extends Controller
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-            $running_balance = $ledger_results[0]->running_balance;
-            $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
+            $total = $ledger_results[0]->running_balance * $request->input('final_unit_cost_per_sku')[$data];
+            $running_amount = $ledger_results[0]->running_amount + $total;
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $data,
-                'quantity' => $request->input('quantity')[$data],
-                'running_balance' => $running_balance,
+                'quantity' => 0,
+                'adjustments' => $ledger_results[0]->running_balance,
+                'running_balance' => $ledger_results[0]->running_balance,
                 'user_id' => auth()->user()->id,
                 'transaction_type' => 'invoice cost adjustment',
                 'all_id' => $new_invoice_cost_adjustment->id,

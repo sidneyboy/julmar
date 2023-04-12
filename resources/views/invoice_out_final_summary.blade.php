@@ -14,7 +14,7 @@
                     <td>{{ $data->principal }}</td>
                     <td>{{ $data->sku_code }}</td>
                     <td>{{ $data->description }}</td>
-                    <td>{{ $data->total }}</td>
+                    <td style="text-align: right">{{ $data->total }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="row" id="show_sku" style="display:none">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="">SKU:</label>
             <select name="sku_barcode" id="sku_barcode" class="form-control select2bs4">
                 <option value="" default>Select</option>
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="row" id="show_barcode">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="">Barcode:</label>
             <input type="text" class="form-control" id="barcode" name="barcode">
         </div>

@@ -54,15 +54,41 @@
             </tfoot>
         </table>
     </div>
+    <br />
     <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-sm float-right btn-dark" id="scan_barcode" style="display:none">SCAN BARCODE</a>
+            <a class="btn btn-sm float-right btn-warning" id="select_sku">SELECT SKU</a>
+        </div>
+    </div>
+    <div class="row" id="show_sku" style="display:none">
         <div class="col-md-6">
             <label for="">Quantity:</label>
-            <input type="text" class="form-control" required name="quantity" id="quantity">
+            <input type="number" min="1" class="form-control" name="sku_quantity" id="sku_quantity">
+        </div>
+        <div class="col-md-6">
+            <label for="">SKU:</label>
+            <select name="sku_barcode" id="sku_barcode" class="form-control select2bs4">
+                <option value="" default>Select</option>
+                @foreach ($pcm_details as $data)
+                    <option value="{{ $data->sku->barcode }}">[<span
+                            style="font-weight: bold;color:green">{{ $data->sku->sku_code }}</span>] -
+                        {{ $data->sku->description }}</option>
+                @endforeach
+            </select>
+        </div>
+
+    </div>
+    <div class="row" id="show_barcode">
+        <div class="col-md-6">
+            <label for="">Quantity:</label>
+            <input type="number" min="1" class="form-control" name="quantity" id="quantity">
         </div>
         <div class="col-md-6">
             <label for="">Barcode:</label>
-            <input type="text" class="form-control" required name="barcode" id="barcode">
+            <input type="text" class="form-control" id="barcode" name="barcode">
         </div>
+
     </div>
     <input type="hidden" value="{{ $type }}" name="type">
     <input type="hidden" value="{{ $id }}" name="id">
@@ -71,6 +97,25 @@
 </form>
 
 <script>
+    $("#select_sku").click(function() {
+        $('#show_barcode').hide();
+        $('#select_sku').hide();
+        $('#show_sku').show();
+        $('#scan_barcode').show();
+        $('#quantity').val('');
+        $('#barcode').val('');
+    });
+
+    $("#scan_barcode").click(function() {
+        $('#show_barcode').show();
+        $('#select_sku').show();
+        $('#show_sku').hide();
+        $('#scan_barcode').hide();
+        $('#sku_quantity').val('');
+        $("#sku_barcode").val('').trigger('change');
+    });
+
+
     $("#warehouse_pcm_final_summary").on('submit', (function(e) {
         e.preventDefault();
         $('#loader').show();
@@ -95,6 +140,7 @@
                     $('#quantity').focus();
                     $('#warehouse_pcm_final_summary_page').html(data);
                     $('#loader').hide();
+                    $('#scan_barcode').click();
                 }
             },
             error: function(error) {
@@ -104,7 +150,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-               
+
             }
         });
     }));
