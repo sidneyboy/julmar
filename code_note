@@ -3,8 +3,8 @@ WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)
 ---get the last row of a group
 
 \Cart::session($userID)->update($rowId,[
-	'quantity' => 2,
-	'price' => 98.67
+'quantity' => 2,
+'price' => 98.67
 ]);
 
 , DB::raw('sum(quantity) as total')
@@ -14,876 +14,658 @@ use Illuminate\Support\Facades\Auth;
 $("#customers_select").val('').trigger('change') ;
 
 function isNumberKey(evt) {
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        if (charCode != 46 && charCode > 31 &&
-            (charCode < 48 || charCode > 57))
-            return false;
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode != 46 && charCode > 31 &&
+(charCode < 48 || charCode> 57))
+    return false;
 
-        return true;
+    return true;
     }
 
     onkeypress="return isNumberKey(event)"
 
 
     $("#example1").DataTable({
-        "responsive": true,
-        "lengthChange": false,
-        "autoWidth": false,
-        "paging": false,
-        "buttons": [
-            { extend: 'copyHtml5', footer: true },
-            { extend: 'excelHtml5', footer: true },
-            { extend: 'csvHtml5', footer: true },
-			{ extend: 'print', footer: true}
-        ]
+    "responsive": true,
+    "lengthChange": false,
+    "autoWidth": false,
+    "paging": false,
+    "buttons": [
+    { extend: 'copyHtml5', footer: true },
+    { extend: 'excelHtml5', footer: true },
+    { extend: 'csvHtml5', footer: true },
+    { extend: 'print', footer: true}
+    ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    
 
 
-    DB::raw('DATE(created_at)'),  [$date_from, $date_to]
 
-    
-<td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+    DB::raw('DATE(created_at)'), [$date_from, $date_to]
 
-$customer_id = $request->input('customer_id');
 
-$sku_ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
-WHERE customer_id = '$customer_id' GROUP BY sku_id)");
+    <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
 
-foreach ($sku_ledger as $key => $data) {
+    $customer_id = $request->input('customer_id');
+
+    $sku_ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
+    WHERE customer_id = '$customer_id' GROUP BY sku_id)");
+
+    foreach ($sku_ledger as $key => $data) {
     $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type','principal_id')->find($data->sku_id);
-}
+    }
 
 
 
 
-@if (session('success'))
-                                            <div class="alert alert-success border-left-success alert-dismissible fade show"
-                                                role="alert">
-                                                {{ session('success') }}
-                                                <button type="button" class="close" data-dismiss="alert"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        @endif
-
-                                        @if (session('error'))
-                                            <div class="alert alert-danger border-left-danger alert-dismissible fade show"
-                                                role="alert">
-                                                {{ session('error') }}
-                                                <button type="button" class="close" data-dismiss="alert"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        @endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  $("#principal").change(function() {
-            $('#van_selling_transaction_show_sku_page').show();
-            //$('.loading').show();
-            $('#hide_if_trigger').show();
-            var principal = $('#principal').val();
-            var store_name = $('#customer_selection').val();
-            $.post({
-                type: "POST",
-                url: "/van_selling_transaction_show_sku",
-                data: 'principal=' + principal + '&store_name=' + store_name,
-                success: function(data) {
-                    console.log(data);
-
-                    $('#van_selling_transaction_show_sku_page').html(data);
-                    $('.loading').hide();
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-
-
-
-        $("#van_selling_transaction_proceed").on('submit', (function(e) {
-            e.preventDefault();
-            //$('#loader').show();
-            $('#hide_if_trigger').hide();
-            $.ajax({
-                url: "van_selling_transaction_proceed",
-                type: "POST",
-                data: new FormData(this),
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function(data) {
-                    console.log(data);
-
-                    $('#loader').hide();
-                    $("#principal").val('').trigger('change');
-                    $('#van_selling_transaction_show_sku_page').hide();
-                    $('#van_selling_transaction_proceed_page').html(data);
-                    $('#hide_if_trigger').show();
-
-                    Swal.fire({
-                      position: 'top-end',
-                      icon: 'success',
-                      title: 'Your work has been saved',
-                      showConfirmButton: false,
-                      timer: 1500
-                  });
-  
-                  location.reload();
-                },
-                error: function(error) {
-                    $('#loader').hide();
-                  Swal.fire(
-                      'Cannot Proceed',
-                      'Please Contact IT Support',
-                      'error'
-                  )
-              }
-            });
-        }));
-
-
-
-@php
-    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
-@endphp
-
-
-<center>
-    {!! $generator->getBarcode($purchase_order->purchase_id, $generator::TYPE_CODE_128) !!}
-    <p>{{ $purchase_order->purchase_id }}</p>
-</center>
-
-
-
-<tr>
-    <td style="text-align: center;text-transform: uppercase;">{{ $data->id }}</td>
-    <td style="text-align: center;text-transform: uppercase;">{{ $data->store_name }}</td>
-    <td style="text-align: center;text-transform: uppercase;">
-        {{ $data->kind_of_business }}</td>
-    <td style="text-align: center;text-transform: uppercase;">{{ $data->credit_term }}
-    </td>
-    <td style="text-align: center;text-transform: uppercase;">
-        {{ $data->credit_line_amount }}</td>
-    <td>{{ $data->location->location }}</td>
-    <td style="text-align: center;text-transform: uppercase;">
-        {{ $data->detailed_location }}</td>
-    <td style="text-align: center;text-transform: uppercase;">
-        {{ $data->detailed_location }}</td>
-    <td style="text-align: center;text-transform: uppercase;">{{ $data->contact_person }}
-    </td>
-    <td style="text-align: center;text-transform: uppercase;">{{ $data->contact_number }}
-    </td>
-    <td>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary btn-block" data-toggle=modal
-            data-target="#exampleModal{{ $data->id }}">
-            VIEW <i class="fas fa-info-circle"></i>
+    @if (session('success'))
+    <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
         </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal{{ $data->id }}" tabindex="-1"
-            role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">ADDITION
-                            INFORMATION</h5>
-                        <button type="button" class="close" data-dismiss="modal"
-                            aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-bordered table-hover table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th colspan="2"
-                                        style="font-weight: bold;text-align: center;">
-                                        PRICE LEVEL PER PRINCIPAL</th>
-                                </tr>
-                                <tr>
-                                    <th>Principal</th>
-                                    <th>Price Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data->customer_principal_price as $price_level)
-                                    <tr>
-                                        <td>{{ $price_level->principal->principal }}</td>
-                                        <td>{{ $price_level->price_level }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Principal</th>
-                                    <th>Discount Rate %</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data->customer_discount as $discount_rate)
-                                    <tr>
-                                        <td>{{ $discount_rate->principal->principal }}
-                                        </td>
-                                        <td style="text-align: center;">
-                                            {{ number_format($discount_rate->customer_discount, 2, '.', ',') }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th colspan="3">STORE CODE PER PRINCIPAL</th>
-                                </tr>
-                                <tr>
-                                    <th>PRINCIPAL</th>
-                                    <th>STORE CODE</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data->customer_principal_code as $store_code)
-                                    <tr>
-                                        <td>{{ $store_code->principal->principal }}</td>
-                                        <td>{{ $store_code->store_code }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </td>
-</tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------van selling inventory ledger
-<form id="van_selling_report_date_range_generate_sku_movement">
-    @csrf
-    <div class="table table-responsive">
-        <table id="table" class="table-sm" data-show-columns="true">
-            <thead class="thead-light">
-                <tr>
-                    <th>PRINCIPAL</th>
-                    <th>CODE</th>
-                    <th>DESCRIPTION</th>
-                    <th>REFERENCE</th>
-                    <th>BUTAL EQUIVALENT</th>
-                    <th>QTY CASE</th>
-                    <th>SKU TYPE</th>
-                    <th>BEG</th>
-                    <th>T - VAN LOAD</th>
-                    <th>T - SALES</th>
-                    <th>INVENTORY ADJUSTMENTS</th>
-                    <th>TOTAL PCM</th>
-                    <th>END</th>
-                    <th>U/P</th>
-                    <th>RUNNING BALANCE</th>
-                    <th>
-                        <label for="car">CHECK</label>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (count($van_selling_ledger) != 0)
-                    @foreach ($van_selling_ledger as $key => $data)
-                        <tr>
-                            <td>{{ $data->principal }}</td>
-                            <td>
-                                <a href="{{ url('van_selling_report_date_range_itemized',$data->sku_code . ',' . $customer_id . ',' . $date_from . ',' . $date_to) }}"
-                                    target="_blank">{{ $data->sku_code }}</a>
-                                <input type="hidden" name="sku_code" value="{{ $data->sku_code }}">
-                                <input type="hidden" name="sku_code_for_movement[]" value="{{ $data->sku_code }}">
-                                <input type="hidden" name="van_selling_upload_ledger_id"
-                                    value="{{ $van_selling_ledger_latest_id[$data->sku_code] }}">
-                            </td>
-                            <td>{{ $data->description }}</td>
-                            <td>{{ $data->reference }}</td>
-                            <td>{{ $data->butal_equivalent }}</td>
-                            <td>
-                                @if ($data->principal == 'EPI')
-                                    NO BUTAL EQUIVALENT
-                                @else
-                                    {{ number_format(($data->beg + $data->total_van_load - $data->total_sales) / $data->butal_equivalent,2,'.',',') }}
-                                @endif
-                            </td>
-                            <td>{{ $data->sku_type }}</td>
-                            <td style="text-align: right">{{ $data->beg }}</td>
-                            <td style="text-align: right">{{ $data->total_van_load }}</td>
-                            <td style="text-align: right">({{ $data->total_sales }})</td>
-                            <td style="text-align: right">
-                                @if ($data->total_inventory_adjustments < 0)
-                                    ({{ $data->total_inventory_adjustments }})
-                                @else
-                                    {{ $data->total_inventory_adjustments }}
-                                @endif
-                            </td>
-                            <td style="text-align: right">{{ $data->total_pcm }}</td>
-                            <td style="text-align: right">{{ $ending_balance[$data->sku_code] }}</td>
-                            <td style="text-align: right;">{{ $unit_price[$data->sku_code] }}</td>
-                            <td style="text-align: right;">
-                                @php
-                                    echo $total_sum = $ending_balance[$data->sku_code] * $unit_price[$data->sku_code];
-                                    $total_running_balance[] = $total_sum;
-                                @endphp
-                            </td>
-                            <td>
-                                @if ($ending_balance[$data->sku_code] != 0)
-                                    <input type="checkbox" name="sku_code_for_transfer_per_sku" class="form-control"
-                                        value="{{ $van_selling_ledger_latest_id[$data->sku_code] }}">
-                                @else
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                @else
-                    @php
-                        $total_running_balance[] = 0;
-                    @endphp
-                @endif
-                <tr>
-                    <th style="text-align: center;">TOTAL INVENTORY AMOUNT</th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                    <th style="text-align: right;">{{ round(array_sum($total_running_balance), 2) }}</th>
-                    <th colspan="" rowspan="" headers="" scope=""></th>
-                </tr>
-            </tbody>
-        </table>
     </div>
-    @if (count($van_selling_ledger) != 0)
-        <div class="row">
-            <input type="hidden" name="customer_id" id="customer_id" value="{{ $customer_id }}">
-            <input type="hidden" value="{{ $date_from }}" id="date_from" name="date_from">
-            <input type="hidden" value="{{ $date_to }}" id="date_to" name="date_from">
-            <input type="hidden" value="{{ array_sum($total_running_balance) }}" id="inventory_total_sum">
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-success btn-block">EXPORT DATA AND MOVE SKU PER CUT OFF</button>
-                <button type="button" id="click_if_trigger" style="display: none;" class="btn btn-info btn-block"
-                    onclick="exportTableToCSV('{{ $store_name }} INVENTORY REPORT {{ $date_from }} TO {{ $date_to }}.csv')">{{ $store_name }}</button>
-            </div>
-            <div class="col-md-3">
-                <button type="button" id="van_selling_report_date_range_generate_clearing"
-                    class="btn btn-primary btn-block">TRANSFER WHOLE INVENTORY</button>
-            </div>
-            <div class="col-md-3">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-info" style="width:100%;" data-toggle="modal"
-                    data-target="#exampleModal">
-                    TRANSFER INVENTORY PER PRINCIPAL
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">SELECT SKU PRINCIPAL</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <select name="principal" id="principal" class="form-control select2">
-                                    <option value="" default>SELECT</option>
-                                    @foreach ($principal as $data)
-                                        <option value="{{ $data->principal }}">{{ $data->principal }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" id="van_selling_report_date_range_generate_clearing_per_principal"
-                                    class="btn btn-info">PROCEED</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <button type="button" id="van_selling_report_date_range_generate_clearing_per_sku"
-                    class="btn btn-warning btn-block">TRANSFER INVENTORY PER SKU</button>
-            </div>
-        </div>
     @endif
-</form>
 
-<script>
-    $('.select2').select2()
-
-    $("#van_selling_report_date_range_generate_clearing").on('click', (function(e) {
-        e.preventDefault();
-        $('.loading').show();
-        var date_from = $('#date_from').val();
-        var van_selling_upload_ledger_id = $('input[name=van_selling_upload_ledger_id]').map(function() {
-            return this.value;
-        }).get();
-        var date_to = $('#date_to').val();
-        var customer_id = $('#customer_id').val();
-
-        $.ajax({
-            url: "van_selling_report_date_range_generate_clearing",
-            type: "POST",
-            data: 'date_from=' + date_from + '&date_to=' + date_to + '&customer_id=' + customer_id +
-                '&van_selling_upload_ledger_id=' + van_selling_upload_ledger_id,
-            success: function(data) {
-                if (data == 'no_sda') {
-                    Swal.fire(
-                      'NO SDA LEDGER DATA FOUND',
-                      'CANNOT PROCEED!!',
-                      'error'
-                      )
-                      $('.loading').hide(); 
-                }else{
-                    $('.loading').hide();
-                    $('#van_selling_report_date_range_itemized_page').show();
-                    $('#van_selling_report_date_range_itemized_page').html(data);
-                }
-                
-            },
-        });
-    }));
-
-    $("#van_selling_report_date_range_generate_clearing_per_principal").on('click', (function(e) {
-        e.preventDefault();
-        $('#exampleModal').modal('toggle'); //or  $('#IDModal').modal('hide');
-        // return false;
-        $('.loading').show();
-        var date_from = $('#date_from').val();
-        var van_selling_upload_ledger_id = $('input[name=van_selling_upload_ledger_id]').map(function() {
-            return this.value;
-        }).get();
-        var date_to = $('#date_to').val();
-        var customer_id = $('#customer_id').val();
-        var principal = $('#principal').val();
-
-        $.ajax({
-            url: "van_selling_report_date_range_generate_clearing_per_principal",
-            type: "POST",
-            data: 'date_from=' + date_from + '&date_to=' + date_to + '&customer_id=' + customer_id +
-                '&van_selling_upload_ledger_id=' + van_selling_upload_ledger_id +
-                '&principal=' + principal,
-            success: function(data) {
-                if (data == 'no_sda') {
-                    Swal.fire(
-                      'NO SDA LEDGER DATA FOUND',
-                      'CANNOT PROCEED!!',
-                      'error'
-                      )
-                      $('.loading').hide(); 
-                }else{
-                    $('.loading').hide();
-                    $('#van_selling_report_date_range_itemized_page').show();
-                    $('#van_selling_report_date_range_itemized_page').html(data);
-                }
-            },
-        });
-    }));
-
-    $("#van_selling_report_date_range_generate_clearing_per_sku").on('click', (function(e) {
-        e.preventDefault();
-        //$('.loading').show();
-        var date_from = $('#date_from').val();
-        var date_to = $('#date_to').val();
-        var customer_id = $('#customer_id').val();
-        var sku_code_for_transfer_per_sku = [];
-        $("input:checkbox[name='sku_code_for_transfer_per_sku']:checked").each(function() {
-            sku_code_for_transfer_per_sku.push($(this).val());
-        });
+    @if (session('error'))
+    <div class="alert alert-danger border-left-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
 
 
-        $.ajax({
-            url: "van_selling_report_date_range_generate_clearing_per_sku",
-            type: "POST",
-            data: 'date_from=' + date_from + '&date_to=' + date_to + '&customer_id=' + customer_id +
-                '&sku_code_for_transfer_per_sku=' + sku_code_for_transfer_per_sku,
-            success: function(data) {
-                 if (data == 'no_sda') {
-                    Swal.fire(
-                      'NO SDA LEDGER DATA FOUND',
-                      'CANNOT PROCEED!!',
-                      'error'
-                      )
-                      $('.loading').hide(); 
-                }else if(data == 'checkbox_error'){
-                    Swal.fire(
-                      'SELECT SKU FIRST. CLICK CHECKBOX',
-                      'CANNOT PROCEED!!',
-                      'error'
-                      )
-                      $('.loading').hide(); 
-                }else{
-                    $('.loading').hide();
-                    $('#van_selling_report_date_range_itemized_page').show();
-                    $('#van_selling_report_date_range_itemized_page').html(data);
-                }
-            },
-        });
-    }));
 
 
-    $("#example1").DataTable();
-    $('#example2').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $("#principal").change(function() {
+    $('#van_selling_transaction_show_sku_page').show();
+    //$('.loading').show();
+    $('#hide_if_trigger').show();
+    var principal = $('#principal').val();
+    var store_name = $('#customer_selection').val();
+    $.post({
+    type: "POST",
+    url: "/van_selling_transaction_show_sku",
+    data: 'principal=' + principal + '&store_name=' + store_name,
+    success: function(data) {
+    console.log(data);
+
+    $('#van_selling_transaction_show_sku_page').html(data);
+    $('.loading').hide();
+    },
+    error: function(error) {
+    console.log(error);
+    }
+    });
     });
 
-    $("#van_selling_report_date_range_generate_sku_movement").on('submit', (function(e) {
-        e.preventDefault();
-        $('.loading').show();
-        $.ajax({
-            url: "van_selling_report_date_range_generate_sku_movement",
-            type: "POST",
-            data: new FormData(this),
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
 
-                // if (data == 'saved') {
-                    
-                // }
 
-                Swal.fire(
-                        'INVENTORY MOVEMENT SUCCESSFUL',
-                        '',
-                        'success'
-                    );
-                    $('.loading').hide();
-                    $('#click_if_trigger').click();
-            },
-        });
+    $("#van_selling_transaction_proceed").on('submit', (function(e) {
+    e.preventDefault();
+    //$('#loader').show();
+    $('#hide_if_trigger').hide();
+    $.ajax({
+    url: "van_selling_transaction_proceed",
+    type: "POST",
+    data: new FormData(this),
+    contentType: false,
+    cache: false,
+    processData: false,
+    success: function(data) {
+    console.log(data);
+
+    $('#loader').hide();
+    $("#principal").val('').trigger('change');
+    $('#van_selling_transaction_show_sku_page').hide();
+    $('#van_selling_transaction_proceed_page').html(data);
+    $('#hide_if_trigger').show();
+
+    Swal.fire({
+    position: 'top-end',
+    icon: 'success',
+    title: 'Your work has been saved',
+    showConfirmButton: false,
+    timer: 1500
+    });
+
+    location.reload();
+    },
+    error: function(error) {
+    $('#loader').hide();
+    Swal.fire(
+    'Cannot Proceed',
+    'Please Contact IT Support',
+    'error'
+    )
+    }
+    });
     }));
 
-    function downloadCSV(csv, filename) {
-        var csvFile;
-        var downloadLink;
 
-        // CSV file
-        csvFile = new Blob([csv], {
-            type: "text/csv"
-        });
 
-        // Download link
-        downloadLink = document.createElement("a");
-
-        // File name
-        downloadLink.download = filename;
-
-        // Create a link to the file
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-
-        // Hide download link
-        downloadLink.style.display = "none";
-
-        // Add the link to DOM
-        document.body.appendChild(downloadLink);
-
-        // Click download link
-        downloadLink.click();
-    }
-
-    function exportTableToCSV(filename) {
-        var csv = [];
-        var rows = document.querySelectorAll("#table tr");
-
-        for (var i = 0; i < rows.length; i++) {
-            var row = [],
-                cols = rows[i].querySelectorAll("td, th");
-
-            for (var j = 0; j < cols.length; j++)
-                row.push(cols[j].innerText);
-
-            csv.push(row.join(","));
-        }
-
-        // Download CSV file
-        downloadCSV(csv.join("\n"), filename);
-    }
-
-    var $table = $('#table')
-
-    function buildTable($el, cells, rows) {
-        var i
-        var j
-        var row
-        var columns = []
-        var data = []
-
-        var classes = $('.toolbar input:checked').next().text()
-
-        $el.bootstrapTable('destroy').bootstrapTable({
-            columns: columns,
-            data: data,
-            showFullscreen: true,
-            search: true,
-            stickyHeader: true,
-            stickyHeaderOffsetLeft: parseInt($('body').css('padding-left'), 10),
-            stickyHeaderOffsetRight: parseInt($('body').css('padding-right'), 10),
-            theadClasses: classes
-        })
-    }
-    $(function() {
-        $('.toolbar input').change(function() {
-            buildTable($table, 20, 50)
-        })
-        buildTable($table, 20, 50)
-    })
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @php
+    $generator = new Picqer\Barcode\BarcodeGeneratorHTML();
+    @endphp
+
+
+    <center>
+        {!! $generator->getBarcode($purchase_order->purchase_id, $generator::TYPE_CODE_128) !!}
+        <p>{{ $purchase_order->purchase_id }}</p>
+    </center>
+
+
+
+
+
+
+
+    <li class="nav-item">
+        <a href="{{ url('/disbursement') }}" class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
+            <i class="fas fa-plus-circle nav-icon"></i>
+            <p>Disbursement</p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url('/disbursement_report') }}" class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
+            <i class="fas fa-plus-circle nav-icon"></i>
+            <p>Disbursement Report</p>
+        </a>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Principal
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('/principal_ledger') }}" class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Principal Ledger</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/new_principal') }}" class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>New Principal</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/principal_discount') }}" class="nav-link {{ $active_tab == 'principal_discount' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Principal Discounts</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/new_principal_categories') }}" class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>New Categories</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('principal_payment') }}" class="nav-link {{ $active_tab == 'principal_payment' ? 'active' : '' }}">
+                    <i class="fas fa-percent nav-icon"></i>
+                    <p>Accounts Payable</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_warehouse_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Warehouse
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('/receiving_draft') }}" class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Received as Draft</p>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a href="{{ url('invoice_out') }}" class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>Invoice Out</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('warehouse_pcm') }}" class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>PCM</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage SKU
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('/sku_add') }}" class="nav-link {{ $active_tab == 'sku_add' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>New SKU</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_list') }}" class="nav-link {{ $active_tab == 'sku_list' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>SKU List</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_barcode') }}" class="nav-link {{ $active_tab == 'sku_barcode' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>SKU Barcode</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_ledger') }}" class="nav-link {{ $active_tab == 'sku_ledger' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Inventory Ledger</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_extract_inventory') }}" class="nav-link {{ $active_tab == 'sku_extract_inventory' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Export SKU</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_update_price') }}" class="nav-link {{ $active_tab == 'sku_update_price' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Price Update</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('bodega_out') }}" class="nav-link {{ $active_tab == 'bodega_out' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Bodega Out</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('bodega_out_report') }}" class="nav-link {{ $active_tab == 'bodega_out_report' ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <p>Bodega Out Report </p>
+                </a>
+            </li>
+
+            {{-- <li class="nav-item">
+                                        <a href="{{ url('/new_principal_categories') }}"
+            class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
+            <i class="fas fa-plus-circle nav-icon"></i>
+            <p>New Categories</p>
+            </a>
+    </li> --}}
+    </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'receiving_and_purchases_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'receiving_and_purchases_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                PO & Receiving
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('/purchase_order') }}" class="nav-link {{ $active_tab == 'purchase_order' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>PO Draft</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/purchase_order_confirmation') }}" class="nav-link {{ $active_tab == 'purchase_order_confirmation' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>PO Confirmation</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/purchase_order_report') }}" class="nav-link {{ $active_tab == 'purchase_order_report' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>PO Report</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/receive_order') }}" class="nav-link {{ $active_tab == 'receive_order' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Final Receiving</p>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a href="{{ url('/receive_order_report') }}" class="nav-link {{ $active_tab == 'receive_order_report' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>Received Report</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('/sku_withdrawal') }}" class="nav-link {{ $active_tab == 'sku_withdrawal' ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <p>SKU Withdrawal</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Adjustments
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('/return_to_principal') }}" class="nav-link {{ $active_tab == 'return_to_principal' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-exchange-alt"></i>
+                    <p>Return To Principal </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/return_to_principal_reports') }}" class="nav-link {{ $active_tab == 'return_to_principal_reports' ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <p>RTP - Report </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/bo_allowance_adjustments') }}" class="nav-link {{ $active_tab == 'bo_allowance_adjustments' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-ban"></i>
+                    <p>Bo Allowance Adj</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/bo_allowance_adjustments_report') }}" class="nav-link {{ $active_tab == 'bo_allowance_adjustments_report' ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <p>BOA - Report</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/invoice_cost_adjustments') }}" class="nav-link {{ $active_tab == 'invoice_cost_adjustments' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-file-invoice"></i>
+                    <p>Invoice Cost Adj</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/invoice_cost_adjustments_report') }}" class="nav-link {{ $active_tab == 'invoice_cost_adjustments_report' ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <p>ICA - Report</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('/inventory_adjustments') }}" class="nav-link {{ $active_tab == 'inventory_adjustments' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-file-invoice"></i>
+                    <p>Inventory Adj</p>
+                </a>
+            </li>
+            {{-- <li class="nav-item">
+                                        <a href="{{ url('/bo_allowance_total') }}"
+            class="nav-link {{ $active_tab == 'bo_allowance_total' ? 'active' : '' }}">
+            <i class="fas fa-chart-bar nav-icon"></i>
+            <p>BO Allowance Total</p>
+            </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url('/subsidy') }}" class="nav-link {{ $active_tab == 'subsidy' ? 'active' : '' }}">
+            <i class="fas fa-chart-bar nav-icon"></i>
+            <p>Subsidy</p>
+        </a>
+    </li> --}}
+    </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Transfer to Branch
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('transfer_to_branch') }}" class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Transfer </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('transfer_to_branch_report') }}" class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Transfer Report</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_agent_and_location_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_agent_and_location_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Agent & Location
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('agent') }}" class="nav-link {{ $active_tab == 'agent' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>New Agent</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('location') }}" class="nav-link {{ $active_tab == 'location' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>New Location</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_customer_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_customer_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Customer
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('customer') }}" class="nav-link {{ $active_tab == 'customer' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>New Customer</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('customer_profile') }}" class="nav-link {{ $active_tab == 'customer_profile' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>Customer Profile</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('customer_principal_code_price_level') }}" class="nav-link {{ $active_tab == 'customer_principal_code_price_level' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>Customer Code/Price L</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('customer_discount') }}" class="nav-link {{ $active_tab == 'customer_discount' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>Customer Discount</p>
+                </a>
+            </li>
+            {{-- mao ni ang applied customer to agent nga tab --}}
+            {{-- <li class="nav-item">
+                                        <a href="{{ url('apply_customer_to_agent') }}"
+            class="nav-link {{ $active_tab == 'apply_customer_to_agent' ? 'active' : '' }}">
+            <i class="fas fa-user-plus nav-icon"></i>
+            <p>Apply Customer To Agent</p>
+            </a>
+    </li>
+
+    <li class="nav-item">
+        <a href="{{ url('applied_customer_to_agent_report') }}" class="nav-link {{ $active_tab == 'applied_customer_to_agent_report' ? 'active' : '' }}">
+            <i class="fas fa-user-plus nav-icon"></i>
+            <p>App Customer To Agent</p>
+        </a>
+    </li> --}}
+    </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_booking_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_booking_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Booking
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('upload_raw_data') }}" class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>Upload Raw Data</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('booking_pcm') }}" class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>PCM</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('warehouse_rgs_report') }}" class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>RGS Report</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('warehouse_bo_report') }}" class="nav-link {{ $active_tab == 'warehouse_bo_report' ? 'active' : '' }}">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <p>BO Report</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+                Manage Van Selling
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ url('van_selling_payment') }}" class="nav-link {{ $active_tab == 'van_selling_payment' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Collection</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_import_data') }}" class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Upload Sales</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('vs_upload_and_export_customer') }}" class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>VS Customers</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_inventory_adjustments') }}" class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Inventory Adjustments</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_withdrawal') }}" class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Withdrawal</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_invoice') }}" class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Print Invoice</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_pcm') }}" class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>PCM</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_pcm_post') }}" class="nav-link {{ $active_tab == 'van_selling_pcm_post' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>PCM Posting</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_inventory_export') }}" class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Inventory Export</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_report_date_range') }}" class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Inventory Ledger</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('van_selling_ar_ledger') }}" class="nav-link {{ $active_tab == 'van_selling_ar_ledger' ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>AR Ledger</p>
+                </a>
+            </li>
+        </ul>
+    </li>

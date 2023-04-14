@@ -219,751 +219,848 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
-                            <li class="nav-item">
-                                <a href="{{ url('/disbursement') }}"
-                                    class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
-                                    <i class="fas fa-plus-circle nav-icon"></i>
-                                    <p>Disbursement</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('/disbursement_report') }}"
-                                    class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
-                                    <i class="fas fa-plus-circle nav-icon"></i>
-                                    <p>Disbursement Report</p>
-                                </a>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Principal
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('/principal_ledger') }}"
-                                            class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Principal Ledger</p>
-                                        </a>
-                                    </li>
+                            @if ($user->position == 'admin')
+                                <li class="nav-item">
+                                    <a href="{{ url('/disbursement') }}"
+                                        class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
+                                        <i class="fas fa-plus-circle nav-icon"></i>
+                                        <p>Disbursement</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('/disbursement_report') }}"
+                                        class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
+                                        <i class="fas fa-plus-circle nav-icon"></i>
+                                        <p>Disbursement Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Principal
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/principal_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Principal Ledger</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('/new_principal') }}"
-                                            class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>New Principal</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/new_principal') }}"
+                                                class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New Principal</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('/principal_discount') }}"
-                                            class="nav-link {{ $active_tab == 'principal_discount' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Principal Discounts</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/principal_discount') }}"
+                                                class="nav-link {{ $active_tab == 'principal_discount' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Principal Discounts</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('/new_principal_categories') }}"
-                                            class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>New Categories</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/new_principal_categories') }}"
+                                                class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New Categories</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('principal_payment') }}"
-                                            class="nav-link {{ $active_tab == 'principal_payment' ? 'active' : '' }}">
-                                            <i class="fas fa-percent nav-icon"></i>
-                                            <p>Accounts Payable</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'manage_warehouse_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Warehouse
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('/receiving_draft') }}"
-                                            class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Received as Draft</p>
-                                        </a>
-                                    </li>
-
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('invoice_out') }}"
-                                            class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Invoice Out</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_pcm') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>PCM</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage SKU
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_add') }}"
-                                            class="nav-link {{ $active_tab == 'sku_add' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>New SKU</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_list') }}"
-                                            class="nav-link {{ $active_tab == 'sku_list' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>SKU List</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_barcode') }}"
-                                            class="nav-link {{ $active_tab == 'sku_barcode' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>SKU Barcode</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_ledger') }}"
-                                            class="nav-link {{ $active_tab == 'sku_ledger' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Inventory Ledger</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_extract_inventory') }}"
-                                            class="nav-link {{ $active_tab == 'sku_extract_inventory' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Export SKU</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_update_price') }}"
-                                            class="nav-link {{ $active_tab == 'sku_update_price' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Price Update</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('bodega_out') }}"
-                                            class="nav-link {{ $active_tab == 'bodega_out' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Bodega Out</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('bodega_out_report') }}"
-                                            class="nav-link {{ $active_tab == 'bodega_out_report' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>Bodega Out Report </p>
-                                        </a>
-                                    </li>
-
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('/new_principal_categories') }}"
-                                            class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>New Categories</p>
-                                        </a>
-                                    </li> --}}
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'receiving_and_purchases_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'receiving_and_purchases_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        PO & Receiving
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('/purchase_order') }}"
-                                            class="nav-link {{ $active_tab == 'purchase_order' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>PO Draft</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/purchase_order_confirmation') }}"
-                                            class="nav-link {{ $active_tab == 'purchase_order_confirmation' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>PO Confirmation</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/purchase_order_report') }}"
-                                            class="nav-link {{ $active_tab == 'purchase_order_report' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>PO Report</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ url('/receive_order') }}"
-                                            class="nav-link {{ $active_tab == 'receive_order' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Final Receiving</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('principal_payment') }}"
+                                                class="nav-link {{ $active_tab == 'principal_payment' ? 'active' : '' }}">
+                                                <i class="fas fa-percent nav-icon"></i>
+                                                <p>Accounts Payable</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_warehouse_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Warehouse
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receiving_draft') }}"
+                                                class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Received as Draft</p>
+                                            </a>
+                                        </li>
 
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('/receive_order_report') }}"
-                                            class="nav-link {{ $active_tab == 'receive_order_report' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>Received Report</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('invoice_out') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Invoice Out</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('/sku_withdrawal') }}"
-                                            class="nav-link {{ $active_tab == 'sku_withdrawal' ? 'active' : '' }}">
-                                            <i class="fas fa-plus-circle nav-icon"></i>
-                                            <p>SKU Withdrawal</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Adjustments
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('/return_to_principal') }}"
-                                            class="nav-link {{ $active_tab == 'return_to_principal' ? 'active' : '' }}">
-                                            <i class="nav-icon fas fa-exchange-alt"></i>
-                                            <p>Return To Principal </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/return_to_principal_reports') }}"
-                                            class="nav-link {{ $active_tab == 'return_to_principal_reports' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>RTP - Report </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/bo_allowance_adjustments') }}"
-                                            class="nav-link {{ $active_tab == 'bo_allowance_adjustments' ? 'active' : '' }}">
-                                            <i class="nav-icon fas fa-ban"></i>
-                                            <p>Bo Allowance Adj</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/bo_allowance_adjustments_report') }}"
-                                            class="nav-link {{ $active_tab == 'bo_allowance_adjustments_report' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>BOA - Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/invoice_cost_adjustments') }}"
-                                            class="nav-link {{ $active_tab == 'invoice_cost_adjustments' ? 'active' : '' }}">
-                                            <i class="nav-icon fas fa-file-invoice"></i>
-                                            <p>Invoice Cost Adj</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/invoice_cost_adjustments_report') }}"
-                                            class="nav-link {{ $active_tab == 'invoice_cost_adjustments_report' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>ICA - Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/inventory_adjustments') }}"
-                                            class="nav-link {{ $active_tab == 'inventory_adjustments' ? 'active' : '' }}">
-                                            <i class="nav-icon fas fa-file-invoice"></i>
-                                            <p>Inventory Adj</p>
-                                        </a>
-                                    </li>
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('/bo_allowance_total') }}"
-                                            class="nav-link {{ $active_tab == 'bo_allowance_total' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>BO Allowance Total</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('/subsidy') }}"
-                                            class="nav-link {{ $active_tab == 'subsidy' ? 'active' : '' }}">
-                                            <i class="fas fa-chart-bar nav-icon"></i>
-                                            <p>Subsidy</p>
-                                        </a>
-                                    </li> --}}
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Transfer to Branch
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('transfer_to_branch') }}"
-                                            class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Transfer </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('transfer_to_branch_report') }}"
-                                            class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Transfer Report</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li
-                                class="nav-item {{ $main_tab == 'manage_agent_and_location_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_agent_and_location_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Agent & Location
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('agent') }}"
-                                            class="nav-link {{ $active_tab == 'agent' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>New Agent</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('warehouse_pcm') }}"
+                                                class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>PCM</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage SKU
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_add') }}"
+                                                class="nav-link {{ $active_tab == 'sku_add' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New SKU</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('location') }}"
-                                            class="nav-link {{ $active_tab == 'location' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>New Location</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'manage_customer_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_customer_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Customer
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('customer') }}"
-                                            class="nav-link {{ $active_tab == 'customer' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>New Customer</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_list') }}"
+                                                class="nav-link {{ $active_tab == 'sku_list' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU List</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('customer_profile') }}"
-                                            class="nav-link {{ $active_tab == 'customer_profile' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Customer Profile</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_barcode') }}"
+                                                class="nav-link {{ $active_tab == 'sku_barcode' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU Barcode</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('customer_principal_code_price_level') }}"
-                                            class="nav-link {{ $active_tab == 'customer_principal_code_price_level' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Customer Code/Price L</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'sku_ledger' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Inventory Ledger</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('customer_discount') }}"
-                                            class="nav-link {{ $active_tab == 'customer_discount' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Customer Discount</p>
-                                        </a>
-                                    </li>
-                                    {{-- mao ni ang applied customer to agent nga tab --}}
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('apply_customer_to_agent') }}"
-                                            class="nav-link {{ $active_tab == 'apply_customer_to_agent' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Apply Customer To Agent</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_extract_inventory') }}"
+                                                class="nav-link {{ $active_tab == 'sku_extract_inventory' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Export SKU</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('applied_customer_to_agent_report') }}"
-                                            class="nav-link {{ $active_tab == 'applied_customer_to_agent_report' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>App Customer To Agent</p>
-                                        </a>
-                                    </li> --}}
-                                </ul>
-                            </li>
-                            <li class="nav-item {{ $main_tab == 'manage_booking_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_booking_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Booking
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('upload_raw_data') }}"
-                                            class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Upload Raw Data</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('booking_pcm') }}"
-                                            class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>PCM</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_rgs_report') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>RGS Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_bo_report') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_bo_report' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>BO Report</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_update_price') }}"
+                                                class="nav-link {{ $active_tab == 'sku_update_price' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Price Update</p>
+                                            </a>
+                                        </li>
 
-                            <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Manage Van Selling
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('van_selling_dashboard') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_dashboard' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Dashboard</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_sales_report') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_sales_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Sales Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_report_date_range') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Inventory Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_inventory_adjustments_report') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Inventory Adj Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_pcm_report') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_pcm_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Pcm Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_calls_report') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_calls_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Calls Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_os_report') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_os_report' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS OS Report</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('vs_upload_and_export_customer') }}"
-                                            class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Customers</p>
-                                        </a>
-                                    </li> --}}
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('van_selling_ar') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_ar' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Beginning AR</p>
-                                        </a>
-                                    </li> --}}
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('van_selling_inventory_adjustments') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Inv. Adjustments</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_actual_stocks_on_hand') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_actual_stocks_on_hand' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Actual Stocks on Hand</p>
-                                        </a>
-                                    </li> --}}
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_payment') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_payment' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Collection</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_import_data') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Upload Sales</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('vs_upload_and_export_customer') }}"
-                                            class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Customers</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_inventory_adjustments') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Inventory Adjustments</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_withdrawal') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Withdrawal</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_invoice') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Print Invoice</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_pcm') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>PCM</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_pcm_post') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_pcm_post' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>PCM Posting</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_inventory_export') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Inventory Export</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_report_date_range') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Inventory Ledger</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_ar_ledger') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_ar_ledger' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>AR Ledger</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('bodega_out') }}"
+                                                class="nav-link {{ $active_tab == 'bodega_out' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Bodega Out</p>
+                                            </a>
+                                        </li>
 
-                                    {{-- <li class="nav-item">
-                                        <a href="{{ url('van_selling_invoice') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Invoice</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_reinvoice') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_reinvoice' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Re-Invoice</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('bodega_out_report') }}"
+                                                class="nav-link {{ $active_tab == 'bodega_out_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>Bodega Out Report </p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_transfer_inventory') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_transfer_inventory' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Transfer Inventory</p>
-                                        </a>
-                                    </li>
+                                    </ul>
+                                </li>
+                                <li
+                                    class="nav-item {{ $main_tab == 'receiving_and_purchases_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'receiving_and_purchases_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            PO & Receiving
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Draft</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_inventory_export') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Inventory Export</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_export_updated_price') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_export_updated_price' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Export U/P</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order_confirmation') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order_confirmation' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Confirmation</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_pcm') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>VS Pcm</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order_report') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order_report' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Report</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_import_data') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Import Sales</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receive_order') }}"
+                                                class="nav-link {{ $active_tab == 'receive_order' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Final Receiving</p>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_import_os') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_import_os' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Import OS</p>
-                                        </a>
-                                    </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ url('van_selling_import_calls') }}"
-                                            class="nav-link {{ $active_tab == 'van_selling_import_calls' ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Van Import Calls</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receive_order_report') }}"
+                                                class="nav-link {{ $active_tab == 'receive_order_report' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Received Report</p>
+                                            </a>
+                                        </li>
 
-                            <li class="nav-item {{ $main_tab == 'manage_custodian_main_tab' ? 'menu-open' : '' }}">
-                                <a href="#"
-                                    class="nav-link {{ $sub_tab == 'manage_custodian_sub_tab' ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Warehouse Custodian
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_releasing') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_releasing' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>Releasing</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_rgs') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_rgs' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>RGS</p>
-                                        </a>
-                                    </li>
-                                   
-                                    <li class="nav-item">
-                                        <a href="{{ url('warehouse_bo') }}"
-                                            class="nav-link {{ $active_tab == 'warehouse_bo' ? 'active' : '' }}">
-                                            <i class="fas fa-user-plus nav-icon"></i>
-                                            <p>BO</p>
-                                        </a>
-                                    </li> --}}
-                                </ul>
-                            </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_withdrawal') }}"
+                                                class="nav-link {{ $active_tab == 'sku_withdrawal' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU Withdrawal</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Adjustments
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/return_to_principal') }}"
+                                                class="nav-link {{ $active_tab == 'return_to_principal' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-exchange-alt"></i>
+                                                <p>Return To Principal </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/return_to_principal_reports') }}"
+                                                class="nav-link {{ $active_tab == 'return_to_principal_reports' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>RTP - Report </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/bo_allowance_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'bo_allowance_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-ban"></i>
+                                                <p>Bo Allowance Adj</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/bo_allowance_adjustments_report') }}"
+                                                class="nav-link {{ $active_tab == 'bo_allowance_adjustments_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>BOA - Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/invoice_cost_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_cost_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-file-invoice"></i>
+                                                <p>Invoice Cost Adj</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/invoice_cost_adjustments_report') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_cost_adjustments_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>ICA - Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/inventory_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'inventory_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-file-invoice"></i>
+                                                <p>Inventory Adj</p>
+                                            </a>
+                                        </li>
 
+                                    </ul>
+                                </li>
+                                <li
+                                    class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Transfer to Branch
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('transfer_to_branch') }}"
+                                                class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transfer </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('transfer_to_branch_report') }}"
+                                                class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transfer Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li
+                                    class="nav-item {{ $main_tab == 'manage_agent_and_location_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_agent_and_location_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Agent & Location
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('agent') }}"
+                                                class="nav-link {{ $active_tab == 'agent' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>New Agent</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('location') }}"
+                                                class="nav-link {{ $active_tab == 'location' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>New Location</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_customer_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_customer_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Customer
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('customer') }}"
+                                                class="nav-link {{ $active_tab == 'customer' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>New Customer</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('customer_profile') }}"
+                                                class="nav-link {{ $active_tab == 'customer_profile' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Customer Profile</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('customer_principal_code_price_level') }}"
+                                                class="nav-link {{ $active_tab == 'customer_principal_code_price_level' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Customer Code/Price L</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('customer_discount') }}"
+                                                class="nav-link {{ $active_tab == 'customer_discount' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Customer Discount</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_booking_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_booking_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Booking
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('upload_raw_data') }}"
+                                                class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Upload Raw Data</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('booking_pcm') }}"
+                                                class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>PCM</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('warehouse_rgs_report') }}"
+                                                class="nav-link {{ $active_tab == 'warehouse_rgs_report' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>RGS Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('warehouse_bo_report') }}"
+                                                class="nav-link {{ $active_tab == 'warehouse_bo_report' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>BO Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_van_selling_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Van Selling
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_payment') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_payment' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Collection</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_import_data') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Upload Sales</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('vs_upload_and_export_customer') }}"
+                                                class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>VS Customers</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_inventory_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_inventory_adjustments' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Inventory Adjustments</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_withdrawal') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_withdrawal' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Withdrawal</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_invoice') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_invoice' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Print Invoice</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_pcm') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_pcm' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>PCM</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_pcm_post') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_pcm_post' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>PCM Posting</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_inventory_export') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_inventory_export' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Inventory Export</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_report_date_range') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_report_date_range' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Inventory Ledger</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_ar_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_ar_ledger' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>AR Ledger</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @elseif ($user->position == 'warehouse')
+                                <li class="nav-item {{ $main_tab == 'manage_warehouse_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Warehouse
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receiving_draft') }}"
+                                                class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Received as Draft</p>
+                                            </a>
+                                        </li>
+
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('invoice_out') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_out' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Invoice Out</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('warehouse_pcm') }}"
+                                                class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>PCM</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @elseif($user->position == 'inventory')
+                                <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Principal
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/principal_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'principal_ledger' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Principal Ledger</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/new_principal') }}"
+                                                class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New Principal</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/principal_discount') }}"
+                                                class="nav-link {{ $active_tab == 'principal_discount' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Principal Discounts</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/new_principal_categories') }}"
+                                                class="nav-link {{ $active_tab == 'new_principal_categories' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New Categories</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('principal_payment') }}"
+                                                class="nav-link {{ $active_tab == 'principal_payment' ? 'active' : '' }}">
+                                                <i class="fas fa-percent nav-icon"></i>
+                                                <p>Accounts Payable</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage SKU
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_add') }}"
+                                                class="nav-link {{ $active_tab == 'sku_add' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>New SKU</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_list') }}"
+                                                class="nav-link {{ $active_tab == 'sku_list' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU List</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_barcode') }}"
+                                                class="nav-link {{ $active_tab == 'sku_barcode' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU Barcode</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'sku_ledger' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Inventory Ledger</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_extract_inventory') }}"
+                                                class="nav-link {{ $active_tab == 'sku_extract_inventory' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Export SKU</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_update_price') }}"
+                                                class="nav-link {{ $active_tab == 'sku_update_price' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Price Update</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('bodega_out') }}"
+                                                class="nav-link {{ $active_tab == 'bodega_out' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Bodega Out</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('bodega_out_report') }}"
+                                                class="nav-link {{ $active_tab == 'bodega_out_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>Bodega Out Report </p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li
+                                    class="nav-item {{ $main_tab == 'receiving_and_purchases_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'receiving_and_purchases_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            PO & Receiving
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Draft</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order_confirmation') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order_confirmation' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Confirmation</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/purchase_order_report') }}"
+                                                class="nav-link {{ $active_tab == 'purchase_order_report' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>PO Report</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receive_order') }}"
+                                                class="nav-link {{ $active_tab == 'receive_order' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Final Receiving</p>
+                                            </a>
+                                        </li>
+
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/receive_order_report') }}"
+                                                class="nav-link {{ $active_tab == 'receive_order_report' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Received Report</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/sku_withdrawal') }}"
+                                                class="nav-link {{ $active_tab == 'sku_withdrawal' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>SKU Withdrawal</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item {{ $main_tab == 'manage_adjustments_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Adjustments
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/return_to_principal') }}"
+                                                class="nav-link {{ $active_tab == 'return_to_principal' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-exchange-alt"></i>
+                                                <p>Return To Principal </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/return_to_principal_reports') }}"
+                                                class="nav-link {{ $active_tab == 'return_to_principal_reports' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>RTP - Report </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/bo_allowance_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'bo_allowance_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-ban"></i>
+                                                <p>Bo Allowance Adj</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/bo_allowance_adjustments_report') }}"
+                                                class="nav-link {{ $active_tab == 'bo_allowance_adjustments_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>BOA - Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/invoice_cost_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_cost_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-file-invoice"></i>
+                                                <p>Invoice Cost Adj</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/invoice_cost_adjustments_report') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_cost_adjustments_report' ? 'active' : '' }}">
+                                                <i class="fas fa-chart-bar nav-icon"></i>
+                                                <p>ICA - Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/inventory_adjustments') }}"
+                                                class="nav-link {{ $active_tab == 'inventory_adjustments' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-file-invoice"></i>
+                                                <p>Inventory Adj</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li
+                                    class="nav-item {{ $main_tab == 'transfer_sku_to_branch_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'transfer_sku_to_branch_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Transfer to Branch
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('transfer_to_branch') }}"
+                                                class="nav-link {{ $active_tab == 'transfer_to_branch' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transfer </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('transfer_to_branch_report') }}"
+                                                class="nav-link {{ $active_tab == 'transfer_to_branch_report' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transfer Report</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

@@ -20,8 +20,14 @@ class Receiving_draft_controller extends Controller
             $date = date('Ymd');
             $time = date('his');
             $session_id = $date . "" . $time;
-            $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')->where('status', 'confirmed')->orWhere('status', 'paid')->orWhere('remarks', 'staggered')->orderBy('id', 'desc')->get();
+            $user = User::select('name', 'position','principal_id')->find(Auth()->user()->id);
+            $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
+                    ->where('principal_id',$user->principal_id)
+                    ->where('status', 'confirmed')
+                    ->orWhere('status', 'paid')
+                    ->where('remarks', 'staggered')
+                    ->orderBy('id', 'desc')
+                    ->get();
 
             return view('receiving_draft', [
                 'user' => $user,
@@ -41,11 +47,12 @@ class Receiving_draft_controller extends Controller
         //return $request->input();
         $purchase_order_details = Purchase_order_details::select('sku_id')
             ->where('purchase_order_id', $request->input('purchase_id'))
+            ->where('remarks', 'staggered')
             ->get();
 
         return view('receiving_draft_sku_selection', [
             'purchase_order_details' => $purchase_order_details,
-        ])->with('purchase_order_id',$request->input('purchase_id'));
+        ])->with('purchase_order_id', $request->input('purchase_id'));
     }
 
     public function receiving_draft_proceed(Request $request)
@@ -88,8 +95,8 @@ class Receiving_draft_controller extends Controller
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_order_id'))
-                        ->where('sku_id', $sku->id)
-                        ->where('remarks', null)
+                        ->where('remarks', 'staggered')
+                        ->orWhere('remarks', null)
                         ->get();
 
                     if ($purchase_order_details) {
@@ -106,8 +113,8 @@ class Receiving_draft_controller extends Controller
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_order_id'))
-                        ->where('sku_id', $sku->id)
-                        ->where('remarks', null)
+                        ->where('remarks', 'staggered')
+                        ->orWhere('remarks', null)
                         ->get();
 
                     if (count($purchase_order_details) != 0) {

@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label for="">Purchase Order/Van #</label>
-                        <select name="purchase_id" class="form-control select2bs4" id="purchase_id" required>
+                        <select name="purchase_id" class="form-control select2bs4" style="width:100%;" id="purchase_id" required>
                             <option value="" default>Select</option>
                             @foreach ($purchase_order as $data)
                                 <option value="{{ $data->id }}">{{ $data->purchase_id }}/{{ $data->van_number }}

@@ -21,8 +21,14 @@ class Warehouse_pcm_controller extends Controller
         if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
-            $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id', 'desc')->get();
-            $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')->orderBy('id', 'desc')->get();
+            $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')
+                ->where('principal_id', $user->principal_id)
+                ->orderBy('id', 'desc')
+                ->get();
+            $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')
+                ->where('principal_id', $user->principal_id)
+                ->orderBy('id', 'desc')
+                ->get();
             return view('warehouse_pcm', [
                 'user' => $user,
                 'bo' => $bo,

@@ -24,13 +24,15 @@ class Invoice_out_controller extends Controller
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $invoice_draft = Invoice_raw::select('id', 'sales_representative')
+                ->where('principal_id', $user->principal_id)
                 ->where('status', null)
                 ->groupBy('sales_representative')
                 ->orderBy('id', 'desc')
                 ->get();
             $van_selling = Vs_withdrawal::select('id', 'delivery_receipt')
+                ->where('principal_id', $user->principal_id)
                 ->where('status', null)
-                ->orderBy('id','desc')
+                ->orderBy('id', 'desc')
                 ->get();
             return view('invoice_out', [
                 'user' => $user,
