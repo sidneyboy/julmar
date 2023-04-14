@@ -8,12 +8,13 @@ use App\Transfer_to_bran_details;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Transfer_to_branch_report_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')->where('principal','!=','None')->get();
             return view('transfer_to_branch_report', [
@@ -24,7 +25,7 @@ class Transfer_to_branch_report_controller extends Controller
                 'active_tab' => 'transfer_to_branch_report',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Pl/');
         }
     }
 

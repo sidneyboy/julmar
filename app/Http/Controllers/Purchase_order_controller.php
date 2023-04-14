@@ -9,12 +9,13 @@ use App\Purchase_order;
 use App\Purchase_order_details;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Purchase_order_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'contact_number', 'principal')->where('principal', '!=', 'none')->get();
 
@@ -27,7 +28,7 @@ class Purchase_order_controller extends Controller
                 'active_tab' => 'purchase_order',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

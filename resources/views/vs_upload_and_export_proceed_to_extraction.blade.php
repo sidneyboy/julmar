@@ -1,6 +1,9 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-hover table-sm" id="extract_data">
+    <table class="table table-bordered table-hover table-sm table-striped table-hover" id="extract_data">
         <thead>
+            <tr>
+                <th colspan="9">van_selling_customer_exported_from_main_system</th>
+            </tr>
             <tr>
                 <th>Location ID</th>
                 <th>Store Name</th>
@@ -11,7 +14,6 @@
                 <th>Contact Number</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
-                <th>van_selling_customer_exported_from_main_system</th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +35,8 @@
 </div>
 <br />
 <button class="btn btn-sm float-right btn-success"
-    onclick="exportTableToCSV('VAN SELLING CUSTOMER MAIN SYSTEM - {{ $location->location }}.csv')">Export Van Selling Customer Data</button>
+    onclick="exportTableToCSV('VAN SELLING CUSTOMER MAIN SYSTEM - {{ $location->location }}.csv')">Export Van Selling
+    Customer Data</button>
 
 
 <script>

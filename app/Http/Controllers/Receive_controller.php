@@ -19,12 +19,13 @@ use App\Sku_price_details;
 use DB;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Receive_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $received_purchase_order_id = Received_purchase_order::select('id')->orderBy('id', 'desc', 'van_number')->first();
             if ($received_purchase_order_id == NULL) {
@@ -43,7 +44,7 @@ class Receive_controller extends Controller
                 'active_tab' => 'receive_order',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

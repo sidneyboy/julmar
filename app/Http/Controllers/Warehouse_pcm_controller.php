@@ -64,17 +64,19 @@ class Warehouse_pcm_controller extends Controller
 
     public function warehouse_pcm_final_summary(Request $request)
     {
-        if ($request->input('barcode') != null) {
-            $barcode = $request->input('barcode');
-            $quantity = $request->input('quantity');
-        } else if ($request->input('sku_barcode') != null) {
-            $barcode = $request->input('sku_barcode');
-            $quantity = $request->input('sku_quantity');
-        }
+
 
 
         if ($request->input('type') == 'rgs') {
-            $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
+            if ($request->input('barcode') != null) {
+                $barcode = $request->input('barcode');
+                $quantity = $request->input('quantity');
+                $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
+            } else if ($request->input('sku_barcode') != null) {
+                $barcode = $request->input('sku_barcode');
+                $quantity = $request->input('sku_quantity');
+                $checker = Sku_add::select('id')->where('id', $barcode)->first();
+            }
 
             if ($checker) {
                 $pcm_details = Return_good_stock_details::where('return_good_stock_id', $request->input('id'))
@@ -129,7 +131,15 @@ class Warehouse_pcm_controller extends Controller
                 return 'invalid';
             }
         } else if ($request->input('type') == 'bo') {
-            $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
+            if ($request->input('barcode') != null) {
+                $barcode = $request->input('barcode');
+                $quantity = $request->input('quantity');
+                $checker = Sku_add::select('id')->where('barcode', $barcode)->first();
+            } else if ($request->input('sku_barcode') != null) {
+                $barcode = $request->input('sku_barcode');
+                $quantity = $request->input('sku_quantity');
+                $checker = Sku_add::select('id')->where('id', $barcode)->first();
+            }
 
             if ($checker) {
                 $pcm_details = Bad_order_details::where('bad_order_id', $request->input('id'))

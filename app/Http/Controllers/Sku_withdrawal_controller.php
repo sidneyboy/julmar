@@ -11,12 +11,13 @@ use App\Sku_price_details;
 use DB;
 use Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Sku_withdrawal_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
 
@@ -31,7 +32,7 @@ class Sku_withdrawal_controller extends Controller
                 'active_tab' => 'sku_withdrawal',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

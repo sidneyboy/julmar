@@ -8,12 +8,13 @@ use App\Van_selling_upload;
 use App\Vs_sales;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_import_data_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             return view('van_selling_import_data', [
                 'user' => $user,
@@ -22,7 +23,7 @@ class Van_selling_import_data_controller extends Controller
                 'active_tab' => 'van_selling_import_data',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

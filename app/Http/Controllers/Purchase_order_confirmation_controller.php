@@ -10,12 +10,13 @@ use App\Principal_discount_details;
 use App\Purchase_order_other_discount_details;
 use App\Purchase_order_discount_details;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Purchase_order_confirmation_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $purchase_order = Purchase_order::select('id', 'purchase_id','sku_type')->where('status', null)->orderBy('id', 'desc')->get();
             return view('purchase_order_confirmation', [
@@ -26,7 +27,7 @@ class Purchase_order_confirmation_controller extends Controller
                 'active_tab' => 'purchase_order_confirmation',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

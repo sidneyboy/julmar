@@ -9,12 +9,13 @@ use App\Customer;
 use App\Customer_ledger;
 use App\Sku_principal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Customer_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $location = Location::get();
             $employee_name = User::select('id', 'name')->where('id', auth()->user()->id)->first();
@@ -33,7 +34,7 @@ class Customer_controller extends Controller
                 'active_tab' => 'customer',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

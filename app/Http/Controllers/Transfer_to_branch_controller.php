@@ -11,12 +11,13 @@ use App\Sku_ledger;
 use DB;
 use App\Sku_principal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Transfer_to_branch_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $received = Received_purchase_order::select('id', 'purchase_order_id', 'principal_id', 'dr_si', 'branch')->orderBy('id', 'desc')->get();
             return view('transfer_to_branch', [
@@ -27,7 +28,7 @@ class Transfer_to_branch_controller extends Controller
                 'active_tab' => 'transfer_to_branch',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

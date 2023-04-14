@@ -10,12 +10,13 @@ use App\Customer_principal_price;
 use App\Location;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Customer_profile_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->get();
             $customer = Customer::get();
@@ -28,7 +29,7 @@ class Customer_profile_controller extends Controller
                 'active_tab' => 'customer_profile',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

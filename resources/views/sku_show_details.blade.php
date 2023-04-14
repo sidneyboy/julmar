@@ -1,7 +1,7 @@
 <form id="sku_add_process">
     @csrf
     <div class="table table-responsive">
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm table-striped table-hover">
             <thead>
                 <tr>
                     <th>Sku Code</th>
@@ -31,15 +31,14 @@
                         <td>{{ $description }}
                             <input type="hidden" name="description_case" value="{{ $description }}">
                         </td>
-                        <td>Case
-                            <input type="hidden" name="sku_type" value="{{ $sku_type }}">
+                        <td>CASE
+                           
                         </td>
                         <td>{{ $main_category->category }}
                             <input type="hidden" name="main_category_id" value="{{ $main_category_id }}">
                         </td>
                         <td>
-                            <select name="sub_category_id_case" class="form-control form-control-sm select2bs4"
-                                required>
+                            <select name="sub_category_id_case" class="form-control form-control-sm select2bs4">
                                 <option value="" default>Select</option>
                                 @foreach ($main_category->sub_category as $data)
                                     <option value="{{ $data->id }}">{{ $data->sub_category }}</option>
@@ -63,15 +62,14 @@
                         <td>{{ $description }}
                             <input type="hidden" name="description_butal" value="{{ $description }}">
                         </td>
-                        <td>Case
-                            <input type="hidden" name="sku_type" value="{{ $sku_type }}">
+                        <td>
+                            BUTAL
                         </td>
                         <td>{{ $main_category->category }}
                             <input type="hidden" name="main_category_id" value="{{ $main_category_id }}">
                         </td>
                         <td>
-                            <select name="sub_category_id_butal" class="form-control form-control-sm select2bs4"
-                                required>
+                            <select name="sub_category_id_butal" class="form-control form-control-sm select2bs4">
                                 <option value="" default>Select</option>
                                 @foreach ($main_category->sub_category as $data)
                                     <option value="{{ $data->id }}">{{ $data->sub_category }}</option>
@@ -82,6 +80,7 @@
                         <td><input type="number" min="1" name="butal_equivalent"
                                 class="form-control form-control-sm" required></td>
                         <td><input type="text" name="weight_butal" class="form-control form-control-sm" required>
+                            <input type="hidden" name="sku_type" value="Case">
                         </td>
                     </tr>
                 @else
@@ -98,8 +97,8 @@
                         <td>{{ $description }}
                             <input type="hidden" name="description_butal" value="{{ $description }}">
                         </td>
-                        <td>Case
-                            <input type="hidden" name="sku_type" value="{{ $sku_type }}">
+                        <td>BUTAL
+                            
                         </td>
                         <td>{{ $main_category->category }}
                             <input type="hidden" name="main_category_id" value="{{ $main_category_id }}">
@@ -117,6 +116,7 @@
                         <td><input type="number" min="1" name="butal_equivalent"
                                 class="form-control form-control-sm" required></td>
                         <td><input type="text" name="weight_butal" class="form-control form-control-sm" required>
+                            <input type="hidden" name="sku_type" value="Butal">
                         </td>
                     </tr>
                 @endif
@@ -140,7 +140,7 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
+                //console.log(data);
                 if (data == 'saved') {
                     Swal.fire({
                         position: 'top-end',
@@ -150,7 +150,7 @@
                         timer: 1500
                     });
 
-					location.reload();
+                    location.reload();
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -159,6 +159,14 @@
                     })
                 }
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

@@ -7,7 +7,9 @@ use App\Sku_ledger;
 use App\Load_sheet;
 use App\Load_sheet_details;
 use App\Invoice_raw;
-use App\Sku_price_details;
+use App\Vs_withdrawal;
+use App\Vs_withdrawal_details;
+use App\Sku_add;
 use DB;
 use Cart;
 use Illuminate\Support\Facades\Auth;
@@ -22,13 +24,18 @@ class Invoice_out_controller extends Controller
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $invoice_draft = Invoice_raw::select('id', 'sales_representative')
-                                    ->where('status', null)
-                                    ->groupBy('sales_representative')
-                                    ->orderBy('id', 'desc')
-                                    ->get();
+                ->where('status', null)
+                ->groupBy('sales_representative')
+                ->orderBy('id', 'desc')
+                ->get();
+            $van_selling = Vs_withdrawal::select('id', 'delivery_receipt')
+                ->where('status', null)
+                ->orderBy('id','desc')
+                ->get();
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,
+                'van_selling' => $van_selling,
                 'main_tab' => 'manage_warehouse_main_tab',
                 'sub_tab' => 'manage_warehouse_sub_tab',
                 'active_tab' => 'invoice_out',
@@ -40,14 +47,28 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_proceed(Request $request)
     {
-        $invoice_draft = Invoice_raw::select('id', 'customer', 'sales_representative')
-            ->where('sales_representative', $request->input('sales_representative'))
-            ->where('status',null)
-            ->groupBy('customer')
-            ->get();
-        return view('invoice_out_proceed', [
-            'invoice_draft' => $invoice_draft,
-        ])->with('sales_representative', $request->input('sales_representative'));
+        $explode = explode('-', $request->input('sales_representative'));
+        $transaction = $explode[0];
+        $rep_dr = $explode[1];
+
+        if ($transaction == 'booking') {
+            $invoice_draft = Invoice_raw::select('id', 'customer', 'sales_representative')
+                ->where('sales_representative', $rep_dr)
+                ->where('status', null)
+                ->groupBy('customer')
+                ->get();
+            return view('invoice_out_proceed', [
+                'invoice_draft' => $invoice_draft,
+            ])->with('sales_representative', $rep_dr)
+                ->with('transaction', $transaction);
+        } elseif ($transaction == 'van') {
+            $van_selling_draft = Vs_withdrawal_details::where('vs_withdrawal_id', $rep_dr)
+                ->get();
+            return view('invoice_out_van_proceed', [
+                'van_selling_draft' => $van_selling_draft,
+            ])->with('rep_dr', $rep_dr)
+                ->with('transaction', $transaction);
+        }
     }
 
     public function invoice_out_final_summary(Request $request)
@@ -55,7 +76,7 @@ class Invoice_out_controller extends Controller
         //return $request->input();
         $invoice_raw = Invoice_raw::select('sku_id', 'sku_type', 'sku_code', 'description', 'principal', 'customer', 'barcode', DB::raw('sum(quantity) as total'))
             ->whereIn('customer', $request->input('checkbox_entry'))
-            ->where('status',null)
+            ->where('status', null)
             ->groupBy('sku_id')
             ->get();
 
@@ -70,17 +91,19 @@ class Invoice_out_controller extends Controller
         //return $request->input();
         if ($request->input('barcode') != null) {
             $barcode = $request->input('barcode');
+            $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description', DB::raw('sum(quantity) as total_quantity'))
+                ->where('sales_representative', $request->input('sales_representative'))
+                ->where('barcode', $barcode)
+                ->groupBy('sku_id')
+                ->first();
         } else if ($request->input('sku_barcode') != null) {
             $barcode = $request->input('sku_barcode');
+            $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description', DB::raw('sum(quantity) as total_quantity'))
+                ->where('sales_representative', $request->input('sales_representative'))
+                ->where('sku_id', $barcode)
+                ->groupBy('sku_id')
+                ->first();
         }
-
-
-        $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description', DB::raw('sum(quantity) as total_quantity'))
-            ->where('sales_representative', $request->input('sales_representative'))
-            ->where('barcode', $barcode)
-            ->groupBy('sku_id')
-            ->first();
-
 
         if ($invoice_raw) {
             Invoice_raw::where('sales_representative', $request->input('sales_representative'))
@@ -184,6 +207,100 @@ class Invoice_out_controller extends Controller
                 'user_id' => auth()->user()->id,
                 'transaction_type' => 'out from warehouse',
                 'all_id' => $load_sheet_id,
+                'principal_id' => $ledger_results[0]->principal_id,
+                'sku_type' => $ledger_results[0]->sku_type,
+                'amount' => $amount,
+                'running_amount' => $running_amount,
+            ]);
+
+            $new_sku_ledger->save();
+        }
+    }
+
+    public function invoice_out_van_final_summary(Request $request)
+    {
+        if ($request->input('barcode') != null) {
+            $barcode = $request->input('barcode');
+            $sku_add = Sku_add::select('id', 'barcode')
+                ->where('barcode', $barcode)
+                ->first();
+            $vs_details = Vs_withdrawal_details::where('vs_withdrawal_id', $request->input('rep_dr'))
+                ->where('sku_id', $sku_add->id)
+                ->first();
+        } else if ($request->input('sku_barcode') != null) {
+            $barcode = $request->input('sku_barcode');
+            $vs_details = Vs_withdrawal_details::where('vs_withdrawal_id', $request->input('rep_dr'))
+                ->where('sku_id', $barcode)
+                ->first();
+        }
+
+        if ($vs_details) {
+            Vs_withdrawal_details::where('vs_withdrawal_id', $request->input('rep_dr'))
+                ->where('sku_id', $vs_details->sku_id)
+                ->update(['remarks' => 'scanned']);
+
+            $cart_checker = \Cart::session(auth()->user()->id)->get($vs_details->sku_id);
+            if ($cart_checker) {
+                \Cart::session(auth()->user()->id)->remove($vs_details->sku_id);
+
+                \Cart::session(auth()->user()->id)->add(array(
+                    'id' => $vs_details->sku_id,
+                    'name' => $vs_details->sku->description,
+                    'price' => 0,
+                    'quantity' => $vs_details->quantity,
+                    'attributes' => array(),
+                    'associatedModel' => $vs_details,
+                ));
+            } else {
+                \Cart::session(auth()->user()->id)->add(array(
+                    'id' => $vs_details->sku_id,
+                    'name' => $vs_details->sku->description,
+                    'price' => 0,
+                    'quantity' => $vs_details->quantity,
+                    'attributes' => array(),
+                    'associatedModel' => $vs_details,
+                ));
+            }
+
+            $cart = Cart::session(auth()->user()->id)->getContent();
+            $vs_withdrawal_details = Vs_withdrawal_details::where('vs_withdrawal_id', $request->input('rep_dr'))
+                ->get();
+
+            return view('invoice_out_van_final_summary', [
+                'cart' => $cart,
+                'vs_withdrawal_details' => $vs_withdrawal_details,
+                'vs_details' => $vs_details,
+                'rep_dr' => $request->input('rep_dr'),
+            ]);
+        } else {
+            return 'invalid';
+        }
+    }
+
+    public function invoice_out_van_saved(Request $request)
+    {
+        //return $request->input();
+
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        $load_sheet_id = uniqid();
+
+        $cart = Cart::session(auth()->user()->id)->getContent();
+
+        foreach ($cart as $key => $cart_data) {
+            $sku_id = $cart_data->id;
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+            $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
+            $amount = $ledger_results[0]->running_amount / $ledger_results[0]->running_balance;
+            $running_amount = $ledger_results[0]->running_amount - $amount;
+            $new_sku_ledger = new Sku_ledger([
+                'sku_id' => $cart_data->id,
+                'quantity' => $cart_data->quantity,
+                'running_balance' => $running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => 'out from warehouse van selling',
+                'all_id' => $request->input('rep_dr'),
                 'principal_id' => $ledger_results[0]->principal_id,
                 'sku_type' => $ledger_results[0]->sku_type,
                 'amount' => $amount,

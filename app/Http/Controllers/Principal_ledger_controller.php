@@ -7,12 +7,13 @@ use App\Principal_ledger;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Principal_ledger_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('principal_ledger', [
@@ -23,7 +24,7 @@ class Principal_ledger_controller extends Controller
                 'active_tab' => 'principal_ledger',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

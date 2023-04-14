@@ -7,12 +7,13 @@ use App\Location;
 use App\Agent;
 use App\Agent_principal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Agent_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $agent = Agent::get();
             $location = Location::get();
@@ -29,7 +30,7 @@ class Agent_controller extends Controller
                 'active_tab' => 'agent',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

@@ -92,6 +92,7 @@ Route::get('/purchase_order_report_show_details/{id}', 'Purchase_order_report_co
 Route::post('purchase_order_report', 'Purchase_order_report_controller@upload_confirmation_image')->name('confirmation.upload.post');
 
 Route::get('/receiving_draft', 'Receiving_draft_controller@index');
+Route::post('/receiving_draft_proceed_generate', 'Receiving_draft_controller@receiving_draft_proceed_generate')->name('receiving_draft_proceed_generate');
 Route::post('/receiving_draft_proceed', 'Receiving_draft_controller@receiving_draft_proceed')->name('receiving_draft_proceed');
 Route::post('/receiving_draft_sku_selection', 'Receiving_draft_controller@receiving_draft_sku_selection')->name('receiving_draft_sku_selection');
 Route::post('/receiving_draft_final_saved', 'Receiving_draft_controller@receiving_draft_final_saved')->name('receiving_draft_final_saved');
@@ -683,6 +684,10 @@ Route::post('/invoice_out_proceed', 'Invoice_out_controller@invoice_out_proceed'
 Route::post('/invoice_out_final_summary', 'Invoice_out_controller@invoice_out_final_summary')->name('invoice_out_final_summary');
 Route::post('/invoice_out_very_final_summary', 'Invoice_out_controller@invoice_out_very_final_summary')->name('invoice_out_very_final_summary');
 Route::post('/invoice_out_saved', 'Invoice_out_controller@invoice_out_saved')->name('invoice_out_saved');
+Route::post('/invoice_out_van_final_summary', 'Invoice_out_controller@invoice_out_van_final_summary')->name('invoice_out_van_final_summary');
+Route::post('/invoice_out_van_saved', 'Invoice_out_controller@invoice_out_van_saved')->name('invoice_out_van_saved');
+
+
 
 
 Route::get('/disbursement', 'Disbursement_controller@index')->name('disbursement');

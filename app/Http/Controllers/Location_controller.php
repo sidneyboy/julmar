@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Location_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $location = Location::get();
             return view('location', [
@@ -20,7 +21,7 @@ class Location_controller extends Controller
                 'active_tab' => 'location',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

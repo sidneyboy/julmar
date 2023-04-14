@@ -7,12 +7,13 @@ use App\Return_good_stock;
 use App\Sku_principal;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Warehouse_rgs_report_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')
                 ->where('principal', '!=', 'none')
@@ -25,7 +26,7 @@ class Warehouse_rgs_report_controller extends Controller
                 'active_tab' => 'warehouse_rgs_report',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

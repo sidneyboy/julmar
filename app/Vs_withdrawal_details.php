@@ -13,6 +13,7 @@ class Vs_withdrawal_details extends Model
         'unit_price',
         'sku_type',
         'sku_code',
+        'remarks',
     ];
 
     public function sku()

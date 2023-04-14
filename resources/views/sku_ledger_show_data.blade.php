@@ -102,49 +102,53 @@
                                                     <td style="text-align: right">
                                                         @if ($details->transaction_type == 'received')
                                                             <span style="color:green">{{ $details->quantity }}</span>
-                                                             @php
-                                                                 $lower_quantity = $details->quantity;
+                                                            @php
+                                                                $lower_quantity = $details->quantity;
                                                             @endphp
-                                                    
                                                         @elseif($details->transaction_type == 'returned')
                                                             (<span style="color:red">{{ $details->quantity }}</span>)
-                                                             @php
-                                                                 $lower_quantity = $details->quantity*-1;
+                                                            @php
+                                                                $lower_quantity = $details->quantity * -1;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'out from warehouse')
                                                             (<span style="color:red">{{ $details->quantity }}</span>)
-                                                             @php
-                                                                 $lower_quantity = $details->quantity*-1;
+                                                            @php
+                                                                $lower_quantity = $details->quantity * -1;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'bodega in')
                                                             <span style="color:green">{{ $details->quantity }}</span>
-                                                             @php
-                                                                 $lower_quantity = $details->quantity;
+                                                            @php
+                                                                $lower_quantity = $details->quantity;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'bodega out')
                                                             (<span style="color:red">{{ $details->quantity }}</span>)
-                                                             @php
-                                                                 $lower_quantity = $details->quantity*-1;
+                                                            @php
+                                                                $lower_quantity = $details->quantity * -1;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'transfer to branch')
                                                             (<span style="color:red">{{ $details->quantity }}</span>)
-                                                             @php
-                                                                 $lower_quantity = $details->quantity*-1;
+                                                            @php
+                                                                $lower_quantity = $details->quantity * -1;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'releasing')
                                                             (<span style="color:red">{{ $details->quantity }}</span>)
-                                                             @php
-                                                                 $lower_quantity = $details->quantity*-1;
+                                                            @php
+                                                                $lower_quantity = $details->quantity * -1;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'van cm')
                                                             <span style="color:green">{{ $details->quantity }}</span>
-                                                             @php
-                                                                 $lower_quantity = $details->quantity;
+                                                            @php
+                                                                $lower_quantity = $details->quantity;
                                                             @endphp
                                                         @elseif($details->transaction_type == 'booking cm')
                                                             <span style="color:green">{{ $details->quantity }}</span>
-                                                             @php
-                                                                 $lower_quantity = $details->quantity;
+                                                            @php
+                                                                $lower_quantity = $details->quantity;
+                                                            @endphp
+                                                        @elseif($details->transaction_type == 'migration')
+                                                            <span style="color:green">{{ $details->quantity }}</span>
+                                                            @php
+                                                                $lower_quantity = $details->quantity;
                                                             @endphp
                                                         @else
                                                             0
@@ -165,24 +169,26 @@
                                                         @endif
                                                     </td>
                                                     <td style="text-align: right">{{ $details->running_balance }}</td>
-                                                    <td style="text-align: right">{{ number_format($details->amount,2,".",",") }}</td>
+                                                    <td style="text-align: right">
+                                                        {{ number_format($details->amount, 2, '.', ',') }}</td>
                                                     <td style="text-align: right">
                                                         @php
                                                             if ($details->adjustments == null) {
                                                                 $details_total = $lower_quantity * $details->amount;
                                                             } else {
-                                                                 $details_total = $details->adjustments * $details->amount;
+                                                                $details_total = $details->adjustments * $details->amount;
                                                             }
                                                             
-                                                           echo number_format($details_total,2,".",",");
+                                                            echo number_format($details_total, 2, '.', ',');
                                                         @endphp
                                                     </td>
-                                                    <td style="text-align: right">{{ number_format($details->running_amount,2,".",",") }}</td>
+                                                    <td style="text-align: right">
+                                                        {{ number_format($details->running_amount, 2, '.', ',') }}</td>
                                                     <td style="text-align: right">
                                                         @if ($details->running_balance == 0)
                                                             0
                                                         @else
-                                                            {{ number_format($details->running_amount / $details->running_balance,2,".",",") }}
+                                                            {{ number_format($details->running_amount / $details->running_balance, 2, '.', ',') }}
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -194,7 +200,7 @@
                         </div>
                     </div>
                 </td>
-                <td style="text-align:right">{{ number_format($sku_ledger[$i]->running_amount,2,".",",") }}</td>
+                <td style="text-align:right">{{ number_format($sku_ledger[$i]->running_amount, 2, '.', ',') }}</td>
             </tr>
         @endfor
     </tbody>

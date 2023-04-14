@@ -1,4 +1,4 @@
-{{-- <table class="table table-bordered table-hover table-sm table-striped" id="example1">
+<table class="table table-bordered table-hover table-sm table-striped" id="example1">
     <thead>
         <tr>
             <th>ID</th>
@@ -11,6 +11,7 @@
             <th>Price 3</th>
             <th>Price 4</th>
             <th>Price 5</th>
+            <th>FUC</th>
         </tr>
     </thead>
     <tbody>
@@ -26,11 +27,12 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
         @endforeach
     </tbody>
-</table> --}}
-<table class="table table-bordered table-hover table-sm table-striped" id="example1">
+</table>
+{{-- <table class="table table-bordered table-hover table-sm table-striped" id="example1">
     <thead>
         <tr>
             <th>ID</th>
@@ -51,7 +53,7 @@
             </tr>
         @endforeach
     </tbody>
-</table>
+</table> --}}
 <script>
     $(document).ready(function() {
         var table = $('#example1').DataTable({

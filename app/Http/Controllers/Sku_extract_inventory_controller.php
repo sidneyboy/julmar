@@ -7,12 +7,12 @@ use App\Sku_add;
 use App\Sku_principal;
 use App\Sku_ledger;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class Sku_extract_inventory_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::where('principal', '!=', 'none')->get();
             return view('sku_extract_inventory', [
@@ -23,7 +23,7 @@ class Sku_extract_inventory_controller extends Controller
                 'active_tab' => 'sku_extract_inventory',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

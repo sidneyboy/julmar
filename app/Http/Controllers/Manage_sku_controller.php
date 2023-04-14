@@ -9,12 +9,12 @@ use App\Sku_sub_category;
 use App\Sku_add;
 use App\Sku_price_details;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class Manage_sku_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             $categories = Sku_category::select('id', 'category')->get();
@@ -29,7 +29,7 @@ class Manage_sku_controller extends Controller
                 'active_tab' => 'sku_add',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -63,6 +63,7 @@ class Manage_sku_controller extends Controller
     {
         //return $request->input();
         if ($request->input('sku_type') == 'Case') {
+           // return 'asdasd';
             $new_1 = new sku_add([
                 'sku_code' => $request->input('sku_code_case'),
                 'description' => $request->input('description_case'),
@@ -70,7 +71,7 @@ class Manage_sku_controller extends Controller
                 'principal_id' => $request->input('principal_id'),
                 'sub_category_id' => $request->input('sub_category_id_case'),
                 'unit_of_measurement' => $request->input('uom_case'),
-                'sku_type' => $request->input('sku_type'),
+                'sku_type' => 'CASE',
                 // 'equivalent_sku_entryNo' => ,
                 'equivalent_butal_pcs' => 1,
                 'barcode' => $request->input('barcode_case'),
@@ -98,11 +99,10 @@ class Manage_sku_controller extends Controller
                 'principal_id' => $request->input('principal_id'),
                 'sub_category_id' => $request->input('sub_category_id_butal'),
                 'unit_of_measurement' => $request->input('uom_butal'),
-                'sku_type' => 'Butal',
+                'sku_type' => 'BUTAL',
                 'equivalent_sku_entryNo' => $new_1->id,
                 'equivalent_butal_pcs' => $request->input('butal_equivalent'),
                 'barcode' => $request->input('barcode_butal'),
-                'weight' => $request->input('weight_butal'),
             ]);
 
             $new_2->save();
@@ -150,8 +150,5 @@ class Manage_sku_controller extends Controller
             $sku_price_details_2->save();
         }
 
-        return 'saved';
-
-       // return redirect('sku_add')->with('success', 'Successfully Added New SKU');
     }
 }

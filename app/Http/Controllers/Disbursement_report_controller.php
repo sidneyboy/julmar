@@ -6,12 +6,13 @@ use App\User;
 use App\Disbursement;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Disbursement_report_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             return view('disbursement_report', [
                 'user' => $user,
@@ -20,7 +21,7 @@ class Disbursement_report_controller extends Controller
                 'active_tab' => 'disbursement_report',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -32,7 +33,7 @@ class Disbursement_report_controller extends Controller
 
         $disbursement = Disbursement::whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
 
-        return view('disbursement_report_show_data',[
+        return view('disbursement_report_show_data', [
             'disbursement' => $disbursement,
         ]);
     }

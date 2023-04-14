@@ -14,16 +14,16 @@ use App\Customer_principal_price;
 use App\Sku_add;
 use App\Sku_price_details;
 use App\Van_selling_upload_ledger;
-
 use App\Vs_withdrawal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_inventory_export_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
 
             date_default_timezone_set('Asia/Manila');
@@ -43,7 +43,7 @@ class Van_selling_inventory_export_controller extends Controller
                 'active_tab' => 'van_selling_inventory_export',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

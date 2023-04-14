@@ -15,12 +15,13 @@ use App\Vs_inventory_ledger;
 use App\Sku_add;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_report_date_range_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $location = Location::get();
             $customer = Customer::select('id', 'store_name', 'kind_of_business')->where('kind_of_business', 'VAN SELLING')->get();
@@ -33,7 +34,7 @@ class Van_selling_report_date_range_controller extends Controller
                 'active_tab' => 'van_selling_report_date_range',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

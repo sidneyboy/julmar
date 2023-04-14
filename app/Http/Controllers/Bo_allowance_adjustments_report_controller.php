@@ -8,12 +8,13 @@ use App\Bo_allowance_adjustments;
 use App\Bo_allowance_adjustments_details;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Bo_allowance_adjustments_report_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('bo_allowance_adjustments_report', [
@@ -24,7 +25,7 @@ class Bo_allowance_adjustments_report_controller extends Controller
                 'active_tab' => 'bo_allowance_adjustments_report',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. /');
         }
     }
 

@@ -15,13 +15,17 @@
                 <form id="invoice_out_proceed">
                     <div class="row">
                         <div class="col-md-12">
-                            <label for="">Delivery Receipt:</label>
+                            <label for="">Delivery Receipt/Sales Rep:</label>
                             <select class="form-control select2bs4" style="width:100%;" required
                                 name="sales_representative">
                                 <option value="" default>Select</option>
                                 @foreach ($invoice_draft as $data)
-                                    <option value="{{ $data->sales_representative }}">{{ $data->sales_representative }}
+                                    <option value="{{ 'booking-' . $data->sales_representative }}">
+                                        {{ $data->sales_representative }}
                                     </option>
+                                @endforeach
+                                @foreach ($van_selling as $vs)
+                                    <option value="{{ 'van-' . $vs->id }}">{{ $vs->delivery_receipt }}</option>
                                 @endforeach
                             </select>
                         </div>

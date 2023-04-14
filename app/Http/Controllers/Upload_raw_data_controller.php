@@ -6,12 +6,13 @@ use App\User;
 use App\Invoice_raw;
 use App\Sku_add;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Upload_raw_data_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             return view('upload_raw_data', [
                 'user' => $user,
@@ -20,7 +21,7 @@ class Upload_raw_data_controller extends Controller
                 'active_tab' => 'upload_raw_data',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

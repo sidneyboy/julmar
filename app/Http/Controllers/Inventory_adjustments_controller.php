@@ -7,12 +7,13 @@ use App\Sku_principal;
 use App\Sku_add;
 use App\Sku_ledger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Inventory_adjustments_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('inventory_adjustments', [
@@ -23,7 +24,7 @@ class Inventory_adjustments_controller extends Controller
                 'active_tab' => 'inventory_adjustments',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

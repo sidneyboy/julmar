@@ -5,12 +5,13 @@ use App\Customer;
 use App\User;
 use App\Van_selling_ar_ledger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_ar_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $customer = Customer::select('id', 'store_name', 'location_id')->where('kind_of_business', 'VAN SELLING')->get();
             return view('van_selling_ar', [
@@ -21,7 +22,7 @@ class Van_selling_ar_controller extends Controller
                 'active_tab' => 'van_selling_ar',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

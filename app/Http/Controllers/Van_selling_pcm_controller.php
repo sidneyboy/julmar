@@ -12,14 +12,14 @@ use App\Vs_inventory_ledger;
 use App\Customer_principal_price;
 use DB;
 use Cart;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_pcm_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             Cart::session(auth()->user()->id)->clear();
             $principal = Sku_principal::where('principal', '!=', 'NONE')->get();
@@ -33,7 +33,7 @@ class Van_selling_pcm_controller extends Controller
                 'active_tab' => 'van_selling_pcm',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

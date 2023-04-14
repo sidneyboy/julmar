@@ -32,7 +32,7 @@
             <select name="sku_barcode" id="sku_barcode" class="form-control select2bs4">
                 <option value="" default>Select</option>
                 @foreach ($invoice_raw as $data)
-                    <option value="{{ $data->sku->barcode }}">[<span
+                    <option value="{{ $data->sku_id }}">[<span
                             style="font-weight: bold;color:green">{{ $data->sku_code }}</span>] -
                         {{ $data->description }}</option>
                 @endforeach

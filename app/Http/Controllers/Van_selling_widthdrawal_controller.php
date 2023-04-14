@@ -18,12 +18,13 @@ use App\Customer_principal_code;
 use App\Vs_inventory_ledger;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_widthdrawal_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             $location = Location::select('id', 'location')->get();
@@ -36,7 +37,7 @@ class Van_selling_widthdrawal_controller extends Controller
                 'active_tab' => 'van_selling_withdrawal',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

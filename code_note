@@ -122,7 +122,7 @@ foreach ($sku_ledger as $key => $data) {
 
         $("#van_selling_transaction_proceed").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            //$('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "van_selling_transaction_proceed",
@@ -134,7 +134,7 @@ foreach ($sku_ledger as $key => $data) {
                 success: function(data) {
                     console.log(data);
 
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $("#principal").val('').trigger('change');
                     $('#van_selling_transaction_show_sku_page').hide();
                     $('#van_selling_transaction_proceed_page').html(data);
@@ -151,6 +151,7 @@ foreach ($sku_ledger as $key => $data) {
                   location.reload();
                 },
                 error: function(error) {
+                    $('#loader').hide();
                   Swal.fire(
                       'Cannot Proceed',
                       'Please Contact IT Support',

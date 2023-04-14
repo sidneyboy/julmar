@@ -8,12 +8,13 @@ use App\Customer;
 use App\Customer_principal_code;
 use App\Customer_principal_price;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Customer_principal_code_price_level_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $customer = Customer::get();
             return view('customer_principal_code_price_level', [
@@ -24,7 +25,7 @@ class Customer_principal_code_price_level_controller extends Controller
                 'active_tab' => 'customer_principal_code_price_level',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

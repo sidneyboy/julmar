@@ -26,7 +26,7 @@
     </div>
     <br />
     <input type="hidden" name="sales_representative" value="{{ $sales_representative }}">
-    <button class="btn btn-sm float-right btn-info">Proceed</button>
+    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
 </form>
 
 <script>

@@ -8,12 +8,13 @@ use App\Vs_inventory_ledger;
 use App\Sku_ledger;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_pcm_post_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $pcm = Vs_pcm::where('status', null)->get();
             return view('van_selling_pcm_post', [
@@ -24,7 +25,7 @@ class Van_selling_pcm_post_controller extends Controller
                 'active_tab' => 'van_selling_pcm_post',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

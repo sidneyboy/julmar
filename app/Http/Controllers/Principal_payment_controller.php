@@ -6,12 +6,12 @@ use App\Principal_ledger;
 use App\Principal_payment;
 use App\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class Principal_payment_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal_data = Sku_principal::select('id','principal')->where('principal','!=','none')->get();
             return view('principal_payment', [
@@ -22,7 +22,7 @@ class Principal_payment_controller extends Controller
                 'active_tab' => 'principal_payment',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

@@ -13,12 +13,13 @@ use App\Principal_discount_details;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Receive_order_report_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
 
             $principals = Sku_principal::select('id', 'contact_number', 'principal')->where('principal','!=','none')->get();
@@ -30,7 +31,7 @@ class Receive_order_report_controller extends Controller
                 'active_tab' => 'receive_order_report',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

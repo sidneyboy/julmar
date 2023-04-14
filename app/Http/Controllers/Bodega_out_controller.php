@@ -12,12 +12,13 @@ use App\Bodega_out_details;
 use App\Sku_ledger;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Bodega_out_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')
                 ->where('principal', '!=', 'none')
@@ -31,7 +32,7 @@ class Bodega_out_controller extends Controller
                 'active_tab' => 'bodega_out',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

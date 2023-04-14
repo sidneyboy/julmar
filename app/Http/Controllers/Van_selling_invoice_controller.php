@@ -10,12 +10,13 @@ use App\Location;
 use App\Customer;
 use App\Customer_principal_code;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Van_selling_invoice_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $van_selling = Vs_withdrawal::select('id','delivery_receipt','customer_id')
                             ->where('status',null)
@@ -29,7 +30,7 @@ class Van_selling_invoice_controller extends Controller
                 'active_tab' => 'van_selling_invoice',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

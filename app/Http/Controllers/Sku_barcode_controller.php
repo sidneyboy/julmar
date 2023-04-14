@@ -5,12 +5,12 @@ use App\User;
 use App\Sku_add;
 use App\Sku_principal;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class Sku_barcode_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principals = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             return view('sku_barcode', [
@@ -21,7 +21,7 @@ class Sku_barcode_controller extends Controller
                 'active_tab' => 'sku_barcode',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
