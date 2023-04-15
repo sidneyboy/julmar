@@ -48,6 +48,7 @@ class Receiving_draft_controller extends Controller
         $purchase_order_details = Purchase_order_details::select('sku_id')
             ->where('purchase_order_id', $request->input('purchase_id'))
             ->where('remarks', 'staggered')
+            ->orWhere('remarks',null)
             ->get();
 
         return view('receiving_draft_sku_selection', [
