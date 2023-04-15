@@ -73,7 +73,7 @@
                                 class="form-control form-control-sm" required
                                 name="quantity_confirmed[{{ $data->sku_id }}]" value="{{ $data->quantity }}"></td>
                         <td><input style="text-align: right" type="text" class="form-control form-control-sm"
-                                required value="0" name="unit_cost[{{ $data->sku_id }}]"
+                                required value="{{ $data->sku->sku_price_details_one->unit_cost }}" name="unit_cost[{{ $data->sku_id }}]"
                                 onkeypress="return isNumberKey(event)">
                             <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
                             <input type="hidden" name="sku_code[{{ $data->sku_id }}]"
