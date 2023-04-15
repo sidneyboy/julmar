@@ -23,7 +23,6 @@ class Receiving_draft_controller extends Controller
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
             if ($user->position == 'admin') {
                 $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
-                    ->where('principal_id', $user->principal_id)
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
                     ->orWhere('status', 'staggered')
@@ -31,6 +30,7 @@ class Receiving_draft_controller extends Controller
                     ->get();
             } else {
                 $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
+                    ->where('principal_id', $user->principal_id)
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
                     ->orWhere('status', 'staggered')
@@ -38,7 +38,7 @@ class Receiving_draft_controller extends Controller
                     ->get();
             }
 
-            return $purchase
+            return $purchase_order;
 
 
             return view('receiving_draft', [
