@@ -20,14 +20,24 @@ class Receiving_draft_controller extends Controller
             $date = date('Ymd');
             $time = date('his');
             $session_id = $date . "" . $time;
-            $user = User::select('name', 'position','principal_id')->find(Auth()->user()->id);
-            $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
-                    ->where('principal_id',$user->principal_id)
+            $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
+            if ($user->position == 'admin') {
+                $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
+                    ->where('principal_id', $user->principal_id)
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
                     ->orWhere('status', 'staggered')
                     ->orderBy('id', 'desc')
                     ->get();
+            } else {
+                $purchase_order = Purchase_order::select('id', 'purchase_id', 'van_number')
+                    ->where('status', 'confirmed')
+                    ->orWhere('status', 'paid')
+                    ->orWhere('status', 'staggered')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
+
 
             return view('receiving_draft', [
                 'user' => $user,
@@ -48,7 +58,7 @@ class Receiving_draft_controller extends Controller
         $purchase_order_details = Purchase_order_details::select('sku_id')
             ->where('purchase_order_id', $request->input('purchase_id'))
             ->where('remarks', 'staggered')
-            ->orWhere('remarks',null)
+            ->orWhere('remarks', null)
             ->get();
 
         return view('receiving_draft_sku_selection', [

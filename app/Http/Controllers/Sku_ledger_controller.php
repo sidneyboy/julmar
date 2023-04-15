@@ -48,6 +48,7 @@ class Sku_ledger_controller extends Controller
             $description[] = Sku_add::select('sku_code','description','sku_type','id')->find($sku_ledger[$i]->sku_id); 
             $name[] = User::select('name')->find($sku_ledger[$i]->user_id);
         }
+        
 
         return view('sku_ledger_show_data', [
             'sku_ledger' => $sku_ledger,

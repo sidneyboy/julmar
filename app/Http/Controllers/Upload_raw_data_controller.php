@@ -40,34 +40,52 @@ class Upload_raw_data_controller extends Controller
 
         for ($i = 1; $i < $counter; $i++) {
             if ($csv[$i][3] != 'Cost of sales') {
-                $barcode = Sku_add::select('barcode', 'id')->where('sku_code', $csv[$i][9])->where('sku_type', $csv[$i][11])->first();
-
-
                 if (str_contains($csv[$i][3], 'DISCOUNT')) {
                 } else {
-                    if ($csv[$i][8] != '') {
-                        $csv_unit_price = str_replace(',', '', $csv[$i][5]) . '<br />';
-                        $unit_price = floatval($csv_unit_price) / $csv[$i][8];
-                        if ($barcode) {
-                            $new  = new Invoice_raw([
-                                'date' => $csv[$i][0],
-                                'invoice_data' => $csv[$i][2],
-                                'customer' => $csv[$i][6],
-                                'delivery_receipt' => $csv[$i][2],
-                                'sales_representative' => $csv[$i][7],
-                                'sku_code' => $csv[$i][9],
-                                'description' => $csv[$i][10],
-                                'quantity' => $csv[$i][8],
-                                'sku_type' => $csv[$i][11],
-                                'principal' => $csv[$i][12],
-                                'barcode' => $barcode->barcode,
-                                'sku_id' => $barcode->id,
-                                'unit_price' => $unit_price,
-                            ]);
+                    if (str_contains($csv[$i][9], 'DSC')) {
+                    } else {
+                        $barcode = Sku_add::select('barcode', 'id')->where('sku_code', $csv[$i][9])->where('sku_type', $csv[$i][11])->first();
+                        if ($csv[$i][8] != '') {
+                            $csv_unit_price = str_replace(',', '', $csv[$i][5]) . '<br />';
+                            $unit_price = floatval($csv_unit_price) / $csv[$i][8];
+                            if ($barcode) {
+                                $new  = new Invoice_raw([
+                                    'date' => $csv[$i][0],
+                                    'invoice_data' => $csv[$i][2],
+                                    'customer' => $csv[$i][6],
+                                    'delivery_receipt' => $csv[$i][2],
+                                    'sales_representative' => $csv[$i][7],
+                                    'sku_code' => $csv[$i][9],
+                                    'description' => $csv[$i][10],
+                                    'quantity' => $csv[$i][8],
+                                    'sku_type' => $csv[$i][11],
+                                    'principal' => $csv[$i][12],
+                                    'barcode' => $barcode->barcode,
+                                    'sku_id' => $barcode->id,
+                                    'unit_price' => $unit_price,
+                                ]);
 
-                            $new->save();
-                        } else {
-                            echo 'wala <br />';
+                                $new->save();
+                            } else {
+                                //echo $csv[$i][9] . '<br />';
+                                $new  = new Invoice_raw([
+                                    'date' => $csv[$i][0],
+                                    'invoice_data' => $csv[$i][2],
+                                    'customer' => $csv[$i][6],
+                                    'delivery_receipt' => $csv[$i][2],
+                                    'sales_representative' => $csv[$i][7],
+                                    'sku_code' => $csv[$i][9],
+                                    'description' => $csv[$i][10],
+                                    'quantity' => $csv[$i][8],
+                                    'sku_type' => $csv[$i][11],
+                                    'principal' => $csv[$i][12],
+                                    'barcode' => '',
+                                    'sku_id' => $barcode->id,
+                                    'unit_price' => $unit_price,
+                                ]);
+
+                                $new->save();
+                            }
                         }
                     }
                 }

@@ -23,17 +23,29 @@ class Invoice_out_controller extends Controller
         if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $invoice_draft = Invoice_raw::select('id', 'sales_representative')
-                ->where('principal_id', $user->principal_id)
-                ->where('status', null)
-                ->groupBy('sales_representative')
-                ->orderBy('id', 'desc')
-                ->get();
-            $van_selling = Vs_withdrawal::select('id', 'delivery_receipt')
-                ->where('principal_id', $user->principal_id)
-                ->where('status', null)
-                ->orderBy('id', 'desc')
-                ->get();
+            if ($user->position == 'admin') {
+                $invoice_draft = Invoice_raw::select('id', 'sales_representative')
+                    ->where('status', null)
+                    ->groupBy('sales_representative')
+                    ->orderBy('id', 'desc')
+                    ->get();
+                $van_selling = Vs_withdrawal::select('id', 'delivery_receipt')
+                    ->where('status', null)
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $invoice_draft = Invoice_raw::select('id', 'sales_representative')
+                    ->where('principal_id', $user->principal_id)
+                    ->where('status', null)
+                    ->groupBy('sales_representative')
+                    ->orderBy('id', 'desc')
+                    ->get();
+                $van_selling = Vs_withdrawal::select('id', 'delivery_receipt')
+                    ->where('principal_id', $user->principal_id)
+                    ->where('status', null)
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
             return view('invoice_out', [
                 'user' => $user,
                 'invoice_draft' => $invoice_draft,
