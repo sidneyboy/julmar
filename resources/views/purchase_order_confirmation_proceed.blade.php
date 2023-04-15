@@ -69,7 +69,7 @@
                     <tr>
                         <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
                         <td>{{ $data->quantity }}</td>
-                        <td><input style="text-align: right" type="number" min="0" value="0"
+                        <td><input style="text-align: right" type="number" min="0"
                                 class="form-control form-control-sm" required
                                 name="quantity_confirmed[{{ $data->sku_id }}]" value="{{ $data->quantity }}"></td>
                         <td><input style="text-align: right" type="text" class="form-control form-control-sm"
