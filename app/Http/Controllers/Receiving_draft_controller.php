@@ -40,6 +40,8 @@ class Receiving_draft_controller extends Controller
                     ->get();
             }
 
+            return $purchase
+
 
             return view('receiving_draft', [
                 'user' => $user,
