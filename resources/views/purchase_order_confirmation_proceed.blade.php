@@ -5,6 +5,8 @@
             <select name="payment_term" class="form-control" required>
                 <option value="" default>Select</option>
                 <option value="cash with order">cash with order</option>
+                <option value="15 days">15 days</option>
+                <option value="30 days">30 days</option>
             </select>
         </div>
         <div class="col-md-3">
@@ -69,7 +71,7 @@
                         <td>{{ $data->quantity }}</td>
                         <td><input style="text-align: right" type="number" min="0" value="0"
                                 class="form-control form-control-sm" required
-                                name="quantity_confirmed[{{ $data->sku_id }}]"></td>
+                                name="quantity_confirmed[{{ $data->sku_id }}]" value="{{ $data->quantity }}"></td>
                         <td><input style="text-align: right" type="text" class="form-control form-control-sm"
                                 required value="0" name="unit_cost[{{ $data->sku_id }}]"
                                 onkeypress="return isNumberKey(event)">
