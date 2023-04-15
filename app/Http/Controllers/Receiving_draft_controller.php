@@ -38,7 +38,7 @@ class Receiving_draft_controller extends Controller
                     ->get();
             }
 
-            return $purchase_order;
+            //return $purchase_order;
 
 
             return view('receiving_draft', [
