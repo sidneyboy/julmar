@@ -21,7 +21,7 @@
             <div class="card-body">
                 <form id="purchase_order_confirmation_proceed">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="">Purchase Order #</label>
                             <select name="purchase_id" class="form-control select2bs4" style="width:100%;" required>
                                 <option value="" default>Select</option>
@@ -30,6 +30,10 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="">Freight</label>
+                            <input type="text" name="freight" class="form-control" required>
                         </div>
                         <div class="col-md-12">
                             <br />

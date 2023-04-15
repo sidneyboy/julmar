@@ -40,7 +40,7 @@ class Purchase_order_confirmation_controller extends Controller
         return view('purchase_order_confirmation_proceed', [
             'purchase_order' => $purchase_order,
             'principal_discount' => $principal_discount,
-        ]);
+        ])->with('freight',$request->input('freight'));
     }
 
     public function purchase_order_confirmation_final_summary(Request $request)

@@ -82,7 +82,7 @@
                                 value="{{ $data->sku->description }}">
                         </td>
                         <td><input style="text-align: right" type="text" class="form-control form-control-sm"
-                                required value="0" name="freight[{{ $data->sku_id }}]"
+                                required value="{{ $freight }}" name="freight[{{ $data->sku_id }}]"
                                 onkeypress="return isNumberKey(event)"></td>
                     </tr>
                 @endforeach
