@@ -25,7 +25,7 @@ class Receiving_draft_controller extends Controller
                     ->where('principal_id',$user->principal_id)
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
-                    ->where('remarks', 'staggered')
+                    ->orWhere('status', 'staggered')
                     ->orderBy('id', 'desc')
                     ->get();
 
