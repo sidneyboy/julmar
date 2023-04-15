@@ -27,6 +27,7 @@ class Receiving_draft_controller extends Controller
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
                     ->orWhere('status', 'staggered')
+                    ->orWhere('status',null)
                     ->orderBy('id', 'desc')
                     ->get();
             } else {
@@ -34,6 +35,7 @@ class Receiving_draft_controller extends Controller
                     ->where('status', 'confirmed')
                     ->orWhere('status', 'paid')
                     ->orWhere('status', 'staggered')
+                    ->orWhere('status',null)
                     ->orderBy('id', 'desc')
                     ->get();
             }
