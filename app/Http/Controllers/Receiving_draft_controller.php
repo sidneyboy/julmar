@@ -81,6 +81,8 @@ class Receiving_draft_controller extends Controller
             $sku = Sku_add::select('id', 'sku_type')->where('id', $barcode)->where('sku_type', $po_sku_type->sku_type)->first();
         }
 
+
+
         if ($sku) {
             $check_po_details = Purchase_order_details::select('freight', 'unit_cost')
                 ->where('purchase_order_id', $request->input('purchase_order_id'))
