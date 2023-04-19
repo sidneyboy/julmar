@@ -24,6 +24,7 @@
                     id="example1">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Store Name</th>
                             <th>KOB</th>
                             <th>Credit Term</th>
@@ -37,6 +38,7 @@
                     <tbody>
                         @foreach ($customer as $data)
                             <tr>
+                                <td>{{ $data->id }}</td>
                                 <td>{{ $data->store_name }}</td>
                                 <td>{{ $data->kind_of_business }}</td>
                                 <td style="text-align: right">{{ $data->credit_term }}</td>

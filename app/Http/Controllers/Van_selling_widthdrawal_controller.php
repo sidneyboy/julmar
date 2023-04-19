@@ -25,6 +25,7 @@ class Van_selling_widthdrawal_controller extends Controller
     public function index()
     {
         if (Auth::check()) {
+            Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             $location = Location::select('id', 'location')->get();
