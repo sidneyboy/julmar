@@ -248,7 +248,7 @@ class Van_selling_widthdrawal_controller extends Controller
                 'running_balance' => $running_balance,
                 'amount' => $request->input('total_amount'),
                 'short' => 0,
-                'outstanding_balance' => $outstanding_balance,
+                'outstanding_balance' => $outstanding_balance + $request->input('total_amount'),
                 'remarks' => 'n/a',
             ]);
 

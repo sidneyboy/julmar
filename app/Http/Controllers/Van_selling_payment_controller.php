@@ -43,7 +43,7 @@ class Van_selling_payment_controller extends Controller
 
     public function van_selling_payment_save(Request $request)
     {
-       // return $request->input();
+        // return $request->input();
 
         $new_collection = new Vs_collection([
             'user_id' => auth()->user()->id,
@@ -62,12 +62,37 @@ class Van_selling_payment_controller extends Controller
             'transaction' => 'collection',
             'all_id' => $new_collection->id,
             'running_balance' => $request->input('running_balance'),
-            'amount' => $request->input('amount')*-1,
+            'amount' => $request->input('amount') * -1,
             'short' => 0,
             'outstanding_balance' => $request->input('running_balance') - $request->input('amount'),
             'remarks' => $request->input('remarks'),
         ]);
 
         $new->save();
+    }
+
+    public function van_selling_short_payment_save(Request $request)
+    {
+        $ledger = Van_selling_ar_ledger::where('customer_id',$request->input('customer_id'))
+                                ->orderBy('id','desc')
+                                ->limit(1)
+                                ->first();
+         
+        $over_short = $ledger->short - $request->input('amount');
+        if ($over_short >= 0) {
+            $new = new Van_selling_ar_ledger([
+                'customer_id' => $request->input('customer_id'),
+                'user_id' => auth()->user()->id,
+                'transaction' => 'short payment',
+                'all_id' => 'n/a',
+                'running_balance' => $ledger->outstanding_balance,
+                'amount' => $request->input('amount'),
+                'short' => $over_short,
+                'outstanding_balance' => $ledger->outstanding_balance - $request->input('amount'),
+            ]);
+            $new->save();
+        } else {
+            return 'error';
+        }
     }
 }

@@ -22,45 +22,78 @@
                  </div>
              </div>
              <div class="card-body">
-                 <form id="search_store_code_form">
-                     @csrf
-                     <div class="row">
-                         <div class="col-md-6">
-                             <label>Van Selling Agent:</label>
-                             <select class="form-control select2bs4" style="width:100%;" name="customer_id" required>
-                                 <option value="" default>Select</option>
-                                 @foreach ($customer as $data)
-                                     <option value="{{ $data->id }}">{{ $data->store_name }}</option>
-                                 @endforeach
-                             </select>
-                         </div>
-                         <div class="col-md-6">
-                             <label for="">Amount:</label>
-                             <input type="text" class="form-control" required name="amount"
-                                 onkeypress="return isNumberKey(event)">
-                         </div>
-                         <div class="col-md-4">
-                             <label for="">Bank:</label>
-                             <select name="bank" class="form-control" required>
-                                 <option value="" default>Select</option>
-                                 <option value="BDO">BDO</option>
-                             </select>
-                         </div>
-                         <div class="col-md-4">
-                             <label for="">Reference #:</label>
-                             <input type="text" name="reference" required class="form-control">
-                         </div>
-                         <div class="col-md-4">
-                             <label for="">Remarks:</label>
-                             <input type="text" name="remarks" required class="form-control">
-                         </div>
-
-                         <div class="col-md-12">
-                             <br />
-                             <button type="submit" class="btn btn-info btn-sm float-right">Generate</button>
-                         </div>
+                 <div class="row">
+                     <div class="col-md-12">
+                         <button class="btn btn-sm btn-warning float-right" id="short_payment_btn">Short Payment</button>
+                         <button class="btn btn-sm btn-dark float-right" id="collection_btn"
+                             style="display: none">Collection</button>
                      </div>
-                 </form>
+                 </div>
+                 <div id="collection">
+                     <form id="search_store_code_form">
+                         @csrf
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <label>Van Selling Agent:</label>
+                                 <select class="form-control select2bs4" style="width:100%;" name="customer_id" required>
+                                     <option value="" default>Select</option>
+                                     @foreach ($customer as $data)
+                                         <option value="{{ $data->id }}">{{ $data->store_name }}</option>
+                                     @endforeach
+                                 </select>
+                             </div>
+                             <div class="col-md-6">
+                                 <label for="">Amount:</label>
+                                 <input type="text" class="form-control" required name="amount"
+                                     onkeypress="return isNumberKey(event)">
+                             </div>
+                             <div class="col-md-4">
+                                 <label for="">Bank:</label>
+                                 <select name="bank" class="form-control" required>
+                                     <option value="" default>Select</option>
+                                     <option value="BDO">BDO</option>
+                                 </select>
+                             </div>
+                             <div class="col-md-4">
+                                 <label for="">Reference #:</label>
+                                 <input type="text" name="reference" required class="form-control">
+                             </div>
+                             <div class="col-md-4">
+                                 <label for="">Remarks:</label>
+                                 <input type="text" name="remarks" required class="form-control">
+                             </div>
+
+                             <div class="col-md-12">
+                                 <br />
+                                 <button type="submit" class="btn btn-info btn-sm float-right">Generate</button>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
+                 <div id="short_payment" style="display: none">
+                     <form id="van_selling_short_payment_save">
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <label>Van Selling Agent:</label>
+                                 <select class="form-control select2bs4" style="width:100%;" name="customer_id" required>
+                                     <option value="" default>Select</option>
+                                     @foreach ($customer as $data)
+                                         <option value="{{ $data->id }}">{{ $data->store_name }}</option>
+                                     @endforeach
+                                 </select>
+                             </div>
+                             <div class="col-md-6">
+                                 <label for="">Amount:</label>
+                                 <input type="text" class="form-control" required name="amount"
+                                     onkeypress="return isNumberKey(event)">
+                             </div>
+                             <div class="col-md-12">
+                                 <br />
+                                 <button class="btn btn-success float-right btn-sm">Submit</button>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
              </div>
              <!-- /.card-body -->
              <div class="card-footer">
@@ -93,6 +126,20 @@
              return true;
          }
 
+         $("#short_payment_btn").click(function() {
+             $('#short_payment').show();
+             $('#collection').hide();
+             $('#short_payment_btn').hide();
+             $('#collection_btn').show();
+         });
+
+         $("#collection_btn").click(function() {
+             $('#short_payment').hide();
+             $('#collection').show();
+             $('#short_payment_btn').show();
+             $('#collection_btn').hide();
+         });
+
          $("#search_store_code_form").on('submit', (function(e) {
              e.preventDefault();
              $('#loader').show();
@@ -115,6 +162,44 @@
                      } else {
                          $('#loader').hide();
                          $('#van_selling_payment_show_accounts_receivable_page').html(data);
+                     }
+                 },
+                 error: function(error) {
+                     $('#loader').hide();
+                     Swal.fire(
+                         'Cannot Proceed',
+                         'Please Contact IT Support',
+                         'error'
+                     )
+                 }
+             });
+         }));
+
+         $("#van_selling_short_payment_save").on('submit', (function(e) {
+             e.preventDefault();
+             $('#loader').show();
+             $.ajax({
+                 url: "van_selling_short_payment_save",
+                 type: "POST",
+                 data: new FormData(this),
+                 contentType: false,
+                 cache: false,
+                 processData: false,
+                 success: function(data) {
+                     if (data == 'error') {
+                         $('#loader').hide();
+                         Swal.fire(
+                             'Cannot Proceed',
+                             'Amount cannot be greater than short',
+                             'error'
+                         )
+                     } else {
+                         $('#loader').hide();
+                         Swal.fire(
+                             'NO DATA FOUND',
+                             'NO DR FOR THE MOMENT',
+                             'error'
+                         )
                      }
                  },
                  error: function(error) {

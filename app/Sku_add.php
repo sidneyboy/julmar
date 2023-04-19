@@ -59,6 +59,12 @@ class Sku_add extends Model
       return $this->hasOne('App\Sku_ledger', 'sku_id')->latest();
     }
 
+    public function vs_sku_ledger()
+    {
+      return $this->hasMany('App\Vs_inventory_ledger', 'sku_id');
+    }
+
+
     public function sku_ledger_quantity()
     {
       return $this->hasOne('App\Sku_ledger', 'sku_id','id')->latest();

@@ -28,7 +28,7 @@
                     <td style="text-align: right">{{ number_format($data->amount, 2, '.', ',') }}</td>
                     <td style="text-align: right">{{ number_format($data->short, 2, '.', ',') }}</td>
                     <td style="text-align: right">{{ number_format($data->outstanding_balance, 2, '.', ',') }}</td>
-                    <td>{{ $data->remarks }}</td>
+                    <td style="width:100px;">{{ $data->remarks }}</td>
                 </tr>
             @endforeach
         </tbody>

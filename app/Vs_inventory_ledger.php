@@ -34,4 +34,14 @@ class Vs_inventory_ledger extends Model
     {
         return $this->belongsTo('App\Customer','customer_id');
     }
+
+    public function vs_reference()
+    {
+        return $this->belongsTo('App\Vs_sales','all_id','reference');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User','user_id');
+    }
 }

@@ -676,6 +676,13 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="{{ url('van_selling_actual_stocks_on_hand') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_actual_stocks_on_hand' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Actual stocks on Hand</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('van_selling_import_data') }}"
                                                 class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
                                                 <i class="far fa-circle nav-icon"></i>

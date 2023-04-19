@@ -46,8 +46,9 @@ class Van_selling_report_date_range_controller extends Controller
         WHERE customer_id = '$customer_id' GROUP BY sku_id)");
 
         foreach ($sku_ledger as $key => $data) {
-            $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type','principal_id')->find($data->sku_id);
+            $sku[] = Sku_add::select('id', 'sku_code', 'description', 'sku_type', 'principal_id')->find($data->sku_id);
         }
+
 
         return view('van_selling_report_date_range_generate_data_page', [
             'sku_ledger' => $sku_ledger,
