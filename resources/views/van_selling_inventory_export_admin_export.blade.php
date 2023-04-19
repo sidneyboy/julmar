@@ -30,11 +30,29 @@
                     <td>{{ $sku[$data->sku_id]->sku_code }}</td>
                     <td>{{ $sku[$data->sku_id]->description }}</td>
                     <td>{{ $sku[$data->sku_id]->unit_of_measurement }}</td>
-                    <td>{{ $data->ending_inventory }}</td>
-                    <td>{{ $sku[$data->sku_id]->equivalent_butal_pcs }}</td>
-                    <td>{{ $data->unit_price }}</td>
+                    <td style="text-align: right">{{ $data->ending_inventory }}</td>
+                    <td style="text-align: right">{{ $sku[$data->sku_id]->equivalent_butal_pcs }}</td>
+                    <td style="text-align: right">{{ $data->unit_price }}</td>
                 </tr>
             @endforeach
+            {{-- @foreach ($sku_add as $sku_data)
+                <tr>
+                    <td>{{ $sku_data->sku_type }}</td>
+                    <td>{{ $sku_data->skuPrincipal->principal }}</td>
+                    <td>{{ $sku_data->sku_code }}</td>
+                    <td>{{ $sku_data->description }}</td>
+                    <td>{{ $sku_data->unit_of_measurement }}</td>
+                    <td style="text-align: right">0</td>
+                    <td style="text-align: right">{{ $sku_data->equivalent_butal_pcs }}</td>
+                    <td>
+                        @if ($sku_data->principal_id == )
+                            
+                        @else
+                            
+                        @endif
+                    </td>
+                </tr>
+            @endforeach --}}
         </tbody>
     </table>
 </div>

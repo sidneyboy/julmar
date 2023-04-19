@@ -66,16 +66,30 @@ class Van_selling_widthdrawal_controller extends Controller
         $sku_price_details = Sku_price_details::select($customer->price_level)->where('sku_id', $request->input('sku'))
             ->first();
 
-        if ($customer->price_level == 'price_1') {
-            $unit_price = $sku_price_details->price_1;
-        } else if ($customer->price_level == 'price_2') {
-            $unit_price = $sku_price_details->price_2;
-        } else if ($customer->price_level == 'price_3') {
-            $unit_price = $sku_price_details->price_3;
-        } else if ($customer->price_level == 'price_4') {
-            $unit_price = $sku_price_details->price_4;
-        } else if ($customer->price_level == 'price_5') {
-            $unit_price = $sku_price_details->price_5;
+        if ($sku_price_details) {
+            if ($customer->price_level == 'price_1') {
+                $unit_price = $sku_price_details->price_1;
+            } else if ($customer->price_level == 'price_2') {
+                $unit_price = $sku_price_details->price_2;
+            } else if ($customer->price_level == 'price_3') {
+                $unit_price = $sku_price_details->price_3;
+            } else if ($customer->price_level == 'price_4') {
+                $unit_price = $sku_price_details->price_4;
+            } else if ($customer->price_level == 'price_5') {
+                $unit_price = $sku_price_details->price_5;
+            }
+        }else{
+            if ($customer->price_level == 'price_1') {
+                $unit_price = 0;
+            } else if ($customer->price_level == 'price_2') {
+                $unit_price = 0;
+            } else if ($customer->price_level == 'price_3') {
+                $unit_price = 0;
+            } else if ($customer->price_level == 'price_4') {
+                $unit_price = 0;
+            } else if ($customer->price_level == 'price_5') {
+                $unit_price = 0;
+            }
         }
 
         if ($sku) {

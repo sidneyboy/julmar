@@ -64,6 +64,7 @@ Route::get('/sku_ledger_show_sku_details/{id}', 'Sku_ledger_controller@sku_ledge
 
 Route::get('/sku_extract_inventory', 'Sku_extract_inventory_controller@index');
 Route::post('/extract_sku_inventory_generate_data', 'Sku_extract_inventory_controller@extract_sku_inventory_generate_data')->name('extract_sku_inventory_generate_data');
+Route::post('/extract_sku_inventory_generate_agent_proceed', 'Sku_extract_inventory_controller@extract_sku_inventory_generate_agent_proceed')->name('extract_sku_inventory_generate_agent_proceed');
 Route::post('/extract_sku_inventory_generate_export_data', 'Sku_extract_inventory_controller@extract_sku_inventory_generate_export_data')->name('extract_sku_inventory_generate_export_data');
 
 Route::get('/sku_update_price', 'Sku_price_update_controller@index');

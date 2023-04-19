@@ -85,6 +85,10 @@ class Van_selling_inventory_export_controller extends Controller
         } else if ($request->input('search_for') == 'admin_export') {
             $customer_id = $request->input('customer_id');
             $customer = Customer::select('id','store_name')->find($request->input('customer_id'));
+            // return $customer_price_level = Customer_principal_price::select('principal_id','price_level')
+            //         ->where('customer_id',$request->input('customer_id'))
+            //         ->get();
+                    
             $ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
             WHERE customer_id = '$customer_id' GROUP BY sku_id)");
 
@@ -92,10 +96,13 @@ class Van_selling_inventory_export_controller extends Controller
                 $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->find($data->sku_id);
             }
 
+            // $sku_add = Sku_add::select('sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->whereNotIn('id',array_keys($sku))->where('sku_type','butal')->get();
+
             return view('van_selling_inventory_export_admin_export', [
                 'customer' => $customer,
                 'ledger' => $ledger,
                 'sku' => $sku,
+                // 'sku_add' => $sku_add,
             ])->with('date', $date)
                 ->with('time', $time);
         }

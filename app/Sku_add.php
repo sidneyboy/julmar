@@ -46,7 +46,7 @@ class Sku_add extends Model
 
     public function sku_price_details_one()
     {
-      return $this->hasOne('App\Sku_price_details','sku_id')->orderBy('id','Desc')->limit(1);
+      return $this->hasOne('App\Sku_price_details','sku_id')->orderBy('id','Desc');
     }
 
     public function sku_ledger()

@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -34,7 +33,7 @@
                         </div>
                         <div class="col-md-4">
                             <label>&nbsp;</label>
-                            <button type="submit" class="btn btn-info btn-block">Generate SKU Inventory</button>
+                            <button type="submit" class="btn btn-info btn-block">Proceed</button>
                         </div>
                     </div>
                 </form>
