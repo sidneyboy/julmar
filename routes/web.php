@@ -529,6 +529,9 @@ Route::post('/van_selling_cm_report_generate', 'Van_selling_cm_report_controller
 
 
 Route::get('/van_selling_ar_ledger', 'Vs_ar_ledger_controller@index')->name('van_selling_ar_ledger');
+Route::get('/van_selling_ar_ledger_adjustment', 'Vs_ar_ledger_controller@van_selling_ar_ledger_adjustment')->name('van_selling_ar_ledger_adjustment');
+Route::post('/van_selling_ar_ledger_adjustments_proceed', 'Vs_ar_ledger_controller@van_selling_ar_ledger_adjustments_proceed')->name('van_selling_ar_ledger_adjustments_proceed');
+Route::post('/van_selling_ar_ledger_adjustments_proceed_save', 'Vs_ar_ledger_controller@van_selling_ar_ledger_adjustments_proceed_save')->name('van_selling_ar_ledger_adjustments_proceed_save');
 Route::post('/van_selling_ar_ledger_generate_data', 'Vs_ar_ledger_controller@van_selling_ar_ledger_generate_data')->name('van_selling_ar_ledger_generate_data');
 
 
@@ -760,7 +763,3 @@ Route::post('/sku_withdrawal_proceed', 'Sku_withdrawal_controller@sku_withdrawal
 Route::post('/sku_withdrawal_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_final_summary')->name('sku_withdrawal_final_summary');
 Route::post('/sku_withdrawal_very_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_very_final_summary')->name('sku_withdrawal_very_final_summary');
 Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_save')->name('sku_withdrawal_save');
-
-
-
-

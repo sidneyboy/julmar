@@ -233,8 +233,10 @@ class Van_selling_widthdrawal_controller extends Controller
             }
         }
 
-
-        $ar_checker = Van_selling_ar_ledger::where('customer_id', $request->input('customer_id'))->orderBy('id', 'desc')->limit(1)->first();
+        $ar_checker = Van_selling_ar_ledger::where('customer_id', $request->input('customer_id'))
+                            ->orderBy('id', 'desc')
+                            ->limit(1)
+                            ->first();
 
         if ($ar_checker) {
             $running_balance = $ar_checker->outstanding_balance;
@@ -247,7 +249,7 @@ class Van_selling_widthdrawal_controller extends Controller
                 'all_id' => $new_withdrawal_saved->id,
                 'running_balance' => $running_balance,
                 'amount' => $request->input('total_amount'),
-                'short' => 0,
+                'short' => $ar_checker->short,
                 'outstanding_balance' => $outstanding_balance + $request->input('total_amount'),
                 'remarks' => 'n/a',
             ]);

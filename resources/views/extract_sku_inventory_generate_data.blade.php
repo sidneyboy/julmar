@@ -1,4 +1,4 @@
-<table class="table table-bordered table-hover table-sm table-striped" id="example1">
+{{-- <table class="table table-bordered table-hover table-sm table-striped" id="example1">
     <thead>
         <tr>
             <th>ID</th>
@@ -31,8 +31,8 @@
             </tr>
         @endforeach
     </tbody>
-</table>
-{{-- <table class="table table-bordered table-hover table-sm table-striped" id="example1">
+</table> --}}
+<table class="table table-bordered table-hover table-sm table-striped" id="example1">
     <thead>
         <tr>
             <th>ID</th>
@@ -53,7 +53,7 @@
             </tr>
         @endforeach
     </tbody>
-</table> --}}
+</table>
 <script>
     $(document).ready(function() {
         var table = $('#example1').DataTable({

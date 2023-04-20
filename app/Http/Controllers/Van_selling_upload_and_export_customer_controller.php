@@ -55,7 +55,8 @@ class Van_selling_upload_and_export_customer_controller extends Controller
 
         if (isset($csv[0][11])) {
             if ($csv[0][11] != "VAN_SELLING_CUSTOMER_CSV_FILE") {
-                return redirect('vs_upload_and_export_customer')->with('error', 'Incorrect File');
+                //return redirect('vs_upload_and_export_customer')->with('error', 'Incorrect File');
+                return 'Incorrect File';
             } else {
                 for ($i = 1; $i < $counter; $i++) {
                     $new = new Van_selling_customer([
