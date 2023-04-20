@@ -49,7 +49,6 @@ class Van_selling_report_date_range_controller extends Controller
             $sku[] = Sku_add::select('id', 'sku_code', 'description', 'sku_type', 'principal_id')->find($data->sku_id);
         }
 
-
         return view('van_selling_report_date_range_generate_data_page', [
             'sku_ledger' => $sku_ledger,
             'sku' => $sku,

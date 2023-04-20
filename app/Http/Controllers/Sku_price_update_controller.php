@@ -6,10 +6,10 @@ use App\User;
 use App\Sku_add;
 use App\Sku_principal;
 use App\Sku_price_details;
-use App\Van_selling_upload_ledger;
+use App\Vs_inventory_ledger;
 use SESSION;
 use DB;
-use App\Customer_principal_price;
+use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,12 +64,13 @@ class Sku_price_update_controller extends Controller
     public function sku_update_price_save(Request $request)
     {
         //return $request->input();
-        $customer_id = Van_selling_upload_ledger::select('customer_id')->groupBy('customer_id')->get();
-        $employee_name = User::select('id', 'name')->where('id', auth()->user()->id)->first();
+
+        //$employee_name = User::select('id', 'name')->where('id', auth()->user()->id)->first();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
         foreach ($request->input('sku_id') as $key => $sku_id) {
+
             $unit_cost = str_replace(',', '', $request->input('unit_cost')[$sku_id]);
             $price_1 = str_replace(',', '', $request->input('price_1')[$sku_id]);
             $price_2 = str_replace(',', '', $request->input('price_2')[$sku_id]);
@@ -102,369 +103,41 @@ class Sku_price_update_controller extends Controller
                 $price_add->save();
             }
 
-            // if ($request->input('sku_type')[$sku_id] == 'BUTAL' or $request->input('sku_type')[$sku_id] == 'Butal' or  $request->input('sku_type')[$sku_id] == 'butal') {
-            //     $price_add = new Sku_price_details([
-            //         'sku_id'    => $sku_id,
-            //         'unit_cost' => $unit_cost,
-            //         'price_1' => $price_1,
-            //         'price_2' => $price_2,
-            //         'price_3' => $price_3,
-            //         'price_4' => $price_4,
-            //         'price_5' => $price_5,
-            //     ]);
-            //     $price_add->save();
+            $agent = Vs_inventory_ledger::select('customer_id')->groupBy('customer_id')->get();
 
+            foreach ($agent as $key => $data) {
+                $customer_id = $data->customer_id;
+                $ledger_results =  DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_id = '$sku_id' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-            //     foreach ($customer_id as $key => $data) {
-            //         $customer_id = $data->customer_id;
-            //         $sku_code = $request->input('sku_code')[$sku_id];
+                if (count($ledger_results)  != 0) {
+                    if ($data->customer->customer_principal_price_one->price_level == 'price_1') {
+                        $unit_price = str_replace(',', '', $request->input('price_1')[$sku_id]);
+                    } elseif ($data->customer->customer_principal_price_one->price_level == 'price_2') {
+                        $unit_price = str_replace(',', '', $request->input('price_2')[$sku_id]);
+                    } elseif ($data->customer->customer_principal_price_one->price_level == 'price_3') {
+                        $unit_price = str_replace(',', '', $request->input('price_3')[$sku_id]);
+                    } elseif ($data->customer->customer_principal_price_one->price_level == 'price_4') {
+                        $unit_price = str_replace(',', '', $request->input('price_4')[$sku_id]);
+                    } elseif ($data->customer->customer_principal_price_one->price_level == 'price_5') {
+                        $unit_price = str_replace(',', '', $request->input('price_5')[$sku_id]);
+                    }
 
-            //         $van_selling_ledger_latest = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-            //         $customer_principal_price = Customer_principal_price::select('id', 'price_level', 'customer_id', 'principal_id')->where('customer_id', $customer_id)->where('principal_id', $request->input('principal_id'))->first();
-            //         if ($customer_principal_price['price_level'] == 'price_1') {
-            //             if ($van_selling_ledger_latest) {
-            //                 if ($van_selling_ledger_latest[0]->end == 0) {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_1;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_1,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 } else {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_1;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_1,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 }
-            //             }
-            //         } elseif ($customer_principal_price['price_level'] == 'price_2') {
-            //             if ($van_selling_ledger_latest) {
-            //                 if ($van_selling_ledger_latest[0]->end == 0) {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_2;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_2,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 } else {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_2;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_2,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 }
-            //             }
-            //         } elseif ($customer_principal_price['price_level'] == 'price_3') {
-            //             if ($van_selling_ledger_latest) {
-            //                 if ($van_selling_ledger_latest[0]->end == 0) {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_3;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_3,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 } else {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_3;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_3,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 }
-            //             }
-            //         } elseif ($customer_principal_price['price_level'] == 'price_4') {
-            //             if ($van_selling_ledger_latest) {
-            //                 if ($van_selling_ledger_latest[0]->end == 0) {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_4;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_4,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 } else {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_4;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_4,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 }
-            //             }
-            //         } elseif ($customer_principal_price['price_level'] == 'price_5') {
-            //             if ($van_selling_ledger_latest) {
-            //                 if ($van_selling_ledger_latest[0]->end == 0) {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_5;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_5,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 } else {
-            //                     $total = $van_selling_ledger_latest[0]->end * $price_5;
-            //                     $van_selling_upload_ledger = new Van_selling_upload_ledger([
-            //                         'customer_id' => $customer_id,
-            //                         'principal' => $van_selling_ledger_latest[0]->principal,
-            //                         'sku_code' => $sku_code,
-            //                         'description' => $van_selling_ledger_latest[0]->description,
-            //                         'unit_of_measurement' => $van_selling_ledger_latest[0]->unit_of_measurement,
-            //                         'sku_type' => $van_selling_ledger_latest[0]->sku_type,
-            //                         'butal_equivalent' => $van_selling_ledger_latest[0]->butal_equivalent,
-            //                         'reference' => 'PRICE ADJUSTMENTS',
-            //                         'beg' => $van_selling_ledger_latest[0]->end,
-            //                         'van_load' => 0,
-            //                         'sales' => 0,
-            //                         'adjustments' => 0,
-            //                         'inventory_adjustments' => 0,
-            //                         'clearing' => 0,
-            //                         'end' => $van_selling_ledger_latest[0]->end,
-            //                         'unit_price' => $price_5,
-            //                         'total' => $total,
-            //                         'running_balance' => $van_selling_ledger_latest[0]->running_balance + $total,
-            //                         'date' => $date,
-            //                         'remarks' => $employee_name->name,
-            //                     ]);
-
-            //                     $van_selling_upload_ledger->save();
-            //                 }
-            //             }
-            //         }
-            //     }
-            // } else {
-            //     $price_add = new Sku_price_details([
-            //         'sku_id'    => $sku_id,
-            //         'unit_cost' => $unit_cost,
-            //         'price_1' => $price_1,
-            //         'price_2' => $price_2,
-            //         'price_3' => $price_3,
-            //         'price_4' => $price_4,
-            //         'price_5' => $price_5,
-            //     ]);
-            //     $price_add->save();
-            // }
+                    $new_inventory_ledger = new Vs_inventory_ledger([
+                        'user_id' => auth()->user()->id,
+                        'customer_id' => $customer_id,
+                        'principal_id' => $ledger_results[0]->principal_id,
+                        'transaction' => 'price update',
+                        'sku_id' => $sku_id,
+                        'beginning_inventory' => $ledger_results[0]->beginning_inventory,
+                        'quantity' => $ledger_results[0]->quantity,
+                        'ending_inventory' => $ledger_results[0]->ending_inventory,
+                        'unit_price' => $unit_price,
+                        'all_id' => 'n/a',
+                        'sku_code' => $ledger_results[0]->sku_code,
+                    ]);
+                    $new_inventory_ledger->save();
+                }
+            }
         }
-
-        return 'saved';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // foreach ($request->input('sku_id') as $key => $data) {
-        // $van_selling_ledger_latest = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Van_selling_upload_ledgers WHERE sku_code = '$data->sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-        // $unit_cost = str_replace(',', '', $request->input('unit_cost')[$data]);
-        // $price_1 = str_replace(',', '', $request->input('price_1')[$data]);
-        // $price_2 = str_replace(',', '', $request->input('price_2')[$data]);
-        // $price_3 = str_replace(',', '', $request->input('price_3')[$data]);
-        // $price_4 = str_replace(',', '', $request->input('price_4')[$data]);
-        // $price_5 = str_replace(',', '', $request->input('price_5')[$data]);
-
-        // $price_add = new Sku_price_details([
-        //     'sku_id'    => $data,
-        //     'unit_cost' => $unit_cost,
-        //     'price_1' => $price_1,
-        //     'price_2' => $price_2,
-        //     'price_3' => $price_3,
-        //     'price_4' => $price_4,
-        //     'price_5' => $price_5,
-        // ]);
-        // $price_add->save();  
-
-
-        // }
-        // return 'saved';
-
     }
 }

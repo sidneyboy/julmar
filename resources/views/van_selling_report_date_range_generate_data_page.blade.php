@@ -20,7 +20,9 @@
                     <td>{{ $sku[$i]->skuPrincipal->principal }}</td>
                     <td>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-link btn-sm" data-toggle="modal"
+                        {{ $sku[$i]->sku_code }}</span> -
+                        {{ $sku[$i]->description }}
+                        {{-- <button type="button" class="btn btn-link btn-sm" data-toggle="modal"
                             data-target="#exampleModal{{ $sku_ledger[$i]->id }}">
                             <span style="color:green;font-weight:bold">{{ $sku[$i]->sku_code }}</span> -
                             {{ $sku[$i]->description }}
@@ -59,7 +61,8 @@
                                                         <td>{{ date('F j, Y', strtotime($details->created_at)) }}</td>
                                                         <td>
                                                             @if ($details->vs_reference)
-                                                                {{ $details->vs_reference->customer_store_name }} - ({{ $details->vs_reference->reference }})
+                                                                {{ $details->vs_reference->customer_store_name }} -
+                                                                ({{ $details->vs_reference->reference }})
                                                             @else
                                                                 {{ $details->user->name }}
                                                             @endif
@@ -89,7 +92,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
 
 
