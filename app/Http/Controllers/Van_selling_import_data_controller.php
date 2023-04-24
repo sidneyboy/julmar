@@ -6,6 +6,7 @@ use App\User;
 use App\Vs_inventory_ledger;
 use App\Van_selling_upload;
 use App\Vs_sales;
+use App\Sku_add;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +59,6 @@ class Van_selling_import_data_controller extends Controller
 
 
                 $counter = count($csv);
-                //return $csv;
 
                 for ($i = 4; $i < $counter; $i++) {
                     $customer_id = $csv[1][1];
@@ -102,6 +102,13 @@ class Van_selling_import_data_controller extends Controller
             return 'Existing File';
         }
 
-        // return redirect('van_selling_import_data')->with('success', 'Data Saved');
+        // for ($i = 0; $i < count($csv); $i++) {
+        //     Sku_add::where('id', $csv[$i][0])
+        //         ->update([
+        //             'barcode' => $csv[$i][5],
+        //         ]);
+        // }
+
+        // // return $csv;
     }
 }

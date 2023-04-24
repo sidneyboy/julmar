@@ -35,23 +35,13 @@
                 <td>{{ $data->sku_type }}</td>
                 <td style="text-align: right">{{ $data->equivalent_butal_pcs }}</td>
                 <td style="text-align: right">{{ $data->barcode }}</td>
-                @if ($data->sku_price_details)
-                    @foreach ($data->sku_price_details as $details)
-                        <td style="text-align: right;">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->final_unit_cost, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->price_1, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->price_2, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->price_3, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->price_4, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($details->price_5, 2, '.', ',') }}</td>
-                    @endforeach
-                @else
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                @endif
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->unit_cost,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->final_unit_cost,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->price_1,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->price_2,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->price_3,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->price_4,2,".",",")  }}</td>
+                <td style="text-align: right">{{ number_format($data->sku_price_details_one->price_5,2,".",",")  }}</td>
             </tr>
         @endforeach
     </tbody>

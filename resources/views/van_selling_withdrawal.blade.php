@@ -36,6 +36,7 @@
                                     style="width:100%;">
                                     <option value="" default>SELECT SKU TYPE</option>
                                     <option value="Butal">Butal</option>
+                                    <option value="Case">Case</option>
                                 </select>
                             </div>
                         </div>

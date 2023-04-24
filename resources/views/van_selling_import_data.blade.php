@@ -78,11 +78,6 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    // Swal.fire(
-                    //     'Data Uploaded Successfully',
-                    //     'Success',
-                    //     'success'
-                    // )
                     $('#loader').hide();
                     Swal.fire({
                         position: 'top-end',

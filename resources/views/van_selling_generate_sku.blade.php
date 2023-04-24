@@ -14,7 +14,7 @@
             <select class="form-control select2bs4" name="sku" id="sku" required style="width:100%;">
                 <option value="" default>Select</option>
                 @foreach ($sku as $data)
-                    <option value="{{ $data->id }}">{{ $data->sku_code . ' - ' . $data->description }}</option>
+                    <option value="{{ $data->id }}">{{ $data->sku_code . ' - ' . $data->description ." - ". $data->sku_type }}</option>
                 @endforeach
             </select>
         </div>

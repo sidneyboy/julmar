@@ -49,7 +49,7 @@ class Van_selling_widthdrawal_controller extends Controller
             return 'no_location';
         } else {
             $customer = Customer::select('id', 'store_name')->where('kind_of_business', 'VAN SELLING')->where('location_id', $request->input('location_id'))->get();
-            $sku = Sku_add::select('id', 'sku_code', 'description')->where('principal_id', $request->input('principal'))->where('sku_type', $request->input('sku_type'))->get();
+            $sku = Sku_add::select('id', 'sku_code', 'description','sku_type')->where('principal_id', $request->input('principal'))->where('sku_type', $request->input('sku_type'))->get();
             return view('van_selling_generate_sku', [
                 'sku' => $sku,
             ])->with('customer', $customer)

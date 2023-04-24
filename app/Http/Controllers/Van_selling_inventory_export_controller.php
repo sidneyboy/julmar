@@ -93,7 +93,7 @@ class Van_selling_inventory_export_controller extends Controller
             WHERE customer_id = '$customer_id' GROUP BY sku_id)");
 
             foreach ($ledger as $key => $data) {
-                $sku[$data->sku_id] = Sku_add::select('sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->find($data->sku_id);
+                $sku[$data->sku_id] = Sku_add::select('id','sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->find($data->sku_id);
             }
 
             // $sku_add = Sku_add::select('sku_code', 'description', 'sku_type', 'principal_id','sku_type','unit_of_measurement','equivalent_butal_pcs')->whereNotIn('id',array_keys($sku))->where('sku_type','butal')->get();

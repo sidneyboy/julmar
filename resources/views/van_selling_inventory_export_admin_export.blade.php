@@ -10,8 +10,10 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             <tr>
+                <th>ID</th>
                 <th>TYPE</th>
                 <th>PRINCIPAL</th>
                 <th>CODE</th>
@@ -25,6 +27,7 @@
         <tbody>
             @foreach ($ledger as $data)
                 <tr>
+                    <td>{{ $data->sku_id }}</td>
                     <td>{{ $sku[$data->sku_id]->sku_type }}</td>
                     <td>{{ $sku[$data->sku_id]->skuPrincipal->principal }}</td>
                     <td>{{ $sku[$data->sku_id]->sku_code }}</td>
