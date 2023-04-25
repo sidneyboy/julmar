@@ -41,7 +41,7 @@ class Van_selling_import_data_controller extends Controller
             }
         }
 
-        //return $csv;
+        return $csv;
         if ($csv[0][3] == 'VAN SELLING EXPORT') {
             $van_selling_upload = Van_selling_upload::select('van_selling_export_code')->where('van_selling_export_code', $csv[1][3])->first();
             if ($van_selling_upload) {
@@ -62,8 +62,8 @@ class Van_selling_import_data_controller extends Controller
 
                 for ($i = 4; $i < $counter; $i++) {
                     $customer_id = $csv[1][1];
-                    $sku_code = $csv[$i][3];
-                    $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_code = '$sku_code' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+                    $sku_id = $csv[$i][3];
+                    $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Vs_inventory_ledgers WHERE sku_code = '$sku_id' AND customer_id = '$customer_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
                     $new_vs_inventory_ledger = new Vs_inventory_ledger([
                         'user_id' => auth()->user()->id,
@@ -72,11 +72,11 @@ class Van_selling_import_data_controller extends Controller
                         'transaction' => 'sales',
                         'sku_id' => $ledger_results[0]->sku_id,
                         'beginning_inventory' => $ledger_results[0]->ending_inventory,
-                        'quantity' => ($csv[$i][5]) * -1,
-                        'ending_inventory' => $ledger_results[0]->ending_inventory - $csv[$i][5],
+                        'quantity' => ($csv[$i][7]) * -1,
+                        'ending_inventory' => $ledger_results[0]->ending_inventory - $csv[$i][7],
                         'unit_price' => $csv[$i][6],
                         'all_id' => $csv[$i][2],
-                        'sku_code' => $sku_code,
+                        'sku_code' => $csv[$i][4],
                     ]);
 
                     $new_vs_inventory_ledger->save();
@@ -88,7 +88,7 @@ class Van_selling_import_data_controller extends Controller
                         'customer_store_name' => $csv[$i][1],
                         'reference' => $csv[$i][2],
                         'sku_id' => $ledger_results[0]->sku_id,
-                        'quantity' => $csv[$i][5],
+                        'quantity' => $csv[$i][7],
                         'unit_price' => $csv[$i][6],
                         'area' => $csv[$i][8],
                         // 'location' => $csv[$i][9],
@@ -105,7 +105,7 @@ class Van_selling_import_data_controller extends Controller
         // for ($i = 0; $i < count($csv); $i++) {
         //     Sku_add::where('id', $csv[$i][0])
         //         ->update([
-        //             'barcode' => $csv[$i][5],
+        //             'barcode' => $csv[$i][7],
         //         ]);
         // }
 

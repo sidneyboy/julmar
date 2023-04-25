@@ -57,23 +57,11 @@ class Sku_extract_inventory_controller extends Controller
         return view('extract_sku_inventory_generate_agent_proceed', [
             'agent_price_level' => $agent_price_level,
         ]);
-
-        // if ($agent_price_level == 'price_1') {
-        //     $price = $sku_price_details->price_1;
-        // } else if ($agent_price_level == 'price_2') {
-        //     $price = $sku_price_details->price_2;
-        // } else if ($agent_price_level == 'price_3') {
-        //     $price = $sku_price_details->price_3;
-        // } else if ($agent_price_level == 'price_4') {
-        //     $price = $sku_price_details->price_4;
-        // } else if ($agent_price_level == 'price_5') {
-        //     $price = $sku_price_details->price_5;
-        // }
     }
 
     public function extract_sku_inventory_generate_export_data(Request $request)
     {
-        return $request->input();
+        //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
         $time = date('His');

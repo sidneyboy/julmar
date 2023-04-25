@@ -79,15 +79,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();
