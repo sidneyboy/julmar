@@ -16,7 +16,7 @@ class Vs_sales extends Model
         'quantity',
         'unit_price',
         'area',
-        'location',
+        'location_id',
         'date_sold',
     ];
 }

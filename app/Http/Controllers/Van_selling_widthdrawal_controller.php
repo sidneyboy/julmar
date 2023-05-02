@@ -14,7 +14,7 @@ use App\Van_selling_ar_ledger;
 use App\Vs_withdrawal;
 use App\Vs_withdrawal_details;
 use App\Customer_principal_price;
-use App\Customer_principal_code;
+use App\sku_ledger;
 use App\Vs_inventory_ledger;
 use DB;
 use Illuminate\Http\Request;
@@ -66,6 +66,7 @@ class Van_selling_widthdrawal_controller extends Controller
             ->first();
         $sku_price_details = Sku_price_details::select($customer->price_level)->where('sku_id', $request->input('sku'))
             ->first();
+
 
         if ($sku_price_details) {
             if ($customer->price_level == 'price_1') {
