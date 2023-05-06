@@ -537,7 +537,7 @@
                         @endif
                     @endforeach
                     <tr>
-                        <th colspan="2" style="text-align: center;font-weight: bold">GRAND TOTAL</th>
+                        <th colspan="1" style="text-align: center;font-weight: bold">GRAND TOTAL</th>
                         <th>{{ array_sum($sum_quantity_lower) }}</th>
                         <th style="text-align: right;font-weight: bold">
                             {{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}

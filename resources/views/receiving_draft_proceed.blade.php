@@ -27,7 +27,7 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td>{{ $po_data->confirmed_quantity }}</td>
+                                        <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
                                     </tr>
                                 @endif
                             @endif
