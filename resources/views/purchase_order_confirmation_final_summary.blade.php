@@ -439,97 +439,99 @@
                 </thead>
                 <tbody>
                     @foreach (array_filter($quantity_confirmed) as $key => $data)
-                        <tr>
-                            <td style="font-size:10px;">
-                                <span style="color:green;font-weight:bold;">{{ $sku_code[$key] }}</span>-
-                                {{ $description[$key] }}
-                                <input type="hidden" value="{{ $key }}" name="sku_id[]">
-                                <input type="hidden" value="{{ $quantity_confirmed[$key] }}"
-                                    name="confirmed_quantity[{{ $key }}]">
-                                <input type="hidden" value="{{ $unit_cost[$key] }}"
-                                    name="unit_cost[{{ $key }}]">
+                        @if ($unit_cost[$key] != 0)
+                            <tr>
+                                <td style="font-size:10px;">
+                                    <span style="color:green;font-weight:bold;">{{ $sku_code[$key] }}</span>-
+                                    {{ $description[$key] }}
+                                    <input type="hidden" value="{{ $key }}" name="sku_id[]">
+                                    <input type="hidden" value="{{ $quantity_confirmed[$key] }}"
+                                        name="confirmed_quantity[{{ $key }}]">
+                                    <input type="hidden" value="{{ $unit_cost[$key] }}"
+                                        name="unit_cost[{{ $key }}]">
 
-                            </td>
-                            <td style="text-align: right">{{ $quantity_confirmed[$key] }}</td>
-                            <td style="text-align: right">{{ number_format($unit_cost[$key], 2, '.', ',') }}</td>
-                            <td style="text-align: right">
+                                </td>
+                                <td style="text-align: right">{{ $quantity_confirmed[$key] }}</td>
+                                <td style="text-align: right">{{ number_format($unit_cost[$key], 2, '.', ',') }}</td>
+                                <td style="text-align: right">
+                                    @php
+                                        $total_amount = $quantity_confirmed[$key] * $unit_cost[$key];
+                                        $sum_total_amount[] = $total_amount;
+                                    @endphp
+                                    {{ number_format($total_amount, 2, '.', ',') }}
+                                </td>
                                 @php
-                                    $total_amount = $quantity_confirmed[$key] * $unit_cost[$key];
-                                    $sum_total_amount[] = $total_amount;
-                                @endphp
-                                {{ number_format($total_amount, 2, '.', ',') }}
-                            </td>
-                            @php
-                                $total = $total_amount;
-                                
-                                $discount_value_holder = $total;
-                                $discount_value_holder_history = [];
-                                $discount_value_holder_history_for_bo_allowance = [];
-                                $totalArray = [];
-                                $percent = [];
-                                foreach ($discount_selected->principal_discount_details as $data_discount) {
-                                    $discount_value_holder_dummy = $discount_value_holder;
-                                    $less_percentage_by = $data_discount->discount_rate / 100;
-                                
-                                    $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                    $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                                
-                                    $discount_value_holder_history[] = $discount_rate_answer;
-                                    $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                    echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
-                                }
-                            @endphp
-
-                            @php
-                                $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
-                                $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
-                                $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
-                                
-                            @endphp
-
-
-                            <td style="text-align: right;">
-                                @php
+                                    $total = $total_amount;
                                     
-                                    $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
-                                    $sum_vat_per_sku[] = $vat;
+                                    $discount_value_holder = $total;
+                                    $discount_value_holder_history = [];
+                                    $discount_value_holder_history_for_bo_allowance = [];
+                                    $totalArray = [];
+                                    $percent = [];
+                                    foreach ($discount_selected->principal_discount_details as $data_discount) {
+                                        $discount_value_holder_dummy = $discount_value_holder;
+                                        $less_percentage_by = $data_discount->discount_rate / 100;
+                                    
+                                        $discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                    
+                                        $discount_value_holder_history[] = $discount_rate_answer;
+                                        $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                                        echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                    }
                                 @endphp
-                                {{ number_format($vat, 2, '.', ',') }}
-                            </td>
-                            <td style="text-align: right;">
-                                @php
-                                    $vat_inclusive_total_cost_per_sku = $bo_allowance * 1.12;
-                                    $sum_vat_inclusive_total_cost_per_sku[] = $vat_inclusive_total_cost_per_sku;
-                                @endphp
-                                {{ number_format($vat_inclusive_total_cost_per_sku, 2, '.', ',') }}
-                            </td>
-                            <td style="text-align: right">
-                                @php
-                                    $freight_per_sku = $freight[$key] * $quantity_confirmed[$key];
-                                    $sum_freight_per_sku[] = $freight_per_sku;
-                                @endphp
-                                {{ number_format($freight_per_sku, 2, '.', ',') }}
-                            </td>
-                            <td style="text-align: right">
-                                @php
-                                    $final_total_cost_per_sku = $vat_inclusive_total_cost_per_sku + $freight_per_sku;
-                                    $sum_final_total_cost_per_sku[] = $final_total_cost_per_sku;
-                                @endphp
-                                {{ number_format($final_total_cost_per_sku, 2, '.', ',') }}
 
-                            </td>
-                            <td style="text-align: right">
                                 @php
-                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity_confirmed[$key];
-                                    $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
+                                    $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
+                                    $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
+                                    $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
+                                    
                                 @endphp
-                                {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
-                                <input type="hidden" name="final_unit_cost[{{ $key }}]"
-                                    value="{{ $final_unit_cost_per_sku }}">
-                                <input type="hidden" name="freight_per_sku[{{ $key }}]"
-                                    value="{{ $freight[$key] }}">
-                            </td>
-                        </tr>
+
+
+                                <td style="text-align: right;">
+                                    @php
+                                        
+                                        $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
+                                        $sum_vat_per_sku[] = $vat;
+                                    @endphp
+                                    {{ number_format($vat, 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right;">
+                                    @php
+                                        $vat_inclusive_total_cost_per_sku = $bo_allowance * 1.12;
+                                        $sum_vat_inclusive_total_cost_per_sku[] = $vat_inclusive_total_cost_per_sku;
+                                    @endphp
+                                    {{ number_format($vat_inclusive_total_cost_per_sku, 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right">
+                                    @php
+                                        $freight_per_sku = $freight[$key] * $quantity_confirmed[$key];
+                                        $sum_freight_per_sku[] = $freight_per_sku;
+                                    @endphp
+                                    {{ number_format($freight_per_sku, 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right">
+                                    @php
+                                        $final_total_cost_per_sku = $vat_inclusive_total_cost_per_sku + $freight_per_sku;
+                                        $sum_final_total_cost_per_sku[] = $final_total_cost_per_sku;
+                                    @endphp
+                                    {{ number_format($final_total_cost_per_sku, 2, '.', ',') }}
+
+                                </td>
+                                <td style="text-align: right">
+                                    @php
+                                        $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity_confirmed[$key];
+                                        $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
+                                    @endphp
+                                    {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
+                                    <input type="hidden" name="final_unit_cost[{{ $key }}]"
+                                        value="{{ $final_unit_cost_per_sku }}">
+                                    <input type="hidden" name="freight_per_sku[{{ $key }}]"
+                                        value="{{ $freight[$key] }}">
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                     <tr>
                         <th colspan="3" style="text-align: center;font-weight: bold">GRAND TOTAL</th>
@@ -895,7 +897,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-               
+
             }
         });
     }));

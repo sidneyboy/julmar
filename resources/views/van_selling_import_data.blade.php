@@ -79,15 +79,24 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
 
-                    location.reload();
+                    if (data == 'Existing File') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'Existing File',
+                            'error'
+                        )
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Your work has been saved',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        location.reload();
+                    }
                 },
                 error: function(error) {
                     $('#loader').hide();

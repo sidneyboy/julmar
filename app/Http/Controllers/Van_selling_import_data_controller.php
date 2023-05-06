@@ -47,14 +47,7 @@ class Van_selling_import_data_controller extends Controller
             if ($van_selling_upload) {
                 return 'Existing File';
             } else {
-                $van_selling_upload_save = new Van_selling_upload([
-                    'van_selling_export_code' => $csv[1][3],
-                    'date' => $date,
-                    'customer_id' => $csv[1][1],
-                    'date_range' => $csv[1][6],
-                ]);
 
-                $van_selling_upload_save->save();
 
                 $counter = count($csv);
 
@@ -89,12 +82,21 @@ class Van_selling_import_data_controller extends Controller
                         'quantity' => $csv[$i][7],
                         'unit_price' => $csv[$i][8],
                         'area' => $csv[$i][11],
-                        'location_id' => $csv[$i][10],
+                        'location' => $csv[$i][10],
                         'date_sold' => $csv[$i][0],
                     ]);
 
                     $new_vs_sales->save();
                 }
+
+                $van_selling_upload_save = new Van_selling_upload([
+                    'van_selling_export_code' => $csv[1][3],
+                    'date' => $date,
+                    'customer_id' => $csv[1][1],
+                    'date_range' => $csv[1][6],
+                ]);
+
+                $van_selling_upload_save->save();
             }
         } else {
             return 'Existing File';
