@@ -70,7 +70,7 @@
                     <td>{{ $data->quantity }}</td>
                     <td><input style="text-align: right" type="number" min="0"
                             class="form-control form-control-sm" required name="quantity_confirmed[{{ $data->sku_id }}]"
-                            value="{{ $data->quantity }}"></td>
+                            value="0"></td>
                     <td>
 
                         @if ($data->sku->sku_price_details_one)
