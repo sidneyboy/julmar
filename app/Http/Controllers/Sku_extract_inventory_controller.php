@@ -7,6 +7,7 @@ use App\Sku_add;
 use App\Customer;
 use App\Sku_principal;
 use App\Customer_principal_price;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,6 +44,19 @@ class Sku_extract_inventory_controller extends Controller
             return view('extract_sku_inventory_generate_agent', [
                 'agent' => $agent,
                 'principal' => $principal,
+            ])->with('extract_for', $request->input('extract_for'));
+        } elseif ($request->input('extract_for') == 'BOOKING') {
+            $principal_id = $request->input('principal');
+            $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
+            WHERE principal_id = '$principal_id' GROUP BY sku_id)");
+
+            for ($i = 0; $i < count($sku_ledger); $i++) {
+                $description[] = Sku_add::select('sku_code', 'description', 'sku_type', 'id','unit_of_measurement')->find($sku_ledger[$i]->sku_id);
+            }
+
+            return view('extract_sku_inventory_generate_booking', [
+                'sku_ledger' => $sku_ledger,
+                'description' => $description,
             ])->with('extract_for', $request->input('extract_for'));
         }
     }

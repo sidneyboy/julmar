@@ -44,6 +44,10 @@
                                     name="confirmed_quantity[{{ $key }}]">
                                 <input type="hidden" value="{{ $unit_cost[$key] }}"
                                     name="unit_cost[{{ $key }}]">
+
+                                @php
+                                    $sum_quantity_lower[] = $quantity_confirmed[$key];
+                                @endphp
                             </td>
                             <td style="text-align: right">{{ $quantity_confirmed[$key] }}</td>
                             <td style="text-align: right">{{ number_format($unit_cost[$key], 2, '.', ',') }}</td>
@@ -117,7 +121,9 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <th style="text-align: center;" colspan="3">GRAND TOTAL</th>
+                        <th style="text-align: center;">GRAND TOTAL</th>
+                        <th style="text-align: right">{{ array_sum($sum_quantity_lower) }}</th>
+                        <th></th>
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}</th>
                         <th style="text-align: right;">{{ number_format(array_sum($sum_discount), 2, '.', ',') }}</th>
@@ -538,7 +544,8 @@
                     @endforeach
                     <tr>
                         <th colspan="1" style="text-align: center;font-weight: bold">GRAND TOTAL</th>
-                        <th>{{ array_sum($sum_quantity_lower) }}</th>
+                        <th style="text-align: right">{{ array_sum($sum_quantity_lower) }}</th>
+                        <th></th>
                         <th style="text-align: right;font-weight: bold">
                             {{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}
 

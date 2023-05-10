@@ -9,7 +9,7 @@
                         </tr>
                         <tr>
                             <th>Desc</th>
-                            <th>Ordered</th>
+                            <th>Confirmed QTY</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -20,14 +20,14 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
+                                        <td style="text-align: center">{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
                                     </tr>
                                 @else
                                     <tr>
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td>{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
+                                        <td style="text-align: center">{{ $po_data->confirmed_quantity }}</td>
                                     </tr>
                                 @endif
                             @endif
@@ -48,7 +48,6 @@
                             <th>U/C(VAT EXT)</th>
                             <th>Freight</th>
                             <th>Received</th>
-                            <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,19 +59,24 @@
                                 </td>
                                 <td style="text-align: right">{{ number_format($draft_data->freight, 2, '.', ',') }}
                                 </td>
-                                <td><input type="number" min="0" class="form-control form-control-sm"
-                                        name="quantity_received[{{ $draft_data->id }}]"></td>
-                                <td>
-                                    <select name="remarks[{{ $draft_data->id }}]" class="form-control form-control-sm"
-                                        required>
-                                        <option value="" default>Select</option>
-                                        <option value="received">Received</option>
-                                        <option value="not_complete">Not Complete</option>
-                                    </select>
+                                <td><input style="text-align: center" type="number" min="0" value="{{ $draft_data->quantity }}"
+                                        class="form-control form-control-sm"
+                                        name="quantity_received[{{ $draft_data->id }}]">
+                                    @php
+                                        $sum_quantity[] = $draft_data->quantity;
+                                    @endphp
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th style="text-align: center">{{ array_sum($sum_quantity) }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

@@ -19,7 +19,7 @@ class Customer_profile_controller extends Controller
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $principal = Sku_principal::select('id', 'principal')->get();
-            $customer = Customer::get();
+            $customer = Customer::where('kind_of_business','!=','VAN SELLING')->get();
             return view('customer_profile', [
                 'user' => $user,
                 'principal' => $principal,

@@ -30,6 +30,7 @@
                             <th>Credit Term</th>
                             <th>Credit Line</th>
                             <th>Location</th>
+                            <th>Location ID</th>
                             <th>Contact Person</th>
                             <th>Contact Number</th>
                             <th>ADDITIONAL<br />INFORMATION</th>
@@ -42,8 +43,9 @@
                                 <td>{{ $data->store_name }}</td>
                                 <td>{{ $data->kind_of_business }}</td>
                                 <td style="text-align: right">{{ $data->credit_term }}</td>
-                                <td style="text-align: right">{{ number_format($data->credit_line_amount,2,".",",")  }}</td>
+                                <td style="text-align: right">{{ number_format($data->credit_line_amount, 2, '.', ',') }}</td>
                                 <td>{{ $data->location->location }}</td>
+                                <td>{{ $data->location_id }}</td>
                                 <td>
                                     @if ($data->contact_person)
                                         {{ $data->contact_person }}
@@ -88,7 +90,10 @@
                 buttons: [
                     'copyHtml5',
                     'excelHtml5',
-                    'csvHtml5',
+                    {
+                        extend: 'csvHtml5',
+                        filename: 'Booking Customer',
+                    },
                     'pdfHtml5'
                 ]
             });

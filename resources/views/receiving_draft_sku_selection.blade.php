@@ -18,11 +18,19 @@
                 @endforeach
             </select>
         </div>
+        <div class="col-md-6">
+            <label for="">Quantity:</label>
+            <input type="text" class="form-control" id="sku_quantity" name="sku_quantity" required>
+        </div>
     </div>
     <div class="row" id="show_barcode">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <label for="">Barcode:</label>
             <input type="text" class="form-control" id="barcode" name="barcode">
+        </div>
+        <div class="col-md-6">
+            <label for="">Quantity:</label>
+            <input type="number" min="1" class="form-control" id="quantity" name="quantity">
         </div>
     </div>
     <br />

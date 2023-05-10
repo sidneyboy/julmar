@@ -8,6 +8,7 @@ use App\User;
 use App\Sku_add;
 use App\Purchase_order;
 use App\Purchase_order_details;
+use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -57,10 +58,9 @@ class Receiving_draft_controller extends Controller
     public function receiving_draft_sku_selection(Request $request)
     {
         //return $request->input();
-        $purchase_order_details = Purchase_order_details::select('sku_id')
+        $purchase_order_details = Purchase_order_details::select('sku_id', 'purchase_order_id')
             ->where('purchase_order_id', $request->input('purchase_id'))
-            ->where('remarks', 'staggered')
-            ->orWhere('remarks', null)
+            ->where('confirmed_quantity', '!=', 0)
             ->get();
 
         return view('receiving_draft_sku_selection', [
@@ -75,10 +75,12 @@ class Receiving_draft_controller extends Controller
             $barcode = $request->input('barcode');
             $po_sku_type = Purchase_order::select('sku_type')->find($request->input('purchase_order_id'));
             $sku = Sku_add::select('id', 'sku_type')->where('barcode', $barcode)->where('sku_type', $po_sku_type->sku_type)->first();
+            $quantity = $request->input('quantity');
         } else if ($request->input('sku_barcode') != null) {
             $barcode = $request->input('sku_barcode');
             $po_sku_type = Purchase_order::select('sku_type')->find($request->input('purchase_order_id'));
             $sku = Sku_add::select('id', 'sku_type')->where('id', $barcode)->where('sku_type', $po_sku_type->sku_type)->first();
+            $quantity = $request->input('sku_quantity');
         }
 
 
@@ -98,6 +100,7 @@ class Receiving_draft_controller extends Controller
                         'user_id' => auth()->user()->id,
                         'unit_cost' => $check_po_details->unit_cost,
                         'freight' => $check_po_details->freight,
+                        'quantity' => $quantity,
                     ]);
 
                     $new_draft->save();
@@ -106,7 +109,7 @@ class Receiving_draft_controller extends Controller
                         ->where('purchase_order_id', $request->input('purchase_order_id'))
                         ->update(['scanned_remarks' => 'scanned']);
 
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight')->where('session_id', $request->input('session_id'))->get();
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_order_id'))
@@ -124,7 +127,11 @@ class Receiving_draft_controller extends Controller
                         return 'sku_received';
                     }
                 } else {
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight')->where('session_id', $request->input('session_id'))->get();
+                    Receiving_draft::where('session_id', $request->input('session_id'))
+                        ->where('sku_id', $sku->id)
+                        ->update(['quantity' => $quantity]);
+
+                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
 
                     $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
                         ->where('purchase_order_id', $request->input('purchase_order_id'))
