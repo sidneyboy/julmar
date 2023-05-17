@@ -29,15 +29,29 @@
                  <form id="customer_save" method="post">
                      @csrf
                      <div class="row">
-                         <div class="col-md-4">
+                         <div class="col-md-3">
                              <label>Store Name</label>
                              <input type="text" class="form-control" name="store_name" required>
                          </div>
-                         <div class="col-md-4">
+                         <div class="col-md-3">
                              <label>Contact Person</label>
                              <input type="text" class="form-control" name="contact_person" required>
                          </div>
-                         <div class="col-md-4">
+                         <div class="col-md-3">
+                             <label>Location</label>
+                             <select class="form-control select2bs4" name="location_id" id="location_id" required
+                                 style="width:100%;">
+                                 <option value="" default>Select</option>
+                                 @foreach ($location as $location_data)
+                                     <option value="{{ $location_data->id }}">{{ $location_data->location }}</option>
+                                 @endforeach
+                             </select>
+                         </div>
+                         <div class="col-md-3">
+                             <label>Detailed Location</label>
+                             <input type="text" name="detailed_location" class="form-control" required>
+                         </div>
+                         <div class="col-md-3">
                              <label>Credit Term</label>
                              <select class="form-control select2bs4" name="credit_term" style="width:100%;" required>
                                  <option value="" default>Select Term</option>
@@ -47,16 +61,24 @@
                                  <option value="60 days">60 days</option>
                              </select>
                          </div>
-                         <div class="col-md-6">
-                             <label>Detailed Location</label>
-                             <input type="text" name="detailed_location" class="form-control" required>
-                         </div>
-                         <div class="col-md-6">
+                         <div class="col-md-3">
                              <label>Credit Line Amount </label>
                              <input type="text" class="form-control" name="credit_line_amount" required
                                  onkeypress="return isNumberKey(event)">
                          </div>
-
+                         <div class="col-md-3">
+                             <label>Mode of Transaction</label>
+                             <select name="mode_of_transaction" class="form-control" required>
+                                 <option value="" default>Select</option>
+                                 <option value="COD">COD</option>
+                                 <option value="VALE">VALE</option>
+                             </select>
+                         </div>
+                         <div class="col-md-3">
+                             <label>Maximum Allowed Sales Order</label>
+                             <input type="number" class="form-control" name="max_allowed_so" required
+                                 onkeypress="return isNumberKey(event)">
+                         </div>
                          <div class="col-md-4">
                              <label>Contact Number</label>
                              <input type="text" class="form-control" name="contact_number" required>
@@ -79,16 +101,7 @@
                                  <option value="INST">INST</option>
                              </select>
                          </div>
-                         <div class="col-md-4">
-                             <label>Location</label>
-                             <select class="form-control select2bs4" name="location_id" id="location_id" required
-                                 style="width:100%;">
-                                 <option value="" default>Select</option>
-                                 @foreach ($location as $location_data)
-                                     <option value="{{ $location_data->id }}">{{ $location_data->location }}</option>
-                                 @endforeach
-                             </select>
-                         </div>
+
                          <div class="col-md-12">
                              <div id="customer_show_location_details"></div>
                          </div>

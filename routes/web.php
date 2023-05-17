@@ -273,6 +273,10 @@ Route::post('/customer_profile_update', 'Customer_profile_controller@customer_pr
 
 Route::get('/customer_profile_generate_principal_code_list', 'Customer_profile_controller@customer_profile_generate_principal_code_list')->name('customer_profile_generate_principal_code_list');
 
+Route::post('/customer_profile_generate', 'Customer_profile_controller@customer_profile_generate')->name('customer_profile_generate');
+
+
+
 
 
 Route::get('/customer_principal_code_price_level', 'Customer_principal_code_price_level_controller@index')->name('customer_principal_code_price_level');

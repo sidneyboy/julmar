@@ -2,7 +2,7 @@
     <table class="table table-bordered table-hover table-sm table-striped" id="example1">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>BOOKING INVENTORY</th>
                 <th>Principal</th>
                 <th>Code</th>
                 <th>Description</th>
@@ -75,15 +75,14 @@
             ordering: true,
             info: false,
             dom: 'Bfrtip',
-            buttons: [
-                'copyHtml5',
-                'excelHtml5',
-                // 'csvHtml5',
-                {
+            buttons: [{
                     extend: 'csvHtml5',
+                    title: 'Van Selling Inventory OS',
                     filename: 'Booking Inventory',
                 },
-                'pdfHtml5'
+                'copyHtml5',
+                'excelHtml5',
+                // 'pdfHtml5'
             ]
         });
         new $.fn.dataTable.FixedHeader(table);

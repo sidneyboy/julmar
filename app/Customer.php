@@ -20,6 +20,7 @@ class Customer extends Model
         'status',
         'longitude',
         'latitude',
+        'allowed_number_of_sales_order',
     ];
 
     public function location()

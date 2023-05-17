@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Sku_principal;
 use App\Customer;
@@ -18,12 +19,14 @@ class Customer_profile_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal = Sku_principal::select('id', 'principal')->get();
-            $customer = Customer::where('kind_of_business','!=','VAN SELLING')->get();
+            // $principal = Sku_principal::select('id', 'principal')->get();
+            // $customer = Customer::where('kind_of_business','!=','VAN SELLING')->get();
+            $location = Location::get();
             return view('customer_profile', [
                 'user' => $user,
-                'principal' => $principal,
-                'customer' => $customer,
+                // 'principal' => $principal,
+                // 'customer' => $customer,
+                'location' => $location,
                 'main_tab' => 'manage_customer_main_tab',
                 'sub_tab' => 'manage_customer_sub_tab',
                 'active_tab' => 'customer_profile',
@@ -31,6 +34,17 @@ class Customer_profile_controller extends Controller
         } else {
             return redirect('/')->with('error', 'Session Expired. Please Login');
         }
+    }
+
+    public function customer_profile_generate(Request $request)
+    {
+        $customer = Customer::where('location_id', $request->input('location_id'))
+            ->where('kind_of_business', '!=', 'VAN SELLING')
+            ->get();
+
+        return view('customer_profile_generate_page', [
+            'customer' => $customer,
+        ]);
     }
 
     public function customer_profile_search(Request $request)

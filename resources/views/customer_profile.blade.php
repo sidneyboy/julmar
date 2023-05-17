@@ -20,51 +20,29 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;"
-                    id="example1">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Store Name</th>
-                            <th>KOB</th>
-                            <th>Credit Term</th>
-                            <th>Credit Line</th>
-                            <th>Location</th>
-                            <th>Location ID</th>
-                            <th>Contact Person</th>
-                            <th>Contact Number</th>
-                            <th>ADDITIONAL<br />INFORMATION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($customer as $data)
-                            <tr>
-                                <td>{{ $data->id }}</td>
-                                <td>{{ $data->store_name }}</td>
-                                <td>{{ $data->kind_of_business }}</td>
-                                <td style="text-align: right">{{ $data->credit_term }}</td>
-                                <td style="text-align: right">{{ number_format($data->credit_line_amount, 2, '.', ',') }}</td>
-                                <td>{{ $data->location->location }}</td>
-                                <td>{{ $data->location_id }}</td>
-                                <td>
-                                    @if ($data->contact_person)
-                                        {{ $data->contact_person }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td style="text-align: right">
-                                    @if ($data->contact_number)
-                                        0{{ $data->contact_number }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td></td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <form id="customer_profile_generate">
+                    @csrf
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <label for="">Location</label>
+                            <select name="location_id" class="form-control select2bs4" required>
+                                <option value="" default>Select</option>
+                                @foreach ($location as $data)
+                                    <option value="{{ $data->id }}">{{ $data->location }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <br />
+                            <button class="btn btn-sm btn-info float-right" type="submit">Generate</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div id="customer_profile_generate_page"></div>
             </div>
         </div>
         <!-- /.card -->
@@ -80,25 +58,31 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $(document).ready(function() {
-            var table = $('#example1').DataTable({
-                responsive: true,
-                paging: true,
-                ordering: true,
-                info: true,
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    {
-                        extend: 'csvHtml5',
-                        filename: 'Booking Customer',
-                    },
-                    'pdfHtml5'
-                ]
+
+        $("#customer_profile_generate").on('submit', (function(e) {
+            e.preventDefault();
+            //$('#loader').show();
+            $.ajax({
+                url: "customer_profile_generate",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    // console.log(data);
+                    $('#customer_profile_generate_page').html(data);
+                },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
-            new $.fn.dataTable.FixedHeader(table);
-        });
+        }));
     </script>
     </body>
 

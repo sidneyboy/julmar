@@ -66,6 +66,8 @@ class Customer_controller extends Controller
             'contact_number'    => $request->input('contact_number'),
             'kind_of_business'    => $request->input('kind_of_business'),
             'status'    => 'UNLOCKED',
+            'mode_of_transaction' => $request->input('mode_of_transaction'),
+            'allowed_number_of_sales_order' => $request->input('max_allowed_so'),
         ]);
 
         $save_new_customer->save();
