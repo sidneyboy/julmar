@@ -602,6 +602,14 @@
                                         </li>
 
                                         <li class="nav-item">
+                                            <a href="{{ url('audit_approved_customer') }}"
+                                                class="nav-link {{ $active_tab == 'audit_approved_customer' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Customer Status</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a href="{{ url('customer_principal_code_price_level') }}"
                                                 class="nav-link {{ $active_tab == 'customer_principal_code_price_level' ? 'active' : '' }}">
                                                 <i class="fas fa-user-plus nav-icon"></i>
@@ -633,6 +641,34 @@
                                                 class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
                                                 <i class="fas fa-user-plus nav-icon"></i>
                                                 <p>Upload Raw Data</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('sales_order') }}"
+                                                class="nav-link {{ $active_tab == 'sales_order_migrate' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>SO Upload</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('sales_order_draft') }}"
+                                                class="nav-link {{ $active_tab == 'sales_order_draft' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>SO Draft </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('sales_invoice') }}"
+                                                class="nav-link {{ $active_tab == 'sales_invoice' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Print Invoice</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('sales_order_register') }}"
+                                                class="nav-link {{ $active_tab == 'sales_order_register' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Sales Register Export</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

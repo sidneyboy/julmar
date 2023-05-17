@@ -38,6 +38,25 @@ if (charCode != 46 && charCode > 31 &&
     ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
+    <script>
+    $(document).ready(function() {
+        var table = $('#example1').DataTable({
+            responsive: true,
+            paging: false,
+            ordering: true,
+            info: false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
+        });
+        new $.fn.dataTable.FixedHeader(table);
+    });
+</script>
+
 
 
     DB::raw('DATE(created_at)'), [$date_from, $date_to]

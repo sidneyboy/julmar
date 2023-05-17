@@ -9,8 +9,6 @@
 
 
 @section('content')
-
-    <br />
     <!-- Main content -->
     <section class="content">
 
@@ -41,10 +39,10 @@
                     </div>
                 @endif
                 <div class="table table-responsive">
-                    <table class="table table-bordered table-hover table-sm" id="example3">
+                    <table class="table table-bordered table-hover table-sm table-striped" id="example1" style="width:100%;font-size:13px;">
                         <thead>
                             <tr>
-                                <th colspan="" rowspan="" headers="" scope="">ID</th>
+                                <th>APPROVED</th>
                                 <th style="text-align: center;">STORE NAME</th>
                                 <th style="text-align: center;">KOB</th>
                                 <th style="text-align: center;">CREDIT TERM</th>
@@ -55,13 +53,53 @@
                                 <th style="text-align: center;">CONTACT<br />PERSON</th>
                                 <th style="text-align: center;">CONTACT<br />NUMBER</th>
                                 <th style="text-align: center;">ADDITIONAL<br />INFORMATION</th>
-                                <th>APPROVED</th>
+                               
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($customer as $data)
                                 <tr>
-                                    <td style="text-align: center;text-transform: uppercase;">{{ $data->id }}</td>
+                                    <td>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-sm btn-warning btn-block" data-toggle="modal"
+                                            data-target="#exampleModal_approved_customer{{ $data->id }}">
+                                            Approved
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal_approved_customer{{ $data->id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{{ route('audit_approved_customer_process') }}"
+                                                        method="post">
+                                                        @csrf
+                                                        <div class="modal-body">
+                                                            <input type="password" placeholder="Audit Password"
+                                                                class="form-control" name="password" required>
+
+                                                            <input type="hidden" value="{{ $data->id }}"
+                                                                name="customer_id">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-sm btn-primary">Save
+                                                                changes</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {{-- <td style="text-align: center;text-transform: uppercase;">{{ $data->id }}</td> --}}
                                     <td style="text-align: center;text-transform: uppercase;">{{ $data->store_name }}</td>
                                     <td style="text-align: center;text-transform: uppercase;">{{ $data->kind_of_business }}
                                     </td>
@@ -82,7 +120,7 @@
                                     </td>
                                     <td>
                                         <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary btn-block" data-toggle=modal
+                                        <button type="button" class="btn btn-sm btn-primary btn-block" data-toggle=modal
                                             data-target="#exampleModal{{ $data->id }}">
                                             VIEW <i class="fas fa-info-circle"></i>
                                         </button>
@@ -101,7 +139,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <table class="table table-bordered table-hover">
+                                                        <table class="table table-bordered table-hover table-striped table-sm">
                                                             <thead>
                                                                 <tr>
                                                                     <th colspan="2"
@@ -170,46 +208,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-warning btn-block" data-toggle="modal"
-                                            data-target="#exampleModal_approved_customer{{ $data->id }}">
-                                            Approved
-                                        </button>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal_approved_customer{{ $data->id }}"
-                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="{{ route('audit_approved_customer_process') }}"
-                                                        method="post">
-                                                        @csrf
-                                                        <div class="modal-body">
-                                                            <input type="password" placeholder="Audit Password"
-                                                                class="form-control" name="password" required>
-
-                                                            <input type="hidden" value="{{ $data->id }}"
-                                                                name="customer_id">
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-sm btn-secondary"
-                                                                data-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-sm btn-primary">Save
-                                                                changes</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
+                                   
                                 </tr>
                             @endforeach
                         </tbody>
@@ -242,13 +241,21 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#example3').DataTable({
-            "paging": false,
-            "lengthChange": false,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
+        $(document).ready(function() {
+            var table = $('#example1').DataTable({
+                responsive: true,
+                paging: false,
+                ordering: true,
+                info: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+            new $.fn.dataTable.FixedHeader(table);
         });
     </script>
     </body>

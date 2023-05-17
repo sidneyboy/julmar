@@ -1,6 +1,6 @@
 <form id="sales_order_draft_save">
     <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th>Agent</th>
@@ -27,7 +27,7 @@
             </tbody>
         </table>
 
-        <table class="table table-bordered table-hover table-sm">
+        <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
                     <th colspan="6">DR: {{ $delivery_receipt }}</th>
@@ -67,7 +67,6 @@
                 @endforeach
             </tbody>
             <tfoot>
-
                 @if ($customer_discount != 0)
                     <tr>
                         <th colspan="5" style="text-align: right">GROSS</th>
@@ -139,8 +138,6 @@
 
 
 <script>
-    $('.select2').select2();
-
     $("#sales_order_draft_save").on('submit', (function(e) {
         e.preventDefault();
         //$('.loading').show();

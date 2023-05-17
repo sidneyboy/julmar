@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -22,7 +21,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>Sales Order Number</label>
-                            <select name="sales_order_id" style="width:100%;" class="form-control select2" required>
+                            <select name="sales_order_id" style="width:100%;" class="form-control select2bs4" required>
                                 <option value="" default>Select</option>
                                 @foreach ($sales_order_draft as $data)
                                     <option value="{{ $data->id }}">
@@ -33,7 +32,7 @@
                         </div>
                         <div class="col-md-12">
                             <br />
-                            <button class="btn btn-info btn-block">PROCEED</button>
+                            <button class="btn btn-info btn-sm float-right">Proceed</button>
                         </div>
                     </div>
                 </form>
@@ -49,7 +48,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">Calculated Summary</h3>
+                <h3 class="card-title" style="font-weight: bold;">Summary</h3>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -78,15 +77,9 @@
             }
         });
 
-
-
-
-
-
         $("#sales_order_draft_generate").on('submit', (function(e) {
             e.preventDefault();
             //$('.loading').show();
-            // $('#sales_order_migrate_summary_page').show();
             $.ajax({
                 url: "sales_order_draft_generate",
                 type: "POST",
@@ -98,6 +91,14 @@
                     $('.loading').hide();
                     $('#sales_order_draft_generate_page').html(data);
                 },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
             });
         }));
     </script>

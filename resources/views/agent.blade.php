@@ -20,7 +20,8 @@
                         </div>
                         <div class="col-md-3">
                             <label>Principal:</label>
-                            <select class="form-control select2bs4" style="width:100%;" multiple="multiple" name="principal[]">
+                            <select class="form-control select2bs4" style="width:100%;" multiple="multiple"
+                                name="principal[]">
                                 @foreach ($principal as $data)
                                     <option value="{{ $data->id }}">{{ $data->principal }}</option>
                                 @endforeach
@@ -58,22 +59,23 @@
             <div class="card-footer">
                 <div class="row">
                     <div class="table table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover table-striped table-sm" style="width:100%;" id="example1">
                             <thead>
                                 <tr>
-                                    <th>FULL NAME</th>
-                                    <th>CONTACT #</th>
-                                    <th>ADDRESS</th>
-
-                                    <th>ASSIGNED LOCATION</th>
-                                    <th>EMAIL ADDRESS</th>
-                                    <th>PRINCIPALS</th>
-                                    <th>ADDED BY:</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Contact #</th>
+                                    <th>Address</th>
+                                    <th>Area</th>
+                                    <th>Email</th>
+                                    <th>Principals</th>
+                                    <th>Added By:</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($agent as $data)
                                     <tr>
+                                        <td>{{ $data->id }}</td>
                                         <td>{{ $data->full_name }}</td>
                                         <td>{{ $data->contact_number }}</td>
                                         <td>{{ $data->full_address }}</td>
@@ -139,6 +141,23 @@
                 }
             });
         }));
+
+        $(document).ready(function() {
+            var table = $('#example1').DataTable({
+                responsive: true,
+                paging: false,
+                ordering: true,
+                info: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+            new $.fn.dataTable.FixedHeader(table);
+        });
     </script>
     </body>
 
