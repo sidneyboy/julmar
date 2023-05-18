@@ -164,7 +164,7 @@
 
     $("#sales_order_draft_update_customer_process").on('submit', (function(e) {
         e.preventDefault();
-        //$('#loader').show();
+        $('#loader').show();
         $.ajax({
             url: "sales_order_draft_update_customer_process",
             type: "POST",
@@ -173,6 +173,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',

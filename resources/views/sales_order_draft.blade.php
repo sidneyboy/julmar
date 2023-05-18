@@ -79,7 +79,7 @@
 
         $("#sales_order_draft_generate").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "sales_order_draft_generate",
                 type: "POST",
@@ -88,7 +88,7 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    $('.loading').hide();
+                    $('#loader').hide();
                     $('#sales_order_draft_generate_page').html(data);
                 },
                 error: function(error) {

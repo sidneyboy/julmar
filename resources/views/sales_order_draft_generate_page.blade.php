@@ -170,6 +170,7 @@
 
     $("#sales_order_draft_proceed_to_final_summary").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "sales_order_draft_proceed_to_final_summary",
             type: "POST",
@@ -178,7 +179,7 @@
             cache: false,
             processData: false,
             success: function(data) {
-                $('.loading').hide();
+                $('#loader').hide();
                 $('#sales_order_draft_proceed_to_final_summary_page').html(data);
             },
         });

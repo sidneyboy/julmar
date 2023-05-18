@@ -61,7 +61,8 @@
                                 value="{{ $unit_price[$details->sku_id] }}">
                             <input type="hidden" name="final_quantity[{{ $details->sku_id }}]"
                                 value="{{ $final_quantity[$details->sku_id] }}">
-                            <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]" value="{{ $sub_total }}">
+                            <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
+                                value="{{ $sub_total }}">
                         </td>
                     </tr>
                 @endforeach
@@ -70,7 +71,7 @@
                 @if ($customer_discount != 0)
                     <tr>
                         <th colspan="5" style="text-align: right">GROSS</th>
-                        <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',')  }}</th>
+                        <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                     </tr>
                     @php
                         $total = array_sum($sum_total);
@@ -104,7 +105,8 @@
                                 $final_total = end($discount_holder);
                             @endphp
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="final_total">
-                            <input type="hidden" value="{{ array_sum($customer_discount_holder) }}" name="customer_discount">
+                            <input type="hidden" value="{{ array_sum($customer_discount_holder) }}"
+                                name="customer_discount">
                         </th>
                     </tr>
                 @else
@@ -140,8 +142,7 @@
 <script>
     $("#sales_order_draft_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
-        // $('#sales_order_migrate_summary_page').show();
+        $('#loader').show();
         $.ajax({
             url: "sales_order_draft_save",
             type: "POST",
@@ -150,16 +151,22 @@
             cache: false,
             processData: false,
             success: function(data) {
-                if (data = 'saved') {
-                    Swal.fire(
-                        'Transaction Submitted',
-                        '',
-                        'success'
-                    )
-                    location.reload();
-                    $('.loading').hide();
-                }
+                $('#loader').hide();
+                Swal.fire(
+                    'Transaction Submitted',
+                    '',
+                    'success'
+                )
+                location.reload();
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

@@ -47,7 +47,7 @@
 
         $("#uploadForm").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
+            $('#loader').show();
             $.ajax({
                 url: "sales_order_upload",
                 type: "POST",

@@ -83,7 +83,7 @@
 
         $("#agent_id").on('change', (function(e) {
             e.preventDefault();
-            // $('#loader').show();
+            $('#loader').show();
             $('#generate_button').show();
             var agent_id = $(this).val();
             var date_range = $('#reservation').val();
@@ -92,7 +92,6 @@
                 type: "POST",
                 data: 'agent_id=' + agent_id + '&date_range=' + date_range,
                 success: function(data) {
-                    console.log(data);
                     $('#loader').hide();
                     $('#sales_order_register_show_next_input_page').html(data);
                 },
@@ -109,7 +108,7 @@
 
         $("#sales_order_register_generate_sales_register").on('submit', (function(e) {
             e.preventDefault();
-            // $('#loader').show();
+            $('#loader').show();
             $.ajax({
                 url: "sales_order_register_generate_sales_register",
                 type: "POST",

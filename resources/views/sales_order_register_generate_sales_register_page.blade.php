@@ -41,15 +41,14 @@
 <script type="text/javascript">
     $(".view_detailed_report").on('click', (function(e) {
         e.preventDefault();
-        //$('.loading').show();
+        $('#loader').show();
         var sales_invoice_id = $(this).val();
         $.ajax({
             url: "sales_order_register_view_details",
             type: "POST",
             data: 'sales_invoice_id=' + sales_invoice_id,
             success: function(data) {
-                console.log(data);
-                $('.loading').hide();
+                $('#loader').hide();
                 $('#sales_order_register_view_details').html(data);
             },
         });
