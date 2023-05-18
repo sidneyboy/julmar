@@ -26,7 +26,7 @@ class Sales_order_register_controller extends Controller
                 'active_tab' => 'sales_order_register',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

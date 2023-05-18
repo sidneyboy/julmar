@@ -8,7 +8,7 @@
                 <th>Agent</th>
                 <th>Total</th>
                 <th>DR</th>
-                <th>Date</th>
+                <th>Delivered Date</th>
                 <th>Details</th>
             </tr>
         </thead>

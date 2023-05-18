@@ -697,6 +697,8 @@ Route::post('/invoice_out_very_final_summary', 'Invoice_out_controller@invoice_o
 Route::post('/invoice_out_saved', 'Invoice_out_controller@invoice_out_saved')->name('invoice_out_saved');
 Route::post('/invoice_out_van_final_summary', 'Invoice_out_controller@invoice_out_van_final_summary')->name('invoice_out_van_final_summary');
 Route::post('/invoice_out_van_saved', 'Invoice_out_controller@invoice_out_van_saved')->name('invoice_out_van_saved');
+Route::post('/invoice_out_sales_invoice_final_summary', 'Invoice_out_controller@invoice_out_sales_invoice_final_summary')->name('invoice_out_sales_invoice_final_summary');
+Route::post('/invoice_out_sales_invoice_saved', 'Invoice_out_controller@invoice_out_sales_invoice_saved')->name('invoice_out_sales_invoice_saved');
 
 
 

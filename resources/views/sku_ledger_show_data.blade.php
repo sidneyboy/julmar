@@ -6,14 +6,20 @@
             <th>Type</th>
             <th>Quantity</th>
             <th>Adjustment</th>
-            <th>Running Inventory</th>
-            <th>Running Amount</th>
+            <th style="text-align: center;">Running Inventory</th>
+            <th style="text-align: center;">Running Amount</th>
         </tr>
     </thead>
     <tbody>
         @for ($i = 0; $i < count($sku_ledger); $i++)
             <tr>
-                <td>{{ date('F j, Y', strtotime($sku_ledger[$i]->created_at)) }}</td>
+                <td>
+                    @if ($sku_ledger[$i]->transaction_type != 'migration')
+                        {{ date('F j, Y', strtotime($sku_ledger[$i]->created_at)) }}
+                    @else
+                        Migration
+                    @endif
+                </td>
                 <td>{{ $description[$i]->sku_code }} - {{ $description[$i]->description }}</td>
                 <td>
                     {{ $description[$i]->sku_type }}
@@ -24,6 +30,10 @@
                     @elseif($sku_ledger[$i]->transaction_type == 'returned')
                         (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
                     @elseif($sku_ledger[$i]->transaction_type == 'out from warehouse')
+                        (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
+                    @elseif($sku_ledger[$i]->transaction_type == 'out from warehouse booking')
+                        (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
+                    @elseif($sku_ledger[$i]->transaction_type == 'out from warehouse van selling')
                         (<span style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
                     @elseif($sku_ledger[$i]->transaction_type == 'bodega in')
                         <span style="color:green">{{ $sku_ledger[$i]->quantity }}</span>

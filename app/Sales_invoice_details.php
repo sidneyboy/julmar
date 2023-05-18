@@ -12,6 +12,7 @@ class Sales_invoice_details extends Model
         'quantity',
         'unit_price',
         'total_amount_per_sku',
+        'remarks',
     ];
 
     public function sku()

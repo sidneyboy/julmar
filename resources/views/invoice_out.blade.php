@@ -27,6 +27,9 @@
                                 @foreach ($van_selling as $vs)
                                     <option value="{{ 'van-' . $vs->id }}">{{ $vs->delivery_receipt }}</option>
                                 @endforeach
+                                @foreach ($sales_invoice as $sales_invoice_data)
+                                    <option value="{{ 'agent_booking-' . $sales_invoice_data->id }}">{{ $sales_invoice_data->delivery_receipt }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-12">

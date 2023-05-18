@@ -38,7 +38,7 @@ class Sales_order_controller extends Controller
                 'active_tab' => 'sales_order_migrate',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
@@ -161,7 +161,7 @@ class Sales_order_controller extends Controller
                 'active_tab' => 'sales_order_draft',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 

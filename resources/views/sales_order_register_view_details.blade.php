@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-hover" id="export_sales_register" style="text-align: center;">
+<table class="table table-sm table-bordered table-hover table-striped" id="export_sales_register" style="text-align: center;">
     <thead>
         <tr>
             <th>{{ $sales_invoice->customer->store_name }}</th>
@@ -33,6 +33,10 @@
                 <td>{{ $details->quantity }}</td>
                 <td>{{ $details->unit_price }}</td>
                 <td>{{ $details->sku->sku_type }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         @endforeach
     </tbody>

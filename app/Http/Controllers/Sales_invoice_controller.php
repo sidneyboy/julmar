@@ -24,7 +24,7 @@ class Sales_invoice_controller extends Controller
                 'active_tab' => 'sales_invoice',
             ]);
         } else {
-            return redirect('auth.login')->with('error', 'Session Expired. Please Login');
+            return redirect('/')->with('error', 'Session Expired. Please Login');
         }
     }
 
