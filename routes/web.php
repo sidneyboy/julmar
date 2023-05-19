@@ -91,6 +91,10 @@ Route::get('/purchase_order_report', 'Purchase_order_report_controller@index');
 Route::post('/purchase_order_report_show_list', 'Purchase_order_report_controller@purchase_order_report_show_list')->name('postData');
 Route::get('/purchase_order_report_show_details/{id}', 'Purchase_order_report_controller@purchase_order_report_show_details')->name('purchase_order_report_show_details');
 Route::post('purchase_order_report', 'Purchase_order_report_controller@upload_confirmation_image')->name('confirmation.upload.post');
+Route::post('purchase_order_report_show_data', 'Purchase_order_report_controller@purchase_order_report_show_data')->name('purchase_order_report_show_data');
+
+
+
 
 Route::get('/receiving_draft', 'Receiving_draft_controller@index');
 Route::post('/receiving_draft_proceed_generate', 'Receiving_draft_controller@receiving_draft_proceed_generate')->name('receiving_draft_proceed_generate');

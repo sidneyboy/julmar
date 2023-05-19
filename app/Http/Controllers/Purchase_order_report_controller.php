@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Session;
 use App\Purchase_order;
 use App\Purchase_order_details;
@@ -33,11 +34,13 @@ class Purchase_order_report_controller extends Controller
         $date_to = date('Y-m-d', strtotime($var[1]));
 
 
-        $purchase_order_data = Purchase_order::whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
-        $counter = count($purchase_order_data);
+        $purchase_order_data = Purchase_order::select('id', 'purchase_id')->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
+            ->where('payment_term', '!=', null)
+            ->get();
+        // $counter = count($purchase_order_data);
         return view('purchase_order_report_show_list', [
             'purchase_order_data' => $purchase_order_data,
-            'counter' => $counter
+            // 'counter' => $counter
         ]);
     }
     public function purchase_order_report_show_details(Request $request, $id)
@@ -54,7 +57,7 @@ class Purchase_order_report_controller extends Controller
         $purchase_id = $explode_data[5];
         $user_name = $explode_data[6];
         $sales_order_number = $explode_data[7];
-        
+
 
         $prepared_by = User::select('name')->where('id', auth()->user()->id)->first();
         $purchase_order = Purchase_order::find($purchase_order_id);
@@ -119,5 +122,15 @@ class Purchase_order_report_controller extends Controller
                 return redirect('purchase_order_report');
             }
         }
+    }
+
+    public function purchase_order_report_show_data(Request $request)
+    {
+        $purchase_order_details = Purchase_order_details::where('purchase_order_id',$request->input('purchase_order_id'))
+                    ->get();
+
+        return view('purchase_order_report_show_data', [
+            'purchase_order_details' => $purchase_order_details,
+        ]);
     }
 }

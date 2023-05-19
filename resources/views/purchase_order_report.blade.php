@@ -53,10 +53,19 @@
          <!-- /.card -->
          <div class="card">
              <div class="card-header">
-                 <h3 class="card-title" style="font-weight: bold;">LIST</h3>
+                 <h3 class="card-title" style="font-weight: bold;">CONFIRMED PURCASE ORDER</h3>
              </div>
              <div class="card-body">
                  <div id="show_report_list"></div>
+             </div>
+         </div>
+
+         <div class="card">
+             <div class="card-header">
+                 <h3 class="card-title" style="font-weight: bold;">REPORT</h3>
+             </div>
+             <div class="card-body">
+                 <div id="show_report_data"></div>
              </div>
          </div>
 
@@ -94,13 +103,13 @@
 
                  },
                  error: function(error) {
-                    $('#loader').hide();
+                     $('#loader').hide();
                      Swal.fire(
                          'Cannot Proceed',
                          'Please Contact IT Support',
                          'error'
                      )
-                    
+
                  }
              });
          });
