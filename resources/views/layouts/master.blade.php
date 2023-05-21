@@ -729,7 +729,14 @@
                                             <a href="{{ url('vs_upload_and_export_customer') }}"
                                                 class="nav-link {{ $active_tab == 'vs_upload_and_export_customer' ? 'active' : '' }}">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>VS Customers</p>
+                                                <p>Import & Export CSTMR</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_customer_list') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_customer_list' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Customer Profile</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

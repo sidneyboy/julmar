@@ -773,3 +773,10 @@ Route::post('/sku_withdrawal_proceed', 'Sku_withdrawal_controller@sku_withdrawal
 Route::post('/sku_withdrawal_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_final_summary')->name('sku_withdrawal_final_summary');
 Route::post('/sku_withdrawal_very_final_summary', 'Sku_withdrawal_controller@sku_withdrawal_very_final_summary')->name('sku_withdrawal_very_final_summary');
 Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_save')->name('sku_withdrawal_save');
+
+
+
+Route::get('/van_selling_customer_list', 'Van_selling_customer_list_controller@index')->name('van_selling_customer_list');
+Route::post('/van_selling_customer_list_show_data', 'Van_selling_customer_list_controller@van_selling_customer_list_show_data')->name('van_selling_customer_list_show_data');
+Route::get('/van_selling_customer_list_show_map/{location_id}', 'Van_selling_customer_list_controller@van_selling_customer_list_show_map')->name('van_selling_customer_list_show_map');
+
