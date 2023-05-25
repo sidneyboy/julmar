@@ -160,6 +160,9 @@
                                                             @php
                                                                 $lower_quantity = $details->quantity;
                                                             @endphp
+                                                        @elseif($details->transaction_type == 'out from warehouse booking')
+                                                            (<span
+                                                                style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
                                                         @else
                                                             0
                                                         @endif
