@@ -586,6 +586,14 @@
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
+                                            <a href="{{ url('customer_upload') }}"
+                                                class="nav-link {{ $active_tab == 'customer_upload' ? 'active' : '' }}">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Customer Upload & Update</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a href="{{ url('customer') }}"
                                                 class="nav-link {{ $active_tab == 'customer' ? 'active' : '' }}">
                                                 <i class="fas fa-user-plus nav-icon"></i>

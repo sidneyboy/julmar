@@ -3,7 +3,6 @@
 @section('navbar')
 @section('sidebar')
 @section('content')
-    <br />
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -30,8 +29,8 @@
                     </div>
                 @endif
 
-                <form action="{{ route('customer_upload_process') }}" enctype="multipart/form-data" method="post">
-                {{-- <form id="customer_upload_process"> --}}
+                {{-- <form action="{{ route('customer_upload_process') }}" enctype="multipart/form-data" method="post"> --}}
+                <form id="customer_upload_process">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -41,10 +40,8 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="submit" value="UPLOAD AGENT SALES ORDER" id="upload_agent_sales_order"
-                                    class="btn btn-block btn-success" />
-                            </div>
+                            <br />
+                            <button class="btn btn-sm float-right btn-success">Upload</button>
                         </div>
                     </div>
                 </form>
@@ -68,51 +65,44 @@
         });
 
 
-        $("#customer_upload_process").on('submit',(function(e){
+        $("#customer_upload_process").on('submit', (function(e) {
             e.preventDefault();
-            //$('.loading').show();
-              $.ajax({
+            //$('#loader').show();
+            $.ajax({
                 url: "customer_upload_process",
                 type: "POST",
-                data:  new FormData(this),
+                data: new FormData(this),
                 contentType: false,
                 cache: false,
-                processData:false,
-                success: function(data){
-
-                  if(data = "existing_file"){
-                     Swal.fire(
-                      'Existing file, Cannot Proceed!!',
-                      '',
-                      'error'
-                    )
-                    $('.loading').hide(); 
-                  }else if(data = 'incorrect_file'){
-                    Swal.fire(
-                      'Incorrect_file, Cannot Proceed!!',
-                      '',
-                      'error'
-                    )
-                    $('.loading').hide(); 
-                  }else if(data = "saved"){
-                     Swal.fire(
-                      'Data Uploaded Successfully',
-                      'Success',
-                      'success'
-                    )
-                    $('.loading').hide();
-                    location.reload();
-                  }else{
-                    Swal.fire(
-                      'Incorrect_file, Cannot Proceed!!',
-                      '',
-                      'error'
-                    )
-                    $('.loading').hide(); 
-                  }
+                processData: false,
+                success: function(data) {
+                    if (data = "saved") {
+                        Swal.fire(
+                            'Data Uploaded Successfully',
+                            'Success',
+                            'success'
+                        )
+                        $('#loader').hide();
+                        location.reload();
+                    } else {
+                        Swal.fire(
+                            'Incorrect or Existing File, Cannot Proceed!!',
+                            '',
+                            'error'
+                        )
+                        $('#loader').hide();
+                    }
                 },
-              });
-          }));
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
+            });
+        }));
     </script>
     </body>
 
