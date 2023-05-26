@@ -279,6 +279,10 @@ Route::get('/customer_profile_generate_principal_code_list', 'Customer_profile_c
 
 Route::post('/customer_profile_generate', 'Customer_profile_controller@customer_profile_generate')->name('customer_profile_generate');
 
+Route::get('/customer_list', 'Customer_list_controller@index')->name('customer_list');
+Route::post('/customer_list_generate_data', 'Customer_list_controller@customer_list_generate_data')->name('customer_list_generate_data');
+Route::get('/customer_list_show_map/{location_id}', 'Customer_list_controller@customer_list_show_map')->name('customer_list_show_map');
+
 
 
 
@@ -779,4 +783,3 @@ Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_sa
 Route::get('/van_selling_customer_list', 'Van_selling_customer_list_controller@index')->name('van_selling_customer_list');
 Route::post('/van_selling_customer_list_show_data', 'Van_selling_customer_list_controller@van_selling_customer_list_show_data')->name('van_selling_customer_list_show_data');
 Route::get('/van_selling_customer_list_show_map/{location_id}', 'Van_selling_customer_list_controller@van_selling_customer_list_show_map')->name('van_selling_customer_list_show_map');
-

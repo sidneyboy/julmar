@@ -602,10 +602,18 @@
                                         </li>
 
                                         <li class="nav-item">
+                                            <a href="{{ url('customer_list') }}"
+                                                class="nav-link {{ $active_tab == 'customer_list' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>Customer List</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a href="{{ url('customer_profile') }}"
                                                 class="nav-link {{ $active_tab == 'customer_profile' ? 'active' : '' }}">
                                                 <i class="fas fa-user-plus nav-icon"></i>
-                                                <p>Customer Profile</p>
+                                                <p>Export Customer</p>
                                             </a>
                                         </li>
 
@@ -744,7 +752,7 @@
                                             <a href="{{ url('van_selling_customer_list') }}"
                                                 class="nav-link {{ $active_tab == 'van_selling_customer_list' ? 'active' : '' }}">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Customer Profile</p>
+                                                <p>Customer List</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
