@@ -46,12 +46,12 @@
                 <th></th>
                 <th></th>
                 <th style="text-align: right">
-                    @if (count($total_case) != 0)
+                    @if (isset($total_case))
                         {{ array_sum($total_case) }}
                     @endif
                 </th>
                 <th style="text-align: right">
-                    @if (count($total_butal) != 0)
+                    @if (isset($total_butal))
                         {{ array_sum($total_butal) }}
                     @endif
                 </th>
