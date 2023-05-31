@@ -13,28 +13,32 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td style="color:blue;font-weight:bold;">{{ $sales_invoice_case->sku_type }}</td>
-                <td>{{ $sales_invoice_case->customer->store_name }}</td>
-                <td>{{ $sales_invoice_case->principal->principal }}</td>
-                <td>{{ $sales_invoice_case->agent->full_name }}</td>
-                <td style="text-align: right">{{ number_format($sales_invoice_case->total, 2, '.', ',') }}</td>
-                <td>{{ $sales_invoice_case->delivery_receipt }}</td>
-                <td>{{ $sales_invoice_case->delivered_date }}</td>
-                <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
-                        value="{{ $sales_invoice_case->id }}">Show</button></td>
-            </tr>
-            <tr>
-                <td style="color:green;font-weight:bold;">{{ $sales_invoice_butal->sku_type }}</td>
-                <td>{{ $sales_invoice_butal->customer->store_name }}</td>
-                <td>{{ $sales_invoice_butal->principal->principal }}</td>
-                <td>{{ $sales_invoice_butal->agent->full_name }}</td>
-                <td style="text-align: right">{{ number_format($sales_invoice_butal->total, 2, '.', ',') }}</td>
-                <td>{{ $sales_invoice_butal->delivery_receipt }}</td>
-                <td>{{ $sales_invoice_butal->delivered_date }}</td>
-                <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
-                        value="{{ $sales_invoice_butal->id }}">Show</button></td>
-            </tr>
+            @if ($sales_invoice_case != null)
+                <tr>
+                    <td style="color:blue;font-weight:bold;">{{ $sales_invoice_case->sku_type }}</td>
+                    <td>{{ $sales_invoice_case->customer->store_name }}</td>
+                    <td>{{ $sales_invoice_case->principal->principal }}</td>
+                    <td>{{ $sales_invoice_case->agent->full_name }}</td>
+                    <td style="text-align: right">{{ number_format($sales_invoice_case->total, 2, '.', ',') }}</td>
+                    <td>{{ $sales_invoice_case->delivery_receipt }}</td>
+                    <td>{{ $sales_invoice_case->delivered_date }}</td>
+                    <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
+                            value="{{ $sales_invoice_case->id }}">Show</button></td>
+                </tr>
+            @endif
+            @if ($sales_invoice_butal != null)
+                <tr>
+                    <td style="color:green;font-weight:bold;">{{ $sales_invoice_butal->sku_type }}</td>
+                    <td>{{ $sales_invoice_butal->customer->store_name }}</td>
+                    <td>{{ $sales_invoice_butal->principal->principal }}</td>
+                    <td>{{ $sales_invoice_butal->agent->full_name }}</td>
+                    <td style="text-align: right">{{ number_format($sales_invoice_butal->total, 2, '.', ',') }}</td>
+                    <td>{{ $sales_invoice_butal->delivery_receipt }}</td>
+                    <td>{{ $sales_invoice_butal->delivered_date }}</td>
+                    <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
+                            value="{{ $sales_invoice_butal->id }}">Show</button></td>
+                </tr>
+            @endif
         </tbody>
     </table>
 </div>

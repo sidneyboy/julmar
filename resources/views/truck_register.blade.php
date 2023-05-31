@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'TRUCK REGISTER')
+@section('title', 'TRUCK')
 
 @section('navbar')
 
@@ -9,15 +9,13 @@
 
 
 @section('content')
-
-    <br />
     <!-- Main content -->
     <section class="content">
 
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">TRUCK REGISTER</h3>
+                <h3 class="card-title" style="font-weight: bold;">TRUCK REGISTRATION</h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -56,7 +54,7 @@
             <!-- /.card-body -->
             <div class="card-footer">
                 <div class="table table-responsive">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover table-sm table-striped" id="example1" style="width:100%;">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -97,25 +95,22 @@
             }
         });
 
-        // $("#received_id").change(function() {
-        //     var received_id = $(this).val();
-        //     $('.loading').show();
-        //     $.post({
-        //         type: "POST",
-        //         url: "/transfer_to_branch_show_input",
-        //         data: 'received_id=' + received_id,
-        //         success: function(data) {
-
-        //             //console.log(data);
-        //             $('.loading').hide();
-        //             $('#show_return_inputs').html(data);
-
-        //         },
-        //         error: function(error) {
-        //             console.log(error);
-        //         }
-        //     });
-        // });
+        $(document).ready(function() {
+            var table = $('#example1').DataTable({
+                responsive: true,
+                paging: false,
+                ordering: true,
+                info: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+            new $.fn.dataTable.FixedHeader(table);
+        });
     </script>
     </body>
 

@@ -19,16 +19,28 @@
                             <select class="form-control select2bs4" style="width:100%;" required
                                 name="sales_representative">
                                 <option value="" default>Select</option>
-                                @foreach ($invoice_draft as $data)
+                                {{-- @foreach ($invoice_draft as $data)
                                     <option value="{{ 'booking-' . $data->sales_representative }}">
                                         {{ $data->sales_representative }}
                                     </option>
-                                @endforeach
+                                @endforeach --}}
                                 @foreach ($van_selling as $vs)
-                                    <option value="{{ 'van-' . $vs->id }}">{{ $vs->delivery_receipt }}</option>
+                                    <option value="{{ 'van-' . $vs->id }}">VS - {{ $vs->delivery_receipt }}</option>
                                 @endforeach
                                 @foreach ($sales_invoice as $sales_invoice_data)
-                                    <option value="{{ 'agent_booking-' . $sales_invoice_data->id }}">{{ $sales_invoice_data->delivery_receipt }}</option>
+                                    @if ($user->position == 'admin')
+                                        <option
+                                            value="{{ 'agent_booking-' . $sales_invoice_data->sales_invoice->agent_id }}">
+                                            BOOKING -
+                                            {{ $sales_invoice_data->sales_invoice->agent->full_name }}</option>
+                                    @else
+                                        @if ($sales_invoice_data->sales_invoice->principal_id == $user->principal_id)
+                                            <option
+                                                value="{{ 'agent_booking-' . $sales_invoice_data->sales_invoice->agent_id }}">
+                                                BOOKING -
+                                                {{ $sales_invoice_data->sales_invoice->agent->full_name }}</option>
+                                        @endif
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

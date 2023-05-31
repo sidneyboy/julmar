@@ -60,7 +60,7 @@ class Receiving_draft_controller extends Controller
         //return $request->input();
         $purchase_order_details = Purchase_order_details::select('sku_id', 'purchase_order_id')
             ->where('purchase_order_id', $request->input('purchase_id'))
-            ->where('confirmed_quantity', '!=', 0)
+            ->where('remarks', '!=','received')
             ->get();
 
         return view('receiving_draft_sku_selection', [
@@ -122,7 +122,8 @@ class Receiving_draft_controller extends Controller
                             'receiving_draft' => $receiving_draft,
                             'purchase_order_details' => $purchase_order_details,
                             'check_po_details' => $check_po_details,
-                        ])->with('session_id', $request->input('session_id'));
+                        ])->with('session_id', $request->input('session_id'))
+                            ->with('purchase_order_id', $request->input('purchase_order_id'));
                     } else {
                         return 'sku_received';
                     }
@@ -144,7 +145,8 @@ class Receiving_draft_controller extends Controller
                             'receiving_draft' => $receiving_draft,
                             'purchase_order_details' => $purchase_order_details,
                             'check_po_details' => $check_po_details,
-                        ])->with('session_id', $request->input('session_id'));
+                        ])->with('session_id', $request->input('session_id'))
+                            ->with('purchase_order_id', $request->input('purchase_order_id'));
                     } else {
                         return 'sku_received';
                     }
@@ -169,12 +171,21 @@ class Receiving_draft_controller extends Controller
         $new->save();
 
         foreach ($request->input('quantity_received') as $key => $value) {
-            Receiving_draft::where('id', $key)
-                ->where('session_id', $request->input('session_id'))
-                ->update([
-                    'quantity' => $request->input('quantity_received')[$key],
-                    'remarks' => $request->input('remarks')[$key],
-                ]);
+            if ($request->input('confirmed_quantity')[$key] == $request->input('quantity_received')[$key]) {
+                Receiving_draft::where('sku_id', $key)
+                    ->where('session_id', $request->input('session_id'))
+                    ->update([
+                        'quantity' => $request->input('quantity_received')[$key],
+                        'remarks' => 'complete',
+                    ]);
+            } else {
+                Receiving_draft::where('sku_id', $key)
+                    ->where('session_id', $request->input('session_id'))
+                    ->update([
+                        'quantity' => $request->input('quantity_received')[$key],
+                        'remarks' => 'staggered',
+                    ]);
+            }
         }
 
         Purchase_order::where('id', $request->input('purchase_order_id'))

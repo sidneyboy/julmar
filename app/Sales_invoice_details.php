@@ -13,10 +13,16 @@ class Sales_invoice_details extends Model
         'unit_price',
         'total_amount_per_sku',
         'remarks',
+        'agent_id',
     ];
 
     public function sku()
     {
         return $this->belongsTo('App\Sku_add', 'sku_id');
+    }
+
+    public function sales_invoice()
+    {
+        return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');
     }
 }

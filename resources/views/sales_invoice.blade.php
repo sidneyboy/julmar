@@ -20,7 +20,7 @@
                                 <option value="" default>Select</option>
                                 @foreach ($sales_invoice as $data)
                                     <option value="{{ $data->id }}">
-                                        {{ $data->agent->full_name . ' - ' . $data->principal->principal . ' - ' . $data->delivery_receipt . ' - ' . $data->total }}
+                                        {{$data->delivery_receipt}}
                                     </option>
                                 @endforeach
                             </select>

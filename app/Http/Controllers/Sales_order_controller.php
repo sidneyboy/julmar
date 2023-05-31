@@ -307,6 +307,7 @@ class Sales_order_controller extends Controller
                 'quantity' => $request->input('final_quantity')[$data],
                 'unit_price' => $request->input('unit_price')[$data],
                 'total_amount_per_sku' => $request->input('total_amount_per_sku')[$data],
+                'agent_id' => $request->input('agent_id'),
             ]);
 
             $sales_invoice_details->save();
@@ -373,7 +374,6 @@ class Sales_order_controller extends Controller
 
             $new_principal_price->save();
         }
-        // return redirect('sales_order_draft')->with('success', 'Customer Update Successfully. Please tell audit to check and approved customer to continue invoicing. Thanks.');
     }
 
 

@@ -647,8 +647,6 @@ Route::get('/sku_sub_category', 'Sku_sub_category_controller@index');
 
 
 
-Route::get('/truck_register', 'Truck_controller@index');
-Route::post('/truck_register_save', 'Truck_controller@truck_register_save')->name('truck_register_save');
 
 
 
@@ -783,3 +781,21 @@ Route::post('/sku_withdrawal_save', 'Sku_withdrawal_controller@sku_withdrawal_sa
 Route::get('/van_selling_customer_list', 'Van_selling_customer_list_controller@index')->name('van_selling_customer_list');
 Route::post('/van_selling_customer_list_show_data', 'Van_selling_customer_list_controller@van_selling_customer_list_show_data')->name('van_selling_customer_list_show_data');
 Route::get('/van_selling_customer_list_show_map/{location_id}', 'Van_selling_customer_list_controller@van_selling_customer_list_show_map')->name('van_selling_customer_list_show_map');
+
+
+
+
+
+Route::get('/booking_pcm_upload', 'Booking_pcm_upload_controller@index')->name('booking_pcm_upload');
+Route::post('/booking_pcm_upload_process', 'Booking_pcm_upload_controller@booking_pcm_upload_process')->name('booking_pcm_upload_process');
+
+
+Route::get('/truck_register', 'Truck_controller@index');
+Route::post('/truck_register_save', 'Truck_controller@truck_register_save')->name('truck_register_save');
+
+Route::get('/truck_load', 'Truck_load_controller@index');
+Route::post('/truck_load_proceed', 'Truck_load_controller@truck_load_proceed')->name('truck_load_proceed');
+Route::post('/truck_load_generated_invoices', 'Truck_load_controller@truck_load_generated_invoices')->name('truck_load_generated_invoices');
+Route::post('/truck_load_generated_invoices_data', 'Truck_load_controller@truck_load_generated_invoices_data')->name('truck_load_generated_invoices_data');
+
+

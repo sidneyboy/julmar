@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTotalToReturnGoodStock extends Migration
+class AddAgentIdToSalesInvoiceDetails extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddTotalToReturnGoodStock extends Migration
      */
     public function up()
     {
-        Schema::table('Return_good_stocks', function (Blueprint $table) {
-            $table->double('total_amount',15,4)->nullable();
+        Schema::table('Sales_invoice_details', function (Blueprint $table) {
+            $table->integer('agent_id');
         });
     }
 
@@ -25,8 +25,8 @@ class AddTotalToReturnGoodStock extends Migration
      */
     public function down()
     {
-        Schema::table('Return_good_stocks', function (Blueprint $table) {
-            $table->dropColumn('total_amount');
+        Schema::table('Sales_invoice_details', function (Blueprint $table) {
+            $table->dropColumn('agent_id');
         });
     }
 }

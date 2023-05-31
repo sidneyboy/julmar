@@ -151,7 +151,7 @@
                 data-placeholder="Customer Discounts" style="width: 100%;">
                 <option value="" default>Select</option>
                 @foreach ($customer_discount as $data)
-                    <option value="{{ $data->customer_discount }}">Less - {{ $data->customer_discount }}</option>
+                    <option value="{{ $data->customer_discount }}" selected>Less - {{ $data->customer_discount }}</option>
                 @endforeach
             </select>
         </div>

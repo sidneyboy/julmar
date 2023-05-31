@@ -25,7 +25,7 @@
                                 <option value="" default>Select</option>
                                 @foreach ($sales_order_draft as $data)
                                     <option value="{{ $data->id }}">
-                                        {{ $data->agent->full_name . ' - ' . $data->principal->principal . ' - ' . $data->sales_order_number }}
+                                        {{ $data->sales_order_number }}
                                     </option>
                                 @endforeach
                             </select>
@@ -77,7 +77,7 @@
             }
         });
 
-        $("#sales_order_draft_generate").on('submit', (function(e) {
+    $("#sales_order_draft_generate").on('submit', (function(e) {
             e.preventDefault();
             $('#loader').show();
             $.ajax({

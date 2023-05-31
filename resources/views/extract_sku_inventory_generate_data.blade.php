@@ -39,7 +39,15 @@
             <th>Code</th>
             <th>Description</th>
             <th>Sku Type</th>
-            <th>Running Inventory</th>
+            {{-- <th>Running Inventory</th> --}}
+            <th>Unit Cost Vat Ex</th>
+            <th>Final Unit Cost</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+            <th>P5</th>
+
         </tr>
     </thead>
     <tbody>
@@ -49,6 +57,12 @@
                 <td>{{ $data->sku_code }}</td>
                 <td>{{ $data->description }}</td>
                 <td>{{ $data->sku_type }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td></td>
             </tr>
         @endforeach

@@ -321,6 +321,33 @@
                                         </li>
                                     </ul>
                                 </li>
+                                <li class="nav-item {{ $main_tab == 'manage_logistics_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_logistics_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Manage Logistics
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_register') }}"
+                                                class="nav-link {{ $active_tab == 'truck_register' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Truck</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_load') }}"
+                                                class="nav-link {{ $active_tab == 'truck_load' ? 'active' : '' }}">
+                                                <i class="fas fa-plus-circle nav-icon"></i>
+                                                <p>Truck Load</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
                                     <a href="#"
                                         class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
@@ -692,6 +719,13 @@
                                                 class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
                                                 <i class="fas fa-user-plus nav-icon"></i>
                                                 <p>PCM</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('booking_pcm_upload') }}"
+                                                class="nav-link {{ $active_tab == 'booking_pcm_upload' ? 'active' : '' }}">
+                                                <i class="fas fa-user-plus nav-icon"></i>
+                                                <p>PCM Upload</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

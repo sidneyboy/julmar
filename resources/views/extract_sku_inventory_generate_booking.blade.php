@@ -1,5 +1,5 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-hover table-sm table-striped" id="example1">
+    <table class="table table-bordered table-hover table-sm table-striped" style="width:100%;font-size:13px;" id="example1">
         <thead>
             <tr>
                 <th>BOOKING INVENTORY</th>

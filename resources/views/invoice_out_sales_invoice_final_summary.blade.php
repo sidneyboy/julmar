@@ -16,7 +16,7 @@
                             <td>[{{ $data->sku->sku_code }}] -
                                 {{ $data->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
+                            <td style="text-align: right">{{ $data->total }}</td>
                         </tr>
                     @else
                         <tr>
@@ -24,7 +24,7 @@
                             <td>[{{ $data->sku->sku_code }}] -
                                 {{ $data->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
+                            <td style="text-align: right">{{ $data->total }}</td>
                         </tr>
                     @endif
                 @endforeach
@@ -32,7 +32,10 @@
         </table>
     </div>
 
-    <input type="hidden" name="rep_dr" value="{{ $rep_dr }}">
+
+    @foreach ($sales_invoice_id as $id)
+        <input type="hidden" name="sales_invoice_id[]" value="{{ $id }}">
+    @endforeach
     <button class="btn btn-sm float-right btn-success" type="submit">Submit</button>
 </form>
 

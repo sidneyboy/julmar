@@ -20,7 +20,10 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td style="text-align: center">{{ $po_data->confirmed_quantity - $po_data->receive }}</td>
+                                        <td style="text-align: center">
+                                            {{ $po_data->confirmed_quantity - $po_data->receive }}
+                                            <input type="hidden" name="confirmed_quantity[{{ $po_data->sku->id }}]" value="{{ $po_data->confirmed_quantity - $po_data->receive }}">
+                                        </td>
                                     </tr>
                                 @else
                                     <tr>
@@ -59,9 +62,10 @@
                                 </td>
                                 <td style="text-align: right">{{ number_format($draft_data->freight, 2, '.', ',') }}
                                 </td>
-                                <td><input style="text-align: center" type="number" min="0" value="{{ $draft_data->quantity }}"
-                                        class="form-control form-control-sm"
-                                        name="quantity_received[{{ $draft_data->id }}]">
+                                <td><input style="text-align: center" type="number" min="0"
+                                        value="{{ $draft_data->quantity }}" class="form-control form-control-sm"
+                                        name="quantity_received[{{ $draft_data->sku_id }}]">
+                                    
                                     @php
                                         $sum_quantity[] = $draft_data->quantity;
                                     @endphp
@@ -83,7 +87,7 @@
     </div>
     <br />
     <input type="hidden" value="{{ $session_id }}" name="session_id">
-    <input type="hidden" value="{{ $purchase_order_details[0]->purchase_order_id }}" name="purchase_order_id">
+    <input type="hidden" value="{{ $purchase_order_id }}" name="purchase_order_id">
     <button class="btn btn-sm float-right btn-success" type="submit">Submit as Draft</button>
 </form>
 
@@ -99,7 +103,6 @@
             cache: false,
             processData: false,
             success: function(data) {
-                console.log(data);
                 if (data == 'saved') {
                     $('#loader').hide();
                     Swal.fire(

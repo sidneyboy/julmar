@@ -46,7 +46,7 @@
                     <td>{{ $data->latitude }}</td>
                     <td>{{ $data->longitude }}</td>
                     <td>{{ $data->mode_of_transaction }}</td>
-                    <td>{{ $data->allowed_number_of_sales_order }}</td>
+                    <td>{{ $data->max_number_of_transactions }}</td>
                 </tr>
                 @foreach ($data->customer_principal_price as $details)
                     <tr>
