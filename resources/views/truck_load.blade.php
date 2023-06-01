@@ -49,7 +49,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">GENERATED INVOICES</h3>
+                <h3 class="card-title" style="font-weight: bold;">LOAD SHEET DATA</h3>
             </div>
             <div class="card-body">
                 <div id="truck_load_generated_invoices_page"></div>
@@ -58,7 +58,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">GENERATED SKU</h3>
+                <h3 class="card-title" style="font-weight: bold;">LOAD SHEET SUMMARY</h3>
             </div>
             <div class="card-body">
                 <div id="truck_load_generated_invoices_data_page"></div>

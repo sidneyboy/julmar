@@ -1,13 +1,44 @@
 <form id="truck_load_generated_invoices_data">
     <div class="row">
+        <div class="col-md-4">
+            <label for="">Truck</label>
+            <select name="truck_id" class="form-control" required>
+                <option value="" default>Select</option>
+                @foreach ($truck as $data)
+                    <option value="{{ $data->id . '-' . $data->plate_no }}">{{ $data->plate_no }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="">Driver</label>
+            <input type="text" class="form-control" name="driver" required style="text-transform: uppercase">
+        </div>
+        <div class="col-md-4">
+            <label for="">Contact #</label>
+            <input type="text" class="form-control" name="contact_number" required
+                onkeypress="return isNumberKey(event)">
+        </div>
+        <div class="col-md-6">
+            <label for="">Helper 1</label>
+            <input type="text" class="form-control" name="helper_1" required style="text-transform: uppercase">
+        </div>
+        <div class="col-md-6">
+            <label for="">Helper 2</label>
+            <input type="text" class="form-control" name="helper_2" required style="text-transform: uppercase">
+        </div>
         <div class="col-md-12">
             <label for="">Invoices</label>
             <select name="sales_invoice_id[]" multiple class="form-control select2bs4" style="width:100%;" required>
                 <option value="" default>Select</option>
                 @foreach ($sales_invoice as $data)
-                    <option value="{{ $data->id }}">{{ $data->agent->full_name }} - {{ $data->delivery_receipt }}</option>
+                    <option value="{{ $data->id }}">{{ $data->agent->full_name }} - {{ $data->delivery_receipt }}
+                    </option>
                 @endforeach
             </select>
+        </div>
+        <div class="col-md-12">
+            <label for="">Detailed Location</label>
+            <input type="text" class="form-control" name="detailed_location" style="text-transform:uppercase" required>
         </div>
         <div class="col-md-12">
             <br />
@@ -21,6 +52,15 @@
     $('.select2bs4').select2({
         theme: 'bootstrap4'
     })
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
 
     $("#truck_load_generated_invoices_data").on('submit', (function(e) {
         e.preventDefault();

@@ -287,7 +287,7 @@ class Sales_order_controller extends Controller
             'principal_id' => $request->input('principal_id'),
             'agent_id' => $request->input('agent_id'),
             'mode_of_transaction' => $request->input('mode_of_transaction'),
-            'sku_type' => $request->input('sku_type'),
+            'sku_type' => strtoupper($request->input('sku_type')),
             'sales_order_number' => $request->input('sales_order_number'),
             'status' => 'invoice',
             'user_id' => auth()->user()->id,
@@ -308,6 +308,8 @@ class Sales_order_controller extends Controller
                 'unit_price' => $request->input('unit_price')[$data],
                 'total_amount_per_sku' => $request->input('total_amount_per_sku')[$data],
                 'agent_id' => $request->input('agent_id'),
+                'principal_id' => $request->input('principal_id'),
+                'sku_type' => strtoupper($request->input('sku_type')),
             ]);
 
             $sales_invoice_details->save();

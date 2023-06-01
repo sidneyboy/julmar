@@ -14,6 +14,8 @@ class Sales_invoice_details extends Model
         'total_amount_per_sku',
         'remarks',
         'agent_id',
+        'principal_id',
+        'sku_type',
     ];
 
     public function sku()

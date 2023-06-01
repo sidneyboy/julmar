@@ -29,7 +29,7 @@ class Truck_controller extends Controller
     public function truck_register_save(Request $request)
     {
         $new = new Truck([
-            'plate_no' => $request->input('plate_no'),
+            'plate_no' => strtoupper($request->input('plate_no')),
             'capacity' => $request->input('capacity'),
             'model' => $request->input('model'),
         ]);
