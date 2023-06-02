@@ -15,6 +15,8 @@ class Bad_order extends Model
         'pcm_number',
         'customer_id',
         'status',
+        'verified_date',
+        'verified_by',
     ];
 
     public function bad_order_details()

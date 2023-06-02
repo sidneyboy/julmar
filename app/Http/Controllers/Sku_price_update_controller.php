@@ -90,6 +90,7 @@ class Sku_price_update_controller extends Controller
                     'price_3' => $checker->price_3,
                     'price_4' => $checker->price_4,
                     'price_5' => $checker->price_5,
+                    'user_id' => auth()->user()->id,
                 ]);
 
                 $sku_price_history->save();
@@ -123,6 +124,7 @@ class Sku_price_update_controller extends Controller
                     'price_3' => $price_3,
                     'price_4' => $price_4,
                     'price_5' => $price_5,
+                    'user_id' => auth()->user()->id,
                 ]);
 
                 $sku_price_history->save();

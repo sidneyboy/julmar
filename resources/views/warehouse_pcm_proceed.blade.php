@@ -92,6 +92,8 @@
     </div>
     <input type="hidden" value="{{ $type }}" name="type">
     <input type="hidden" value="{{ $id }}" name="id">
+    <input type="hidden" value="{{ $pcm->customer_id }}" name="customer_id">
+    <input type="hidden" value="{{ $pcm->principal_id }}" name="principal_id">
     <br />
     <button class="btn btn-sm float-right btn-info">Proceed</button>
 </form>
@@ -140,7 +142,7 @@
                     $('#quantity').focus();
                     $('#warehouse_pcm_final_summary_page').html(data);
                     $('#loader').hide();
-                    $('#scan_barcode').click();
+                    // $('#scan_barcode').click();
                 }
             },
             error: function(error) {

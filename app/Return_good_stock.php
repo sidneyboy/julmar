@@ -16,6 +16,8 @@ class Return_good_stock extends Model
         'customer_id',
         'agent_id',
         'status',
+        'verified_date',
+        'verified_by',
     ];
 
     public function return_good_stock_details()

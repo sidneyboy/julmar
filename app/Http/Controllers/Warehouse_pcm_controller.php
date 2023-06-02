@@ -6,8 +6,11 @@ use App\User;
 use App\Sku_add;
 use App\Bad_order;
 use App\Bad_order_details;
+use App\Bad_order_discounts;
+use App\Customer_discount;
 use App\Return_good_stock;
 use App\Return_good_stock_details;
+use App\Return_good_stock_discounts;
 use Cart;
 use DB;
 use App\Sku_ledger;
@@ -23,18 +26,22 @@ class Warehouse_pcm_controller extends Controller
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
             if ($user->position == 'admin') {
                 $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')
+                    ->where('status', null)
                     ->orderBy('id', 'desc')
                     ->get();
                 $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')
+                    ->where('status', null)
                     ->orderBy('id', 'desc')
                     ->get();
             } else {
                 $bo = Bad_order::select('id', 'pcm_number', 'principal_id', 'agent_id')
                     ->where('principal_id', $user->principal_id)
+                    ->where('status', null)
                     ->orderBy('id', 'desc')
                     ->get();
                 $rgs = Return_good_stock::select('id', 'pcm_number', 'principal_id', 'agent_id')
                     ->where('principal_id', $user->principal_id)
+                    ->where('status', null)
                     ->orderBy('id', 'desc')
                     ->get();
             }
@@ -43,8 +50,8 @@ class Warehouse_pcm_controller extends Controller
                 'user' => $user,
                 'bo' => $bo,
                 'rgs' => $rgs,
-                'main_tab' => 'manage_warehouse_main_tab',
-                'sub_tab' => 'manage_warehouse_sub_tab',
+                'main_tab' => 'manage_pcm_custodian_main_tab',
+                'sub_tab' => 'manage_pcm_custodian_sub_tab',
                 'active_tab' => 'warehouse_pcm',
             ]);
         } else {
@@ -59,16 +66,14 @@ class Warehouse_pcm_controller extends Controller
         $id = $explode[1];
 
         if ($type == 'rgs') {
-            $pcm = Return_good_stock::find($id);
+            $pcm = Return_good_stock::select('id', 'customer_id', 'principal_id')->find($id);
             $pcm_details = Return_good_stock_details::where('return_good_stock_id', $id)
                 ->get();
         } else if ($type == 'bo') {
-            $pcm = Bad_order::find($id);
+            $pcm = Bad_order::select('id', 'customer_id', 'principal_id')->find($id);
             $pcm_details = Bad_order_details::where('bad_order_id', $id)
                 ->get();
         }
-
-
 
         return view('warehouse_pcm_proceed', [
             'pcm' => $pcm,
@@ -80,9 +85,6 @@ class Warehouse_pcm_controller extends Controller
 
     public function warehouse_pcm_final_summary(Request $request)
     {
-
-
-
         if ($request->input('type') == 'rgs') {
             if ($request->input('barcode') != null) {
                 $barcode = $request->input('barcode');
@@ -135,9 +137,15 @@ class Warehouse_pcm_controller extends Controller
 
                     $cart = Cart::session(auth()->user()->id)->getContent();
 
+                    $customer_discount = Customer_discount::select('id', 'customer_discount')
+                        ->where('customer_id', $request->input('customer_id'))
+                        ->where('principal_id', $request->input('principal_id'))
+                        ->get();
+
                     return view('warehouse_pcm_final_summary', [
                         'pcm' => $pcm,
                         'cart' => $cart,
+                        'customer_discount' => $customer_discount,
                     ])->with('type', $request->input('type'))
                         ->with('id', $request->input('id'));
                 } else {
@@ -198,9 +206,15 @@ class Warehouse_pcm_controller extends Controller
 
                     $cart = Cart::session(auth()->user()->id)->getContent();
 
+                    $customer_discount = Customer_discount::select('id', 'customer_discount')
+                        ->where('customer_id', $request->input('customer_id'))
+                        ->where('principal_id', $request->input('principal_id'))
+                        ->get();
+
                     return view('warehouse_pcm_final_summary', [
                         'pcm' => $pcm,
                         'cart' => $cart,
+                        'customer_discount' => $customer_discount,
                     ])->with('type', $request->input('type'))
                         ->with('id', $request->input('id'));
                 } else {
@@ -214,11 +228,17 @@ class Warehouse_pcm_controller extends Controller
 
     public function warehouse_pcm_save(Request $request)
     {
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        //return $request->input();
         if ($request->input('type') == 'rgs') {
             $cart = Cart::session(auth()->user()->id)->getContent();
             Return_good_stock::where('id', $request->input('id'))
                 ->update([
-                    'status' => 'scanned',
+                    'status' => 'verified',
+                    'verified_date' => $date,
+                    'verified_by' => auth()->user()->id,
+                    'total_amount' => $request->input('total_amount'),
                 ]);
             foreach ($cart as $key => $data) {
                 Return_good_stock_details::where('sku_id', $data->id)
@@ -245,11 +265,21 @@ class Warehouse_pcm_controller extends Controller
 
                 $new_sku_ledger->save();
             }
+
+            foreach ($request->input('discount_rate') as $key => $discount_rate) {
+                $new_discount_rate = new Return_good_stock_discounts([
+                    'return_good_stock_id' => $request->input('id'),
+                    'discount_rate' => $discount_rate,
+                ]);
+            }
         } else {
             $cart = Cart::session(auth()->user()->id)->getContent();
             Bad_order::where('id', $request->input('id'))
                 ->update([
-                    'status' => 'scanned',
+                    'status' => 'verified',
+                    'verified_date' => $date,
+                    'verified_by' => auth()->user()->id,
+                    'total_amount' => $request->input('total_amount'),
                 ]);
             foreach ($cart as $key => $data) {
                 Bad_order_details::where('sku_id', $data->id)
@@ -258,6 +288,13 @@ class Warehouse_pcm_controller extends Controller
                         'confirmed_quantity' => $data->quantity,
                         'user_id' => auth()->user()->id,
                     ]);
+            }
+
+            foreach ($request->input('discount_rate') as $key => $discount_rate) {
+                $new_discount_rate = new Bad_order_discounts([
+                    'bad_order_id' => $request->input('id'),
+                    'discount_rate' => $discount_rate,
+                ]);
             }
         }
     }

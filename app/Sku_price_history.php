@@ -14,5 +14,6 @@ class Sku_price_history extends Model
         'price_3',
         'price_4',
         'price_5',
+        'user_id',
     ];
 }
