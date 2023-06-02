@@ -1,4 +1,10 @@
 <form id="sales_order_draft_proceed_to_final_summary">
+    @if ($sales_order_draft->principal->principal == 'GCI')
+        <label for="">Delivery Receipt</label>
+        <input type="text" name="delivery_receipt_for_gci" class="form-control" required>
+    @endif
+    <br />
+
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-sm table-striped" style="width:100%;">
             <thead>
@@ -136,12 +142,6 @@
                     </tr>
                 @endforeach
             </tbody>
-            {{-- <tfoot>
-                <tr>
-                    <td colspan="5">TOTAL</td>
-                    <td style="text-align: right">{{ array_sum($sum_total) }}</td>
-                </tr>
-            </tfoot> --}}
         </table>
     </div>
     <div class="row">

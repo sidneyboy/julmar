@@ -7,6 +7,10 @@ use App\Return_good_stock;
 use App\Return_good_stock_details;
 use App\Bad_order;
 use App\Bad_order_details;
+use App\Sku_price_history;
+use App\Customer_principal_price;
+use App\Sku_price_details;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,6 +33,9 @@ class Booking_pcm_upload_controller extends Controller
 
     public function booking_pcm_upload_process(Request $request)
     {
+        // date_default_timezone_set('Asia/Manila');
+        //$date = date('Y-m-d');
+
         $csv = array();
         $count_all_data = $_FILES["file"]["tmp_name"];
         if (($handle = fopen($count_all_data, "r")) !== FALSE) {
@@ -43,8 +50,8 @@ class Booking_pcm_upload_controller extends Controller
         $transaction = $explode[1];
 
         if ($transaction == "RGS") {
-            $checker = Return_good_stock::where('pcm_number', $csv[0][5])->first();
-            if ($checker) {
+            $checker = Return_good_stock::where('pcm_number', $csv[0][5])->count();
+            if ($checker == 0) {
                 $new_rgs = new Return_good_stock([
                     'delivery_receipt' => "Previous RGS",
                     'user_id' => auth()->user()->id,
@@ -57,17 +64,44 @@ class Booking_pcm_upload_controller extends Controller
                 ]);
 
                 $new_rgs->save();
+
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $csv[0][1])
+                    ->where('principal_id', $csv[1][2])
+                    ->first();
+
                 for ($i = 3; $i < $counter; $i++) {
                     if ($csv[$i][0] != 'Total') {
-                        $new_details = new Return_good_stock_details([
-                            'return_good_stock_id' => $new_rgs->id,
-                            'sku_id' => $csv[$i][0],
-                            'quantity' => $csv[$i][3],
-                            'unit_price' => $csv[$i][4],
-                            'user_id' => auth()->user()->id,
-                        ]);
+                        $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                            ->where('sku_id', $csv[$i][0])
+                            ->orderBy('id', 'desc')
+                            ->first();
 
-                        $new_details->save();
+                        if ($price_history) {
+                            $new_details = new Return_good_stock_details([
+                                'return_good_stock_id' => $new_rgs->id,
+                                'sku_id' => $csv[$i][0],
+                                'quantity' => $csv[$i][4],
+                                'unit_price' => $price_history->price_level,
+                                'user_id' => auth()->user()->id,
+                            ]);
+
+                            $new_details->save();
+                        } else {
+                            $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                                ->where('sku_id', $csv[$i][0])
+                                ->first();
+
+                            $new_details = new Return_good_stock_details([
+                                'return_good_stock_id' => $new_rgs->id,
+                                'sku_id' => $csv[$i][0],
+                                'quantity' => $csv[$i][4],
+                                'unit_price' => $price_details->price_level,
+                                'user_id' => auth()->user()->id,
+                            ]);
+
+                            $new_details->save();
+                        }
                     } else {
                         Return_good_stock::where('id', $new_rgs->id)
                             ->update([
@@ -79,8 +113,8 @@ class Booking_pcm_upload_controller extends Controller
                 return 'Existing Data';
             }
         } else {
-            $checker = Return_good_stock::where('pcm_number', $csv[0][5])->first();
-            if ($checker) {
+            $checker = Bad_order::where('pcm_number', $csv[0][5])->count();
+            if ($checker == 0) {
                 $new_bo = new Bad_order([
                     'user_id' => auth()->user()->id,
                     'principal_id' => $csv[1][2],
@@ -93,17 +127,44 @@ class Booking_pcm_upload_controller extends Controller
 
                 $new_bo->save();
 
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $csv[0][1])
+                    ->where('principal_id', $csv[1][2])
+                    ->first();
+
+
                 for ($i = 3; $i < $counter; $i++) {
                     if ($csv[$i][0] != 'Total') {
-                        $new_details = new Bad_order_details([
-                            'bad_order_id' => $new_bo->id,
-                            'sku_id' => $csv[$i][0],
-                            'quantity' => $csv[$i][3],
-                            'unit_price' => $csv[$i][4],
-                            'user_id' => auth()->user()->id,
-                        ]);
+                        $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                            ->where('sku_id', $csv[$i][0])
+                            ->orderBy('id', 'desc')
+                            ->first();
 
-                        $new_details->save();
+                        if ($price_history) {
+                            $new_details = new Bad_order_details([
+                                'bad_order_id' => $new_bo->id,
+                                'sku_id' => $csv[$i][0],
+                                'quantity' => $csv[$i][4],
+                                'unit_price' => $price_history->price_level,
+                                'user_id' => auth()->user()->id,
+                            ]);
+
+                            $new_details->save();
+                        } else {
+                            $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                                ->where('sku_id', $csv[$i][0])
+                                ->first();
+
+                            $new_details = new Bad_order_details([
+                                'bad_order_id' => $new_bo->id,
+                                'sku_id' => $csv[$i][0],
+                                'quantity' => $csv[$i][4],
+                                'unit_price' => $price_details->price_level,
+                                'user_id' => auth()->user()->id,
+                            ]);
+
+                            $new_details->save();
+                        }
                     } else {
                         Bad_order::where('id', $new_bo->id)
                             ->update([

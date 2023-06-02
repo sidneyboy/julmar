@@ -56,7 +56,7 @@
 
         $("#booking_pcm_upload_process").on('submit', (function(e) {
             e.preventDefault();
-            // $('#loader').show();
+            $('#loader').show();
             $.ajax({
                 url: "booking_pcm_upload_process",
                 type: "POST",
@@ -66,13 +66,22 @@
                 processData: false,
                 success: function(data) {
                     if (data == 'Existing Data') {
+                        $('#loader').hide();
                         Swal.fire(
                             'Cannot Proceed',
                             'Existing PCM Number',
                             'error'
                         )
-                    }else{
-                        alert('ok');
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Your work has been saved',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        location.reload();
                     }
                 },
                 error: function(error) {

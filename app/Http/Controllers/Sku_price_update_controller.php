@@ -7,9 +7,8 @@ use App\Sku_add;
 use App\Sku_principal;
 use App\Sku_price_details;
 use App\Vs_inventory_ledger;
-use SESSION;
+use App\Sku_price_history;
 use DB;
-use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,9 +77,23 @@ class Sku_price_update_controller extends Controller
             $price_4 = str_replace(',', '', $request->input('price_4')[$sku_id]);
             $price_5 = str_replace(',', '', $request->input('price_5')[$sku_id]);
 
-            $checker = Sku_price_details::select('sku_id')->where('sku_id', $sku_id)->first();
+            $checker = Sku_price_details::select('sku_id', 'unit_cost', 'price_1', 'price_2', 'price_3', 'price_4', 'price_5')
+                ->where('sku_id', $sku_id)
+                ->first();
 
             if ($checker) {
+                $sku_price_history = new Sku_price_history([
+                    'sku_id' => $sku_id,
+                    'unit_cost' => $checker->unit_cost,
+                    'price_1' => $checker->price_1,
+                    'price_2' => $checker->price_2,
+                    'price_3' => $checker->price_3,
+                    'price_4' => $checker->price_4,
+                    'price_5' => $checker->price_5,
+                ]);
+
+                $sku_price_history->save();
+
                 Sku_price_details::where('sku_id', $sku_id)
                     ->update([
                         'unit_cost' => $unit_cost,
@@ -101,6 +114,18 @@ class Sku_price_update_controller extends Controller
                     'price_5' => $price_5,
                 ]);
                 $price_add->save();
+
+                $sku_price_history = new Sku_price_history([
+                    'sku_id'    => $sku_id,
+                    'unit_cost' => $unit_cost,
+                    'price_1' => $price_1,
+                    'price_2' => $price_2,
+                    'price_3' => $price_3,
+                    'price_4' => $price_4,
+                    'price_5' => $price_5,
+                ]);
+
+                $sku_price_history->save();
             }
 
             $agent = Vs_inventory_ledger::select('customer_id')->groupBy('customer_id')->get();

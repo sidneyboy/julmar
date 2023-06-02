@@ -225,22 +225,22 @@ class Sales_order_controller extends Controller
 
             if ($sku_type == 'BUTAL') {
                 if ($date_receipt != $year_and_month) {
-                    $delivery_receipt = $request->input('principal') . "B-" . $date_receipt  . "-0001";
+                    $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
                 } else {
-                    $delivery_receipt = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                    $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
                 }
             } else {
                 if ($date_receipt != $year_and_month) {
-                    $delivery_receipt = $request->input('principal') . "C-" . $date_receipt  . "-0001";
+                    $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
                 } else {
-                    $delivery_receipt = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                    $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
                 }
             }
         } else {
             if ($sku_type == 'BUTAL') {
-                $delivery_receipt = $request->input('principal') . "B-" . $date_receipt  . "-0001";
+                $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
             } else {
-                $delivery_receipt = $request->input('principal') . "C-" . $date_receipt  . "-0001";
+                $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
             }
         }
 
@@ -254,6 +254,12 @@ class Sales_order_controller extends Controller
 
         $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
 
+        $check_dr = $request->input('delivery_receipt_for_gci');
+        if (isset($check_dr)) {
+            $delivery_receipt = $check_dr;
+        } else {
+            $delivery_receipt = $delivery_receipt_data;
+        }
 
         return view('sales_order_draft_proceed_to_final_summary', [
             'sales_order_draft' => $sales_order_draft,
