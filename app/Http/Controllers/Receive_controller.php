@@ -61,7 +61,7 @@ class Receive_controller extends Controller
 
         $purchase_order = Purchase_order::select('id', 'discount_type', 'bo_allowance_discount_rate', 'cwo_discount_rate')->find($purchase_order_id);
 
-        $purchase_order_details = Purchase_order_details::select('id', 'sku_id', 'confirmed_quantity')->where('purchase_order_id', $purchase_order_id)
+        $purchase_order_details = Purchase_order_details::select('id', 'sku_id', 'confirmed_quantity', 'receive')->where('purchase_order_id', $purchase_order_id)
             ->orderBy('sku_id')
             ->get();
 
@@ -404,11 +404,19 @@ class Receive_controller extends Controller
                 }
             }
         }
+      
+        $check_purchase_order_details = Purchase_order_details::select('confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))
+            ->get();
 
-        $check_purchase_order_details = Purchase_order_details::whereColumn('receive', '<>', 'confirmed_quantity')
-            ->where('purchase_order_id', $request->input('purchase_order_id'))->count();
+        foreach ($check_purchase_order_details as $key => $check_for_update) {
+            if ($check_for_update->confirmed_quantity > $check_for_update->receive) {
+                $checker_for_update_data[] = $check_for_update->confirmed_quantity;
+            }else{
+                $checker_for_update_data[] = 0;
+            }
+        }
 
-        if ($check_purchase_order_details > 0) {
+        if (array_sum($checker_for_update_data) > 0) {
             $update_purchase_order = Purchase_order::find($request->input('purchase_order_id'));
             $update_purchase_order->remarks = 'staggered';
             $update_purchase_order->status = 'staggered';

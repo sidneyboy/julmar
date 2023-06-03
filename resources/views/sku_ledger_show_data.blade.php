@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-hover table-striped" id="example1">
+<table class="table table-sm table-bordered table-hover table-striped" style="width:100%;" id="example1">
     <thead>
         <tr>
             <th>Date</th>

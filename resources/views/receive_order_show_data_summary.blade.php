@@ -98,7 +98,7 @@
                             <td><span style="color:green;font-weight:bold;">{{ $data->sku->sku_code }}</span> -
                                 {{ $data->sku->description }}
                             </td>
-                            <td>{{ $data->confirmed_quantity }}</td>
+                            <td style="text-align: right">{{ $data->confirmed_quantity - $data->receive }}</td>
                         </tr>
                     @endforeach
                 </tbody>

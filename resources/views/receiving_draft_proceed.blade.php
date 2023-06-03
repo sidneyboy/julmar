@@ -14,7 +14,7 @@
                     </thead>
                     <tbody>
                         @foreach ($purchase_order_details as $po_data)
-                            @if ($po_data->confirmed_quantity - $po_data->receive != 0)
+                            @if ($po_data->confirmed_quantity > $po_data->receive != 0)
                                 @if ($po_data->scanned_remarks == 'scanned')
                                     <tr style="background: #97e47e">
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>

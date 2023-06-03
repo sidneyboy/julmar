@@ -25,7 +25,7 @@
                     <td>{{ $description[$i]->description }}</td>
                     <td>{{ $description[$i]->sku_type }}</td>
                     <td>{{ $description[$i]->unit_of_measurement }}</td>
-                    <td style="text-align: right">{{ $sku_ledger[$i]->quantity }}</td>
+                    <td style="text-align: right">{{ $sku_ledger[$i]->running_balance }}</td>
                     <td style="text-align: right">
                         @if ($description[$i]->sku_price_details_one)
                             {{ $description[$i]->sku_price_details_one->price_1 }}

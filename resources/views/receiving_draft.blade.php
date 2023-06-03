@@ -18,7 +18,7 @@
                             <option value="" default>Select</option>
                             @foreach ($purchase_order as $data)
                                 <option value="{{ $data->id }}">
-                                    {{ $data->purchase_id }}/{{ strtoupper($data->van_number) }}
+                                    VAN # - {{ strtoupper($data->van_number) }}
                                 </option>
                             @endforeach
                         </select>

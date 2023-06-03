@@ -15,7 +15,7 @@
                         <td>{{ $data->sku->skuPrincipal->principal }}</td>
                         <td>[<span style="color:green">{{ $data->sku->sku_code }}</span>] - {{ $data->sku->description }}
                         </td>
-                        <td style="text-align: right">{{ $data->total }}</td>
+                        <td style="text-align: right">{{ $data->quantity }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -49,9 +49,9 @@
     </div>
     <br />
     <input type="hidden" name="rep_dr" value="{{ $rep_dr }}">
-    @foreach ($sales_invoice as $data)
+    {{-- @foreach ($sales_invoice as $data)
         <input type="hidden" value="{{ $data->id }}" name="sales_invoice_id[]">
-    @endforeach
+    @endforeach --}}
     <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
 </form>
 

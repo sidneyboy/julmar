@@ -12,9 +12,11 @@
             <select name="sku_barcode" id="sku_barcode" class="form-control select2bs4">
                 <option value="" default>Select</option>
                 @foreach ($purchase_order_details as $data)
-                    <option value="{{ $data->sku_id }}">[<span
-                            style="font-weight: bold;color:green">{{ $data->sku->sku_code }}</span>] -
-                        {{ $data->sku->description }}</option>
+                    @if ($data->confirmed_quantity > $data->receive)
+                        <option value="{{ $data->sku_id }}">[<span
+                                style="font-weight: bold;color:green">{{ $data->sku->sku_code }}</span>] -
+                            {{ $data->sku->description }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>

@@ -36,9 +36,8 @@ class Invoice_out_controller extends Controller
                     ->orderBy('id', 'desc')
                     ->get();
 
-                $sales_invoice = Sales_invoice_details::select('sales_invoice_id', 'agent_id')
-                    ->where('remarks', null)
-                    ->groupBy('agent_id')
+                $sales_invoice = Sales_invoice::select('id', 'delivery_receipt', 'principal_id')
+                    ->where('status', 'printed')
                     ->get();
             } else {
 
@@ -55,9 +54,8 @@ class Invoice_out_controller extends Controller
                     ->orderBy('id', 'desc')
                     ->get();
 
-                $sales_invoice = Sales_invoice_details::select('sales_invoice_id', 'agent_id')
-                    ->where('remarks', null)
-                    ->groupBy('agent_id')
+                $sales_invoice = Sales_invoice::select('id', 'delivery_receipt', 'principal_id')
+                    ->where('status', 'printed')
                     ->get();
             }
             return view('invoice_out', [
@@ -98,19 +96,11 @@ class Invoice_out_controller extends Controller
             ])->with('rep_dr', $rep_dr)
                 ->with('transaction', $transaction);
         } else if ($transaction == 'agent_booking') {
-            $sales_invoice = Sales_invoice::select('id')
-                ->where('agent_id', $rep_dr)
-                ->where('status', 'printed')
-                ->orderBy('id', 'desc')
+            $sales_invoice_details = Sales_invoice_details::where('sales_invoice_id', $rep_dr)
                 ->get();
-            $sales_invoice_details = Sales_invoice_details::select('*', DB::raw('sum(quantity) as total'))
-                ->whereIn('sales_invoice_id', $sales_invoice)
-                ->where('remarks', null)
-                ->groupBy('sku_id')
-                ->get();
+
             return view('invoice_out_sales_invoice_proceed', [
                 'sales_invoice_details' => $sales_invoice_details,
-                'sales_invoice' => $sales_invoice,
             ])->with('rep_dr', $rep_dr)
                 ->with('transaction', $transaction);
         }
@@ -133,7 +123,6 @@ class Invoice_out_controller extends Controller
 
     public function invoice_out_very_final_summary(Request $request)
     {
-        //return $request->input();
         if ($request->input('barcode') != null) {
             $barcode = $request->input('barcode');
             $invoice_raw = Invoice_raw::select('sku_id', 'barcode', 'description', DB::raw('sum(quantity) as total_quantity'))
@@ -364,24 +353,21 @@ class Invoice_out_controller extends Controller
             $sku_add = Sku_add::select('id', 'barcode')
                 ->where('barcode', $barcode)
                 ->first();
-            $invoice_details = Sales_invoice_details::select('*', DB::raw('sum(quantity) as total'))
-                ->whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
+            $invoice_details = Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
                 ->where('sku_id', $sku_add->id)
                 ->groupBy('sku_id')
                 ->first();
         } else if ($request->input('sku_barcode') != null) {
             $barcode = $request->input('sku_barcode');
-            $invoice_details = Sales_invoice_details::select('*', DB::raw('sum(quantity) as total'))
-                ->whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
+            $invoice_details = Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
                 ->where('sku_id', $barcode)
                 ->groupBy('sku_id')
                 ->first();
         }
 
 
-
         if ($invoice_details) {
-            Sales_invoice_details::whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
+            Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
                 ->where('sku_id', $invoice_details->sku_id)
                 ->update(['remarks' => 'scanned']);
 
@@ -394,7 +380,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_details->sku_id,
                     'name' => $invoice_details->sku->description,
                     'price' => 0,
-                    'quantity' => $invoice_details->total,
+                    'quantity' => $invoice_details->quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_details,
                 ));
@@ -403,7 +389,7 @@ class Invoice_out_controller extends Controller
                     'id' => $invoice_details->sku_id,
                     'name' => $invoice_details->sku->description,
                     'price' => 0,
-                    'quantity' => $invoice_details->total,
+                    'quantity' => $invoice_details->quantity,
                     'attributes' => array(),
                     'associatedModel' => $invoice_details,
                 ));
@@ -411,10 +397,9 @@ class Invoice_out_controller extends Controller
 
             $cart = Cart::session(auth()->user()->id)->getContent();
 
-            $sales_invoice_details = Sales_invoice_details::select('*', DB::raw('sum(quantity) as total'))
-                ->whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
-                ->where('remarks','scanned')
-                ->orWhere('remarks',null)
+            $sales_invoice_details = Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
+                ->where('remarks', 'scanned')
+                ->orWhere('remarks', null)
                 ->groupBy('sku_id')
                 ->get();
 
@@ -423,7 +408,6 @@ class Invoice_out_controller extends Controller
                 'sales_invoice_details' => $sales_invoice_details,
                 'invoice_details' => $invoice_details,
                 'rep_dr' => $request->input('rep_dr'),
-                'sales_invoice_id' => $request->input('sales_invoice_id'),
             ]);
         } else {
             return 'invalid';
@@ -439,7 +423,7 @@ class Invoice_out_controller extends Controller
 
         $cart = Cart::session(auth()->user()->id)->getContent();
 
-        Sales_invoice::whereIn('id', $request->input('sales_invoice_id'))
+        Sales_invoice::where('id', $request->input('rep_dr'))
             ->update(['status' => 'out']);
 
         foreach ($cart as $key => $cart_data) {
@@ -464,7 +448,7 @@ class Invoice_out_controller extends Controller
 
             $new_sku_ledger->save();
 
-            Sales_invoice_details::whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
+            Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
                 ->where('sku_id', $sku_id)
                 ->update(['remarks' => 'out']);
         }
