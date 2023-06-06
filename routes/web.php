@@ -797,5 +797,10 @@ Route::get('/truck_load', 'Truck_load_controller@index');
 Route::post('/truck_load_proceed', 'Truck_load_controller@truck_load_proceed')->name('truck_load_proceed');
 Route::post('/truck_load_generated_invoices', 'Truck_load_controller@truck_load_generated_invoices')->name('truck_load_generated_invoices');
 Route::post('/truck_load_generated_invoices_data', 'Truck_load_controller@truck_load_generated_invoices_data')->name('truck_load_generated_invoices_data');
+Route::post('/truck_load_generated_final_summary_invoices_data', 'Truck_load_controller@truck_load_generated_final_summary_invoices_data')->name('truck_load_generated_final_summary_invoices_data');
+Route::post('/truck_load_generated_final_summary_invoices_remove_data', 'Truck_load_controller@truck_load_generated_final_summary_invoices_remove_data')->name('truck_load_generated_final_summary_invoices_remove_data');
+Route::post('/truck_load_generated_very_final_summary_invoices_data', 'Truck_load_controller@truck_load_generated_very_final_summary_invoices_data')->name('truck_load_generated_very_final_summary_invoices_data');
+
+
 
 

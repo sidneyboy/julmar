@@ -27,18 +27,19 @@
             <input type="text" class="form-control" name="helper_2" required style="text-transform: uppercase">
         </div>
         <div class="col-md-12">
+            <label for="">Detailed Location</label>
+            <input type="text" class="form-control" name="detailed_location" style="text-transform:uppercase"
+                required>
+        </div>
+        <div class="col-md-12">
             <label for="">Invoices</label>
-            <select name="sales_invoice_id[]" multiple class="form-control select2bs4" style="width:100%;" required>
+            <select name="sales_invoice_id" class="form-control select2bs4" style="width:100%;" required>
                 <option value="" default>Select</option>
                 @foreach ($sales_invoice as $data)
                     <option value="{{ $data->id }}">{{ $data->agent->full_name }} - {{ $data->delivery_receipt }}
                     </option>
                 @endforeach
             </select>
-        </div>
-        <div class="col-md-12">
-            <label for="">Detailed Location</label>
-            <input type="text" class="form-control" name="detailed_location" style="text-transform:uppercase" required>
         </div>
         <div class="col-md-12">
             <br />
