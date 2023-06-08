@@ -267,10 +267,12 @@ class Warehouse_pcm_controller extends Controller
             }
 
             foreach ($request->input('discount_rate') as $key => $discount_rate) {
-                $new_discount_rate = new Return_good_stock_discounts([
+                $new_discount_rate_rgs = new Return_good_stock_discounts([
                     'return_good_stock_id' => $request->input('id'),
                     'discount_rate' => $discount_rate,
                 ]);
+
+                $new_discount_rate_rgs->save();
             }
         } else {
             $cart = Cart::session(auth()->user()->id)->getContent();
@@ -291,10 +293,12 @@ class Warehouse_pcm_controller extends Controller
             }
 
             foreach ($request->input('discount_rate') as $key => $discount_rate) {
-                $new_discount_rate = new Bad_order_discounts([
+                $new_discount_rate_bo = new Bad_order_discounts([
                     'bad_order_id' => $request->input('id'),
                     'discount_rate' => $discount_rate,
                 ]);
+
+                $new_discount_rate_bo->save();
             }
         }
     }
