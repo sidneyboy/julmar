@@ -27,7 +27,8 @@
             </tr>
             <tr>
                 <td>TOTAL OUTLET/INVOICES</td>
-                <td style="text-align: center;" colspan="6"> {{ count($number_of_customers) }} OUTLET(S)/{{ count($final_sales_invoice_id) }} INVOICE(S)</td>
+                <td style="text-align: center;" colspan="6"> {{ count($number_of_customers) }}
+                    OUTLET(S)/{{ count($final_sales_invoice_id) }} INVOICE(S)</td>
             </tr>
         </tbody>
     </table>
@@ -59,7 +60,12 @@
                             $sum_butal[] = $outlet_details_butal[$outlet_data->principal_id][0]->total;
                         @endphp
                     </td>
-                    <td></td>
+                    <td style="text-align: right">
+                        {{ number_format(array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id]), 2, '.', ',') }}
+                        @php
+                            $sum_conversion[] = array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id]);
+                        @endphp
+                    </td>
                     @if ($outlet_details_case[$outlet_data->principal_id][0]->total_amount != 0)
                         <td style="text-align: right">
                             {{ number_format($outlet_details_case[$outlet_data->principal_id][0]->total_amount, 2, '.', ',') }}
@@ -84,8 +90,17 @@
                             @endphp
                         </td>
                     @endif
-                    <td></td>
-                    <td></td>
+                    <td style="text-align: right">{{ number_format(($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion)), 2, '.', ',') }}
+                        @php
+                            $percentage = ($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion));
+                            $sum_percentage[] = ($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion));
+                        @endphp
+                    </td>
+                    <td style="text-align: right">{{ number_format($total_expense_per_delivery * $percentage,2,".",",") }}
+                        @php
+                            $sum_equivalent[] = $total_expense_per_delivery * $percentage;
+                        @endphp
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -94,12 +109,16 @@
                 <th>OVERALL</th>
                 <th style="text-align: right">{{ array_sum($sum_case) }}</th>
                 <th style="text-align: right">{{ array_sum($sum_butal) }}</th>
-                <th></th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_conversion), 2, '.', ',') }}</th>
                 <th style="text-align: right">
                     {{ number_format(array_sum($sum_amount), 2, '.', ',') }}
                 </th>
-                <th></th>
-                <th></th>
+                <th style="text-align: right">
+                    {{ number_format(array_sum($sum_percentage), 2, '.', ',') }}
+                </th>
+                <th style="text-align: right">
+                    {{ number_format(array_sum($sum_equivalent), 2, '.', ',') }}
+                </th>
             </tr>
             <tr>
                 <th colspan="7" style="text-align: center;">{{ $detailed_location }}</th>

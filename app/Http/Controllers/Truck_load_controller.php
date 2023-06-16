@@ -175,15 +175,28 @@ class Truck_load_controller extends Controller
             ->get();
 
         foreach ($outlet as $key => $outlet_data) {
-            $outlet_details_case[$outlet_data->principal_id] = Sales_invoice_details::select('sku_type', DB::raw('sum(quantity) as total'), DB::raw('sum(total_amount_per_sku) as total_amount'))
+            $outlet_details_case[$outlet_data->principal_id] = Sales_invoice_details::select('sku_id', 'sku_type', DB::raw('sum(quantity) as total'), DB::raw('sum(total_amount_per_sku) as total_amount'))
                 ->where('principal_id', $outlet_data->principal_id)
                 ->where('sku_type', 'CASE')
                 ->get();
+
+            $total_sum_case_for_percentage[] =  $outlet_details_case[$outlet_data->principal_id][0]->total;
 
             $outlet_details_butal[$outlet_data->principal_id] = Sales_invoice_details::select('sku_type', DB::raw('sum(quantity) as total'), DB::raw('sum(total_amount_per_sku) as total_amount'))
                 ->where('principal_id', $outlet_data->principal_id)
                 ->where('sku_type', 'BUTAL')
                 ->get();
+
+            $outlet_details_sku_butal = sales_invoice_details::select('sku_id', 'quantity')
+                ->where('principal_id', $outlet_data->principal_id)
+                ->where('sku_type', 'BUTAL')
+                ->get();
+
+            foreach ($outlet_details_sku_butal as $key => $details_sku_butal) {
+                $outlet_details_sku_butal_data[$outlet_data->principal_id][] = $details_sku_butal->quantity / $details_sku_butal->sku->equivalent_butal_pcs;
+            }
+
+            $total_sum_conversion[] = array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id]);
         }
 
         $explode = explode('-', $request->input('truck_id'));
@@ -195,8 +208,11 @@ class Truck_load_controller extends Controller
             'outlet_details_case' => $outlet_details_case,
             'outlet_details_butal' => $outlet_details_butal,
             'number_of_customers' => $number_of_customers,
+            'total_sum_case_for_percentage' => $total_sum_case_for_percentage,
+            'total_sum_conversion' => $total_sum_conversion,
             'truck_id' => $truck_id,
             'plate_no' => $plate_no,
+            'outlet_details_sku_butal_data' => $outlet_details_sku_butal_data,
         ])->with('location_id', $request->input('location_id'))
             ->with('detailed_location', strtoupper(str_replace(',', '', $request->input('detailed_location'))))
             ->with('final_sales_invoice_id', $request->input('final_sales_invoice_id'))
@@ -204,6 +220,7 @@ class Truck_load_controller extends Controller
             ->with('driver', strtoupper($request->input('driver')))
             ->with('contact_number', strtoupper($request->input('contact_number')))
             ->with('helper_1', strtoupper($request->input('helper_1')))
-            ->with('helper_2', strtoupper($request->input('helper_2')));
+            ->with('helper_2', strtoupper($request->input('helper_2')))
+            ->with('total_expense_per_delivery',$request->input('total_expense_per_delivery'));
     }
 }

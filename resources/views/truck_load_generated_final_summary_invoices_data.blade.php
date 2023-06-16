@@ -1,4 +1,7 @@
 <form id="truck_load_generated_very_final_summary_invoices_data">
+    <label for="">Total Expense Per Delivery</label>
+    <input type="text" class="form-control" required name="total_expense_per_delivery" onkeypress="return isNumberKey(event)">
+    <br />
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
             <thead>
@@ -25,7 +28,7 @@
                         <th style="text-align: right">{{ $data->quantity }}</th>
                         <td style="text-align: center;"><button value="{{ $data->id }}"
                                 class="btn btn-sm btn-danger remove_invoice"><i class="bi bi-trash"></i></button>
-                            <input type="hidden" name="final_sales_invoice_id[]" value="{{ $data->id }}">    
+                            <input type="hidden" name="final_sales_invoice_id[]" value="{{ $data->id }}">
                         </td>
                     </tr>
                 @endforeach
@@ -47,7 +50,14 @@
 
 
 <script>
-    // 
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
 
 
     $("#truck_load_generated_very_final_summary_invoices_data").on('submit', (function(e) {
