@@ -600,7 +600,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_agent_and_location_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Agent & Location
+                                            Agent & Sales Area
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -609,7 +609,7 @@
                                             <a href="{{ url('agent') }}"
                                                 class="nav-link {{ $active_tab == 'agent' ? 'active' : '' }}">
                                                   <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>New Agent</p>
+                                                <p>Agent</p>
                                             </a>
                                         </li>
 
@@ -617,7 +617,7 @@
                                             <a href="{{ url('location') }}"
                                                 class="nav-link {{ $active_tab == 'location' ? 'active' : '' }}">
                                                   <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>New Location</p>
+                                                <p>Sales Area</p>
                                             </a>
                                         </li>
                                     </ul>

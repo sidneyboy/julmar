@@ -50,53 +50,68 @@
             @foreach ($outlet as $outlet_data)
                 <tr>
                     <td>TOTAL QTY/AMT {{ $outlet_data->principal->principal }}:</td>
-                    <td style="text-align: right">{{ $outlet_details_case[$outlet_data->principal_id][0]->total }}
+                    {{-- <td style="text-align: right">{{ array_sum($total_quantity_per_case[$outlet_data->principal_id]) }}
                         @php
-                            $sum_case[] = $outlet_details_case[$outlet_data->principal_id][0]->total;
+                            $sum_case[] = array_sum($total_quantity_per_case[$outlet_data->principal_id]);
                         @endphp
+                    </td> --}}
+                    <td style="text-align: right">
+                        @if (array_sum($total_quantity_per_case[$outlet_data->principal_id]) != 0)
+                            {{ array_sum($total_quantity_per_case[$outlet_data->principal_id]) }}
+                            @php
+                                $sum_case[] = array_sum($total_quantity_per_case[$outlet_data->principal_id]);
+                            @endphp
+                        @else
+                            0
+                            @php
+                                $sum_case[] = 0;
+                            @endphp
+                        @endif
                     </td>
-                    <td style="text-align: right">{{ $outlet_details_butal[$outlet_data->principal_id][0]->total }}
+                    <td style="text-align: right">
+                        @if (array_sum($total_quantity_per_butal[$outlet_data->principal_id]) != 0)
+                            {{ array_sum($total_quantity_per_butal[$outlet_data->principal_id]) }}
+                            @php
+                                $sum_butal[] = array_sum($total_quantity_per_butal[$outlet_data->principal_id]);
+                            @endphp
+                        @else
+                            0
+                            @php
+                                $sum_butal[] = 0;
+                            @endphp
+                        @endif
+                    </td>
+                    <td style="text-align: right">
+                        @if (isset($conversion_butal[$outlet_data->principal_id]))
+                            @php
+                                $conversion = array_sum($conversion_butal[$outlet_data->principal_id]);
+                                echo number_format($conversion, 2, '.', ',');
+                                $sum_conversion[] = $conversion;
+                            @endphp
+                        @else
+                            @php
+                                $conversion = 0;
+                                echo number_format($conversion, 2, '.', ',');
+                                $sum_conversion[] = $conversion;
+                            @endphp
+                        @endif
+                    </td>
+                    <td style="text-align: right">
                         @php
-                            $sum_butal[] = $outlet_details_butal[$outlet_data->principal_id][0]->total;
+                            $amount = array_sum($total_amount_per_butal[$outlet_data->principal_id]) + array_sum($total_amount_per_case[$outlet_data->principal_id]);
+                            echo number_format($amount, 2, '.', ',');
+                            $sum_amount[] = $amount;
                         @endphp
                     </td>
                     <td style="text-align: right">
-                        {{ number_format(array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id]), 2, '.', ',') }}
                         @php
-                            $sum_conversion[] = array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id]);
+                            $percentage = (array_sum($total_quantity_per_case[$outlet_data->principal_id]) + $conversion) / (array_sum($sum_total_quantity_per_case) + array_sum($sum_total_conversion));
+                            echo number_format($percentage, 2, '.', ',');
+                            $sum_percentage[] = $percentage;
                         @endphp
                     </td>
-                    @if ($outlet_details_case[$outlet_data->principal_id][0]->total_amount != 0)
-                        <td style="text-align: right">
-                            {{ number_format($outlet_details_case[$outlet_data->principal_id][0]->total_amount, 2, '.', ',') }}
-                            @php
-                                $sum_amount[] = $outlet_details_case[$outlet_data->principal_id][0]->total_amount;
-                            @endphp
-                        </td>
-                    @elseif($outlet_details_butal[$outlet_data->principal_id][0]->total_amount != 0)
-                        <td style="text-align: right">
-                            {{ number_format($outlet_details_butal[$outlet_data->principal_id][0]->total_amount, 2, '.', ',') }}
-                            @php
-                                $sum_amount[] = $outlet_details_butal[$outlet_data->principal_id][0]->total_amount;
-                            @endphp
-                        </td>
-                    @elseif(
-                        $outlet_details_butal[$outlet_data->principal_id][0]->total_amount != 0 &&
-                            $outlet_details_case[$outlet_data->principal_id][0]->total_amount != 0)
-                        <td style="text-align: right">
-                            {{ number_format($outlet_details_case[$outlet_data->principal_id][0]->total_amount + $outlet_details_butal[$outlet_data->principal_id][0]->total_amount, 2, '.', ',') }}
-                            @php
-                                $sum_amount[] = $outlet_details_case[$outlet_data->principal_id][0]->total_amount + $outlet_details_butal[$outlet_data->principal_id][0]->total_amount;
-                            @endphp
-                        </td>
-                    @endif
-                    <td style="text-align: right">{{ number_format(($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion)), 2, '.', ',') }}
-                        @php
-                            $percentage = ($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion));
-                            $sum_percentage[] = ($outlet_details_case[$outlet_data->principal_id][0]->total + array_sum($outlet_details_sku_butal_data[$outlet_data->principal_id])) / (array_sum($total_sum_case_for_percentage) + array_sum($total_sum_conversion));
-                        @endphp
-                    </td>
-                    <td style="text-align: right">{{ number_format($total_expense_per_delivery * $percentage,2,".",",") }}
+                    <td style="text-align: right">
+                        {{ number_format($total_expense_per_delivery * $percentage, 2, '.', ',') }}
                         @php
                             $sum_equivalent[] = $total_expense_per_delivery * $percentage;
                         @endphp

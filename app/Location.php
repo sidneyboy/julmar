@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     protected $fillable = [
-    	'location'
+    	'location',
+        'detailed_location',
     ];
 
     public function location_details()

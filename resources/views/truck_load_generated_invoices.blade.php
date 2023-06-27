@@ -28,8 +28,9 @@
         </div>
         <div class="col-md-12">
             <label for="">Detailed Location</label>
-            <input type="text" class="form-control" name="detailed_location" style="text-transform:uppercase"
-                required>
+            @foreach ($location as $location_data)
+               <p> {{ $location_data->detailed_location .","}} </p>
+            @endforeach
         </div>
         <div class="col-md-12">
             <label for="">Invoices</label>

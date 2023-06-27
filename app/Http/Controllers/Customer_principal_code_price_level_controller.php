@@ -16,7 +16,7 @@ class Customer_principal_code_price_level_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $customer = Customer::where('kind_of_business','!=','VAN SELLING')->get();
+            $customer = Customer::get();
             return view('customer_principal_code_price_level', [
                 'user' => $user,
                 'customer' => $customer,

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Location;
 use Illuminate\Http\Request;
@@ -27,11 +28,20 @@ class Location_controller extends Controller
 
     public function location_save(Request $request)
     {
-        $location_save = new Location([
-            'location' => $request->input('location'),
-        ]);
-        $location_save->save();
+        $checker = Location::where('location', strtoupper($request->input('location')))
+            ->where('detailed_location', strtoupper($request->input('detailed_location')))
+            ->count();
 
-        return 'saved';
+        if ($checker == 0) {
+            $location_save = new Location([
+                'location' => strtoupper($request->input('location')),
+                'detailed_location' => strtoupper($request->input('detailed_location')),
+            ]);
+            $location_save->save();
+
+            return 'saved';
+        }else{
+            return 'existing';
+        }
     }
 }
