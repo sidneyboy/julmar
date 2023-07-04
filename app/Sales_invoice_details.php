@@ -16,6 +16,7 @@ class Sales_invoice_details extends Model
         'agent_id',
         'principal_id',
         'sku_type',
+        'kilograms',
     ];
 
     public function sku()

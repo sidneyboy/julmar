@@ -30,12 +30,13 @@
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
-                    <th colspan="6">DR: {{ $delivery_receipt }}</th>
+                    <th colspan="7">DR: {{ $delivery_receipt }}</th>
                 </tr>
                 <tr>
                     <th>Code</th>
                     <th>Desc</th>
                     <th>UOM</th>
+                    <th>KG</th>
                     <th>Qty</th>
                     <th>U/P</th>
                     <th>Sub Total</th>
@@ -47,7 +48,16 @@
                         <td>{{ $details->sku->sku_code }}</td>
                         <td>{{ $details->sku->description }}</td>
                         <td>{{ $details->sku->unit_of_measurement }}</td>
-                        <td style="text-align: right">{{ $final_quantity[$details->sku_id] }}</td>
+                        <td style="text-align: right">{{ $details->sku->kilograms }}
+                            @php
+                                $sum_kg[] = $details->sku->kilograms;
+                            @endphp
+                        </td>
+                        <td style="text-align: right">{{ $final_quantity[$details->sku_id] }}
+                            @php
+                                $sum_quantity[] = $final_quantity[$details->sku_id];
+                            @endphp
+                        </td>
                         <td style="text-align: right">
                             {{ $unit_price[$details->sku_id] }}
                         </td>
@@ -61,6 +71,8 @@
                                 value="{{ $unit_price[$details->sku_id] }}">
                             <input type="hidden" name="final_quantity[{{ $details->sku_id }}]"
                                 value="{{ $final_quantity[$details->sku_id] }}">
+                            <input type="hidden" name="kilograms[{{ $details->sku_id }}]"
+                                value="{{ $details->sku->kilograms }}">
                             <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
                                 value="{{ $sub_total }}">
                         </td>
@@ -98,7 +110,14 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <th colspan="5" style="text-align: right">Final Total</th>
+                        <th colspan="3" style="text-align: right">TOTAL</th>
+                        <th style="text-align: right">
+                            {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
+                        </th>
+                        <th style="text-align: right">
+                            {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
+                        </th>
+                        <th></th>
                         <th style="text-align: right;text-decoration: overline">
                             {{ number_format(end($discount_holder), 2, '.', ',') }}
                             @php
@@ -111,7 +130,14 @@
                     </tr>
                 @else
                     <tr>
-                        <th colspan="5" style="text-align: right">TOTAL</th>
+                        <th colspan="3" style="text-align: right">TOTAL</th>
+                        <th style="text-align: right">
+                            {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
+                        </th>
+                        <th style="text-align: right">
+                            {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
+                        </th>
+                        <th></th>
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_total), 2, '.', ',') }}
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="final_total">

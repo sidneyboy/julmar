@@ -1,5 +1,9 @@
 <form id="truck_load_generated_invoices_data">
     <div class="row">
+        <div class="col-md-12">
+            <label for="">Trucking Company</label>
+            <input type="text" class="form-control" name="trucking_company" required>
+        </div>
         <div class="col-md-4">
             <label for="">Truck</label>
             <select name="truck_id" class="form-control" required>
@@ -29,7 +33,7 @@
         <div class="col-md-12">
             <label for="">Detailed Location</label>
             @foreach ($location as $location_data)
-               <p> {{ $location_data->detailed_location .","}} </p>
+                <p> {{ $location_data->detailed_location . ',' }} </p>
             @endforeach
         </div>
         <div class="col-md-12">

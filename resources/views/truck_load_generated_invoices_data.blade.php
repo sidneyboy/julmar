@@ -3,6 +3,7 @@
         <table class="table table-bordered table-hover table-striped table-sm" style="width:100%">
             <thead>
                 <tr>
+                    <th>{{ $sales_invoice->delivery_receipt }}</th>
                     <th>{{ $sales_invoice->customer->store_name }}</th>
                     <th>{{ $sales_invoice->principal->principal }}</th>
                     <th>{{ $sales_invoice->sku_type }}</th>
@@ -11,6 +12,7 @@
                     <th>Code</th>
                     <th>Description</th>
                     <th>Quantity</th>
+                    <th>KG</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +25,12 @@
                                 $total_quantity[] = $data->quantity;
                             @endphp
                         </td>
+                        <td style="text-align: right">
+                            @php
+                                echo $data->sku->kilograms;
+                                $total_kg[] = $data->sku->kilograms;
+                            @endphp
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -33,11 +41,15 @@
                     <th style="text-align: right">{{ array_sum($total_quantity) }}
                         <input type="hidden" name="total_quantity" value="{{ array_sum($total_quantity) }}">
                     </th>
+                    <th style="text-align: right">{{ array_sum($total_kg) }}
+                        <input type="hidden" name="total_kg" value="{{ array_sum($total_kg) }}">
+                    </th>
                 </tr>
             </tfoot>
         </table>
     </div>
 
+    <input type="hidden" name="trucking_company" value="{{ $trucking_company }}">
     <input type="hidden" name="location_id" value="{{ $location_id }}">
     <input type="hidden" name="detailed_location" value="{{ $detailed_location }}">
     <input type="hidden" name="sales_invoice_id" value="{{ $sales_invoice_id }}">

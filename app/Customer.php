@@ -21,11 +21,17 @@ class Customer extends Model
         'longitude',
         'latitude',
         'allowed_number_of_sales_order',
+        'location_details_id',
     ];
 
     public function location()
     {
     	return $this->BelongsTo('App\Location', 'location_id');
+    }
+
+    public function location_details()
+    {
+    	return $this->BelongsTo('App\Location_details', 'location_details_id');
     }
 
     public function customer_discount()

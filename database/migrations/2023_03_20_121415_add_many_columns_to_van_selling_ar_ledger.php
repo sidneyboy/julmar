@@ -19,8 +19,8 @@ class AddManyColumnsToVanSellingArLedger extends Migration
             $table->double('running_balance',15,4)->nullable();
             $table->double('amount',15,4)->nullable();
             $table->double('short',15,4)->nullable();
-            $table->double('outstanding_balance',15,4)->nullable();
-            $table->string('remarks')->nullable();
+            // $table->double('outstanding_balance',15,4)->nullable();
+            // $table->string('remarks')->nullable();
         });
     }
 
@@ -37,8 +37,8 @@ class AddManyColumnsToVanSellingArLedger extends Migration
             $table->dropColumn('running_balance');
             $table->dropColumn('amount');
             $table->dropColumn('short');
-            $table->dropColumn('outstanding_balance');
-            $table->dropColumn('remarks');
+            // $table->dropColumn('outstanding_balance');
+            // $table->dropColumn('remarks');
         });
     }
 }

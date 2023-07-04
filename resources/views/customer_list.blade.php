@@ -52,7 +52,7 @@
 
         $("#customer_list_generate_data").on('submit', (function(e) {
             e.preventDefault();
-            //$('#loader').show();
+            $('#loader').show();
             $.ajax({
                 url: "customer_list_generate_data",
                 type: "POST",

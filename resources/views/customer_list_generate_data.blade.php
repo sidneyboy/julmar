@@ -3,15 +3,15 @@
 <br /><br />
 <div class="table table-responsive">
     <table class="table table-bordered table-hover table-sm table-striped" id="example1"
-        style="width:100%;font-size:13px;">
+        style="width:100%;font-size:11px;">
         <thead>
             <tr>
                 <th style="text-align: center;">STORE NAME</th>
                 <th style="text-align: center;">KOB</th>
                 <th style="text-align: center;">CREDIT TERM</th>
                 <th style="text-align: center;">CREDIT<br />LINE<br />AMOUNT</th>
-                <th style="text-align: center;">LOCATION</th>
-                <th style="text-align: center;">BRGY/PUROK/SITIO</th>
+                <th style="text-align: center;">SALES AREA</th>
+                <th style="text-align: center;">BRGY/PUROK/SITIO/MUNI</th>
                 <th style="text-align: center;">DETAILED<br />LOCATION</th>
                 <th style="text-align: center;">CONTACT<br />PERSON</th>
                 <th style="text-align: center;">CONTACT<br />NUMBER</th>
@@ -34,7 +34,11 @@
 
                     </td>
                     <td style="text-align: center;text-transform: uppercase;">
-                        {{ $data->detailed_location }}</td>
+
+                        @if ($data->location_details)
+                            {{ $data->location_details->barangay }}
+                        @endif
+                    </td>
                     <td style="text-align: center;text-transform: uppercase;">
                         {{ $data->detailed_location }}</td>
                     <td style="text-align: center;text-transform: uppercase;">{{ $data->contact_person }}

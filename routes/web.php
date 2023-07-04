@@ -803,6 +803,35 @@ Route::post('/truck_load_generated_invoices_data', 'Truck_load_controller@truck_
 Route::post('/truck_load_generated_final_summary_invoices_data', 'Truck_load_controller@truck_load_generated_final_summary_invoices_data')->name('truck_load_generated_final_summary_invoices_data');
 Route::post('/truck_load_generated_final_summary_invoices_remove_data', 'Truck_load_controller@truck_load_generated_final_summary_invoices_remove_data')->name('truck_load_generated_final_summary_invoices_remove_data');
 Route::post('/truck_load_generated_very_final_summary_invoices_data', 'Truck_load_controller@truck_load_generated_very_final_summary_invoices_data')->name('truck_load_generated_very_final_summary_invoices_data');
+Route::post('/truck_load_save', 'Truck_load_controller@truck_load_save')->name('truck_load_save');
+
+Route::get('/truck_load_list', 'Truck_load_list_controller@index');
+Route::post('/truck_load_lost_update_loading_date', 'Truck_load_list_controller@truck_load_lost_update_loading_date')->name('truck_load_lost_update_loading_date');
+Route::post('/truck_load_lost_update_departure_date', 'Truck_load_list_controller@truck_load_lost_update_departure_date')->name('truck_load_lost_update_departure_date');
+Route::post('/truck_load_lost_update_arrival_date', 'Truck_load_list_controller@truck_load_lost_update_arrival_date')->name('truck_load_lost_update_arrival_date');
+Route::post('/truck_load_lost_update_sg_departure_noted_by', 'Truck_load_list_controller@truck_load_lost_update_sg_departure_noted_by')->name('truck_load_lost_update_sg_departure_noted_by');
+Route::post('/truck_load_lost_update_sg_arrival_noted_by', 'Truck_load_list_controller@truck_load_lost_update_sg_arrival_noted_by')->name('truck_load_lost_update_sg_arrival_noted_by');
+Route::post('/truck_load_lost_update_fuel_given', 'Truck_load_list_controller@truck_load_lost_update_fuel_given')->name('truck_load_lost_update_fuel_given');
+Route::post('/truck_load_lost_update_remarks', 'Truck_load_list_controller@truck_load_lost_update_remarks')->name('truck_load_lost_update_remarks');
+Route::post('/truck_load_lost_update_total_expense', 'Truck_load_list_controller@truck_load_lost_update_total_expense')->name('truck_load_lost_update_total_expense');
+Route::get('/truck_load_list_print/{id}', 'Truck_load_list_controller@truck_load_list_print')->name('truck_load_list_print');
+Route::get('/truck_load_list_driver_print/{id}', 'Truck_load_list_controller@truck_load_list_driver_print')->name('truck_load_list_driver_print');
+
+
+Route::get('/truck_load_report', 'Truck_load_report_controller@index');
+Route::post('/truck_load_report_show', 'truck_load_report_controller@truck_load_report_show')->name('truck_load_report_show');
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -43,7 +43,7 @@
                                  style="width:100%;">
                                  <option value="" default>Select</option>
                                  @foreach ($location as $location_data)
-                                     <option value="{{ $location_data->id }}">{{ $location_data->location }}</option>
+                                     <option value="{{ $location_data->location_id }}">{{ $location_data->barangay }}</option>
                                  @endforeach
                              </select>
                          </div>

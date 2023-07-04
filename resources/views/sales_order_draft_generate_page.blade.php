@@ -151,7 +151,8 @@
                 data-placeholder="Customer Discounts" style="width: 100%;">
                 <option value="" default>Select</option>
                 @foreach ($customer_discount as $data)
-                    <option value="{{ $data->customer_discount }}" selected>Less - {{ $data->customer_discount }}</option>
+                    <option value="{{ $data->customer_discount }}" selected>Less - {{ $data->customer_discount }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -182,6 +183,14 @@
                 $('#loader').hide();
                 $('#sales_order_draft_proceed_to_final_summary_page').html(data);
             },
+            error: function(error) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Cannot Proceed',
+                    'Please Contact IT Support',
+                    'error'
+                )
+            }
         });
     }));
 </script>

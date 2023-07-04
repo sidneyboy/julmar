@@ -12,7 +12,8 @@
                     <th>Principal</th>
                     <th>Sku Type</th>
                     <th>Location</th>
-                    <th>Quantity</th>
+                    <th>Total QTY</th>
+                    <th>Total KG</th>
                     <th>Remove</th>
                 </tr>
             </thead>
@@ -26,6 +27,11 @@
                         <td>{{ $data->associatedModel->sku_type }}</td>
                         <td>{{ $data->associatedModel->customer->location->location }}</td>
                         <th style="text-align: right">{{ $data->quantity }}</th>
+                        <th style="text-align: right">
+                            @foreach ($data->attributes as $item)
+                                {{ $item['kilograms'] }}
+                            @endforeach
+                        </th>
                         <td style="text-align: center;"><button value="{{ $data->id }}"
                                 class="btn btn-sm btn-danger remove_invoice"><i class="bi bi-trash"></i></button>
                             <input type="hidden" name="final_sales_invoice_id[]" value="{{ $data->id }}">
@@ -37,6 +43,7 @@
     </div>
 
     <input type="hidden" name="location_id" id="location_id" value="{{ $location_id }}">
+    <input type="hidden" name="trucking_company" id="trucking_company" value="{{ $trucking_company }}">
     <input type="hidden" name="detailed_location" id="detailed_location" value="{{ $detailed_location }}">
     <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="{{ $sales_invoice_id }}">
     <input type="hidden" name="truck_id" id="truck_id" value="{{ $truck_id }}">
@@ -96,6 +103,7 @@
         var contact_number = $('#contact_number').val();
         var helper_1 = $('#helper_1').val();
         var helper_2 = $('#helper_2').val();
+        var trucking_company = $('#trucking_company').val();
 
         $.post({
             type: "POST",
@@ -103,7 +111,8 @@
             data: 'sales_invoice_id=' + sales_invoice_id + '&location_id=' + location_id +
                 '&detailed_location=' + detailed_location + '&truck_id=' + truck_id + '&driver=' +
                 driver + '&contact_number=' + contact_number + '&helper_1=' + helper_1 + '&helper_2=' +
-                helper_2,
+                helper_2 + '&trucking_company=' +
+                trucking_company,
             success: function(data) {
                 $('#loader').hide();
                 $('#truck_load_generated_final_summary_invoices_data_page').html(data);

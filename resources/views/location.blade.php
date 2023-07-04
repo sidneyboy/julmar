@@ -28,18 +28,10 @@
              <div class="card-body">
                  <form id="submit_location" method="post">
                      <div class="row">
-
-                         <div class="col-md-6">
+                         <div class="col-md-12">
                              <div class="form-group">
                                  <label>Sales Area</label>
                                  <input type="text" name="location" class="form-control"
-                                     style="text-transform: uppercase" required>
-                             </div>
-                         </div>
-                         <div class="col-md-6">
-                             <div class="form-group">
-                                 <label>Location</label>
-                                 <input type="text" name="detailed_location" class="form-control"
                                      style="text-transform: uppercase" required>
                              </div>
                          </div>
@@ -48,18 +40,18 @@
                                  <input type="submit" value="SUBMIT" class="btn btn-sm float-right btn-success" />
                              </div>
                          </div>
-
                      </div>
                  </form>
                  <div class="row">
                      <div class="col-md-12">
                          <label for="">Sales Area List</label>
-                         <table class="table table-bordered table-hover table-striped table-sm">
+                         <table class="table table-bordered table-hover table-striped table-sm" id="example1">
                              <thead>
                                  <tr>
                                      <th>ID</th>
                                      <th>Sales Area</th>
-                                     <th>Location</th>
+                                     <th>Detailed Location</th>
+                                     <th>Add Location</th>
                                  </tr>
                              </thead>
                              <tbody>
@@ -67,8 +59,83 @@
                                      <tr>
                                          <td>{{ $data->id }}</td>
                                          <td>{{ $data->location }}</td>
-                                         <td>{{ $data->detailed_location }}</td>
+                                         <td><button type="button" class="btn btn-info btn-sm btn-block"
+                                                 data-toggle="modal" data-target="#exampleModal{{ $data->id }}">
+                                                 View
+                                             </button>
 
+                                             <!-- Modal -->
+                                             <div class="modal fade" id="exampleModal{{ $data->id }}" tabindex="-1"
+                                                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                 <div class="modal-dialog " role="document">
+                                                     <div class="modal-content">
+                                                         <div class="modal-header">
+                                                             <h5 class="modal-title" id="exampleModalLabel">
+                                                                 {{ $data->location }}</h5>
+                                                             <button type="button" class="close" data-dismiss="modal"
+                                                                 aria-label="Close">
+                                                                 <span aria-hidden="true">&times;</span>
+                                                             </button>
+                                                         </div>
+                                                         <div class="modal-body">
+                                                             <table class="table table-bordered table-striped table-sm"
+                                                                 style="width:100%;">
+                                                                 <thead>
+                                                                     <tr>
+                                                                        <th>Sales Area</th>
+                                                                        <th>Location</th>
+                                                                     </tr>
+                                                                 </thead>
+                                                                 <tbody>
+                                                                    @foreach ($data->location_details as $item)
+                                                                        <tr>
+                                                                            <td>{{ $data->location }}</td>
+                                                                            <td>{{ $item->barangay }}</td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                 </tbody>
+                                                             </table>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </td>
+                                         <td><button type="button" class="btn btn-info btn-sm btn-block"
+                                                 data-toggle="modal" data-target="#exampleModal{{ $data->id }}">
+                                                 Add
+                                             </button>
+
+                                             <!-- Modal -->
+                                             <div class="modal fade" id="exampleModal{{ $data->id }}" tabindex="-1"
+                                                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                 <div class="modal-dialog " role="document">
+                                                     <div class="modal-content">
+                                                         <div class="modal-header">
+                                                             <h5 class="modal-title" id="exampleModalLabel">
+                                                                 {{ $data->location }}</h5>
+                                                             <button type="button" class="close" data-dismiss="modal"
+                                                                 aria-label="Close">
+                                                                 <span aria-hidden="true">&times;</span>
+                                                             </button>
+                                                         </div>
+                                                         <form action="{{ route('location_add_details') }}" method="post">
+                                                             @csrf
+                                                             <div class="modal-body">
+                                                                 <input type="text" name="detailed_location"
+                                                                     class="form-control" required>
+                                                                 <input type="text" name="id"
+                                                                     value="{{ $data->id }}" class="form-control"
+                                                                     required>
+                                                             </div>
+                                                             <div class="modal-footer">
+                                                                 <button class="btn btn-sm float-right btn-success"
+                                                                     type="submit">Save</button>
+                                                             </div>
+                                                         </form>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </td>
                                      </tr>
                                  @endforeach
                              </tbody>
@@ -97,6 +164,22 @@
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
              }
+         });
+         $(document).ready(function() {
+             var table = $('#example1').DataTable({
+                 responsive: true,
+                 paging: false,
+                 ordering: true,
+                 info: false,
+                 dom: 'Bfrtip',
+                 buttons: [
+                     'copyHtml5',
+                     'excelHtml5',
+                     'csvHtml5',
+                     'pdfHtml5'
+                 ]
+             });
+             new $.fn.dataTable.FixedHeader(table);
          });
 
          $("#submit_location").on('submit', (function(e) {

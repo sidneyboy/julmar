@@ -214,33 +214,40 @@ class Sales_order_controller extends Controller
 
 
 
-        $sales_invoice = Sales_invoice::select('delivery_receipt')->latest()->first();
-        $sku_type = strtoupper($request->input('sku_type'));
+        if ($request->input('principal') == 'GCI') {
+            $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
+            $sku_type = strtoupper($request->input('sku_type'));
+        } else {
+            $sales_invoice = Sales_invoice::select('delivery_receipt')
+                ->where('principal_id', $request->input('principal_id'))
+                ->orderBy('id', 'desc')->first();
+            $sku_type = strtoupper($request->input('sku_type'));
 
-        if (!is_null($sales_invoice)) {
-            // $sales_invoice->delivery_receipt;
-            $var_explode = explode('-', $sales_invoice->delivery_receipt);
-            $year_and_month = $var_explode[1] . "-" . $var_explode[2];
-            $series = $var_explode[3];
+            if (!is_null($sales_invoice)) {
+                // $sales_invoice->delivery_receipt;
+                $var_explode = explode('-', $sales_invoice->delivery_receipt);
+                $year_and_month = $var_explode[1] . "-" . $var_explode[2];
+                $series = $var_explode[3];
 
-            if ($sku_type == 'BUTAL') {
-                if ($date_receipt != $year_and_month) {
+                if ($sku_type == 'BUTAL') {
+                    if ($date_receipt != $year_and_month) {
+                        $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
+                    } else {
+                        $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                    }
+                } else {
+                    if ($date_receipt != $year_and_month) {
+                        $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
+                    } else {
+                        $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                    }
+                }
+            } else {
+                if ($sku_type == 'BUTAL') {
                     $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
                 } else {
-                    $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
-                }
-            } else {
-                if ($date_receipt != $year_and_month) {
                     $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
-                } else {
-                    $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
                 }
-            }
-        } else {
-            if ($sku_type == 'BUTAL') {
-                $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
-            } else {
-                $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
             }
         }
 
@@ -316,6 +323,7 @@ class Sales_order_controller extends Controller
                 'agent_id' => $request->input('agent_id'),
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => strtoupper($request->input('sku_type')),
+                'kilograms' => $request->input('kilograms')[$data],
             ]);
 
             $sales_invoice_details->save();

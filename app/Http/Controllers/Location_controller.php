@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Location;
+use App\Location_details;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,13 +36,26 @@ class Location_controller extends Controller
         if ($checker == 0) {
             $location_save = new Location([
                 'location' => strtoupper($request->input('location')),
-                'detailed_location' => strtoupper($request->input('detailed_location')),
+                'detailed_location' => 'none',
             ]);
             $location_save->save();
 
             return 'saved';
-        }else{
+        } else {
             return 'existing';
         }
+    }
+
+    public function location_add_details(Request $request)
+    {
+        $new = new Location_details([
+            'location_id' => $request->input('id'),
+            'barangay' => strtoupper($request->input('detailed_location')),
+            'street' => 'none',
+        ]);
+
+        $new->save();
+
+        return redirect('location');
     }
 }

@@ -366,6 +366,20 @@
                                                 <p>Truck Load</p>
                                             </a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_load_list') }}"
+                                                class="nav-link {{ $active_tab == 'truck_load_list' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Truck Load List</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_load_report') }}"
+                                                class="nav-link {{ $active_tab == 'truck_load_report' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Report</p>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item  {{ $main_tab == 'manage_sku_main_tab' ? 'menu-open' : '' }}">
