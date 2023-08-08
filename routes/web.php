@@ -824,7 +824,7 @@ Route::post('/truck_load_report_show', 'truck_load_report_controller@truck_load_
 
 
 
-
+Route::get('/ap_subsidiary_ledger', 'Ap_ledger_controller@index');
 
 
 

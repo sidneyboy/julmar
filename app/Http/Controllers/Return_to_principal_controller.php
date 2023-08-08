@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Received_purchase_order;
 use App\Received_purchase_order_details;
+use App\Ap_ledger;
 use App\Personnel_description;
 use App\Personnel_add;
 use App\Sku_ledger;
@@ -72,6 +73,7 @@ class Return_to_principal_controller extends Controller
                 'received_purchase_order' => $received_purchase_order,
             ])->with('quantity', $request->input('quantity'))
                 ->with('unit_cost', $request->input('unit_cost'))
+                ->with('remarks', $request->input('remarks'))
                 ->with('freight', $request->input('freight'))
                 ->with('code', $request->input('code'))
                 ->with('description', $request->input('description'))
@@ -88,6 +90,10 @@ class Return_to_principal_controller extends Controller
     public function return_to_principal_save(Request $request)
     {
         //return $request->input();
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+
+       
 
         $return_to_principal_save = new Return_to_principal([
             'principal_id' => $request->input('principal_id'),
@@ -107,6 +113,29 @@ class Return_to_principal_controller extends Controller
         ]);
 
         $return_to_principal_save->save();
+
+        $reference = Received_purchase_order::select('id','purchase_order_id')->find($request->input('received_id'));
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('total_final_cost');
+        } else {
+            $ap_ledger_running_balance = $request->input('total_final_cost');
+        }
+        $new_ap_ledger = new Ap_ledger([
+            'principal_id' => $request->input('principal_id'),
+            'user_id' => auth()->user()->id,
+            'transaction_date' => $date,
+            'description' => 'Return to principal from PO#: ' . $reference->purchase_order->purchase_id .' and RR#: '. $reference->id,
+            'debit_record' => 0,
+            'credit_record' => $request->input('total_final_cost'),
+            'running_balance' => $ap_ledger_running_balance,
+            'transaction' => 'return to principal',
+            'reference' => $return_to_principal_save->id,
+            'remarks' => $request->input('remarks') .', returned by '. $request->input('personnel'),
+        ]);
+
+        $new_ap_ledger->save();
 
         $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
 

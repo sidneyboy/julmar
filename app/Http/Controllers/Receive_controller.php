@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ap_ledger;
 use App\Principal_ledger;
 use App\Purchase_order;
 use App\Purchase_order_details;
@@ -164,6 +165,9 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
+        //return $request->input();
+
+
 
         $new_received_purchase_orders = new Received_purchase_order([
             'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
@@ -193,6 +197,29 @@ class Receive_controller extends Controller
         ]);
 
         $new_received_purchase_orders->save();
+
+        $po = Purchase_order::select('purchase_id')->find($request->input('purchase_order_id'));
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
+        } else {
+            $ap_ledger_running_balance = $request->input('total_final_cost');
+        }
+        $new_ap_ledger = new Ap_ledger([
+            'principal_id' => $request->input('principal_id'),
+            'user_id' => auth()->user()->id,
+            'transaction_date' => $date,
+            'description' => 'Received PO#: ' . $po->purchase_id,
+            'debit_record' => 0,
+            'credit_record' => $request->input('total_final_cost'),
+            'running_balance' => $ap_ledger_running_balance,
+            'transaction' => 'received',
+            'reference' => $new_received_purchase_orders->id,
+            'remarks' => '',
+        ]);
+
+        $new_ap_ledger->save();
 
         $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
 
@@ -404,14 +431,14 @@ class Receive_controller extends Controller
                 }
             }
         }
-      
+
         $check_purchase_order_details = Purchase_order_details::select('confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))
             ->get();
 
         foreach ($check_purchase_order_details as $key => $check_for_update) {
             if ($check_for_update->confirmed_quantity > $check_for_update->receive) {
                 $checker_for_update_data[] = $check_for_update->confirmed_quantity;
-            }else{
+            } else {
                 $checker_for_update_data[] = 0;
             }
         }

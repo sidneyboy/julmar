@@ -234,6 +234,33 @@
                                         <p>Disbursement Report</p>
                                     </a>
                                 </li>
+                                <li class="nav-item {{ $main_tab == 'manage_ledger_main_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_ledger_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
+                                        <p>
+                                            AP Ledger
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/ap_subsidiary_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'ap_subsidiary_ledger' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Subsidiary</p>
+                                            </a>
+                                        </li>
+
+                                        {{-- <li class="nav-item">
+                                            <a href="{{ url('/new_principal') }}"
+                                                class="nav-link {{ $active_tab == 'new_principal' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>General</p>
+                                            </a>
+                                        </li> --}}
+                                    </ul>
+                                </li>
                                 <li class="nav-item {{ $main_tab == 'manage_principal_main_tab' ? 'menu-open' : '' }}">
                                     <a href="#"
                                         class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">

@@ -511,7 +511,7 @@
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
                                 <input type="hidden" value="{{ $final_unit_cost_per_sku }}"
                                     name="final_unit_cost_per_sku[{{ $data }}]">
-                                <input type="text" value="{{ $final_total_cost_per_sku }}"
+                                <input type="hidden" value="{{ $final_total_cost_per_sku }}"
                                     name="final_total_cost_per_sku[{{ $data }}]">
                             </td>
                         </tr>
@@ -850,6 +850,7 @@
     @endif
 
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
+    <input type="hidden" value="{{ $remarks }}" name="remarks">
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $personnel }}" name="personnel">
     <input type="hidden" value="{{ $gross_purchases }}" name="gross_purchases">
@@ -868,7 +869,7 @@
 <script>
     $("#return_to_principal_save").on('submit', (function(e) {
         e.preventDefault();
-        $('#loader').show();
+        //$('#loader').show();
         $.ajax({
             url: "return_to_principal_save",
             type: "POST",
@@ -878,15 +879,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();
