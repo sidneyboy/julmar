@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ap_ledger;
 use App\Received_purchase_order;
 use App\Received_purchase_order_details;
 use App\Sku_principal;
@@ -76,6 +77,9 @@ class Bo_allowance_adjustments_controller extends Controller
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
+
+
+
         $bo_allowance_adjustments_save = new Bo_allowance_adjustments([
             'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
@@ -87,6 +91,29 @@ class Bo_allowance_adjustments_controller extends Controller
         ]);
 
         $bo_allowance_adjustments_save->save();
+
+        $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('net_deduction');
+        } else {
+            $ap_ledger_running_balance = $request->input('net_deduction');
+        }
+        $new_ap_ledger = new Ap_ledger([
+            'principal_id' => $request->input('principal_id'),
+            'user_id' => auth()->user()->id,
+            'transaction_date' => $date,
+            'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+            'debit_record' => $request->input('net_deduction'),
+            'credit_record' => 0,
+            'running_balance' => $ap_ledger_running_balance,
+            'transaction' => 'bo allowance adjustment',
+            'reference' => $bo_allowance_adjustments_save->id,
+            'remarks' => $request->input('particulars'),
+        ]);
+
+        $new_ap_ledger->save();
 
 
         foreach ($request->input('sku_id') as $key => $sku) {

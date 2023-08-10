@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ap_ledger;
 use App\Received_purchase_order;
 use App\Sku_principal;
 use App\Invoice_cost_adjustments;
@@ -23,7 +24,7 @@ class Invoice_cost_adjustment_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $received_data = Received_purchase_order::select('id','principal_id','purchase_order_id')->orderBy('id','desc')->get();
+            $received_data = Received_purchase_order::select('id', 'principal_id', 'purchase_order_id')->orderBy('id', 'desc')->get();
             return view('invoice_cost_adjustments', [
                 'user' => $user,
                 'received_data' => $received_data,
@@ -78,6 +79,8 @@ class Invoice_cost_adjustment_controller extends Controller
         $date = date('Y-m-d');
         //return $request->input();
 
+
+
         $new_invoice_cost_adjustment = new Invoice_cost_adjustments([
             'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
@@ -96,6 +99,47 @@ class Invoice_cost_adjustment_controller extends Controller
         ]);
 
         $new_invoice_cost_adjustment->save();
+
+        $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
+        } else {
+            $ap_ledger_running_balance = $request->input('total_final_cost');
+        }
+
+        if ($request->input('total_final_cost') > 0) {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Invoice Cost Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'invoice cost adjustment',
+                'reference' => $new_invoice_cost_adjustment->id,
+                'remarks' => $request->input('particulars'),
+            ]);
+
+            $new_ap_ledger->save();
+        } else {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Invoice Cost Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'invoice cost adjustment',
+                'reference' => $new_invoice_cost_adjustment->id,
+                'remarks' => $request->input('particulars'),
+            ]);
+
+            $new_ap_ledger->save();
+        }
 
         foreach ($request->input('sku_id') as $key => $data) {
             $invoice_cost_details_save = new invoice_cost_adjustment_details([
