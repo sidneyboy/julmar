@@ -101,7 +101,9 @@ class Invoice_cost_adjustment_controller extends Controller
         $new_invoice_cost_adjustment->save();
 
         $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')->take(1)->first();
 
         if ($ap_ledger_last_transaction) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
@@ -130,7 +132,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'user_id' => auth()->user()->id,
                 'transaction_date' => $date,
                 'description' => 'Invoice Cost Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-                'debit_record' => $request->input('total_final_cost'),
+                'debit_record' => $request->input('total_final_cost') * -1,
                 'credit_record' => 0,
                 'running_balance' => $ap_ledger_running_balance,
                 'transaction' => 'invoice cost adjustment',

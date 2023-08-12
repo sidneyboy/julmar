@@ -10,9 +10,6 @@
                         <th>Amount</th>
                         <th style="text-align: center">Discount
                             @foreach ($discount_selected->principal_discount_details as $data)
-                                {{-- @php
-                                    $sum_discount_selected[] = $data->discount_rate;
-                                @endphp --}}
                                 @if ($data->discount_name != 'BO' and $data->discount_name != 'CWO')
                                     <input type="hidden" name="discount_selected_name[]"
                                         value="{{ $data->discount_name }}">

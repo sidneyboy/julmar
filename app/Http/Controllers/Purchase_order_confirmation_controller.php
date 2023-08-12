@@ -87,7 +87,7 @@ class Purchase_order_confirmation_controller extends Controller
 
     public function purchase_order_confirmation_saved(Request $request)
     {
-        //return $request->input();
+       //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 

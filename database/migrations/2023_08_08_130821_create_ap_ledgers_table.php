@@ -25,7 +25,7 @@ class CreateApLedgersTable extends Migration
             $table->double('credit_record',15,4);
             $table->double('running_balance',15,4);
             $table->string('transaction');
-            $table->integer('reference');
+            $table->integer('reference')->nullable();
             $table->string('remarks')->nullable();
             $table->string('close_date')->nullable();
             $table->timestamps();

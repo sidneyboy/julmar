@@ -18,7 +18,7 @@ class CreatePurchaseOrderDiscountDetailsTable extends Migration
             $table->bigInteger('purchase_order_id')->unsigned()->index();
             $table->foreign('purchase_order_id')->references('id')->on('purchase_orders');
             $table->string('discount_name');
-            $table->double('discount_rate', 5, 4);
+            $table->double('discount_rate', 15, 4);
             $table->timestamps();
         });
     }

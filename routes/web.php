@@ -827,6 +827,11 @@ Route::post('/truck_load_report_show', 'truck_load_report_controller@truck_load_
 Route::get('/ap_subsidiary_ledger', 'Ap_ledger_controller@index');
 Route::post('/ap_ledger_subsidiary_ledger_show_report_list', 'Ap_ledger_controller@ap_ledger_subsidiary_ledger_show_report_list')->name('ap_ledger_subsidiary_ledger_show_report_list');
 
+Route::get('/ap_general_ledger', 'Ap_ledger_controller@ap_general_ledger');
+Route::post('/ap_ledger_general_ledger_show_report_list', 'Ap_ledger_controller@ap_ledger_general_ledger_show_report_list')->name('ap_ledger_general_ledger_show_report_list');
+
+
+
 
 
 

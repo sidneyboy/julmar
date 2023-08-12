@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'AP-Subsidiary')
+@section('title', 'AP-General')
 
 @section('navbar')
 
@@ -15,7 +15,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">AP SUBSIDIARY LEDGER</h3>
+                <h3 class="card-title" style="font-weight: bold;">AP GENERAL LEDGER</h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -92,14 +92,14 @@
         $('#generate').on('click', function(e) {
             var date = $('#reservation').val();
             var principal = $('#principal').val();
-            $('#loader').show();
+            // $('#loader').show();
             $.post({
                 type: "POST",
-                url: "/ap_ledger_subsidiary_ledger_show_report_list",
+                url: "/ap_ledger_general_ledger_show_report_list",
                 data: 'date=' + date + '&principal=' + principal,
                 success: function(data) {
 
-                    $('#loader').hide();
+                    // $('#loader').hide();
                     $('#show_report_list').html(data);
 
                 },

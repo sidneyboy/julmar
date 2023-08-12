@@ -107,7 +107,7 @@
 
                                 <input type="hidden" value="{{ $final_unit_cost }}"
                                     name="final_unit_cost_per_sku[{{ $data }}]">
-                                <input type="text" value="{{ $final_total_cost }}"
+                                <input type="hidden" value="{{ $final_total_cost }}"
                                     name="final_total_cost_per_sku[{{ $data }}]">
                             </td>
                         </tr>
@@ -869,7 +869,7 @@
 <script>
     $("#return_to_principal_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('#loader').show();
+        $('#loader').show();
         $.ajax({
             url: "return_to_principal_save",
             type: "POST",
@@ -879,15 +879,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

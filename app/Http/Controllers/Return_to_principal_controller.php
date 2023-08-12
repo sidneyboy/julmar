@@ -115,7 +115,9 @@ class Return_to_principal_controller extends Controller
         $return_to_principal_save->save();
 
         $reference = Received_purchase_order::select('id','purchase_order_id')->find($request->input('received_id'));
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+                ->where('principal_id',$request->input('principal_id'))    
+                ->orderBy('id', 'desc')->take(1)->first();
 
         if ($ap_ledger_last_transaction) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('total_final_cost');

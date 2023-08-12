@@ -18,7 +18,7 @@ class CreateReceivedDiscountDetailsTable extends Migration
             $table->bigInteger('received_id')->unsigned()->index()->nullable();
             $table->foreign('received_id')->references('id')->on('received_purchase_orders');
             $table->string('discount_name');
-            $table->double('discount_rate',5,4);
+            $table->double('discount_rate',15,4);
             $table->timestamps();
         });
     }

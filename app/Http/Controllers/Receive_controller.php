@@ -62,6 +62,7 @@ class Receive_controller extends Controller
 
         $purchase_order = Purchase_order::select('id', 'discount_type', 'bo_allowance_discount_rate', 'cwo_discount_rate')->find($purchase_order_id);
 
+
         $purchase_order_details = Purchase_order_details::select('id', 'sku_id', 'confirmed_quantity', 'receive')->where('purchase_order_id', $purchase_order_id)
             ->orderBy('sku_id')
             ->get();
@@ -199,7 +200,7 @@ class Receive_controller extends Controller
         $new_received_purchase_orders->save();
 
         $po = Purchase_order::select('purchase_id')->find($request->input('purchase_order_id'));
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->orderBy('id', 'desc')->take(1)->first();
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->where('principal_id',$request->input('principal_id'))->orderBy('id', 'desc')->take(1)->first();
 
         if ($ap_ledger_last_transaction) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');

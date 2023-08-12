@@ -70,6 +70,7 @@
 <script>
     $("#disbursement_saved").on('submit', (function(e) {
         e.preventDefault();
+        $('#loader').show();
         $.ajax({
             url: "disbursement_saved",
             type: "POST",

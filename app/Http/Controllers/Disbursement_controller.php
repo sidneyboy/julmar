@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ap_ledger;
 use App\User;
 use App\Sku_principal;
 use App\Purchase_order;
@@ -9,6 +10,7 @@ use App\Principal_ledger;
 use App\Disbursement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class Disbursement_controller extends Controller
 {
     public function index()
@@ -55,11 +57,11 @@ class Disbursement_controller extends Controller
             ->with('bank', $request->input('bank'))
             ->with('payee', $request->input('payee'))
             ->with('particulars', $request->input('particulars'))
-            ->with('amount', str_replace(',','',$request->input('amount')))
+            ->with('amount', str_replace(',', '', $request->input('amount')))
             ->with('amount_in_words', $request->input('amount_in_words'))
-            ->with('credit', str_replace(',','',$request->input('credit')))
+            ->with('credit', str_replace(',', '', $request->input('credit')))
             ->with('cv_number', $request->input('cv_number'))
-            ->with('debit', str_replace(',','',$request->input('debit')))
+            ->with('debit', str_replace(',', '', $request->input('debit')))
             ->with('remarks', $request->input('remarks'))
             ->with('title', $request->input('title'))
             ->with('check_deposit_slip', $request->input('check_deposit_slip'))
@@ -130,11 +132,36 @@ class Disbursement_controller extends Controller
             $principal_ledger_saved->save();
         }
 
-        Purchase_order::where('id', $request->input('purchase_order_id'))
-            ->update([
-                'status' => 'paid',
-            ]);
 
-        return 'saved';
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')->take(1)->first();
+
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('amount');
+        } else {
+            $ap_ledger_running_balance = $request->input('amount');
+        }
+        $new_ap_ledger = new Ap_ledger([
+            'principal_id' => $request->input('principal_id'),
+            'user_id' => auth()->user()->id,
+            'transaction_date' => $date,
+            'description' => 'Payment to Principal',
+            'debit_record' => $request->input('amount'),
+            'credit_record' => 0,
+            'running_balance' => $ap_ledger_running_balance,
+            'transaction' => 'payment to principal',
+            'reference' => $new->id,
+            'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
+        ]);
+
+        $new_ap_ledger->save();
+
+        // Purchase_order::where('id', $request->input('purchase_order_id'))
+        //     ->update([
+        //         'status' => 'paid',
+        //     ]);
+
+        // return 'saved';
     }
 }
