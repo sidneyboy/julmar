@@ -166,7 +166,7 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        //return $request->input();
+        // return $request->input();
 
 
 

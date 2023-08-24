@@ -97,8 +97,8 @@
                                                 <th>Quantity</th>
                                                 <th>Adjustment</th>
                                                 <th>Running Inventory</th>
-                                                <th>Unit Cost</th>
-                                                <th>Sub-Total</th>
+                                                <th>FUC</th>
+                                                <th>Amount</th>
                                                 <th>Running Amount</th>
                                                 <th>Average Cost</th>
                                             </tr>
@@ -198,11 +198,11 @@
                                                     <td style="text-align: right">
                                                         {{ number_format($details->running_amount, 2, '.', ',') }}</td>
                                                     <td style="text-align: right">
-                                                        @if ($details->running_balance == 0)
+                                                        @if ($details->running_amount == 0)
                                                             0
                                                         @else
                                                             {{ number_format($details->running_amount / $details->running_balance, 2, '.', ',') }}
-                                                        @endif
+                                                        @endif 
                                                     </td>
                                                 </tr>
                                             @endforeach

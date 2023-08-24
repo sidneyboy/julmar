@@ -93,8 +93,7 @@ class Return_to_principal_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-       
-
+     
         $return_to_principal_save = new Return_to_principal([
             'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
@@ -124,6 +123,7 @@ class Return_to_principal_controller extends Controller
         } else {
             $ap_ledger_running_balance = $request->input('total_final_cost');
         }
+
         $new_ap_ledger = new Ap_ledger([
             'principal_id' => $request->input('principal_id'),
             'user_id' => auth()->user()->id,
@@ -207,9 +207,9 @@ class Return_to_principal_controller extends Controller
 
             $new_return_details->save();
 
-            // Received_purchase_order_details::where('received_id', $request->input('received_id'))
-            //     ->where('sku_idi', $data)
-            //     ->update(['quantity_returned' => $request->input('quantity_return')]);
+            Received_purchase_order_details::where('received_id', $request->input('received_id'))
+                ->where('sku_id', $data)
+                ->update(['quantity_returned' => $request->input('quantity_return')[$data]]);
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
             $count_ledger_row = count($ledger_results);
@@ -248,5 +248,7 @@ class Return_to_principal_controller extends Controller
                 $new_sku_ledger->save();
             }
         }
+
+        return 'saved';
     }
 }

@@ -5,7 +5,7 @@
                 <thead>
                     <tr>
                         <th>Desc</th>
-                        <th>Received</th>
+                        <th>To be return</th>
                         <th style="text-align: center;">U/C<br />(VAT EX)</th>
                         <th>Amount</th>
                         <th style="text-align: center">Discount
@@ -273,7 +273,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY
+                        <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
@@ -281,7 +281,7 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
+                        <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
@@ -381,7 +381,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY
+                        <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -389,7 +389,7 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
+                        <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -403,7 +403,7 @@
                 <thead>
                     <tr>
                         <th>Desc</th>
-                        <th>Received</th>
+                        <th>To be return</th>
                         <th style="text-align: center;">U/C<br />(VAT EX)</th>
                         <th>Amount</th>
                         @foreach ($received_purchase_order->received_discount_details as $data)
@@ -704,8 +704,9 @@
                             $net_payable = $total_final_cost - array_sum($less_discount_value_holder_history);
                         @endphp
                         {{ number_format($net_payable, 2, '.', ',') }}
-                        <input type="hidden" value="{{ $net_payable }}" name="net_payable">
-                        <input type="hidden" name="total_less_other_discount" value="{{ $total_other_discounts }}">
+                        <input type="hidden" value="{{ $net_payable }}" name="net_payable_updated">
+                        <input type="hidden" name="total_less_other_discount"
+                            value="{{ $total_other_discounts }}">
                     </td>
                 </tr>
             </table>
@@ -721,7 +722,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY
+                        <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
@@ -729,7 +730,7 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
+                        <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
@@ -831,7 +832,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY
+                        <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -839,7 +840,7 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
+                        <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -848,6 +849,74 @@
             </table>
         @endif
     @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $remarks }}" name="remarks">
@@ -896,7 +965,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-               
+
             }
         });
     }));

@@ -122,11 +122,15 @@
                             <td><span style="color:green;font-weight:bold;">{{ $details->sku->sku_code }}</span>-
                                 {{ $details->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $details->quantity }}</td>
+                            <td style="text-align: right">{{ $details->quantity - $details->quantity_returned }}
+                                @php
+                                    $quantity_final = $details->quantity - $details->quantity_returned;
+                                @endphp
+                            </td>
                             <td style="text-align: right">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $details->quantity * $details->unit_cost;
+                                    $total_amount = $quantity_final * $details->unit_cost;
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -168,7 +172,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $details->freight * $details->quantity;
+                                    $freight_per_sku = $details->freight * $quantity_final;
                                     $sum_freight[] = $freight_per_sku;
                                     echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
@@ -182,7 +186,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost = $final_total_cost / $details->quantity;
+                                    $final_unit_cost = $final_total_cost / $quantity_final;
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
                                 {{ number_format($final_unit_cost, 2, '.', ',') }}
@@ -515,11 +519,15 @@
                                 {{ $details->sku->description }}
 
                             </td>
-                            <td style="text-align: right">{{ $details->quantity }}</td>
+                            <td style="text-align: right">{{ $details->quantity }}
+                                @php
+                                    $quantity_final = $details->quantity - $details_quantity_returned;
+                                @endphp
+                            </td>
                             <td style="text-align: right">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $details->quantity * $details->unit_cost;
+                                    $total_amount = $quantity_final * $details->unit_cost;
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
                                 {{ number_format($total_amount, 2, '.', ',') }}
@@ -570,7 +578,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $freight_per_sku = $details->freight * $details->quantity;
+                                    $freight_per_sku = $details->freight * $quantity_final;
                                     $sum_freight_per_sku[] = $freight_per_sku;
                                 @endphp
                                 {{ number_format($freight_per_sku, 2, '.', ',') }}
@@ -585,7 +593,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $details->quantity;
+                                    $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity_final;
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                                 @endphp
                                 {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}

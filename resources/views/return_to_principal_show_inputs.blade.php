@@ -26,7 +26,7 @@
                     <th>Type</th>
                     <th>Qty Received</th>
                     <th>Qty To Be Return</th>
-                    <th>Cost</th>
+                    <th>Unit Cost</th>
                     <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);"
                             class="big-checkbox" /></th>
                 </tr>

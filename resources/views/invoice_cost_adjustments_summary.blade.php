@@ -407,33 +407,62 @@
                     </td>
                 </tr>
             </table>
+            @if ($total_final_cost > 0)
+                <table class="table table-bordered table-hover table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
 
-            <table class="table table-bordered table-hover table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                            <th style="text-align: center;">DR</th>
+                            <th style="text-align: center;">CR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">INVENTORY
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">ACCOUNTS PAYABLE
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @else
+                <table class="table table-bordered table-hover table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
 
-                        <th style="text-align: center;">DR</th>
-                        <th style="text-align: center;">CR</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="text-align: center;">INVENTORY
-                            {{ $received_purchase_order->principal->principal }}</td>
-                        <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
-                            {{ $received_purchase_order->principal->principal }}</td>
-                        <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
-                    </tr>
-                </tbody>
-            </table>
+                            <th style="text-align: center;">DR</th>
+                            <th style="text-align: center;">CR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">ACCOUNTS PAYABLE
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost*-1, 2, '.', ','); ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">INVENTORY
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost*-1, 2, '.', ','); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
+
         @endif
     @elseif($received_purchase_order->discount_type == 'type_b')
         <div class="table table-responsive">
@@ -871,7 +900,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm table-striped">
+            {{-- <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -882,7 +911,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">INVENTORY
+                        <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -890,13 +919,68 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">ACCOUNTS PAYABLE
+                        <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
+            @if ($total_final_cost > 0)
+                <table class="table table-bordered table-hover table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+
+                            <th style="text-align: center;">DR</th>
+                            <th style="text-align: center;">CR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">INVENTORY
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">ACCOUNTS PAYABLE
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @else
+                <table class="table table-bordered table-hover table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+
+                            <th style="text-align: center;">DR</th>
+                            <th style="text-align: center;">CR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">ACCOUNTS PAYABLE
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost*-1, 2, '.', ','); ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">INVENTORY
+                                {{ $received_purchase_order->principal->principal }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost*-1, 2, '.', ','); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
         @endif
     @endif
 

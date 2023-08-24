@@ -1,5 +1,5 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-striped table-sm" style="width:100%;font-size:13px;" id="example1">
+    <table class="table table-bordered table-striped table-sm" style="width:100%;font-size:15px;" id="example1">
         <thead>
             <tr>
                 <th>Principal</th>

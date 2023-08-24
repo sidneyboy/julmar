@@ -58,12 +58,16 @@ class Bo_allowance_adjustments_controller extends Controller
     {
         //return $request->input();
         $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
-        return view('bo_allowance_adjustments_summary')->with('received_id', $request->input('received_id'))
+        $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
+        $sku_add_details = Received_purchase_order_details::where('received_id', $request->input('received_id'))->get();
+        return view('bo_allowance_adjustments_summary', [
+            'received_purchase_order' => $received_purchase_order,
+        ])->with('received_id', $request->input('received_id'))
             ->with('unit_cost_adjustment', $unit_cost_adjustment)
             ->with('description', $request->input('description'))
             ->with('quantity', $request->input('quantity'))
             ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-            ->with('sku', $request->input('checkbox_entry'))
+            ->with('sku', $sku_add_details)
             ->with('code', $request->input('code'))
             ->with('particulars', $request->input('particulars'))
             ->with('principal_name', $request->input('principal_name'))
@@ -102,20 +106,40 @@ class Bo_allowance_adjustments_controller extends Controller
         } else {
             $ap_ledger_running_balance = $request->input('net_deduction');
         }
-        $new_ap_ledger = new Ap_ledger([
-            'principal_id' => $request->input('principal_id'),
-            'user_id' => auth()->user()->id,
-            'transaction_date' => $date,
-            'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-            'debit_record' => $request->input('net_deduction'),
-            'credit_record' => 0,
-            'running_balance' => $ap_ledger_running_balance,
-            'transaction' => 'bo allowance adjustment',
-            'reference' => $bo_allowance_adjustments_save->id,
-            'remarks' => $request->input('particulars'),
-        ]);
 
-        $new_ap_ledger->save();
+        if ($request->input('net_deduction') > 0) {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => $request->input('net_deduction'),
+                'credit_record' => 0,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'bo allowance adjustment',
+                'reference' => $bo_allowance_adjustments_save->id,
+                'remarks' => $request->input('particulars'),
+            ]);
+
+            $new_ap_ledger->save();
+        } else {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => 0,
+                'credit_record' => $request->input('net_deduction') * -1,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'bo allowance adjustment',
+                'reference' => $bo_allowance_adjustments_save->id,
+                'remarks' => $request->input('particulars'),
+            ]);
+
+            $new_ap_ledger->save();
+        }
+
+
 
 
         foreach ($request->input('sku_id') as $key => $sku) {
