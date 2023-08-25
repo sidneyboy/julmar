@@ -661,6 +661,14 @@
                                                 <p>Sales Area</p>
                                             </a>
                                         </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('location_export') }}"
+                                                class="nav-link {{ $active_tab == 'location_export' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Export Area</p>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item {{ $main_tab == 'manage_customer_main_tab' ? 'menu-open' : '' }}">

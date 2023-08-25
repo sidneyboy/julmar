@@ -248,6 +248,8 @@ Route::get('/location', 'Location_controller@index')->name('location');
 Route::post('/location_save', 'Location_controller@location_save')->name('postData');
 Route::post('/location_details_save', 'Location_controller@location_details_save')->name('postData');
 Route::post('/location_add_details', 'Location_controller@location_add_details')->name('location_add_details');
+Route::get('/location_export', 'Location_controller@location_export')->name('location_export');
+
 
 
 

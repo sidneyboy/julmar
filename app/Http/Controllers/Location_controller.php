@@ -58,4 +58,21 @@ class Location_controller extends Controller
 
         return redirect('location');
     }
+
+    public function location_export()
+    {
+        if (Auth::check()) {
+            $user = User::select('name', 'position')->find(Auth()->user()->id);
+            $location = Location::get();
+            return view('location_export', [
+                'user' => $user,
+                'location' => $location,
+                'main_tab' => 'manage_agent_and_location_main_tab',
+                'sub_tab' => 'manage_agent_and_location_sub_tab',
+                'active_tab' => 'location_export',
+            ]);
+        } else {
+            return redirect('/')->with('error', 'Session Expired. Please Login');
+        }
+    }
 }
