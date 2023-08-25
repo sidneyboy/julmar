@@ -123,7 +123,7 @@
                                                              <div class="modal-body">
                                                                  <input type="text" name="detailed_location"
                                                                      class="form-control" required>
-                                                                 <input type="text" name="id"
+                                                                 <input type="hidden" name="id"
                                                                      value="{{ $data->id }}" class="form-control"
                                                                      required>
                                                              </div>
