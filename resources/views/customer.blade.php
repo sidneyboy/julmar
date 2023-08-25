@@ -38,14 +38,18 @@
                              <input type="text" class="form-control" name="contact_person" required>
                          </div>
                          <div class="col-md-3">
-                             <label>Location</label>
+                             <label>Sales Area</label>
                              <select class="form-control select2bs4" name="location_id" id="location_id" required
                                  style="width:100%;">
                                  <option value="" default>Select</option>
                                  @foreach ($location as $location_data)
-                                     <option value="{{ $location_data->location_id }}">{{ $location_data->barangay }}</option>
+                                     <option value="{{ $location_data->id }}">{{ $location_data->location }}
+                                     </option>
                                  @endforeach
                              </select>
+                         </div>
+                         <div class="col-md-3">
+                             <div id="show_location_details"></div>
                          </div>
                          <div class="col-md-3">
                              <label>Detailed Location</label>
@@ -74,7 +78,7 @@
                                  <option value="VALE">VALE</option>
                              </select>
                          </div>
-                         <div class="col-md-3">
+                         <div class="col-md-4">
                              <label>Maximum Allowed Sales Order</label>
                              <input type="number" class="form-control" name="max_allowed_so" required
                                  onkeypress="return isNumberKey(event)">
@@ -141,6 +145,25 @@
 
              return true;
          }
+
+         $("#location_id").change(function() {
+             //$('#loader').show();
+             var location_id = $('#location_id').val();
+             $.post({
+                 type: "POST",
+                 url: "/customer_generate_location_details",
+                 data: 'location_id=' + location_id,
+                 success: function(data) {
+                     console.log(data);
+
+                     $('#show_location_details').html(data);
+                     $('#loader').hide();
+                 },
+                 error: function(error) {
+                     console.log(error);
+                 }
+             });
+         });
 
          $("#customer_save").on('submit', (function(e) {
              e.preventDefault();

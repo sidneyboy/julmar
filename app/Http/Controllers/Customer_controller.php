@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Location;
 use App\Location_details;
@@ -17,7 +18,7 @@ class Customer_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $location = Location_details::get();
+            $location = Location::get();
             $employee_name = User::select('id', 'name')->where('id', auth()->user()->id)->first();
             $agent = Personnel_add::select('id', 'full_name')->get();
             $customer = Customer::get();
@@ -38,6 +39,16 @@ class Customer_controller extends Controller
         }
     }
 
+    public function customer_generate_location_details(Request $request)
+    {
+        $location_details = Location_details::select('id', 'barangay')->where('location_id', $request->input('location_id'))
+            ->get();
+
+        return view('customer_generate_location_details', [
+            'location_details' => $location_details,
+        ]);
+    }
+
     public function customer_show_location_details(Request $request)
     {
         $select_location_details = Location_details::select('id', 'barangay', 'street')->where('location_id', $request->input('location_id'))->get();
@@ -49,7 +60,8 @@ class Customer_controller extends Controller
 
     public function customer_save(Request $request)
     {
-        $location_details = Location_details::select('id','location_id')->find($request->input('location_id'));
+       // return $request->input();
+        // $location_details = Location_details::select('id', 'location_id')->find($request->input('location_id'));
 
         date_default_timezone_set('Asia/Manila');
         $date = date('Ymd');
@@ -57,7 +69,7 @@ class Customer_controller extends Controller
         $credit_line_amount = str_replace(',', '', $request->input('credit_line_amount'));
         $save_new_customer = new Customer([
             'store_name'    => strtoupper($request->input('store_name')),
-            'location_id'    => $location_details->location_id,
+            'location_id'    => $request->input('location_details_id'),
             'detailed_location'    => strtoupper($request->input('detailed_location')),
             'credit_term'    => $request->input('credit_term'),
             'credit_line_amount'    => $credit_line_amount,
@@ -67,7 +79,7 @@ class Customer_controller extends Controller
             'status'    => 'UNLOCKED',
             'mode_of_transaction' => $request->input('mode_of_transaction'),
             'allowed_number_of_sales_order' => $request->input('max_allowed_so'),
-            'location_details_id' => $location_details->id,
+            'location_details_id' => $request->input('location_details_id'),
         ]);
 
         $save_new_customer->save();

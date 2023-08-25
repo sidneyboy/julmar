@@ -256,6 +256,8 @@ Route::get('/customer', 'Customer_controller@index')->name('customer');
 Route::post('/customer_show_location_details', 'Customer_controller@customer_show_location_details')->name('postData');
 Route::post('/customer_save', 'Customer_controller@customer_save')->name('postData');
 Route::post('/customer_location_update', 'Customer_controller@customer_location_update')->name('customer_location_update');
+Route::post('/customer_generate_location_details', 'Customer_controller@customer_generate_location_details')->name('customer_generate_location_details');
+
 
 
 Route::get('/customer_discount', 'Customer_discount_controller@index')->name('customer_discount');
