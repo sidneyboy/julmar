@@ -128,7 +128,7 @@
                                 <input type="hidden" name="freight_per_sku[{{ $data }}]"
                                     value="{{ $new_freight[$data] }}">
                                 <input type="hidden" name="final_total_cost_per_sku[{{ $data }}]"
-                                    value="{{ $final_unit_cost }}">
+                                    value="{{ $final_total_cost }}">
                             </td>
                         </tr>
                     @endforeach
@@ -1003,7 +1003,6 @@
     $("#invoice_cost_adjustments_save").on('submit', (function(e) {
         e.preventDefault();
         $('#loader').show();
-        $('#hide_if_trigger').hide();
         $.ajax({
             url: "invoice_cost_adjustments_save",
             type: "POST",

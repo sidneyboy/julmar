@@ -39,8 +39,13 @@
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
-                                $sum_total_amount[] = $total_amount;
+                                if ($unit_cost_adjustment > 0) {
+                                    $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
+                                    $sum_total_amount[] = $total_amount;
+                                } else {
+                                    $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
+                                    $sum_total_amount[] = $total_amount;
+                                }
                             @endphp
                             {{ number_format($total_amount, 2, '.', ',') }}
                             <input type="hidden" name="bo_allowance_per_sku[{{ $data->sku_id }}]"
@@ -48,7 +53,7 @@
                         </td>
                         <td style="text-align: right">
                             @php
-                                $adjusted_amount = $amount - $total_amount;
+                                $adjusted_amount = $amount + $total_amount;
                             @endphp
                             {{ number_format($adjusted_amount, 2, '.', ',') }}
                         </td>
@@ -65,8 +70,12 @@
                                 value="{{ $unit_cost[$data->sku_id] }}">
                             <input type="hidden" name="adjusted_amount[{{ $data->sku_id }}]"
                                 value="{{ $unit_cost_adjustment }}">
+                            <input type="hidden" name="adjusted_amount_data[{{ $data->sku_id }}]"
+                                value="{{ $adjusted_amount }}">
                             <input type="hidden" name="adjusted_final_unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $difference }}">
+                            <input type="hidden" name="original_final_unit_cost[{{ $data->sku_id }}]"
+                                value="{{ $unit_cost[$data->sku_id] }}">
                         </td>
                     </tr>
                 @endforeach
@@ -186,7 +195,7 @@
 <script>
     $("#bo_allowance_adjustments_save").on('submit', (function(e) {
         e.preventDefault();
-        // $('#loader').show();
+        $('#loader').show();
         $.ajax({
             url: "bo_allowance_adjustments_save",
             type: "POST",
@@ -195,16 +204,16 @@
             cache: false,
             processData: false,
             success: function(data) {
-                // $('#loader').hide();
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                $('#loader').hide();
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

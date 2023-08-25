@@ -157,19 +157,19 @@ class Invoice_cost_adjustment_controller extends Controller
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-            $total = $ledger_results[0]->running_balance * $request->input('final_unit_cost_per_sku')[$data];
-            $running_amount = $ledger_results[0]->running_amount + $total;
+            $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $data,
                 'quantity' => 0,
-                'adjustments' => $ledger_results[0]->running_balance,
+                'adjustments' => 0,
                 'running_balance' => $ledger_results[0]->running_balance,
                 'user_id' => auth()->user()->id,
                 'transaction_type' => 'invoice cost adjustment',
                 'all_id' => $new_invoice_cost_adjustment->id,
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $ledger_results[0]->sku_type,
-                'amount' => $request->input('final_unit_cost_per_sku')[$data],
+                'amount' => $request->input('final_total_cost_per_sku')[$data],
+                'final_unit_cost' => 0,
                 'running_amount' => $running_amount,
             ]);
 

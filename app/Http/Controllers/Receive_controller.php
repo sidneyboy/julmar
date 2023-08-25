@@ -394,7 +394,8 @@ class Receive_controller extends Controller
                         'all_id' => $new_received_purchase_orders->id,
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => $request->input('sku_type'),
-                        'amount' => $request->input('final_unit_cost')[$data],
+                        'final_unit_cost' => $request->input('final_unit_cost')[$data],
+                        'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $running_amount,
                     ]);
 
@@ -409,7 +410,8 @@ class Receive_controller extends Controller
                         'all_id' => $new_received_purchase_orders->id,
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => $request->input('sku_type'),
-                        'amount' => $request->input('final_unit_cost')[$data],
+                        'final_unit_cost' => $request->input('final_unit_cost')[$data],
+                        'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $request->input('final_total_cost_per_sku')[$data],
                     ]);
 

@@ -19,6 +19,7 @@ class Sku_ledger extends Model
       'adjustments',
       'amount',
       'running_amount',
+      'final_unit_cost',
     ];
 
     public function sku()

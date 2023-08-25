@@ -93,7 +93,7 @@ class Return_to_principal_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-     
+
         $return_to_principal_save = new Return_to_principal([
             'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
@@ -215,33 +215,55 @@ class Return_to_principal_controller extends Controller
             $count_ledger_row = count($ledger_results);
 
             if ($count_ledger_row > 0) {
-                $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
-                $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
-                $new_sku_ledger = new Sku_ledger([
-                    'sku_id' => $data,
-                    'quantity' => $request->input('quantity_return')[$data],
-                    'running_balance' => $running_balance,
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'returned',
-                    'all_id' => $return_to_principal_save->id,
-                    'principal_id' => $request->input('principal_id'),
-                    'sku_type' => $request->input('sku_type'),
-                    'amount' => $request->input('final_unit_cost_per_sku')[$data],
-                    'running_amount' => $running_amount,
-                ]);
+                if ($ledger_results[0]->transaction_type == 'bo allowance adjustment' or $ledger_results[0]->transaction_type == 'invoice cost adjustment') {
+                    $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
+                    $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('quantity_return')[$data]*-1,
+                        'running_balance' => $running_balance,
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'returned',
+                        'all_id' => $return_to_principal_save->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => strtoupper($request->input('sku_type')),
+                        'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
+                        'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
+                        'running_amount' => $running_amount,
+                    ]);
 
-                $new_sku_ledger->save();
+                    $new_sku_ledger->save();
+                } else {
+                    $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
+                    $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('quantity_return')[$data]*-1,
+                        'running_balance' => $running_balance,
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'returned',
+                        'all_id' => $return_to_principal_save->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => strtoupper($request->input('sku_type')),
+                        'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
+                        'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
+                        'running_amount' => $running_amount,
+                    ]);
+
+                    $new_sku_ledger->save();
+                }
             } else {
                 $new_sku_ledger = new Sku_ledger([
                     'sku_id' => $data,
-                    'quantity' => $request->input('quantity_return')[$data],
+                    'quantity' => $request->input('quantity_return')[$data]*-1,
                     'running_balance' => $request->input('quantity_return')[$data],
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'returned',
                     'all_id' => $return_to_principal_save->id,
                     'principal_id' => $request->input('principal_id'),
-                    'sku_type' => $request->input('sku_type'),
-                    'amount' => $request->input('final_unit_cost_per_sku')[$data],
+                    'sku_type' => strtoupper($request->input('sku_type')),
+                    'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
+                    'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
                     'running_amount' => $request->input('final_total_cost_per_sku')[$data],
                 ]);
 

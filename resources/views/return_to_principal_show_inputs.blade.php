@@ -37,7 +37,7 @@
                         <td>{{ $data->sku->sku_code }}</td>
                         <td>{{ $data->sku->description }}</td>
                         <td>{{ $data->sku->sku_type }}</td>
-                        <td>{{ $data->quantity }}</td>
+                        <td>{{ $data->quantity - $data->quantity_returned }}</td>
                         <td><input type="number" name="quantity[{{ $data->sku_id }}]"
                                 class="form-control form-control-sm">
                             <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}"

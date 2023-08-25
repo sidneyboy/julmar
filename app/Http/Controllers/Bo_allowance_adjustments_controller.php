@@ -82,135 +82,151 @@ class Bo_allowance_adjustments_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        // $bo_allowance_adjustments_save = new Bo_allowance_adjustments([
-        //     'principal_id' => $request->input('principal_id'),
-        //     'received_id' => $request->input('received_id'),
-        //     'user_id' => auth()->user()->id,
-        //     'particulars' => $request->input('particulars'),
-        //     'bo_allowance_deduction' => $request->input('bo_allowance_deduction'),
-        //     // 'vat_deduction' => $request->input('vat_deduction'),
-        //     'net_deduction' => $request->input('net_deduction'),
-        // ]);
+        $bo_allowance_adjustments_save = new Bo_allowance_adjustments([
+            'principal_id' => $request->input('principal_id'),
+            'received_id' => $request->input('received_id'),
+            'user_id' => auth()->user()->id,
+            'particulars' => $request->input('particulars'),
+            'bo_allowance_deduction' => $request->input('bo_allowance_deduction'),
+            // 'vat_deduction' => $request->input('vat_deduction'),
+            'net_deduction' => $request->input('net_deduction'),
+        ]);
 
-        // $bo_allowance_adjustments_save->save();
+        $bo_allowance_adjustments_save->save();
 
-        // $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
-        // $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
-        //     ->where('principal_id', $request->input('principal_id'))
-        //     ->orderBy('id', 'desc')->take(1)->first();
+        $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')->take(1)->first();
 
-        // if ($ap_ledger_last_transaction) {
-        //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('net_deduction');
-        // } else {
-        //     $ap_ledger_running_balance = $request->input('net_deduction');
-        // }
+        if ($ap_ledger_last_transaction) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('net_deduction');
+        } else {
+            $ap_ledger_running_balance = $request->input('net_deduction');
+        }
 
-        // if ($request->input('net_deduction') > 0) {
-        //     $new_ap_ledger = new Ap_ledger([
-        //         'principal_id' => $request->input('principal_id'),
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_date' => $date,
-        //         'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-        //         'debit_record' => $request->input('net_deduction'),
-        //         'credit_record' => 0,
-        //         'running_balance' => $ap_ledger_running_balance,
-        //         'transaction' => 'bo allowance adjustment',
-        //         'reference' => $bo_allowance_adjustments_save->id,
-        //         'remarks' => $request->input('particulars'),
-        //     ]);
+        if ($request->input('net_deduction') > 0) {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => $request->input('net_deduction'),
+                'credit_record' => 0,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'bo allowance adjustment',
+                'reference' => $bo_allowance_adjustments_save->id,
+                'remarks' => $request->input('particulars'),
+            ]);
 
-        //     $new_ap_ledger->save();
-        // } else {
-        //     $new_ap_ledger = new Ap_ledger([
-        //         'principal_id' => $request->input('principal_id'),
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_date' => $date,
-        //         'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-        //         'debit_record' => 0,
-        //         'credit_record' => $request->input('net_deduction') * -1,
-        //         'running_balance' => $ap_ledger_running_balance,
-        //         'transaction' => 'bo allowance adjustment',
-        //         'reference' => $bo_allowance_adjustments_save->id,
-        //         'remarks' => $request->input('particulars'),
-        //     ]);
+            $new_ap_ledger->save();
+        } else {
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
+                'debit_record' => 0,
+                'credit_record' => $request->input('net_deduction') * -1,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'bo allowance adjustment',
+                'reference' => $bo_allowance_adjustments_save->id,
+                'remarks' => $request->input('particulars'),
+            ]);
 
-        //     $new_ap_ledger->save();
-        // }
+            $new_ap_ledger->save();
+        }
 
 
 
 
         foreach ($request->input('sku_id') as $key => $sku) {
-            // $bo_allowance_adjustments_details = new Bo_allowance_adjustments_details([
-            //     'bo_allowance_id' => 1,
-            //     'sku_id' => $sku,
-            //     'quantity' => $request->input('quantity')[$sku],
-            //     'unit_cost' => $request->input('unit_cost')[$sku],
-            //     'adjusted_amount' => $request->input('adjusted_amount')[$sku],
-            // ]);
+            $bo_allowance_adjustments_details = new Bo_allowance_adjustments_details([
+                'bo_allowance_id' => $bo_allowance_adjustments_save->id,
+                'sku_id' => $sku,
+                'quantity' => $request->input('quantity')[$sku],
+                'unit_cost' => $request->input('unit_cost')[$sku],
+                'adjusted_amount' => $request->input('adjusted_amount')[$sku],
+            ]);
 
-            // $bo_allowance_adjustments_details->save();
+            $bo_allowance_adjustments_details->save();
 
-            // Received_purchase_order_details::where('received_id', $request->input('received_id'))
-            //     ->where('sku_id', $sku)
-            //     ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
+            Received_purchase_order_details::where('received_id', $request->input('received_id'))
+                ->where('sku_id', $sku)
+                ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 
-            if ($ledger_results->transaction_type == 'bo allowance adjustment' or $ledger_results->transaction_type == 'invoice cost adjustment') {
+            if ($ledger_results[0]->transaction_type == 'bo allowance adjustment' or $ledger_results[0]->transaction_type == 'invoice cost adjustment') {
+
+                $running_amount = $ledger_results[0]->running_amount + $request->input('bo_allowance_per_sku')[$sku];
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $sku,
+                    'quantity' => 0,
+                    'adjustments' => 0,
+                    'running_balance' => $ledger_results[0]->running_balance,
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'bo allowance adjustment',
+                    'all_id' => $bo_allowance_adjustments_save->id,
+                    'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $ledger_results[0]->sku_type,
+                    'final_unit_cost' =>  0,
+                    'amount' => $request->input('bo_allowance_per_sku')[$sku],
+                    'running_amount' => $running_amount,
+                ]);
+
+                $new_sku_ledger->save();
             } else {
-                echo $request->input('adjusted_final_unit_cost')[$sku];
+                $running_amount = $ledger_results[0]->running_amount + $request->input('bo_allowance_per_sku')[$sku];
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $sku,
+                    'quantity' => 0,
+                    'adjustments' => 0,
+                    'running_balance' => $ledger_results[0]->running_balance,
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'bo allowance adjustment',
+                    'all_id' => $bo_allowance_adjustments_save->id,
+                    'principal_id' => $request->input('principal_id'),
+                    'sku_type' => $ledger_results[0]->sku_type,
+                    'final_unit_cost' =>  0,
+                    'amount' => $request->input('bo_allowance_per_sku')[$sku],
+                    'running_amount' => $running_amount,
+                ]);
+
+                $new_sku_ledger->save();
             }
-
-            // $total = $request->input('adjusted_amount')[$sku] * $ledger_results[0]->running_balance;
-            // $running_amount = $ledger_results[0]->running_amount + $total;
-            // $new_sku_ledger = new Sku_ledger([
-            //     'sku_id' => $sku,
-            //     'quantity' => 0,
-            //     'adjustments' => $ledger_results[0]->running_balance,
-            //     'running_balance' => $ledger_results[0]->running_balance,
-            //     'user_id' => auth()->user()->id,
-            //     'transaction_type' => 'bo allowance adjustment',
-            //     'all_id' => $bo_allowance_adjustments_save->id,
-            //     'principal_id' => $request->input('principal_id'),
-            //     'sku_type' => $ledger_results[0]->sku_type,
-            //     'amount' => $request->input('adjusted_amount')[$sku],
-            //     'running_amount' => $running_amount,
-            // ]);
-
-            // $new_sku_ledger->save();
         }
 
 
-        // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+        $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-        // $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-        // $principal_ledger_saved = new Principal_ledger([
-        //     'principal_id' => $request->input('principal_id'),
-        //     'user_id' => auth()->user()->id,
-        //     'date' => $date,
-        //     'all_id' => $bo_allowance_adjustments_save->id,
-        //     'transaction' => 'bo adjustment',
-        //     'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-        //     'received' => 0,
-        //     'returned' => 0,
-        //     'adjustment' => $request->input('bo_allowance_deduction') * -1,
-        //     'payment' => 0,
-        //     'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('bo_allowance_deduction'),
-        // ]);
-        // $principal_ledger_saved->save();
-
-
-        // $bo_allowance_jer = new Bo_allowance_adjustments_jer([
-        //     'bo_allowance_id' => $bo_allowance_adjustments_save->id,
-        //     'dr' => $request->input('net_deduction'),
-        //     'cr' => $request->input('net_deduction'),
-        //     'date' => $date
-        // ]);
-
-        // $bo_allowance_jer->save();
+        $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+        $principal_ledger_saved = new Principal_ledger([
+            'principal_id' => $request->input('principal_id'),
+            'user_id' => auth()->user()->id,
+            'date' => $date,
+            'all_id' => $bo_allowance_adjustments_save->id,
+            'transaction' => 'bo adjustment',
+            'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            'received' => 0,
+            'returned' => 0,
+            'adjustment' => $request->input('bo_allowance_deduction') * -1,
+            'payment' => 0,
+            'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('bo_allowance_deduction'),
+        ]);
+        $principal_ledger_saved->save();
 
 
-        // return 'saved';
+        $bo_allowance_jer = new Bo_allowance_adjustments_jer([
+            'bo_allowance_id' => $bo_allowance_adjustments_save->id,
+            'dr' => $request->input('net_deduction'),
+            'cr' => $request->input('net_deduction'),
+            'date' => $date
+        ]);
+
+        $bo_allowance_jer->save();
+
+
+        return 'saved';
     }
 }

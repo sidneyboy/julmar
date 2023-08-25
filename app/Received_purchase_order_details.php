@@ -21,6 +21,11 @@ class Received_purchase_order_details extends Model
         return $this->belongsTo('App\Sku_add', 'sku_id');
     }
 
+    public function sku_ledger()
+    {
+        return $this->hasOne('App\Sku_ledger', 'sku_id')->orderBy('id','desc')->limit(1);
+    }
+
     public function received_purchase_order()
     {
         return $this->belongsTo('App\Received_purchase_order', 'received_id');
