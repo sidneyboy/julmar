@@ -101,12 +101,12 @@
                                              </div>
                                          </td>
                                          <td><button type="button" class="btn btn-info btn-sm btn-block"
-                                                 data-toggle="modal" data-target="#exampleModal{{ $data->id }}">
+                                                 data-toggle="modal" data-target="#exampleModaladd_location{{ $data->id }}">
                                                  Add
                                              </button>
 
                                              <!-- Modal -->
-                                             <div class="modal fade" id="exampleModal{{ $data->id }}" tabindex="-1"
+                                             <div class="modal fade" id="exampleModaladd_location{{ $data->id }}" tabindex="-1"
                                                  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                  <div class="modal-dialog " role="document">
                                                      <div class="modal-content">
