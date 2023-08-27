@@ -21,7 +21,6 @@ class Invoice_out_controller extends Controller
 {
     public function index()
     {
-
         if (Auth::check()) {
             Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
@@ -96,6 +95,7 @@ class Invoice_out_controller extends Controller
             ])->with('rep_dr', $rep_dr)
                 ->with('transaction', $transaction);
         } else if ($transaction == 'agent_booking') {
+            
             $sales_invoice_details = Sales_invoice_details::where('sales_invoice_id', $rep_dr)
                 ->get();
 
@@ -398,9 +398,9 @@ class Invoice_out_controller extends Controller
             $cart = Cart::session(auth()->user()->id)->getContent();
 
             $sales_invoice_details = Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
-                ->where('remarks', 'scanned')
-                ->orWhere('remarks', null)
-                ->groupBy('sku_id')
+                // ->where('remarks', 'scanned')
+                // ->orWhere('remarks', null)
+                // ->groupBy('sku_id')
                 ->get();
 
             return view('invoice_out_sales_invoice_final_summary', [
@@ -428,14 +428,16 @@ class Invoice_out_controller extends Controller
 
         foreach ($cart as $key => $cart_data) {
             $sku_id = $cart_data->id;
-            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '211' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+            $final_unit_cost = $ledger_results[0]->running_amount / $ledger_results[0]->running_balance;
+            $amount = ($cart_data->quantity*-1) * $final_unit_cost;
 
             $running_balance = $ledger_results[0]->running_balance - $cart_data->quantity;
-            $amount = $ledger_results[0]->running_amount / $ledger_results[0]->running_balance;
-            $running_amount = $ledger_results[0]->running_amount - $amount;
+            $running_amount = $ledger_results[0]->running_amount + $amount;
             $new_sku_ledger = new Sku_ledger([
                 'sku_id' => $cart_data->id,
-                'quantity' => $cart_data->quantity,
+                'quantity' => $cart_data->quantity*-1,
                 'running_balance' => $running_balance,
                 'user_id' => auth()->user()->id,
                 'transaction_type' => 'out from warehouse booking',
@@ -443,6 +445,7 @@ class Invoice_out_controller extends Controller
                 'principal_id' => $ledger_results[0]->principal_id,
                 'sku_type' => $ledger_results[0]->sku_type,
                 'amount' => $amount,
+                'final_unit_cost' => $final_unit_cost,
                 'running_amount' => $running_amount,
             ]);
 
