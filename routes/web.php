@@ -834,6 +834,13 @@ Route::post('/ap_ledger_subsidiary_ledger_show_report_list', 'Ap_ledger_controll
 Route::get('/ap_general_ledger', 'Ap_ledger_controller@ap_general_ledger');
 Route::post('/ap_ledger_general_ledger_show_report_list', 'Ap_ledger_controller@ap_ledger_general_ledger_show_report_list')->name('ap_ledger_general_ledger_show_report_list');
 
+Route::get('/ap_ledger_subsidiary_cut_off/{principal_id}', 'Ap_ledger_controller@ap_ledger_subsidiary_cut_off')->name('ap_ledger_subsidiary_cut_off');
+Route::post('/ap_ledger_subsidiary_cut_off_save', 'Ap_ledger_controller@ap_ledger_subsidiary_cut_off_save')->name('ap_ledger_subsidiary_cut_off_save');
+Route::post('/ap_ledger_general_ledger_show_search_type', 'Ap_ledger_controller@ap_ledger_general_ledger_show_search_type')->name('ap_ledger_general_ledger_show_search_type');
+
+
+
+
 
 
 

@@ -14,24 +14,76 @@
         </thead>
         <tbody>
             @foreach ($ap_ledger as $data)
-                <tr>
-                    <td>{{ $data->principal->principal }}</td>
-                    <td>{{ $data->transaction_date }}</td>
-                    <td>{{ $data->description }}</td>
-                    <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}
-                        @php
-                            $total_dr[] = $data->debit_record;
-                        @endphp
-                    </td>
-                    <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
-                        @php
-                            $total_cr[] = $data->credit_record;
-                        @endphp
-                    </td>
-                    <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
-                    <td>{{ $data->remarks }}</td>
-                    <td>{{ $data->user->name }}</td>
-                </tr>
+                @if ($data->transaction == 'beginning')
+                    <tr style="background-color:greenyellow">
+                        <td>{{ $data->principal->principal }}</td>
+                        <td>{{ $data->transaction_date }}</td>
+                        <td>{{ $data->description }}</td>
+                        <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_dr[] = $data->debit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_cr[] = $data->credit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
+                        <td>{{ $data->remarks }}</td>
+                        <td>{{ $data->user->name }}</td>
+                    </tr>
+                @elseif($data->transaction == 'cut off')
+                    <tr style="background-color:red">
+                        <td>{{ $data->principal->principal }}</td>
+                        <td>{{ $data->transaction_date }}</td>
+                        <td>{{ $data->description }}</td>
+                        <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_dr[] = $data->debit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_cr[] = $data->credit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
+                        <td>{{ $data->remarks }}</td>
+                        <td>{{ $data->user->name }}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td>{{ $data->principal->principal }}</td>
+                        <td>{{ $data->transaction_date }}</td>
+                        <td>{{ $data->description }}</td>
+                        <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_dr[] = $data->debit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
+                            @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
+                                @php
+                                    $total_cr[] = $data->credit_record;
+                                @endphp
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
+                        <td>{{ $data->remarks }}</td>
+                        <td>{{ $data->user->name }}</td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
         <tfoot>
@@ -48,6 +100,18 @@
         </tfoot>
     </table>
 </div>
+
+<br />
+
+<form id="ap_ledger_subsidiary_cut_off_save">
+    <label for="">Remarks</label>
+    <textarea name="remarks" class="form-control" cols="30" rows="3" required></textarea>
+    <input type="hidden" name="principal_id" value="{{ $ap_ledger[0]->principal_id }}">
+    <br />
+    <button class="float-right btn-sm btn-success">Cut Off</button>
+</form>
+<br /><br />
+
 
 <script>
     $(document).ready(function() {
@@ -66,4 +130,53 @@
         });
         new $.fn.dataTable.FixedHeader(table);
     });
+
+    ap_ledger_subsidiary_cut_off_save
+
+    $("#ap_ledger_subsidiary_cut_off_save").on('submit', (function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Are you sure you want to cut off?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#loader').show();
+                $.ajax({
+                    url: "ap_ledger_subsidiary_cut_off_save",
+                    type: "post",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(data) {
+                        $('#loader').hide();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Your work has been saved',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        location.reload();
+                    },
+                    error: function(error) {
+                        $('#loader').hide();
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'Please Contact IT Support',
+                            'error'
+                        )
+
+
+                    }
+                });
+            }
+        })
+    }));
 </script>

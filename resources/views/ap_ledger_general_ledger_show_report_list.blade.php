@@ -2,24 +2,25 @@
     <table class="table table-bordered table-striped table-sm" style="width:100%;font-size:15px;" id="example1">
         <thead>
             <tr>
-                <th>Description</th>
+                <th>Principal</th>
                 <th>DR</th>
                 <th>CR</th>
-                <th>Running</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Beginning Balance</td>
-                <td style="text-align: right">0</td>
-                <td style="text-align: right">0</td>
-                <td style="text-align: right">{{ number_format(array_sum($running_balance), 2, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>NEED TO ASK MAAM VAN</td>
-                <td style="text-align: right">{{ number_format($ap_ledger_debit_credit->total_dr, 2, '.', ',') }}</td>
-                <td style="text-align: right">{{ number_format($ap_ledger_debit_credit->total_cr, 2, '.', ',') }}</td>
-                <td style="text-align: right">{{ number_format(array_sum($running_balance) + $ap_ledger_debit_credit->total_cr - $ap_ledger_debit_credit->total_dr, 2, '.', ',') }}</td>
+                <td>{{ $principal }}</td>
+                <td style="text-align: right">{{ number_format($ap_ledger_debit_credit->total_dr,2,".",",")  }}</td>
+                <td style="text-align: right">
+                    @php
+                       $credit_record = $ap_ledger_debit_credit->total_cr + $ap_ledger_running_balance->running_balance;
+                    @endphp
+                    {{ number_format($credit_record,2,".",",") }}
+                </td>
+                <td style="text-align: right">
+                    {{ number_format($credit_record - $ap_ledger_debit_credit->total_dr,2,".",",") }}
+                </td>
             </tr>
         </tbody>
     </table>

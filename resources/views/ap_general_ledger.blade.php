@@ -43,7 +43,7 @@
                             <select class="form-control" id="principal" style="width:100%;">
                                 <option value="" default>Select Principal</option>
                                 @foreach ($principals as $principal)
-                                    <option value="{{ $principal->id }}">
+                                    <option value="{{ $principal->id .','. $principal->principal }}">
                                         {{ $principal->principal }}</option>
                                 @endforeach
                             </select>
@@ -52,6 +52,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
+                        <br />
                         <button class="btn btn-info float-right btn-sm" id="generate">Generate Report</button>
                     </div>
                 </div>
@@ -78,16 +79,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
-        var hasSuccess = '<?php echo Session::has('success'); ?>';
-        if (hasSuccess) {
-            toastr.success('New Sku Information Saved!')
-        }
-
-        var deleteSuccess = '<?php echo Session::has('deleteSuccess'); ?>';
-        if (deleteSuccess) {
-            toastr.warning('Sku Information Deleted!')
-        }
 
         $('#generate').on('click', function(e) {
             var date = $('#reservation').val();

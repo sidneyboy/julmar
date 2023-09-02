@@ -38,10 +38,12 @@
                             </thead>
                             <tbody>
                                 @foreach ($location as $data)
-                                    <tr>
-                                        <td>{{ $data->id }}</td>
-                                        <td>{{ $data->location }}</td>
-                                    </tr>
+                                    @foreach ($data->location_details as $details)
+                                        <tr>
+                                            <td>{{ $details->id }}</td>
+                                            <td>{{ $data->location ." - ". $details->barangay }}</td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
                             </tbody>
                         </table>
