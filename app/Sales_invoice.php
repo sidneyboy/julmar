@@ -29,6 +29,7 @@ class Sales_invoice extends Model
         'customer_discount',
         'total_payment',
         'payment_status',
+        'truck_load_status',
     ];
 
     public function principal()

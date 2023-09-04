@@ -53,6 +53,7 @@ class Truck_load_controller extends Controller
     {
         $sales_invoice = Sales_invoice::select('id', 'delivery_receipt', 'agent_id')
             ->whereIn('agent_id', $request->input('agent_id'))
+            ->where('truck_load_status',null)
             ->get();
 
         $truck = Truck::select('id', 'plate_no')
@@ -323,7 +324,8 @@ class Truck_load_controller extends Controller
             $total_amount[$value->sku_type] = $data_invoice_details->total_amount;
             $total_kg[$value->sku_type] = $data_invoice_details->total_kg;
 
-
+            Sales_invoice::where('id', $value->id)
+                ->update(['truck_load_status' => 'loaded']);
 
             if ($value->sku_type == 'CASE') {
                 $new_logistics_invoices = new Logistics_invoices([
@@ -364,9 +366,6 @@ class Truck_load_controller extends Controller
                 $new_logistics_invoices->save();
             }
         }
-
-
-
         Cart::session(auth()->user()->id)->clear();
     }
 }
