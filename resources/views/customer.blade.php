@@ -177,26 +177,16 @@
                  processData: false,
                  success: function(data) {
                      console.log(data);
-                     if (data == 'saved') {
-                         Swal.fire({
-                             position: 'top-end',
-                             icon: 'success',
-                             title: 'New customer saved, do not forget to add principal code and price level',
-                             showConfirmButton: false,
-                             timer: 1500
-                         })
+                     Swal.fire({
+                         position: 'top-end',
+                         icon: 'success',
+                         title: 'New customer saved, do not forget to add principal code and price level',
+                         showConfirmButton: false,
+                         timer: 1500
+                     })
 
-                         location.reload();
-                         $('#loader').hide();
-
-                     } else {
-                         Swal.fire(
-                             'Something went wrong!',
-                             'Redo process or contact system administrator',
-                             'error'
-                         )
-                         $('#loader').hide();
-                     }
+                     location.reload();
+                     $('#loader').hide();
                  },
                  error: function(error) {
                      $('#loader').hide();

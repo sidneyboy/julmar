@@ -137,7 +137,6 @@
                             'PLEASE SELECT LOCATION AND SKU TYPE',
                             'error'
                         );
-
                     } else {
                         $('#loader').hide();
                         $('#van_selling_generate_sku_page').html(data);
@@ -181,6 +180,13 @@
                             'error'
                         );
 
+                    } else if (data == 'no_price_level') {
+                        $('#loader').hide();
+                        Swal.fire(
+                            'PALIHOG INPUT DAAN SA CUSTOMER CODE AND PRICE LEVEL. DAKONG SALAMAT',
+                            '',
+                            'error'
+                        );
                     } else {
                         $('#loader').hide();
                         $('#quantity').val('');

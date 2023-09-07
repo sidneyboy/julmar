@@ -49,7 +49,7 @@ class Van_selling_widthdrawal_controller extends Controller
             return 'no_location';
         } else {
             $customer = Customer::select('id', 'store_name')->where('kind_of_business', 'VAN SELLING')->where('location_id', $request->input('location_id'))->get();
-            $sku = Sku_add::select('id', 'sku_code', 'description','sku_type')->where('principal_id', $request->input('principal'))->where('sku_type', $request->input('sku_type'))->get();
+            $sku = Sku_add::select('id', 'sku_code', 'description', 'sku_type')->where('principal_id', $request->input('principal'))->where('sku_type', $request->input('sku_type'))->get();
             return view('van_selling_generate_sku', [
                 'sku' => $sku,
             ])->with('customer', $customer)
@@ -64,69 +64,76 @@ class Van_selling_widthdrawal_controller extends Controller
         $customer = Customer_principal_price::select('price_level')->where('customer_id', $request->input('customer'))
             ->where('principal_id', $request->input('principal'))
             ->first();
-        $sku_price_details = Sku_price_details::select($customer->price_level)->where('sku_id', $request->input('sku'))
-            ->first();
+
+        if ($customer) {
+            $sku_price_details = Sku_price_details::select($customer->price_level)->where('sku_id', $request->input('sku'))
+                ->first();
 
 
-        if ($sku_price_details) {
-            if ($customer->price_level == 'price_1') {
-                $unit_price = $sku_price_details->price_1;
-            } else if ($customer->price_level == 'price_2') {
-                $unit_price = $sku_price_details->price_2;
-            } else if ($customer->price_level == 'price_3') {
-                $unit_price = $sku_price_details->price_3;
-            } else if ($customer->price_level == 'price_4') {
-                $unit_price = $sku_price_details->price_4;
-            } else if ($customer->price_level == 'price_5') {
-                $unit_price = $sku_price_details->price_5;
-            }
-        }else{
-            if ($customer->price_level == 'price_1') {
-                $unit_price = 0;
-            } else if ($customer->price_level == 'price_2') {
-                $unit_price = 0;
-            } else if ($customer->price_level == 'price_3') {
-                $unit_price = 0;
-            } else if ($customer->price_level == 'price_4') {
-                $unit_price = 0;
-            } else if ($customer->price_level == 'price_5') {
-                $unit_price = 0;
-            }
-        }
-
-        if ($sku) {
-            $cart_checker = \Cart::session(auth()->user()->id)->get($sku->id);
-            if ($cart_checker) {
-                \Cart::session(auth()->user()->id)->remove($sku->id);
-
-                \Cart::session(auth()->user()->id)->add(array(
-                    'id' => $sku->id,
-                    'name' => $sku->description,
-                    'price' => $unit_price,
-                    'quantity' => $request->input('quantity'),
-                    'attributes' => array(),
-                    'associatedModel' => $sku,
-                ));
+            if ($sku_price_details) {
+                if ($customer->price_level == 'price_1') {
+                    $unit_price = $sku_price_details->price_1;
+                } else if ($customer->price_level == 'price_2') {
+                    $unit_price = $sku_price_details->price_2;
+                } else if ($customer->price_level == 'price_3') {
+                    $unit_price = $sku_price_details->price_3;
+                } else if ($customer->price_level == 'price_4') {
+                    $unit_price = $sku_price_details->price_4;
+                } else if ($customer->price_level == 'price_5') {
+                    $unit_price = $sku_price_details->price_5;
+                }
             } else {
-                \Cart::session(auth()->user()->id)->add(array(
-                    'id' => $sku->id,
-                    'name' => $sku->description,
-                    'price' => $unit_price,
-                    'quantity' => $request->input('quantity'),
-                    'attributes' => array(),
-                    'associatedModel' => $sku,
-                ));
+                if ($customer->price_level == 'price_1') {
+                    $unit_price = 0;
+                } else if ($customer->price_level == 'price_2') {
+                    $unit_price = 0;
+                } else if ($customer->price_level == 'price_3') {
+                    $unit_price = 0;
+                } else if ($customer->price_level == 'price_4') {
+                    $unit_price = 0;
+                } else if ($customer->price_level == 'price_5') {
+                    $unit_price = 0;
+                }
             }
 
-            $cart = Cart::session(auth()->user()->id)->getContent();
+            if ($sku) {
+                $cart_checker = \Cart::session(auth()->user()->id)->get($sku->id);
+                if ($cart_checker) {
+                    \Cart::session(auth()->user()->id)->remove($sku->id);
 
-            return view('van_selling_generate_sku_quantity', [
-                'cart' => $cart,
-                'customer_id' => $request->input('customer'),
-                'principal_id' => $request->input('principal'),
-            ]);
+                    \Cart::session(auth()->user()->id)->add(array(
+                        'id' => $sku->id,
+                        'name' => $sku->description,
+                        'price' => $unit_price,
+                        'quantity' => $request->input('quantity'),
+                        'attributes' => array(),
+                        'associatedModel' => $sku,
+                    ));
+                } else {
+                    \Cart::session(auth()->user()->id)->add(array(
+                        'id' => $sku->id,
+                        'name' => $sku->description,
+                        'price' => $unit_price,
+                        'quantity' => $request->input('quantity'),
+                        'attributes' => array(),
+                        'associatedModel' => $sku,
+                    ));
+                }
+
+                $cart = Cart::session(auth()->user()->id)->getContent();
+
+                
+
+                return view('van_selling_generate_sku_quantity', [
+                    'cart' => $cart,
+                    'customer_id' => $request->input('customer'),
+                    'principal_id' => $request->input('principal'),
+                ]);
+            } else {
+                return 'invalid';
+            }
         } else {
-            return 'invalid';
+            return 'no_price_level';
         }
     }
 
@@ -235,9 +242,9 @@ class Van_selling_widthdrawal_controller extends Controller
         }
 
         $ar_checker = Van_selling_ar_ledger::where('customer_id', $request->input('customer_id'))
-                            ->orderBy('id', 'desc')
-                            ->limit(1)
-                            ->first();
+            ->orderBy('id', 'desc')
+            ->limit(1)
+            ->first();
 
         if ($ar_checker) {
             $running_balance = $ar_checker->outstanding_balance;
