@@ -824,6 +824,13 @@
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
+                                            <a href="{{ url('van_selling_reports_and_dashboard') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_reports_and_dashboard' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Dashboard</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('van_selling_payment') }}"
                                                 class="nav-link {{ $active_tab == 'van_selling_payment' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

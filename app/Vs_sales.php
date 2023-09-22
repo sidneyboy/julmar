@@ -19,4 +19,14 @@ class Vs_sales extends Model
         'location',
         'date_sold',
     ];
+
+    public function principal()
+    {
+        return $this->belongsTo('App\Sku_principal', 'principal_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id');
+    }
 }

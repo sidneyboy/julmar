@@ -841,6 +841,11 @@ Route::post('/ap_ledger_general_ledger_show_search_type', 'Ap_ledger_controller@
 
 
 
+Route::get('/van_selling_reports_and_dashboard', 'Van_selling_reports_and_dashboard_controller@index');
+Route::get('/van_selling_reports_and_dashboard_productive_calls', 'Van_selling_reports_and_dashboard_controller@van_selling_reports_and_dashboard_productive_calls')->name('van_selling_reports_and_dashboard_productive_calls');
+Route::post('/van_selling_reports_and_dashboard_productive_calls_generate', 'Van_selling_reports_and_dashboard_controller@van_selling_reports_and_dashboard_productive_calls_generate')->name('van_selling_reports_and_dashboard_productive_calls_generate');
+
+
 
 
 
