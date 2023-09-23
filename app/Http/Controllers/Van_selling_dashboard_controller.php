@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Sku_principal;
-use App\Van_selling_sales;
+use App\Vs_sales;
 use App\Customer;
 use Carbon\Carbon;
 use DB;
@@ -29,10 +29,10 @@ class Van_selling_dashboard_controller extends Controller
             $month_label_for_agent_performance = date('F');
             $daysCount = Carbon::createFromDate($year, $month, 1)->daysInMonth;
 
-            $monthly_sales = Van_selling_sales::select(
+            $monthly_sales = Vs_sales::select(
                 DB::raw('year(created_at) as year'),
                 DB::raw('month(created_at) as month'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->where(DB::raw('date(created_at)'), '>=', $year . "-01-01")
                 ->groupBy('year')
                 ->groupBy('month')
@@ -46,23 +46,23 @@ class Van_selling_dashboard_controller extends Controller
                 $monthly_total_sales[] = round($monthly_sales_result['total_sales'], 2);
             }
 
-            $monthly_principal_sales = Van_selling_sales::select(
-                DB::raw('principal'),
-                DB::raw('sum(total) as total_sales'),
+            $monthly_principal_sales = Vs_sales::select(
+                DB::raw('principal_id'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->where(DB::raw('date(created_at)'), '>=', $year . "-01-01")
-                ->groupBy('principal')
+                ->groupBy('principal_id')
                 ->get()
                 ->toArray();
 
             foreach ($monthly_principal_sales as $monthly_principal_sales_result) {
-                $monthly_principal_sales_result_principal[] = $monthly_principal_sales_result['principal'];
+                $monthly_principal_sales_result_principal[] = $monthly_principal_sales_result['principal_id'];
                 $monthly_principal_sales_result_sales[] = round($monthly_principal_sales_result['total_sales'], 2);
             }
 
 
-            $monthly_agent_sales = Van_selling_sales::select(
+            $monthly_agent_sales = Vs_sales::select(
                 DB::raw('customer_id'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
                 ->groupBy('customer_id')
                 ->get()
@@ -80,18 +80,18 @@ class Van_selling_dashboard_controller extends Controller
             }
 
 
-            $principal_monthly_sales = Van_selling_sales::select(
-                DB::raw('principal'),
-                DB::raw('sum(total) as total_sales'),
+            $principal_monthly_sales = Vs_sales::select(
+                DB::raw('principal_id'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
-                ->groupBy('principal')
+                ->groupBy('principal_id')
                 ->get()
                 ->toArray();
 
 
             if ($principal_monthly_sales) {
                 foreach ($principal_monthly_sales as $principal_monthly_sales_result) {
-                    $principal_monthly_sales_result_principal[] = $principal_monthly_sales_result['principal'];
+                    $principal_monthly_sales_result_principal[] = $principal_monthly_sales_result['principal_id'];
                     $principal_monthly_sales_result_sales[] = round($principal_monthly_sales_result['total_sales'], 2);
                 }
             } else {
@@ -99,13 +99,13 @@ class Van_selling_dashboard_controller extends Controller
                 $principal_monthly_sales_result_sales[] = '';
             }
 
-            $top_10_sku_sales = Van_selling_sales::select(
+            $top_10_sku_sales = Vs_sales::select(
                 DB::raw('sku_code'),
-                DB::raw('sum(sales) as total_quantity'),
+                DB::raw('sum(quantity) as total_quantity'),
                 DB::raw('description'),
-                DB::raw('principal'),
+                DB::raw('principal_id'),
                 DB::raw('unit_price'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
                 ->groupBy('sku_code')
                 ->orderBy('total_sales', 'DESC')
@@ -113,9 +113,9 @@ class Van_selling_dashboard_controller extends Controller
                 ->get()
                 ->toArray();
 
-            $top_10_agent_sales = Van_selling_sales::select(
+            $top_10_agent_sales = Vs_sales::select(
                 DB::raw('customer_id'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
                 ->groupBy('customer_id')
                 ->orderBy('total_sales', 'DESC')
@@ -135,10 +135,10 @@ class Van_selling_dashboard_controller extends Controller
 
 
 
-            $top_10_stores_sales = Van_selling_sales::select(
+            $top_10_stores_sales = Vs_sales::select(
                 DB::raw('location'),
                 DB::raw('store_name'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
                 ->groupBy('store_name')
                 ->orderBy('total_sales', 'DESC')
@@ -147,9 +147,9 @@ class Van_selling_dashboard_controller extends Controller
                 ->toArray();
 
 
-            $monthly_location_sales = Van_selling_sales::select(
+            $monthly_location_sales = Vs_sales::select(
                 DB::raw('location'),
-                DB::raw('sum(total) as total_sales'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
             )->whereMonth('created_at', $month)
                 ->groupBy('location')
                 ->orderBy('total_sales', 'DESC')

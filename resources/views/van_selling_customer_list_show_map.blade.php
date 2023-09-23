@@ -207,7 +207,7 @@
             ],
             view: new ol.View({
                 center: ol.proj.fromLonLat([124.64970709949716, 8.483466116291813]),
-                maxZoom: 18,
+                maxZoom: 26,
                 zoom: 13
             })
         });

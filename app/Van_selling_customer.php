@@ -16,6 +16,7 @@ class Van_selling_customer extends Model
         'contact_number',
         'latitude',
         'longitude',
+        'location_details_id',
     ];
 
     public function location()

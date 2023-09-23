@@ -13,7 +13,7 @@
 <script>
     $("#vs_upload_and_export_proceed_upload").on('submit', (function(e) {
         e.preventDefault();
-        $('#loader').show();
+         $('#loader').show();
         $('#hide_if_trigger').hide();
         $.ajax({
             url: "vs_upload_and_export_proceed_upload",

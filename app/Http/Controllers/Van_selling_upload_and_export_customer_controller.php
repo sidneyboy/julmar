@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Van_selling_customer;
 use App\Location;
+use App\Location_details;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,8 +60,15 @@ class Van_selling_upload_and_export_customer_controller extends Controller
                 return 'Incorrect File';
             } else {
                 for ($i = 1; $i < $counter; $i++) {
+                  
+                    $location_id = Location_details::select('location_id')
+                                    ->where('id',$csv[$i][1])
+                                    ->first();
+
+        
                     $new = new Van_selling_customer([
-                        'location_id' => $csv[$i][1],
+                        'location_id' => $location_id->location_id,
+                        'location_details_id' => $csv[$i][1],
                         'store_name' => $csv[$i][2],
                         'store_type' => $csv[$i][3],
                         'barangay' => $csv[$i][4],
@@ -69,6 +77,7 @@ class Van_selling_upload_and_export_customer_controller extends Controller
                         'contact_number' => $csv[$i][7],
                         'latitude' => $csv[$i][8],
                         'longitude' => $csv[$i][9],
+                        
                     ]);
 
                     $new->save();
