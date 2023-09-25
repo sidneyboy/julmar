@@ -44,6 +44,7 @@ class Sku_ledger_controller extends Controller
             WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)");
         }
 
+
         for ($i=0; $i < count($sku_ledger); $i++) { 
             $description[] = Sku_add::select('sku_code','description','sku_type','id')->find($sku_ledger[$i]->sku_id); 
             $name[] = User::select('name')->find($sku_ledger[$i]->user_id);

@@ -26,6 +26,23 @@ class Van_selling_reports_and_dashboard_controller extends Controller
 
             $total_monthly_productive_calls = Vs_sales::whereMonth('created_at', $month)->distinct()->count('customer_store_name');
 
+    
+            $monthly_sales = Vs_sales::select(
+                DB::raw('year(created_at) as year'),
+                DB::raw('month(created_at) as month'),
+                DB::raw('sum(quantity * unit_price) as total_sales'),
+            )->where(DB::raw('date(created_at)'), '>=', $year . "-01-01")
+                ->groupBy('year')
+                ->groupBy('month')
+                ->get()
+                ->toArray();
+    
+            foreach ($monthly_sales as $monthly_sales_result) {
+                $dateObj   = DateTime::createFromFormat('!m', $monthly_sales_result['month']);
+                $monthName = $dateObj->format('F'); // March
+                $month_label[] = $monthName;
+                $monthly_total_sales[] = round($monthly_sales_result['total_sales'], 2);
+            }
 
             return view('van_selling_reports_and_dashboard', [
                 'total_monthly_productive_calls' => $total_monthly_productive_calls,
@@ -36,6 +53,8 @@ class Van_selling_reports_and_dashboard_controller extends Controller
                 'main_tab' => 'manage_principal_main_tab',
                 'sub_tab' => 'manage_principal_sub_tab',
                 'active_tab' => 'van_selling_reports_and_dashboard',
+                'month_label' => $month_label,
+                'monthly_total_sales' => $monthly_total_sales,
             ]);
         } else {
             return redirect('/')->with('error', 'Session Expired. Please Login');
@@ -50,6 +69,7 @@ class Van_selling_reports_and_dashboard_controller extends Controller
             $customer = Customer::select('id', 'store_name')
                 ->where('kind_of_business', 'VAN SELLING')
                 ->get();
+
             return view('van_selling_reports_and_dashboard_productive_calls', [
                 'customer' => $customer,
                 'location' => $location,
@@ -84,8 +104,12 @@ class Van_selling_reports_and_dashboard_controller extends Controller
             ->distinct()
             ->get();
 
+       
+
+
         return view('van_selling_reports_and_dashboard_productive_calls_generate', [
             'productive_calls' => $productive_calls,
+           
         ]);
     }
 }

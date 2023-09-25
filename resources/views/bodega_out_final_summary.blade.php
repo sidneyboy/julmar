@@ -17,7 +17,7 @@
                     <td>{{ $convert }}</td>
                     <td>Case
                         <input type="hidden" name="out_from_sku_id" value="{{ $sku_add->id }}">
-                        <input type="hidden" name="out_from_quantity" value="{{ $convert}}">
+                        <input type="hidden" name="out_from_quantity" value="{{ $convert }}">
                     </td>
                 </tr>
             </tbody>
@@ -41,7 +41,8 @@
                         {{ $equivalents->equivalent_butal_pcs * $convert }}</td>
                     <td>Butal
                         <input type="hidden" name="in_to_sku_id" value="{{ $equivalents->id }}">
-                        <input type="hidden" name="in_to_quantity" value="{{ $equivalents->equivalent_butal_pcs * $convert }}">
+                        <input type="hidden" name="in_to_quantity"
+                            value="{{ $equivalents->equivalent_butal_pcs * $convert }}">
                     </td>
                 </tr>
             </tbody>
@@ -63,10 +64,10 @@
                 <tr>
                     <td>{{ $sku_add->sku_code }}</td>
                     <td>{{ $sku_add->description }}</td>
-                    <td>{{ $sku_add->equivalent_butal_pcs *  $convert}}</td>
+                    <td>{{ $sku_add->equivalent_butal_pcs * $convert }}</td>
                     <td>Butal
                         <input type="hidden" name="out_from_sku_id" value="{{ $sku_add->id }}">
-                        <input type="hidden" name="out_from_quantity" value="{{ $convert}}">
+                        <input type="hidden" name="out_from_quantity" value="{{ $convert }}">
                     </td>
                 </tr>
             </tbody>
@@ -89,14 +90,15 @@
                     <td>{{ $convert }}</td>
                     <td>Case
                         <input type="hidden" name="in_to_sku_id" value="{{ $equivalents->id }}">
-                        <input type="hidden" name="in_to_quantity" value="{{ $equivalents->equivalent_butal_pcs * $convert }}">
+                        <input type="hidden" name="in_to_quantity"
+                            value="{{ $equivalents->equivalent_butal_pcs * $convert }}">
                     </td>
                 </tr>
             </tbody>
         </table>
         <input type="hidden" name="remarks" value="out from butal">
     @endif
-    
+
     <input type="hidden" name="sku_type" value="{{ $sku_type }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
     <button class="btn btn-sm float-right btn-success">Submit</button>
@@ -116,15 +118,23 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                if (data == 'no_inventory_found') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No Inventory Found!',
+                        'error'
+                    )
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                location.reload();
+                    location.reload();
+                }
             },
             error: function(error) {
                 Swal.fire(
@@ -132,7 +142,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-               
+
             }
         });
     }));

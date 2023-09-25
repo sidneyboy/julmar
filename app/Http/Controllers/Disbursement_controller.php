@@ -34,7 +34,7 @@ class Disbursement_controller extends Controller
     {
         if ($request->input('disbursement') == 'payment to principal') {
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
-
+            
             return view('disbursement_show_selection', [
                 'principal' => $principal,
             ])->with('disbursement', $request->input('disbursement'));

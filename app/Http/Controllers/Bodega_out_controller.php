@@ -128,6 +128,8 @@ class Bodega_out_controller extends Controller
 
         if ($out_from_sku_count_ledger_row > 0) {
             $out_from_sku_running_balance = $out_from_sku_ledger_results[0]->running_balance - $request->input('out_from_quantity');
+            $average_cost = $out_from_sku_ledger_results[0]->running_amount / $out_from_sku_ledger_results[0]->running_balance;
+            $amount = ($average_cost * $request->input('out_from_quantity')) * -1;
             $out_from_sku_ledger_new_sku_ledger = new Sku_ledger([
                 'sku_id' => $out_from_sku_id,
                 'quantity' => $request->input('out_from_quantity'),
@@ -137,22 +139,14 @@ class Bodega_out_controller extends Controller
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $sku_type_data_first->sku_type,
+                'final_unit_cost' => $average_cost,
+                'amount' => $amount,
+                'running_amount' => $out_from_sku_ledger_results[0]->running_amount + $amount,
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
         } else {
-            $out_from_sku_ledger_new_sku_ledger = new Sku_ledger([
-                'sku_id' => $out_from_sku_id,
-                'quantity' => $request->input('out_from_quantity'),
-                'running_balance' => $request->input('out_from_quantity'),
-                'user_id' => auth()->user()->id,
-                'transaction_type' => 'bodega out',
-                'all_id' => $new_bodega_out->id,
-                'principal_id' => $request->input('principal_id'),
-                'sku_type' => $sku_type_data_first->sku_type,
-            ]);
-
-            $out_from_sku_ledger_new_sku_ledger->save();
+            return 'no_inventory';
         }
 
         $in_to_sku_id = $request->input('in_to_sku_id');
@@ -164,6 +158,9 @@ class Bodega_out_controller extends Controller
 
         if ($in_to_sku_count_ledger_row > 0) {
             $in_to_sku_running_balance = $in_to_sku_ledger_results[0]->running_balance + $request->input('in_to_quantity');
+            $out_from_sku_running_balance = $in_to_sku_ledger_results[0]->running_balance + $request->input('in_to_quantity');
+            $average_cost = $in_to_sku_ledger_results[0]->running_amount / $in_to_sku_ledger_results[0]->running_balance;
+            $amount = $average_cost * $request->input('out_from_quantity');
             $in_to_sku_ledger_new_sku_ledger = new Sku_ledger([
                 'sku_id' => $in_to_sku_id,
                 'quantity' => $request->input('in_to_quantity'),
@@ -173,6 +170,9 @@ class Bodega_out_controller extends Controller
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $sku_type_data_second->sku_type,
+                'final_unit_cost' => $average_cost,
+                'amount' => $amount,
+                'running_amount' => $in_to_sku_ledger_results[0]->running_amount + $amount,
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();
@@ -186,6 +186,9 @@ class Bodega_out_controller extends Controller
                 'all_id' => $new_bodega_out->id,
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $sku_type_data_second->sku_type,
+                'final_unit_cost' => 0,
+                'amount' => 0,
+                'running_amount' => 0,
             ]);
 
             $in_to_sku_ledger_new_sku_ledger->save();
