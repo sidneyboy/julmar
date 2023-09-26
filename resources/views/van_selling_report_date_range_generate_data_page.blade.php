@@ -101,7 +101,15 @@
                     <td>{{ Str::ucfirst($sku_ledger[$i]->transaction) }}</td>
                     <td style="text-align: right">{{ $sku_ledger[$i]->beginning_inventory }}</td>
                     <td style="text-align: right">{{ $sku_ledger[$i]->quantity }}</td>
-                    <td style="text-align: right">{{ $sku_ledger[$i]->ending_inventory }}</td>
+                    <td style="text-align: right">
+                        <a href="{{ url('van_selling_report_date_range_generate_specific_data',[
+                            'customer_id' => $sku_ledger[$i]->customer_id,
+                            'sku_id' => $sku_ledger[$i]->sku_id,
+                        ]) }}" target="_blank">
+                            {{ $sku_ledger[$i]->ending_inventory }}
+                        </a>
+                      
+                    </td>
                     <td style="text-align: right">
                         {{ number_format($sku_ledger[$i]->unit_price, 2, '.', ',') }}
                     </td>

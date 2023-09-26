@@ -604,8 +604,9 @@ Route::post('/van_selling_report_date_range_generate_sku_movement', 'Van_selling
 Route::post('/van_selling_report_date_range_generate_clearing', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing')->name('van_selling_report_date_range_generate_clearing');
 Route::post('/van_selling_report_date_range_generate_clearing_per_principal', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_principal')->name('van_selling_report_date_range_generate_clearing_per_principal');
 Route::post('/van_selling_report_date_range_generate_clearing_per_sku', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_clearing_per_sku')->name('van_selling_report_date_range_generate_clearing_per_sku');
-
 Route::post('/van_selling_report_date_range_clearing_operation_save', 'Van_selling_report_date_range_controller@van_selling_report_date_range_clearing_operation_save')->name('van_selling_report_date_range_clearing_operation_save');
+Route::get('/van_selling_report_date_range_generate_specific_data/{customer_id}/{sku_id}', 'Van_selling_report_date_range_controller@van_selling_report_date_range_generate_specific_data')->name('van_selling_report_date_range_generate_specific_data');
+
 
 
 

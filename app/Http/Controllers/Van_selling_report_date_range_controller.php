@@ -13,6 +13,7 @@ use App\Van_selling_transfer_inventory_details;
 use App\Van_selling_inventory_clearing;
 use App\Vs_inventory_ledger;
 use App\Sku_add;
+use App\Sku_ledger;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,15 +46,25 @@ class Van_selling_report_date_range_controller extends Controller
         $sku_ledger = DB::select("SELECT * FROM vs_inventory_ledgers WHERE id IN (SELECT MAX(id) FROM vs_inventory_ledgers
         WHERE customer_id = '$customer_id' GROUP BY sku_id)");
 
+
         foreach ($sku_ledger as $key => $data) {
             $sku[] = Sku_add::select('id', 'sku_code', 'description', 'sku_type', 'principal_id')->find($data->sku_id);
         }
 
-        
-
         return view('van_selling_report_date_range_generate_data_page', [
             'sku_ledger' => $sku_ledger,
             'sku' => $sku,
+        ]);
+    }
+
+    public function van_selling_report_date_range_generate_specific_data($customer_id,$sku_id)
+    {
+        $sku_ledger = Vs_inventory_ledger::where('customer_id',$customer_id)
+                            ->where('sku_id',$sku_id)
+                            ->get();
+
+        return view('van_selling_report_date_range_generate_specific_data',[
+            'sku_ledger' => $sku_ledger
         ]);
     }
 
