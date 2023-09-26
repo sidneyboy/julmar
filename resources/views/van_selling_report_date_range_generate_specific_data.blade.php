@@ -31,7 +31,7 @@
             <tbody>
                 @foreach ($sku_ledger as $data)
                     <tr>
-                        <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                        <td>{{ date('F j, Y H:i', strtotime($data->created_at)) }}</td>
                         <td>{{ $data->principal->principal }}</td>
                         <td>{{ $data->sku->description }}</td>
                         <td>{{ $data->sku->sku_type }}</td>
