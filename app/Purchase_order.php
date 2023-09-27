@@ -31,6 +31,7 @@ class Purchase_order extends Model
     'bo_allowance_discount_rate',
     'cwo_discount_rate',
     'cwo_discount',
+    'payment_status',
   ];
 
   public function purchaseOrderDetails()

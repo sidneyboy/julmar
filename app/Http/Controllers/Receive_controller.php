@@ -166,41 +166,72 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        // return $request->input();
+        $po = Purchase_order::select('purchase_id', 'payment_status')->find($request->input('purchase_order_id'));
 
 
+        if ($po->payment_status == 'paid') {
+            $new_received_purchase_orders = new Received_purchase_order([
+                'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
+                'discount_id' => $request->input('discount_id'),
+                'principal_id' => $request->input('principal_id'),
+                'purchase_order_id' => $request->input('purchase_order_id'),
+                'dr_si' => $request->input('dr_si'),
+                'truck_number' => $request->input('truck_number'),
+                'courier' => $request->input('courier'),
+                'invoice_date' => $request->input('invoice_date'),
+                'discount_type' => $request->input('discount_type'),
+                'scanned_by' => $request->input('scanned_by'),
+                'finalized_by' => auth()->user()->id,
+                'branch' => $request->input('branch'),
+                'gross_purchase' => $request->input('gross_purchases'),
+                'total_less_discount' => $request->input('total_less_discount'),
+                'bo_discount' => $request->input('bo_discount'),
+                'vatable_purchase' => $request->input('vatable_purchase'),
+                'vat' => $request->input('vat'),
+                'freight' => $request->input('freight'),
+                'total_final_cost' => $request->input('total_final_cost'),
+                'total_less_other_discount' => $request->input('total_less_other_discount'),
+                'net_payable' => $request->input('net_payable'),
+                'invoice_image' => 'No Sales Invoice Yet',
+                'cwo_discount_rate' => $request->input('cwo_discount_rate'),
+                'cwo_discount' => $request->input('cwo_discount'),
+                'payment_status' => 'paid',
+            ]);
 
-        $new_received_purchase_orders = new Received_purchase_order([
-            'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
-            'discount_id' => $request->input('discount_id'),
-            'principal_id' => $request->input('principal_id'),
-            'purchase_order_id' => $request->input('purchase_order_id'),
-            'dr_si' => $request->input('dr_si'),
-            'truck_number' => $request->input('truck_number'),
-            'courier' => $request->input('courier'),
-            'invoice_date' => $request->input('invoice_date'),
-            'discount_type' => $request->input('discount_type'),
-            'scanned_by' => $request->input('scanned_by'),
-            'finalized_by' => auth()->user()->id,
-            'branch' => $request->input('branch'),
-            'gross_purchase' => $request->input('gross_purchases'),
-            'total_less_discount' => $request->input('total_less_discount'),
-            'bo_discount' => $request->input('bo_discount'),
-            'vatable_purchase' => $request->input('vatable_purchase'),
-            'vat' => $request->input('vat'),
-            'freight' => $request->input('freight'),
-            'total_final_cost' => $request->input('total_final_cost'),
-            'total_less_other_discount' => $request->input('total_less_other_discount'),
-            'net_payable' => $request->input('net_payable'),
-            'invoice_image' => 'No Sales Invoice Yet',
-            'cwo_discount_rate' => $request->input('cwo_discount_rate'),
-            'cwo_discount' => $request->input('cwo_discount'),
-        ]);
+            $new_received_purchase_orders->save();
+        } else {
+            $new_received_purchase_orders = new Received_purchase_order([
+                'bo_allowance_discount_rate' => $request->input('bo_allowance_discount_rate'),
+                'discount_id' => $request->input('discount_id'),
+                'principal_id' => $request->input('principal_id'),
+                'purchase_order_id' => $request->input('purchase_order_id'),
+                'dr_si' => $request->input('dr_si'),
+                'truck_number' => $request->input('truck_number'),
+                'courier' => $request->input('courier'),
+                'invoice_date' => $request->input('invoice_date'),
+                'discount_type' => $request->input('discount_type'),
+                'scanned_by' => $request->input('scanned_by'),
+                'finalized_by' => auth()->user()->id,
+                'branch' => $request->input('branch'),
+                'gross_purchase' => $request->input('gross_purchases'),
+                'total_less_discount' => $request->input('total_less_discount'),
+                'bo_discount' => $request->input('bo_discount'),
+                'vatable_purchase' => $request->input('vatable_purchase'),
+                'vat' => $request->input('vat'),
+                'freight' => $request->input('freight'),
+                'total_final_cost' => $request->input('total_final_cost'),
+                'total_less_other_discount' => $request->input('total_less_other_discount'),
+                'net_payable' => $request->input('net_payable'),
+                'invoice_image' => 'No Sales Invoice Yet',
+                'cwo_discount_rate' => $request->input('cwo_discount_rate'),
+                'cwo_discount' => $request->input('cwo_discount'),
+            ]);
 
-        $new_received_purchase_orders->save();
+            $new_received_purchase_orders->save();
+        }
 
-        $po = Purchase_order::select('purchase_id')->find($request->input('purchase_order_id'));
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->where('principal_id',$request->input('principal_id'))->orderBy('id', 'desc')->take(1)->first();
+
+        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->orderBy('id', 'desc')->take(1)->first();
 
         if ($ap_ledger_last_transaction) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');

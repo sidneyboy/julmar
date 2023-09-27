@@ -32,6 +32,7 @@ class Received_purchase_order extends Model
       'net_payable',
       'cwo_discount_rate',
       'cwo_discount',
+      'payment_status',
     ];
 
     public function purchase_order()

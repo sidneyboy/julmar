@@ -1,6 +1,5 @@
 <form id="received_order_save">
     @csrf
-
     @if ($discount_type == 'type_a')
         <div class="table table-responsive">
             <table class="table table-bordered table-sm table-hover table-striped">

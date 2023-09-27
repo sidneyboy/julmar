@@ -2,7 +2,7 @@
     <table class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
-                <th></th>
+                <th style="text-align: center;text-transform:uppercase">{{ $po_rr }}</th>
                 <th colspan="3" style="text-align: center;text-transform:uppercase">{{ $title }}</th>
                 <th>{{ date('F j, Y', strtotime($date)) }}</th>
             </tr>
@@ -41,16 +41,45 @@
             <tr>
                 <th colspan="3"></th>
                 <th>CHECK #</th>
-                <th>{{ $check_deposit_slip }}</th>
+                <th style="text-align: right">{{ $check_deposit_slip }}</th>
             </tr>
             <tr>
                 <th colspan="3"></th>
                 <th>CV #</th>
-                <th>{{ $cv_number }}</th>
+                <th style="text-align: right">{{ $cv_number }}</th>
             </tr>
         </thead>
     </table>
+
+    <table class="table table-bordered table-hover table-sm table-striped">
+        <thead>
+            <tr>
+                <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+
+                <th style="text-align: center;">DR</th>
+                <th style="text-align: center;">CR</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center;">AP - 
+                    {{ $principal_name->principal }}</td>
+                <td></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format($amount, 2, '.', ','); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: center;">CASH IN BANK
+                    {{ $bank }}</td>
+                <td></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format($amount, 2, '.', ','); ?></td>
+            </tr>
+        </tbody>
+    </table>
+
     <input type="hidden" name="disbursement" value="{{ $disbursement }}">
+    <input type="hidden" name="po_rr_id" value="{{ $po_rr_id }}">
     <input type="hidden" name="bank" value="{{ $bank }}">
     <input type="hidden" name="check_deposit_slip" value="{{ $check_deposit_slip }}">
     <input type="hidden" name="title" value="{{ $title }}">
@@ -63,6 +92,7 @@
     <input type="hidden" name="remarks" value="{{ $remarks }}">
     <input type="hidden" name="cv_number" value="{{ $cv_number }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
+    
 
     <button class="btn btn-sm float-right btn-success" type="submit">Submit</button>
 </form>
@@ -97,7 +127,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                
+
             }
         });
     }));

@@ -8,6 +8,8 @@ use App\Sku_principal;
 use App\Purchase_order;
 use App\Principal_ledger;
 use App\Disbursement;
+use App\Disbursement_jer;
+use App\Received_purchase_order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,7 +36,7 @@ class Disbursement_controller extends Controller
     {
         if ($request->input('disbursement') == 'payment to principal') {
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
-            
+
             return view('disbursement_show_selection', [
                 'principal' => $principal,
             ])->with('disbursement', $request->input('disbursement'));
@@ -43,19 +45,40 @@ class Disbursement_controller extends Controller
 
     public function disbursement_proceed(Request $request)
     {
-        // $purchase_order = Purchase_order::select('id', 'purchase_id')->where('principal_id', $request->input('principal_id'))->where('status', '!=', 'paid')->orderBy('id', 'desc')->get();
-        return view('disbursement_proceed')->with('disbursement', $request->input('disbursement'))
+        $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
+            ->where('payment_term', 'cash with order')
+            ->where('payment_status', null)
+            ->get();
+
+        $receive_purchase_order_unpaid = Received_purchase_order::select('id')
+            ->where('payment_status', null)
+            ->get();
+
+        return view('disbursement_proceed', [
+            'purchase_order_unpaid' => $purchase_order_unpaid,
+            'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
+        ])->with('disbursement', $request->input('disbursement'))
             ->with('principal_id', $request->input('principal_id'));
     }
 
     public function disbursement_final_summary(Request $request)
     {
+
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
+
+        $explode = explode('|', $request->input('po_rr_id'));
+        $po_rr_id = $explode[0];
+        $po_rr = $explode[1];
+
+        $principal_name = Sku_principal::select('principal')
+            ->find($request->input('principal_id'));
 
         return view('disbursement_final_summary')->with('amount', str_replace(',', '', $request->input('amount')))
             ->with('bank', $request->input('bank'))
             ->with('payee', $request->input('payee'))
+            ->with('po_rr_id', $po_rr_id)
+            ->with('po_rr', $po_rr)
             ->with('particulars', $request->input('particulars'))
             ->with('amount', str_replace(',', '', $request->input('amount')))
             ->with('amount_in_words', $request->input('amount_in_words'))
@@ -68,12 +91,13 @@ class Disbursement_controller extends Controller
             ->with('date', $date)
             ->with('disbursement', $request->input('disbursement'))
             ->with('principal_id', $request->input('principal_id'))
-            ->with('purchase_id', $request->input('purchase_id'));
+            ->with('purchase_id', $request->input('purchase_id'))
+            ->with('principal_name', $principal_name);
     }
 
     public function disbursement_saved(Request $request)
     {
-        //dd($request->all());
+        // dd($request->all());
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -92,9 +116,31 @@ class Disbursement_controller extends Controller
             'particulars' => $request->input('particulars'),
             'cv_number' => $request->input('cv_number'),
             'remarks' => $request->input('remarks'),
+            'po_rr_id' => $request->input('po_rr_id'),
         ]);
 
         $new->save();
+
+        $new_jer = new Disbursement_jer([
+            'disbursement_id' => $new->id,
+            'principal_id' => $request->input('principal_id'),
+            'debit_record' => $request->input('amount'),
+            'credit_record' => $request->input('amount'),
+        ]);
+
+        $new_jer->save();
+
+        $explode = explode('-', $request->input('po_rr_id'));
+        $transaction = $explode[0];
+        $po_rr_id = $explode[1];
+
+        if ($transaction == 'PO') {
+            Purchase_order::where('id', $po_rr_id)
+                ->update(['payment_status' => 'paid']);
+        } else {
+            Received_purchase_order::where('id', $po_rr_id)
+                ->update(['payment_status' => 'paid']);
+        }
 
         $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
         if ($principal_ledger_latest) {
@@ -156,12 +202,5 @@ class Disbursement_controller extends Controller
         ]);
 
         $new_ap_ledger->save();
-
-        // Purchase_order::where('id', $request->input('purchase_order_id'))
-        //     ->update([
-        //         'status' => 'paid',
-        //     ]);
-
-        // return 'saved';
     }
 }

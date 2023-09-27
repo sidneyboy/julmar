@@ -5,15 +5,18 @@
                 <label for="">Title</label>
                 <input type="text" class="form-control" required name="title">
             </div>
-            {{-- <div class="col-md-3">
-                <label for="">Purchase Order</label>
-                <select name="purchase_id" class="form-control select2bs4" required style="width:100%;">
+            <div class="col-md-3">
+                <label for="">Purchase Order / RR</label>
+                <select name="po_rr_id" class="form-control select2bs4" required style="width:100%;">
                     <option value="" default>Select</option>
-                    @foreach ($purchase_order as $data)
-                        <option value="{{ $data->id }}">{{ $data->purchase_id }}</option>
+                    @foreach ($purchase_order_unpaid as $purchase_order_unpaid_data)
+                        <option value="PO - {{ $purchase_order_unpaid_data->id }} | {{ $purchase_order_unpaid_data->purchase_id }}">PO - {{ $purchase_order_unpaid_data->purchase_id }}</option>
+                    @endforeach
+                    @foreach ($receive_purchase_order_unpaid as $receive_purchase_order_unpaid_data)
+                        <option value="RR - {{ $receive_purchase_order_unpaid_data->id }} | {{ $receive_purchase_order_unpaid_data->id }}">RR - {{ $receive_purchase_order_unpaid_data->id }}</option>
                     @endforeach
                 </select>
-            </div> --}}
+            </div>
             <div class="col-md-3">
                 <label for="">Bank</label>
                 <select name="bank" class="form-control" required style="width:100%;">
@@ -107,7 +110,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                
+
             }
         });
     }));
