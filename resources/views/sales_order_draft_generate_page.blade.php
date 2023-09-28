@@ -158,7 +158,7 @@
         </div>
         <div class="col-md-12">
             <br />
-            <button type="submit" class="btn btn-info btn-block">PROCEED TO FINAL SUMMARY</button>
+            <button type="submit" class="btn btn-info btn-sm float-right">Proceed to final summary</button>
         </div>
     </div>
 </form>

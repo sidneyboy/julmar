@@ -20,6 +20,10 @@ use App\Sales_order_print_jer_details;
 use App\Customer;
 use App\Ar_ledger;
 use App\Location;
+use App\Sales_invoice_accounts_receivable;
+use App\Sales_invoice_cost_of_sales;
+use App\Sales_invoice_jer;
+use App\Sales_invoice_sales;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -312,6 +316,89 @@ class Sales_order_controller extends Controller
         ]);
 
         $sales_invoice_save->save();
+
+        $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($get_last_row_sales_invoice_accounts_receivable) {
+            $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance + $request->input('final_gross_amount_jer');
+        } else {
+            $sales_invoice_ar_running_balance = $request->input('final_gross_amount_jer');
+        }
+
+        $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+            'user_id' => auth()->user()->id,
+            'principal_id' => $request->input('principal_id'),
+            'customer_id' => $request->input('customer_id'),
+            'transaction' => 'sales invoice',
+            'all_id' => $sales_invoice_save->id,
+            'debit_record' => $request->input('final_gross_amount_jer'),
+            'credit_record' => 0,
+            'running_balance' => $sales_invoice_ar_running_balance,
+        ]);
+
+        $new_sales_invoice_accounts_receivable->save();
+
+        $get_last_row_sales_invoice_sales = Sales_invoice_sales::where('customer_id', $request->input('customer_id'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($get_last_row_sales_invoice_sales) {
+            $sales_invoice_sales_running_balance = $get_last_row_sales_invoice_sales->running_balance + $request->input('final_gross_amount_jer');
+        } else {
+            $sales_invoice_sales_running_balance = $request->input('final_gross_amount_jer');
+        }
+
+        $new_sales_invoice_sales = new Sales_invoice_sales([
+            'user_id' => auth()->user()->id,
+            'principal_id' => $request->input('principal_id'),
+            'customer_id' => $request->input('customer_id'),
+            'transaction' => 'sales invoice',
+            'all_id' => $sales_invoice_save->id,
+            'debit_record' => 0,
+            'credit_record' => $request->input('final_gross_amount_jer'),
+            'running_balance' => $sales_invoice_sales_running_balance,
+        ]);
+
+        $new_sales_invoice_sales->save();
+
+        $get_last_row_sales_invoice_cost_of_sales = Sales_invoice_cost_of_sales::where('customer_id', $request->input('customer_id'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($get_last_row_sales_invoice_cost_of_sales) {
+            $sales_invoice_cost_of_sales_running_balance = $get_last_row_sales_invoice_cost_of_sales->running_balance + $request->input('final_unit_cost_amount_jer');
+        } else {
+            $sales_invoice_cost_of_sales_running_balance = $request->input('final_unit_cost_amount_jer');
+        }
+
+        $new_sales_invoice_cost_of_sales = new Sales_invoice_cost_of_sales([
+            'user_id' => auth()->user()->id,
+            'principal_id' => $request->input('principal_id'),
+            'customer_id' => $request->input('customer_id'),
+            'transaction' => 'sales invoice',
+            'all_id' => $sales_invoice_save->id,
+            'debit_record' => $request->input('final_unit_cost_amount_jer'),
+            'credit_record' => 0,
+            'running_balance' => $sales_invoice_cost_of_sales_running_balance,
+        ]);
+
+        $new_sales_invoice_cost_of_sales->save();
+
+
+        $new_sales_invoice_jer = new Sales_invoice_jer([
+            'sales_invoice_id' => $sales_invoice_save->id,
+            'debit_record_ar' => $request->input('final_gross_amount_jer'),
+            'credit_record_sales' => $request->input('final_gross_amount_jer'),
+            'debit_record_cost_of_sales' => $request->input('final_unit_cost_amount_jer'),
+            'credit_record_inventory' => $request->input('final_unit_cost_amount_jer'),
+        ]);
+
+        $new_sales_invoice_jer->save();
 
         foreach ($request->input('sku_id') as $key => $data) {
             $sales_invoice_details = new Sales_invoice_details([

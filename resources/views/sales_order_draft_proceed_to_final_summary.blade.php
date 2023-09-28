@@ -3,24 +3,24 @@
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
-                    <th>Agent</th>
-                    <th>Customer</th>
-                    <th>Customer Code</th>
-                    <th>Price Level</th>
-                    <th>Principal</th>
-                    <th>Sku Type</th>
-                    <th>Mode of Transaction</th>
+                    <th style="text-align: center">Agent</th>
+                    <th style="text-align: center">Customer</th>
+                    <th style="text-align: center">Customer Code</th>
+                    <th style="text-align: center">Price Level</th>
+                    <th style="text-align: center">Principal</th>
+                    <th style="text-align: center">Sku Type</th>
+                    <th style="text-align: center">Mode of Transaction</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ $sales_order_draft->agent->full_name }}</td>
-                    <td>{{ $sales_order_draft->customer->store_name }}</td>
-                    <td>{{ $customer_principal_code }}</td>
-                    <td style="text-transform:uppercase">{{ $customer_principal_price }}</td>
-                    <td>{{ $sales_order_draft->principal->principal }}</td>
-                    <td>{{ $sales_order_draft->sku_type }}</td>
-                    <td>
+                    <td style="text-align: center;">{{ $sales_order_draft->agent->full_name }}</td>
+                    <td style="text-align: center;">{{ $sales_order_draft->customer->store_name }}</td>
+                    <td style="text-align: center;">{{ $customer_principal_code }}</td>
+                    <td style="text-transform:uppercase;text-align:center;">{{ $customer_principal_price }}</td>
+                    <td style="text-align: center;">{{ $sales_order_draft->principal->principal }}</td>
+                    <td style="text-align: center;">{{ $sales_order_draft->sku_type }}</td>
+                    <td style="text-align: center;">
                         {{ $sales_order_draft->mode_of_transaction }}
                     </td>
                 </tr>
@@ -60,11 +60,15 @@
                         </td>
                         <td style="text-align: right">
                             {{ $unit_price[$details->sku_id] }}
+
                         </td>
                         <td style="text-align: right">
                             @php
                                 echo $sub_total = $final_quantity[$details->sku_id] * $unit_price[$details->sku_id];
                                 $sum_total[] = $sub_total;
+                                
+                                $unit_cost_sub_total = $details->sku->sku_price_details_one->unit_cost * $final_quantity[$details->sku_id];
+                                $sum_unit_cost_sub_total[] = $unit_cost_sub_total;
                             @endphp
                             <input type="hidden" name="sku_id[]" value="{{ $details->sku_id }}">
                             <input type="hidden" name="unit_price[{{ $details->sku_id }}]"
@@ -82,7 +86,10 @@
             <tfoot>
                 @if ($customer_discount != 0)
                     <tr>
-                        <th colspan="5" style="text-align: right">GROSS</th>
+                        <th colspan="3" style="text-align: center">GROSS</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                     </tr>
                     @php
@@ -92,8 +99,11 @@
                     @endphp
                     @foreach ($customer_discount as $data_discount)
                         <tr>
-                            <th colspan="4"></th>
-                            <th style="text-align: right">Less - {{ $data_discount }}</th>
+
+                            <th style="text-align: center" colspan="3">LESS - {{ $data_discount }}</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th style="text-align: right">
                                 @php
                                     $discount_value_holder_dummy = $discount_value_holder;
@@ -110,7 +120,7 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <th colspan="3" style="text-align: right">TOTAL</th>
+                        <th colspan="3" style="text-align: center">TOTAL</th>
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
                         </th>
@@ -123,14 +133,14 @@
                             @php
                                 $final_total = end($discount_holder);
                             @endphp
-                            <input type="hidden" value="{{ array_sum($sum_total) }}" name="final_total">
+                            <input type="hidden" value="{{ $final_total }}" name="final_total">
                             <input type="hidden" value="{{ array_sum($customer_discount_holder) }}"
                                 name="customer_discount">
                         </th>
                     </tr>
                 @else
                     <tr>
-                        <th colspan="3" style="text-align: right">TOTAL</th>
+                        <th colspan="3" style="text-align: center">TOTAL</th>
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
                         </th>
@@ -147,6 +157,118 @@
                 @endif
             </tfoot>
         </table>
+
+        @if ($customer_discount != 0)
+            <table class="table table-bordered table-hover table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+
+                        <th style="text-align: center;">DR</th>
+                        <th style="text-align: center;">CR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">ACCOUNTS RECEIVABLE -
+                            {{ $sales_order_draft->customer->store_name }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format($final_total, 2, '.', ',') }}
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center;">SALES - {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format($final_total, 2, '.', ',') }}
+                            <input type="hidden" name="final_gross_amount_jer" value="{{ $final_total }}">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: center;">COST OF SALES -
+                            {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center;">INVENTORY - {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                            <input type="hidden" name="final_unit_cost_amount_jer" value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        @else
+            <table class="table table-bordered table-hover table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                        <th style="text-align: center;">DR</th>
+                        <th style="text-align: center;">CR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">ACCOUNTS RECEIVABLE -
+                            {{ $sales_order_draft->customer->store_name }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_total), 2, '.', ',') }}
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center;">SALES - {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_total), 2, '.', ',') }}
+                            <input type="hidden" name="final_gross_amount_jer" value="{{ array_sum($sum_total) }}">
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td style="text-align: center;">COST OF SALES -
+                            {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center;">INVENTORY - {{ $sales_order_draft->principal->principal }}
+                        </td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                            <input type="hidden" name="final_unit_cost_amount_jer" value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
+
+
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -159,7 +281,7 @@
             <input type="hidden" value="{{ $principal_id }}" name="principal_id">
             <input type="hidden" value="{{ $sales_order_draft->sales_order_number }}" name="sales_order_number">
             <input type="hidden" value="{{ $sales_order_draft->id }}" name="sales_order_draft_id">
-            <button type="submit" class="btn btn-success btn-block">SUBMIT</button>
+            <button type="submit" class="btn btn-success btn-sm float-right">Submit</button>
         </div>
     </div>
 </form>
@@ -178,12 +300,12 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire(
-                    'Transaction Submitted',
-                    '',
-                    'success'
-                )
-                location.reload();
+                // Swal.fire(
+                //     'Transaction Saved',
+                //     '',
+                //     'success'
+                // )
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

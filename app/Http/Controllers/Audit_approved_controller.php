@@ -72,15 +72,19 @@ class Audit_approved_controller extends Controller
 
     public function audit_approved_customer_process(Request $request)
     {
-        $user = User::find(auth()->user()->id);
-        $hashedPassword = $user->password;
-        if (Hash::check($request->input('password'), $hashedPassword)) {
-            Customer::where('id', $request->input('customer_id'))
-                ->update(['status' => 'Approved']);
+        $user = User::select('id', 'password', 'position')->find(auth()->user()->id);
+        if ($user->position == 'admin' or $user->position == 'audit') {
+            $hashedPassword = $user->password;
+            if (Hash::check($request->input('password'), $hashedPassword)) {
+                Customer::where('id', $request->input('customer_id'))
+                    ->update(['status' => 'Approved']);
 
-            return redirect('audit_approved_customer')->with('sucess', 'Approved Successfully');
-        } else {
-            return redirect('audit_approved_customer')->with('error', 'Wrong Password');
+                return redirect('audit_approved_customer')->with('sucess', 'Approved Successfully');
+            } else {
+                return redirect('audit_approved_customer')->with('error', 'Wrong Password');
+            }
+        }else{
+            return redirect('audit_approved_customer')->with('error', 'Access Disallowed');
         }
     }
 }

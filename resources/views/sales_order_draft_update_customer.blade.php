@@ -24,7 +24,7 @@
         </div>
 
         <div class="col-md-4">
-            <label>Store Name</label>
+            <label>Sales Area</label>
             <select name="location_id" class="form-control" required>
                 <option value="" default>Select</option>
                 <option value="{{ $customer_check->location_id }}" selected>{{ $customer_check->location->location }}
