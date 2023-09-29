@@ -16,4 +16,10 @@ class Sales_invoice_sales extends Model
         'credit_record',
         'running_balance',
     ];
+
+    public function sales_invoice()
+    {
+        return $this->belongsTo('App\Sales_invoice', 'all_id')->select('delivery_receipt');
+    }
 }
+

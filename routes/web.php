@@ -850,14 +850,5 @@ Route::post('/van_selling_reports_and_dashboard_productive_calls_generate', 'Van
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+Route::get('/customer_ledger', 'Customer_ledger_controller@index');
+Route::post('/customer_ledger_generate', 'Customer_ledger_controller@customer_ledger_generate')->name('customer_ledger_generate');

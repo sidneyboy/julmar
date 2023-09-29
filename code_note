@@ -1,3 +1,11 @@
+use Illuminate\Support\Facades\DB;
+
+
+
+
+
+
+
 $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
 WHERE principal_id = '$principal_id' AND sku_type = '$sku_type' GROUP BY sku_id)");
 ---get the last row of a group

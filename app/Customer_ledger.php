@@ -8,23 +8,23 @@ class Customer_ledger extends Model
 {
     protected $fillable = [
         'customer_payment_id',
-         'van_selling_payment_id',
-    	'customer_id',
-    	'principal_id',
+        'van_selling_payment_id',
+        'customer_id',
+        'principal_id`',
         'delivery_receipt',
-    	'sales_order_number',
-    	'transaction_reference',
+        'sales_order_number',
+        'transaction_reference',
         'accounts_receivable_previous',
-    	'sales',
+        'sales',
         'payment',
         'bo',
         'rgs',
         'adjustments',
         'payment',
         'accounts_receivable_end',
-    	'credit_line_amount',
+        'credit_line_amount',
         'update_credit_line_amount',
-    	'credit_line_balance',
+        'credit_line_balance',
     ];
 
     public function customer()
@@ -32,11 +32,8 @@ class Customer_ledger extends Model
         return $this->belongsTo('App\Customer', 'customer_id');
     }
 
-     public function principal()
+    public function principal()
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
-
-
-
 }

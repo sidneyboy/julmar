@@ -49,6 +49,11 @@ class Sku_add extends Model
       return $this->hasOne('App\Sku_price_details','sku_id')->orderBy('id','Desc');
     }
 
+    public function sku_price_details_unit_cost()
+    {
+      return $this->hasOne('App\Sku_price_details','sku_id')->select('unit_cost')->orderBy('id','Desc');
+    }
+
     public function sku_ledger()
     {
       return $this->hasMany('App\Sku_ledger', 'sku_id');
