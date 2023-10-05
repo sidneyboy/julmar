@@ -144,6 +144,15 @@ class Sales_order_controller extends Controller
                         $sales_order_details->save();
                     }
 
+                    $customer_checker = Customer_principal_code::select('id')->where('customer_id', $csv[1][0])
+                        ->where('principal_id', $csv[1][2])
+                        ->count();
+
+                    if ($customer_checker == 0) {
+                        Customer::where('id', $csv[1][0])
+                            ->update(['status' => 'Pending Approval']);
+                    }
+
                     return 'saved';
                 }
             } else {
@@ -173,9 +182,13 @@ class Sales_order_controller extends Controller
     {
         $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
 
-        $customer_check = Customer::find($sales_order_draft->customer_id);
+        // $customer_check = Customer::find($sales_order_draft->customer_id);
 
-        if ($customer_check->status == "Pending Approval") {
+        $customer_principal_price_checker = Customer_principal_price::where('customer_id', $sales_order_draft->customer_id)
+            ->where('principal_id', $sales_order_draft->principal_id)
+            ->count();
+
+        if ($customer_principal_price_checker == 0) {
             $location = Location::select('id', 'location')->where('id', '!=', $customer_check->location_id)->get();
             $customer_principal_code = Customer_principal_code::where('customer_id', $customer_check->id)->where('principal_id', $sales_order_draft->principal_id)->first();
             $customer_principal_price = Customer_principal_price::where('customer_id', $customer_check->id)->where('principal_id', $sales_order_draft->principal_id)->first();
@@ -189,7 +202,6 @@ class Sales_order_controller extends Controller
         } else {
             $customer_principal_price = Customer_principal_price::select('price_level')->where('customer_id', $sales_order_draft->customer_id)
                 ->where('principal_id', $sales_order_draft->principal_id)->first();
-
 
             $customer_discount = Customer_discount::select('id', 'customer_discount')->where('customer_id', $sales_order_draft->customer_id)
                 ->where('principal_id', $sales_order_draft->principal_id)
@@ -205,6 +217,36 @@ class Sales_order_controller extends Controller
                 'customer_principal_code' => $customer_principal_code,
             ]);
         }
+
+        // if ($customer_check->status == "Pending Approval") {
+        //     $location = Location::select('id', 'location')->where('id', '!=', $customer_check->location_id)->get();
+        //     $customer_principal_code = Customer_principal_code::where('customer_id', $customer_check->id)->where('principal_id', $sales_order_draft->principal_id)->first();
+        //     $customer_principal_price = Customer_principal_price::where('customer_id', $customer_check->id)->where('principal_id', $sales_order_draft->principal_id)->first();
+        //     return view('sales_order_draft_update_customer', [
+        //         'customer_check' => $customer_check,
+        //         'customer_principal_code' => $customer_principal_code,
+        //         'customer_principal_price' => $customer_principal_price,
+        //         'sales_order_draft' => $sales_order_draft,
+        //         'location' => $location,
+        //     ]);
+        // } else {
+        //     $customer_principal_price = Customer_principal_price::select('price_level')->where('customer_id', $sales_order_draft->customer_id)
+        //         ->where('principal_id', $sales_order_draft->principal_id)->first();
+
+        //     $customer_discount = Customer_discount::select('id', 'customer_discount')->where('customer_id', $sales_order_draft->customer_id)
+        //         ->where('principal_id', $sales_order_draft->principal_id)
+        //         ->get();
+
+        //     $customer_principal_code = Customer_principal_code::select('store_code')->where('customer_id', $sales_order_draft->customer_id)
+        //         ->where('principal_id', $sales_order_draft->principal_id)->first();
+
+        //     return view('sales_order_draft_generate_page', [
+        //         'sales_order_draft' => $sales_order_draft,
+        //         'customer_discount' => $customer_discount,
+        //         'customer_principal_price' => $customer_principal_price,
+        //         'customer_principal_code' => $customer_principal_code,
+        //     ]);
+        // }
     }
 
     public function sales_order_draft_proceed_to_final_summary(Request $request)

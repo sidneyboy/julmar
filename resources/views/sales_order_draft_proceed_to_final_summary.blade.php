@@ -30,15 +30,17 @@
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
-                    <th colspan="7">DR: {{ $delivery_receipt }}</th>
+                    <th colspan="8">DR: {{ $delivery_receipt }}</th>
                 </tr>
                 <tr>
                     <th>Code</th>
                     <th>Desc</th>
                     <th>UOM</th>
-                    <th>KG</th>
+                    {{-- <th>KG</th> --}}
                     <th>Qty</th>
                     <th>U/P</th>
+                    <th>Sub Total</th>
+                    <th>Avg Cost</th>
                     <th>Sub Total</th>
                 </tr>
             </thead>
@@ -48,27 +50,22 @@
                         <td>{{ $details->sku->sku_code }}</td>
                         <td>{{ $details->sku->description }}</td>
                         <td>{{ $details->sku->unit_of_measurement }}</td>
-                        <td style="text-align: right">{{ $details->sku->kilograms }}
-                            @php
-                                $sum_kg[] = $details->sku->kilograms;
-                            @endphp
-                        </td>
                         <td style="text-align: right">{{ $final_quantity[$details->sku_id] }}
                             @php
                                 $sum_quantity[] = $final_quantity[$details->sku_id];
                             @endphp
                         </td>
                         <td style="text-align: right">
-                            {{ $unit_price[$details->sku_id] }}
+                            {{ number_format($unit_price[$details->sku_id], 2, '.', ',') }}
 
                         </td>
                         <td style="text-align: right">
                             @php
-                                echo $sub_total = $final_quantity[$details->sku_id] * $unit_price[$details->sku_id];
+                                $sub_total = $final_quantity[$details->sku_id] * $unit_price[$details->sku_id];
                                 $sum_total[] = $sub_total;
+                                echo number_format($sub_total, 2, '.', ',');
+                                $sum_kg[] = $details->sku->kilograms;
                                 
-                                $unit_cost_sub_total = $details->sku->sku_price_details_one->unit_cost * $final_quantity[$details->sku_id];
-                                $sum_unit_cost_sub_total[] = $unit_cost_sub_total;
                             @endphp
                             <input type="hidden" name="sku_id[]" value="{{ $details->sku_id }}">
                             <input type="hidden" name="unit_price[{{ $details->sku_id }}]"
@@ -80,6 +77,17 @@
                             <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
                                 value="{{ $sub_total }}">
                         </td>
+                        <td style="text-align: right">
+                            @php
+                                $unit_cost_sub_total = $details->sku->sku_ledger_get_average_cost->running_amount / $details->sku->sku_ledger_get_average_cost->running_balance;
+                                $sum_unit_cost_sub_total[] = $unit_cost_sub_total * $final_quantity[$details->sku_id];
+                                
+                                echo number_format($unit_cost_sub_total, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align:right">
+                            {{ number_format($unit_cost_sub_total * $final_quantity[$details->sku_id], 2, '.', ',') }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -89,8 +97,9 @@
                         <th colspan="3" style="text-align: center">GROSS</th>
                         <th></th>
                         <th></th>
-                        <th></th>
                         <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     @php
                         $total = array_sum($sum_total);
@@ -101,7 +110,6 @@
                         <tr>
 
                             <th style="text-align: center" colspan="3">LESS - {{ $data_discount }}</th>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th style="text-align: right">
@@ -117,13 +125,15 @@
                                 @endphp
                                 <input type="hidden" name="discount_rate[]" value="{{ $data_discount }}">
                             </th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     @endforeach
                     <tr>
                         <th colspan="3" style="text-align: center">TOTAL</th>
-                        <th style="text-align: right">
+                        {{-- <th style="text-align: right">
                             {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
-                        </th>
+                        </th> --}}
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
                         </th>
@@ -137,21 +147,28 @@
                             <input type="hidden" value="{{ array_sum($customer_discount_holder) }}"
                                 name="customer_discount">
                         </th>
+                        <th></th>
+                        <th style="text-align: right;text-decoration: overline">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                        </th>
                     </tr>
                 @else
                     <tr>
-                        <th colspan="3" style="text-align: center">TOTAL</th>
-                        <th style="text-align: right">
+                        <th colspan="4" style="text-align: center">TOTAL</th>
+                        {{-- <th style="text-align: right">
                             {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
-                        </th>
+                        </th> --}}
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
                         </th>
-                        <th></th>
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_total), 2, '.', ',') }}
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="final_total">
                             <input type="hidden" value="{{ 0 }}" name="customer_discount">
+                        </th>
+                        <th></th>
+                        <th style="text-align: right">
+                            {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
                         </th>
                     </tr>
                 @endif
@@ -207,7 +224,8 @@
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
-                            <input type="hidden" name="final_unit_cost_amount_jer" value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                            <input type="hidden" name="final_unit_cost_amount_jer"
+                                value="{{ array_sum($sum_unit_cost_sub_total) }}">
                         </td>
                     </tr>
                 </tbody>
@@ -261,7 +279,8 @@
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
-                            <input type="hidden" name="final_unit_cost_amount_jer" value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                            <input type="hidden" name="final_unit_cost_amount_jer"
+                                value="{{ array_sum($sum_unit_cost_sub_total) }}">
                         </td>
                     </tr>
                 </tbody>

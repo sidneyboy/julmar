@@ -9,6 +9,7 @@ use App\Purchase_order;
 use App\Principal_ledger;
 use App\Disbursement;
 use App\Disbursement_jer;
+use App\Received_jer;
 use App\Received_purchase_order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,20 +46,83 @@ class Disbursement_controller extends Controller
 
     public function disbursement_proceed(Request $request)
     {
-        $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
-            ->where('payment_term', 'cash with order')
-            ->where('payment_status', null)
-            ->get();
+        // $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
+        // ->where('principal_id',$request->input('principal_id'))
+        //     ->where('payment_term', 'cash with order')
+        //     ->where('payment_status', null)
+        //     ->orWhere('payment_status', 'partial')
+        //     ->get();
 
         $receive_purchase_order_unpaid = Received_purchase_order::select('id')
+            ->where('principal_id', $request->input('principal_id'))
             ->where('payment_status', null)
+            ->orWhere('payment_status', 'partial')
             ->get();
 
         return view('disbursement_proceed', [
-            'purchase_order_unpaid' => $purchase_order_unpaid,
+            // 'purchase_order_unpaid' => $purchase_order_unpaid,
             'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
         ])->with('disbursement', $request->input('disbursement'))
             ->with('principal_id', $request->input('principal_id'));
+    }
+
+    public function disbursement_show_po_rr_payable(Request $request)
+    {
+        $explode = explode('|', $request->input('po_rr_id'));
+        $po_rr_data = $explode[0];
+
+        $explode_po_rr_data = explode('-', $po_rr_data);
+        $transaction = $explode_po_rr_data[0];
+        $po_rr_id = $explode_po_rr_data[1];
+
+
+
+        if ($transaction == "RR ") {
+            $checker = Received_purchase_order::select('payment_status')
+                ->where('id', $po_rr_id)
+                ->first();
+
+            if ($checker->payment_status == 'partial') {
+                $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
+                    ->sum('amount');
+
+                $receive_purchase_order_unpaid_amount = Received_jer::select('dr')
+                    ->where('received_id', $po_rr_id)
+                    ->first();
+
+                $amount_payable = $receive_purchase_order_unpaid_amount->dr - $prev_payment;
+            } else {
+                $receive_purchase_order_unpaid_amount = Received_jer::select('dr')
+                    ->where('received_id', $po_rr_id)
+                    ->first();
+
+                $amount_payable = $receive_purchase_order_unpaid_amount->dr;
+            }
+        } else {
+            $checker = Purchase_order::select('payment_status')
+                ->where('id', $po_rr_id)
+                ->first();
+
+            if ($checker->payment_status == 'partial') {
+                $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
+                    ->sum('amount');
+
+                $amount_payable = Disbursement::select('amount_payble')
+                    ->where('po_rr_id', $po_rr_id)
+                    ->first();
+
+                $amount_payable = $amount_payable->amount_payable - $prev_payment;
+            } else {
+                $receive_purchase_order_unpaid_amount = Purchase_order::select('dr')
+                    ->where('received_id', $po_rr_id)
+                    ->first();
+
+                $amount_payable = $receive_purchase_order_unpaid_amount->dr;
+            }
+        }
+
+        return view('disbursement_show_po_rr_payable')
+            ->with('amount_payable', $amount_payable);
     }
 
     public function disbursement_final_summary(Request $request)
@@ -74,19 +138,15 @@ class Disbursement_controller extends Controller
         $principal_name = Sku_principal::select('principal')
             ->find($request->input('principal_id'));
 
-        return view('disbursement_final_summary')->with('amount', str_replace(',', '', $request->input('amount')))
+        return view('disbursement_final_summary')
             ->with('bank', $request->input('bank'))
-            ->with('payee', $request->input('payee'))
             ->with('po_rr_id', $po_rr_id)
             ->with('po_rr', $po_rr)
             ->with('particulars', $request->input('particulars'))
             ->with('amount', str_replace(',', '', $request->input('amount')))
-            ->with('amount_in_words', $request->input('amount_in_words'))
-            ->with('credit', str_replace(',', '', $request->input('credit')))
+            ->with('amount_payable', str_replace(',', '', $request->input('amount_payable')))
+            ->with('original_amount_payable', str_replace(',', '', $request->input('original_amount_payable')))
             ->with('cv_number', $request->input('cv_number'))
-            ->with('debit', str_replace(',', '', $request->input('debit')))
-            ->with('remarks', $request->input('remarks'))
-            ->with('title', $request->input('title'))
             ->with('check_deposit_slip', $request->input('check_deposit_slip'))
             ->with('date', $date)
             ->with('disbursement', $request->input('disbursement'))
@@ -101,6 +161,10 @@ class Disbursement_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
+        $explode = explode('-', $request->input('po_rr_id'));
+        $transaction = $explode[0];
+        $po_rr_id = $explode[1];
+
         $new = new Disbursement([
             'user_id' => auth()->user()->id,
             'disbursement' => $request->input('disbursement'),
@@ -108,15 +172,11 @@ class Disbursement_controller extends Controller
             'check_deposit_slip' => $request->input('check_deposit_slip'),
             'principal_id' => $request->input('principal_id'),
             'amount' => $request->input('amount'),
-            'payee' => $request->input('payee'),
-            'amount_in_words' => $request->input('amount_in_words'),
-            'title' => $request->input('title'),
-            'debit' => $request->input('debit'),
-            'credit' => $request->input('credit'),
+            'amount_payable' => str_replace(',', '', $request->input('amount_payable')),
             'particulars' => $request->input('particulars'),
             'cv_number' => $request->input('cv_number'),
-            'remarks' => $request->input('remarks'),
-            'po_rr_id' => $request->input('po_rr_id'),
+            'po_rr_id' => $po_rr_id,
+            'transaction' => $transaction,
         ]);
 
         $new->save();
@@ -130,16 +190,24 @@ class Disbursement_controller extends Controller
 
         $new_jer->save();
 
-        $explode = explode('-', $request->input('po_rr_id'));
-        $transaction = $explode[0];
-        $po_rr_id = $explode[1];
+
 
         if ($transaction == 'PO') {
-            Purchase_order::where('id', $po_rr_id)
-                ->update(['payment_status' => 'paid']);
+            if ($request->input('outstanding_balance') != 0) {
+                Purchase_order::where('id', $po_rr_id)
+                    ->update(['payment_status' => 'partial']);
+            } else {
+                Purchase_order::where('id', $po_rr_id)
+                    ->update(['payment_status' => 'paid']);
+            }
         } else {
-            Received_purchase_order::where('id', $po_rr_id)
-                ->update(['payment_status' => 'paid']);
+            if ($request->input('outstanding_balance') != 0) {
+                Received_purchase_order::where('id', $po_rr_id)
+                    ->update(['payment_status' => 'partial']);
+            } else {
+                Received_purchase_order::where('id', $po_rr_id)
+                    ->update(['payment_status' => 'paid']);
+            }
         }
 
         $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();

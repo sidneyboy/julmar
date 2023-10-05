@@ -723,6 +723,10 @@ Route::post('/disbursement_proceed', 'Disbursement_controller@disbursement_proce
 Route::post('/disbursement_final_summary', 'Disbursement_controller@disbursement_final_summary')->name('disbursement_final_summary');
 Route::post('/disbursement_saved', 'Disbursement_controller@disbursement_saved')->name('disbursement_saved');
 
+Route::post('/disbursement_show_po_rr_payable', 'Disbursement_controller@disbursement_show_po_rr_payable')->name('disbursement_show_po_rr_payable');
+
+
+
 
 Route::get('/disbursement_report', 'Disbursement_report_controller@index')->name('disbursement_report');
 Route::post('/disbursement_report_show_data', 'Disbursement_report_controller@disbursement_report_show_data')->name('disbursement_report_show_data');

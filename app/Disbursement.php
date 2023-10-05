@@ -22,6 +22,8 @@ class Disbursement extends Model
         'cv_number',
         'remarks',
         'po_rr_id',
+        'amount_payable',
+        'transaction',
     ];
 
     public function user()
