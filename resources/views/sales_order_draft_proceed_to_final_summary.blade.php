@@ -30,16 +30,20 @@
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
-                    <th colspan="8">DR: {{ $delivery_receipt }}</th>
+                    <th colspan="12">DR: {{ $delivery_receipt }}</th>
                 </tr>
                 <tr>
                     <th>Code</th>
                     <th>Desc</th>
                     <th>UOM</th>
-                    {{-- <th>KG</th> --}}
                     <th>Qty</th>
                     <th>U/P</th>
                     <th>Sub Total</th>
+                    @foreach ($customer_discount as $item_discount_rate)
+                        <th>Less - {{ $item_discount_rate }}%</th>
+                    @endforeach
+                    <th>Total Discount</th>
+                    <th>Final Total</th>
                     <th>Avg Cost</th>
                     <th>Sub Total</th>
                 </tr>
@@ -65,7 +69,6 @@
                                 $sum_total[] = $sub_total;
                                 echo number_format($sub_total, 2, '.', ',');
                                 $sum_kg[] = $details->sku->kilograms;
-                                
                             @endphp
                             <input type="hidden" name="sku_id[]" value="{{ $details->sku_id }}">
                             <input type="hidden" name="unit_price[{{ $details->sku_id }}]"
@@ -76,6 +79,34 @@
                                 value="{{ $details->sku->kilograms }}">
                             <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
                                 value="{{ $sub_total }}">
+                        </td>
+                        @php
+                            $upper_total = $sub_total;
+                            $discount_holder = [];
+                            $discount_value_holder_upper = $upper_total;
+                        @endphp
+                        @foreach ($customer_discount as $item_discount_rate)
+                            <td style="text-align:right">
+                                @php
+                                    $discount_value_holder_upper_dummy = $discount_value_holder_upper;
+                                    $less_percentage_upper = $item_discount_rate / 100;
+                                    
+                                    $discount_value_holder_upper = $discount_value_holder_upper - $discount_value_holder_upper_dummy * $less_percentage_upper;
+                                    $discount_per_sku = $discount_value_holder_upper_dummy - $discount_value_holder_upper;
+                                    
+                                    echo number_format($discount_per_sku, 2, '.', ',');
+                                    $total_discount_per_sku[] = $discount_per_sku;
+                                @endphp
+                            </td>
+                        @endforeach
+                        <td style="text-align:right">
+                            {{ number_format(array_sum($total_discount_per_sku), 2, '.', ',') }}
+                        </td>
+                        <td style="text-align: right">
+                            {{ number_format($sub_total - array_sum($total_discount_per_sku), 2, '.', ',') }}
+                            @php
+                                $sum_total_discount_per_sku[] = $sub_total - array_sum($total_discount_per_sku);
+                            @endphp
                         </td>
                         <td style="text-align: right">
                             @php
@@ -100,6 +131,10 @@
                         <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     @php
                         $total = array_sum($sum_total);
@@ -108,7 +143,6 @@
                     @endphp
                     @foreach ($customer_discount as $data_discount)
                         <tr>
-
                             <th style="text-align: center" colspan="3">LESS - {{ $data_discount }}</th>
                             <th></th>
                             <th></th>
@@ -127,18 +161,19 @@
                             </th>
                             <th></th>
                             <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     @endforeach
                     <tr>
                         <th colspan="3" style="text-align: center">TOTAL</th>
-                        {{-- <th style="text-align: right">
-                            {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
-                        </th> --}}
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
                         </th>
                         <th></th>
-                        <th style="text-align: right;text-decoration: overline">
+                        <th style="text-align: right;text-decoration: overline;color:green">
                             {{ number_format(end($discount_holder), 2, '.', ',') }}
                             @php
                                 $final_total = end($discount_holder);
@@ -148,6 +183,10 @@
                                 name="customer_discount">
                         </th>
                         <th></th>
+                        <th></th>
+                        <th style="text-align: right;text-decoration: overline;color:red;">{{ number_format(array_sum($sum_total_discount_per_sku), 2, '.', ',') }}</th>
+                        <th></th>
+                        <th></th>
                         <th style="text-align: right;text-decoration: overline">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
                         </th>
@@ -155,9 +194,6 @@
                 @else
                     <tr>
                         <th colspan="4" style="text-align: center">TOTAL</th>
-                        {{-- <th style="text-align: right">
-                            {{ number_format(array_sum($sum_kg), 2, '.', ',') }}
-                        </th> --}}
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_quantity), 2, '.', ',') }}
                         </th>
