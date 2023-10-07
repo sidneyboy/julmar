@@ -17,6 +17,7 @@ class Sales_invoice_details extends Model
         'principal_id',
         'sku_type',
         'kilograms',
+        'total_discount_per_sku',
     ];
 
     public function sku()

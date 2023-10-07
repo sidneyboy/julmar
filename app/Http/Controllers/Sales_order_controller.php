@@ -182,7 +182,7 @@ class Sales_order_controller extends Controller
     {
         $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
 
-        // $customer_check = Customer::find($sales_order_draft->customer_id);
+        $customer_check = Customer::find($sales_order_draft->customer_id);
 
         $customer_principal_price_checker = Customer_principal_price::where('customer_id', $sales_order_draft->customer_id)
             ->where('principal_id', $sales_order_draft->principal_id)
@@ -453,6 +453,7 @@ class Sales_order_controller extends Controller
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => strtoupper($request->input('sku_type')),
                 'kilograms' => $request->input('kilograms')[$data],
+                'total_discount_per_sku' => $request->input('total_discount_per_sku')[$data],
             ]);
 
             $sales_invoice_details->save();

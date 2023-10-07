@@ -149,8 +149,9 @@
         var table = $('#example1').DataTable({
             responsive: true,
             paging: false,
-            ordering: true,
+            ordering: false,
             info: false,
+            searching: false,
             dom: 'Bfrtip',
             buttons: [
                 // 'copyHtml5',

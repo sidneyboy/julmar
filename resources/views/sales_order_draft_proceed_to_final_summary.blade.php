@@ -81,31 +81,39 @@
                                 value="{{ $sub_total }}">
                         </td>
                         @php
-                            $upper_total = $sub_total;
-                            $discount_holder = [];
-                            $discount_value_holder_upper = $upper_total;
+                            $total = $sub_total;
+                            
+                            $discount_value_holder = $total;
+                            $discount_value_holder_history = [];
+                            $discount_value_holder_history_for_bo_allowance = [];
+                            $totalArray = [];
+                            $percent = [];
                         @endphp
                         @foreach ($customer_discount as $item_discount_rate)
-                            <td style="text-align:right">
-                                @php
-                                    $discount_value_holder_upper_dummy = $discount_value_holder_upper;
-                                    $less_percentage_upper = $item_discount_rate / 100;
-                                    
-                                    $discount_value_holder_upper = $discount_value_holder_upper - $discount_value_holder_upper_dummy * $less_percentage_upper;
-                                    $discount_per_sku = $discount_value_holder_upper_dummy - $discount_value_holder_upper;
-                                    
-                                    echo number_format($discount_per_sku, 2, '.', ',');
-                                    $total_discount_per_sku[] = $discount_per_sku;
-                                @endphp
-                            </td>
+                            @php
+                                $discount_value_holder_dummy = $discount_value_holder;
+                                $less_percentage_by = $item_discount_rate / 100;
+                                
+                                $discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                                $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                
+                                $discount_value_holder_history[] = $discount_rate_answer;
+                                $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                                echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                            @endphp
                         @endforeach
                         <td style="text-align:right">
-                            {{ number_format(array_sum($total_discount_per_sku), 2, '.', ',') }}
+                            @php
+                                $total_discount_per_sku = $sub_total - end($discount_value_holder_history_for_bo_allowance);
+                            @endphp
+                            {{ number_format($total_discount_per_sku, 2, '.', ',') }}
+                            <input type="hidden" name="total_discount_per_sku[{{ $details->sku_id }}]"
+                                value="{{ $total_discount_per_sku }}">
                         </td>
                         <td style="text-align: right">
-                            {{ number_format($sub_total - array_sum($total_discount_per_sku), 2, '.', ',') }}
+                            {{ number_format($sub_total - $total_discount_per_sku, 2, '.', ',') }}
                             @php
-                                $sum_total_discount_per_sku[] = $sub_total - array_sum($total_discount_per_sku);
+                                $sum_total_discount_per_sku[] = $sub_total - $total_discount_per_sku;
                             @endphp
                         </td>
                         <td style="text-align: right">
@@ -184,8 +192,13 @@
                         </th>
                         <th></th>
                         <th></th>
-                        <th style="text-align: right;text-decoration: overline;color:red;">{{ number_format(array_sum($sum_total_discount_per_sku), 2, '.', ',') }}</th>
+
                         <th></th>
+                        <th style="text-align: right;text-decoration: overline;color:red;">
+
+                            {{ number_format(array_sum($sum_total_discount_per_sku), 2, '.', ',') }}
+
+                        </th>
                         <th></th>
                         <th style="text-align: right;text-decoration: overline">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
