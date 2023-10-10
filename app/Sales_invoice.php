@@ -42,6 +42,11 @@ class Sales_invoice extends Model
         return $this->belongsTo('App\Agent', 'agent_id');
     }
 
+    public function sales_invoice_agent()
+    {
+        return $this->belongsTo('App\Agent', 'agent_id')->select('full_name');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id');
@@ -50,6 +55,11 @@ class Sales_invoice extends Model
     public function customer()
     {
         return $this->belongsTo('App\Customer', 'customer_id');
+    }
+
+    public function sales_invoice_customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id')->select('store_name','location_id','kind_of_business');
     }
 
     public function sales_order()

@@ -25,6 +25,11 @@ class Sales_invoice_details extends Model
         return $this->belongsTo('App\Sku_add', 'sku_id');
     }
 
+    public function sales_invoice_sku()
+    {
+        return $this->belongsTo('App\Sku_add', 'sku_id')->select('description','sku_type','id');
+    }
+
     public function sales_invoice()
     {
         return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');

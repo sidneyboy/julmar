@@ -9,10 +9,17 @@
                 <th>Qty</th>
                 <th>Price</th>
                 <th>Gross Sales</th>
+                <th>Total Disc</th>
+                <th>Sales Return</th>
                 <th>Net Sales</th>
                 <th>U/C</th>
                 <th>Gross Cost of Sales</th>
+                <th>Cost of Return</th>
                 <th>Cost of Sales</th>
+                <th>Net Profit</th>
+                <th>Salesman</th>
+                <th>Sales Area</th>
+                <th>KOB</th>
             </tr>
         </thead>
         <tbody>
@@ -21,8 +28,8 @@
                     <tr>
                         <td>{{ $data->delivery_receipt }}</td>
                         <td>{{ $data->principal->principal }}</td>
-                        <td>{{ $details->sku->description }}</td>
-                        <td>{{ $details->sku->sku_type }}</td>
+                        <td>{{ $details->sales_invoice_sku->description }}</td>
+                        <td>{{ $details->sales_invoice_sku->sku_type }}</td>
                         <td style="text-align: right">{{ $details->quantity }}</td>
                         <td style="text-align: right">{{ number_format($details->unit_price, 2, '.', ',') }}</td>
                         <td style="text-align: right">
@@ -34,28 +41,56 @@
                         </td>
                         <td style="text-align: right">
                             @php
-                                $net_sales = $details->quantity * $details->unit_price;
+                                $total_discount = $details->total_discount_per_sku;
+                                echo number_format($total_discount, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align: right">
+                            @php
+                                $sales_return = 0;
+                                echo number_format($sales_return, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align: right">
+                            @php
+                                $net_sales = $details->quantity * $details->unit_price - $total_discount;
                                 $sum_net_sales[] = $net_sales;
                                 echo number_format($net_sales, 2, '.', ',');
                             @endphp
                         </td>
                         <td style="text-align: right">
-                            {{ number_format($details->sku->sku_price_details_unit_cost->unit_cost, 2, '.', ',') }}
+                            {{ number_format($details->sales_invoice_sku->sku_price_details_unit_cost->unit_cost, 2, '.', ',') }}
                         </td>
                         <td style="text-align: right">
                             @php
-                                $gross_cost_of_sales = $details->quantity * $details->sku->sku_price_details_unit_cost->unit_cost;
+                                $gross_cost_of_sales = $details->quantity * $details->sales_invoice_sku->sku_price_details_unit_cost->unit_cost;
                                 $sum_gross_cost_of_sales[] = $gross_cost_of_sales;
                                 echo number_format($gross_cost_of_sales, 2, '.', ',');
                             @endphp
                         </td>
                         <td style="text-align: right">
                             @php
-                                $cost_of_sales = $details->quantity * $details->sku->sku_price_details_unit_cost->unit_cost;
-                                $sum_cost_of_sales[] = $cost_of_sales;
-                                echo number_format($cost_of_sales, 2, '.', ',');
+                                $cost_of_return = $details->sales_invoice_sku->sku_ledger_get_average_cost->running_amount / $details->sales_invoice_sku->sku_ledger_get_average_cost->running_balance;
+                                echo number_format($cost_of_return, 2, '.', ',');
                             @endphp
                         </td>
+                        <td style="text-align: right">
+                            @php
+                                $net_cost_of_sales = $details->quantity * $details->sales_invoice_sku->sku_price_details_unit_cost->unit_cost - $cost_of_return;
+                                $sum_net_cost_of_sales[] = $net_cost_of_sales;
+                                echo number_format($net_cost_of_sales, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align: right">
+                            @php
+                                $net_profit = $net_sales - $net_cost_of_sales;
+                                $sum_net_profit[] = $net_profit;
+                                echo number_format($net_profit, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td>{{ $data->sales_invoice_agent->full_name }}</td>
+                        <td>{{ $data->sales_invoice_customer->location->location  }}</td>
+                        <td>{{ $data->sales_invoice_customer->kind_of_business }}</td>
                     </tr>
                 @endforeach
             @endforeach
