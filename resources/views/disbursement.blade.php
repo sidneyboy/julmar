@@ -29,11 +29,12 @@
                                         <label for="">Disbursement:</label>
                                         <select name="disbursement" id="disbursement" class="form-control" required>
                                             <option value="" default>Select</option>
-                                            <option value="payment to principal">Payment to Principal</option>
+                                            <option value="payment to principal">Principal Payment</option>
+                                            <option value="collection">Collection</option>
+                                            <option value="others">Others</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        
                                         <div id="disbursement_show_selection"></div>
                                     </div>
                                     <div class="col-md-12">

@@ -44,7 +44,7 @@ class Sales_invoice extends Model
 
     public function sales_invoice_agent()
     {
-        return $this->belongsTo('App\Agent', 'agent_id')->select('full_name');
+        return $this->belongsTo('App\Agent', 'agent_id')->select('full_name','id');
     }
 
     public function user()

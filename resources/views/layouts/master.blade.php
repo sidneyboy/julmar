@@ -220,19 +220,38 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             @if ($user->position == 'admin')
-                                <li class="nav-item">
-                                    <a href="{{ url('/disbursement') }}"
-                                        class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                        <p>Disbursement</p>
+                                <li class="nav-item {{ $main_tab == 'manage_accounting_tab' ? 'menu-open' : '' }}">
+                                    <a href="#"
+                                        class="nav-link {{ $sub_tab == 'manage_accounting_sub_tab' ? 'active' : '' }}">
+                                        <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
+                                        <p>
+                                            Accounting
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
                                     </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('/disbursement_report') }}"
-                                        class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                        <p>Disbursement Report</p>
-                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ url('/disbursement') }}"
+                                                class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Disbursement</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('/disbursement_report') }}"
+                                                class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Disbursement Report</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('customer_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'customer_ledger' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Customer Ledger</p>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="nav-item {{ $main_tab == 'manage_ledger_main_tab' ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -748,13 +767,7 @@
                                         </p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="{{ url('customer_ledger') }}"
-                                                class="nav-link {{ $active_tab == 'customer_ledger' ? 'active' : '' }}">
-                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Customer Ledger</p>
-                                            </a>
-                                        </li>
+
                                         <li class="nav-item">
                                             <a href="{{ url('upload_raw_data') }}"
                                                 class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">

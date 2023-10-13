@@ -171,7 +171,7 @@
 
     $("#sales_order_draft_proceed_to_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        $('#loader').show();
+        // $('#loader').show();
         $.ajax({
             url: "sales_order_draft_proceed_to_final_summary",
             type: "POST",
@@ -180,8 +180,16 @@
             cache: false,
             processData: false,
             success: function(data) {
-                $('#loader').hide();
-                $('#sales_order_draft_proceed_to_final_summary_page').html(data);
+                if (data == 'existing dr') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Existing DR',
+                        'error'
+                    )
+                } else {
+                    $('#loader').hide();
+                    $('#sales_order_draft_proceed_to_final_summary_page').html(data);
+                }
             },
             error: function(error) {
                 $('#loader').hide();

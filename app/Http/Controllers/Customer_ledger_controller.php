@@ -25,8 +25,8 @@ class Customer_ledger_controller extends Controller
                 'user' => $user,
                 'principal' => $principal,
                 'customer' => $customer,
-                'main_tab' => 'manage_customer_main_tab',
-                'sub_tab' => 'manage_customer_sub_tab',
+                'main_tab' => 'manage_accounting_tab',
+                'sub_tab' => 'manage_accounting_sub_tab',
                 'active_tab' => 'customer_ledger',
             ]);
         } else {

@@ -261,8 +261,14 @@ class Sales_order_controller extends Controller
 
 
         if ($request->input('principal') == 'GCI') {
-            $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
-            $sku_type = strtoupper($request->input('sku_type'));
+            $dr_checker = Sales_invoice::select('delivery_receipt')
+                ->where('delivery_receipt', $request->input('delivery_receipt_for_gci'))->count();
+            if ($dr_checker != 0) {
+                return 'existing dr';
+            } else {
+                $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
+                $sku_type = strtoupper($request->input('sku_type'));
+            }
         } else {
             $sales_invoice = Sales_invoice::select('delivery_receipt')
                 ->where('principal_id', $request->input('principal_id'))

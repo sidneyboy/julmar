@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ap_ledger;
+use App\Customer;
 use App\User;
 use App\Sku_principal;
 use App\Purchase_order;
@@ -11,6 +12,13 @@ use App\Disbursement;
 use App\Disbursement_jer;
 use App\Received_jer;
 use App\Received_purchase_order;
+use App\Sales_invoice;
+use App\Sales_invoice_accounts_receivable;
+use App\Sales_invoice_collection_jer;
+use App\Sales_invoice_collection_receipt;
+use App\Sales_invoice_collection_receipt_details;
+use App\Sales_invoice_jer;
+use App\Transaction_entry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +32,8 @@ class Disbursement_controller extends Controller
             return view('disbursement', [
                 'user' => $user,
                 // 'principal' => $principal,
-                'main_tab' => '',
-                'sub_tab' => '',
+                'main_tab' => 'manage_accounting_tab',
+                'sub_tab' => 'manage_accounting_sub_tab',
                 'active_tab' => 'disbursement',
             ]);
         } else {
@@ -41,29 +49,67 @@ class Disbursement_controller extends Controller
             return view('disbursement_show_selection', [
                 'principal' => $principal,
             ])->with('disbursement', $request->input('disbursement'));
+        } elseif ($request->input('disbursement') == 'collection') {
+            $customer = Customer::select('store_name', 'id')
+                ->where('kind_of_business', '!=', 'VAN SELLING')
+                ->get();
+
+            return view('disbursement_show_selection', [
+                'customer' => $customer,
+            ])->with('disbursement', $request->input('disbursement'));
+        } elseif ($request->input('disbursement') == 'others') {
+            return view('disbursement_show_selection')->with('disbursement', $request->input('disbursement'));
         }
     }
 
     public function disbursement_proceed(Request $request)
     {
-        // $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
-        // ->where('principal_id',$request->input('principal_id'))
-        //     ->where('payment_term', 'cash with order')
-        //     ->where('payment_status', null)
-        //     ->orWhere('payment_status', 'partial')
-        //     ->get();
+        if ($request->input('disbursement') == 'payment to principal') {
+            // $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
+            // ->where('principal_id',$request->input('principal_id'))
+            //     ->where('payment_term', 'cash with order')
+            //     ->where('payment_status', null)
+            //     ->orWhere('payment_status', 'partial')
+            //     ->get();
 
-        $receive_purchase_order_unpaid = Received_purchase_order::select('id')
-            ->where('principal_id', $request->input('principal_id'))
-            ->where('payment_status', null)
-            ->orWhere('payment_status', 'partial')
-            ->get();
+            $receive_purchase_order_unpaid = Received_purchase_order::select('id')
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('payment_status', null)
+                ->orWhere('payment_status', 'partial')
+                ->get();
 
-        return view('disbursement_proceed', [
-            // 'purchase_order_unpaid' => $purchase_order_unpaid,
-            'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
-        ])->with('disbursement', $request->input('disbursement'))
-            ->with('principal_id', $request->input('principal_id'));
+            return view('disbursement_proceed', [
+                // 'purchase_order_unpaid' => $purchase_order_unpaid,
+                'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
+            ])->with('disbursement', $request->input('disbursement'))
+                ->with('principal_id', $request->input('principal_id'));
+        } elseif ($request->input('disbursement') == 'collection') {
+            date_default_timezone_set('Asia/Manila');
+            $date = date('Y-m-d');
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment')
+                ->where('customer_id', $request->input('customer_id'))
+                ->where('payment_status', null)
+                ->orWhere('payment_status', 'partial')
+                ->get();
+
+            return view('disbursement_proceed', [
+                'sales_invoice' => $sales_invoice,
+            ])->with('disbursement', $request->input('disbursement'))
+                ->with('date', $date)
+                ->with('customer_id', $request->input('customer_id'));
+        } elseif ($request->input('disbursement') == 'others') {
+            date_default_timezone_set('Asia/Manila');
+            $date = date('Y-m-d');
+
+            $transaction_entry = Transaction_entry::where('description', $request->input('description'))
+                ->get();
+
+            return view('disbursement_proceed', [
+                'transaction_entry' => $transaction_entry,
+            ])->with('description', strtoupper($request->input('description')))
+                ->with('disbursement', $request->input('disbursement'))
+                ->with('date', $date);
+        }
     }
 
     public function disbursement_show_po_rr_payable(Request $request)
@@ -128,31 +174,58 @@ class Disbursement_controller extends Controller
     public function disbursement_final_summary(Request $request)
     {
 
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
+        if ($request->input('disbursement') == 'payment to principal') {
+            date_default_timezone_set('Asia/Manila');
+            $date = date('Y-m-d');
 
-        $explode = explode('|', $request->input('po_rr_id'));
-        $po_rr_id = $explode[0];
-        $po_rr = $explode[1];
+            $explode = explode('|', $request->input('po_rr_id'));
+            $po_rr_id = $explode[0];
+            $po_rr = $explode[1];
 
-        $principal_name = Sku_principal::select('principal')
-            ->find($request->input('principal_id'));
+            $principal_name = Sku_principal::select('principal')
+                ->find($request->input('principal_id'));
 
-        return view('disbursement_final_summary')
-            ->with('bank', $request->input('bank'))
-            ->with('po_rr_id', $po_rr_id)
-            ->with('po_rr', $po_rr)
-            ->with('particulars', $request->input('particulars'))
-            ->with('amount', str_replace(',', '', $request->input('amount')))
-            ->with('amount_payable', str_replace(',', '', $request->input('amount_payable')))
-            ->with('original_amount_payable', str_replace(',', '', $request->input('original_amount_payable')))
-            ->with('cv_number', $request->input('cv_number'))
-            ->with('check_deposit_slip', $request->input('check_deposit_slip'))
-            ->with('date', $date)
-            ->with('disbursement', $request->input('disbursement'))
-            ->with('principal_id', $request->input('principal_id'))
-            ->with('purchase_id', $request->input('purchase_id'))
-            ->with('principal_name', $principal_name);
+            return view('disbursement_final_summary')
+                ->with('bank', $request->input('bank'))
+                ->with('po_rr_id', $po_rr_id)
+                ->with('po_rr', $po_rr)
+                ->with('particulars', $request->input('particulars'))
+                ->with('amount', str_replace(',', '', $request->input('amount')))
+                ->with('amount_payable', str_replace(',', '', $request->input('amount_payable')))
+                ->with('original_amount_payable', str_replace(',', '', $request->input('original_amount_payable')))
+                ->with('cv_number', $request->input('cv_number'))
+                ->with('check_deposit_slip', $request->input('check_deposit_slip'))
+                ->with('date', $date)
+                ->with('disbursement', $request->input('disbursement'))
+                ->with('principal_id', $request->input('principal_id'))
+                ->with('purchase_id', $request->input('purchase_id'))
+                ->with('principal_name', $principal_name);
+        } elseif ($request->input('disbursement') == 'collection') {
+            date_default_timezone_set('Asia/Manila');
+            $date = date('Y-m-d');
+
+            foreach ($request->input('amount_collected') as $key => $value) {
+                if ($request->input('outstanding_balance')[$key] < str_replace(',', '', $value)) {
+                    return 'cannot proceed';
+                }
+            }
+
+            $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment')
+                ->whereIn('id', array_keys($amount_collected))
+                ->get();
+            return view('disbursement_final_summary', [
+                'amount_collected' => $amount_collected,
+                'sales_invoice' => $sales_invoice,
+            ])->with('customer_id', $request->input('customer_id'))
+                ->with('bank', $request->input('bank'))
+                ->with('date', $date)
+                ->with('check_ref_cash', strtoupper($request->input('check_ref_cash')))
+                ->with('disbursement', $request->input('disbursement'))
+                ->with('official_receipt_no', strtoupper($request->input('official_receipt_no')))
+                ->with('payment_date', $request->input('payment_date'))
+                ->with('remarks', $request->input('remarks'));
+        }
     }
 
     public function disbursement_saved(Request $request)
@@ -161,114 +234,192 @@ class Disbursement_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        $explode = explode('-', $request->input('po_rr_id'));
-        $transaction = $explode[0];
-        $po_rr_id = $explode[1];
+        if ($request->input('disbursement') == 'payment to principal') {
+            $explode = explode('-', $request->input('po_rr_id'));
+            $transaction = $explode[0];
+            $po_rr_id = $explode[1];
 
-        $new = new Disbursement([
-            'user_id' => auth()->user()->id,
-            'disbursement' => $request->input('disbursement'),
-            'bank' => $request->input('bank'),
-            'check_deposit_slip' => $request->input('check_deposit_slip'),
-            'principal_id' => $request->input('principal_id'),
-            'amount' => $request->input('amount'),
-            'amount_payable' => str_replace(',', '', $request->input('amount_payable')),
-            'particulars' => $request->input('particulars'),
-            'cv_number' => $request->input('cv_number'),
-            'po_rr_id' => $po_rr_id,
-            'transaction' => $transaction,
-        ]);
-
-        $new->save();
-
-        $new_jer = new Disbursement_jer([
-            'disbursement_id' => $new->id,
-            'principal_id' => $request->input('principal_id'),
-            'debit_record' => $request->input('amount'),
-            'credit_record' => $request->input('amount'),
-        ]);
-
-        $new_jer->save();
-
-
-
-        if ($transaction == 'PO') {
-            if ($request->input('outstanding_balance') != 0) {
-                Purchase_order::where('id', $po_rr_id)
-                    ->update(['payment_status' => 'partial']);
-            } else {
-                Purchase_order::where('id', $po_rr_id)
-                    ->update(['payment_status' => 'paid']);
-            }
-        } else {
-            if ($request->input('outstanding_balance') != 0) {
-                Received_purchase_order::where('id', $po_rr_id)
-                    ->update(['payment_status' => 'partial']);
-            } else {
-                Received_purchase_order::where('id', $po_rr_id)
-                    ->update(['payment_status' => 'paid']);
-            }
-        }
-
-        $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-        if ($principal_ledger_latest) {
-            $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-            $principal_ledger_saved = new Principal_ledger([
-                'principal_id' => $request->input('principal_id'),
+            $new = new Disbursement([
                 'user_id' => auth()->user()->id,
-                'date' => $date,
-                'all_id' => $new->id,
-                'transaction' => $request->input('disbursement'),
-                'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                'received' => 0,
-                'returned' => 0,
-                'adjustment' => 0,
-                'payment' =>  $request->input('amount'),
-                'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('amount'),
+                'disbursement' => $request->input('disbursement'),
+                'bank' => $request->input('bank'),
+                'check_deposit_slip' => $request->input('check_deposit_slip'),
+                'principal_id' => $request->input('principal_id'),
+                'amount' => $request->input('amount'),
+                'amount_payable' => str_replace(',', '', $request->input('amount_payable')),
+                'particulars' => $request->input('particulars'),
+                'cv_number' => $request->input('cv_number'),
+                'po_rr_id' => $po_rr_id,
+                'transaction' => $transaction,
             ]);
 
-            $principal_ledger_saved->save();
-        } else {
-            $principal_ledger_saved = new Principal_ledger([
+            $new->save();
+
+            $new_jer = new Disbursement_jer([
+                'disbursement_id' => $new->id,
                 'principal_id' => $request->input('principal_id'),
-                'user_id' => auth()->user()->id,
-                'date' => $date,
-                'all_id' => $new->id,
-                'transaction' => $request->input('disbursement'),
-                'accounts_payable_beginning' => 0,
-                'received' => 0,
-                'returned' => 0,
-                'adjustment' => 0,
-                'payment' => $request->input('amount'),
-                'accounts_payable_end' => $request->input('amount') * -1,
+                'debit_record' => $request->input('amount'),
+                'credit_record' => $request->input('amount'),
             ]);
 
-            $principal_ledger_saved->save();
+            $new_jer->save();
+
+
+
+            if ($transaction == 'PO') {
+                if ($request->input('outstanding_balance') != 0) {
+                    Purchase_order::where('id', $po_rr_id)
+                        ->update(['payment_status' => 'partial']);
+                } else {
+                    Purchase_order::where('id', $po_rr_id)
+                        ->update(['payment_status' => 'paid']);
+                }
+            } else {
+                if ($request->input('outstanding_balance') != 0) {
+                    Received_purchase_order::where('id', $po_rr_id)
+                        ->update(['payment_status' => 'partial']);
+                } else {
+                    Received_purchase_order::where('id', $po_rr_id)
+                        ->update(['payment_status' => 'paid']);
+                }
+            }
+
+            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            if ($principal_ledger_latest) {
+                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
+                    'date' => $date,
+                    'all_id' => $new->id,
+                    'transaction' => $request->input('disbursement'),
+                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' =>  $request->input('amount'),
+                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - $request->input('amount'),
+                ]);
+
+                $principal_ledger_saved->save();
+            } else {
+                $principal_ledger_saved = new Principal_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'user_id' => auth()->user()->id,
+                    'date' => $date,
+                    'all_id' => $new->id,
+                    'transaction' => $request->input('disbursement'),
+                    'accounts_payable_beginning' => 0,
+                    'received' => 0,
+                    'returned' => 0,
+                    'adjustment' => 0,
+                    'payment' => $request->input('amount'),
+                    'accounts_payable_end' => $request->input('amount') * -1,
+                ]);
+
+                $principal_ledger_saved->save();
+            }
+
+
+            $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+                ->where('principal_id', $request->input('principal_id'))
+                ->orderBy('id', 'desc')->take(1)->first();
+
+            if ($ap_ledger_last_transaction) {
+                $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('amount');
+            } else {
+                $ap_ledger_running_balance = $request->input('amount');
+            }
+            $new_ap_ledger = new Ap_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'description' => 'Payment to Principal',
+                'debit_record' => $request->input('amount'),
+                'credit_record' => 0,
+                'running_balance' => $ap_ledger_running_balance,
+                'transaction' => 'payment to principal',
+                'reference' => $new->id,
+                'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
+            ]);
+
+            $new_ap_ledger->save();
+        } elseif ($request->input('disbursement') == 'collection') {
+            //return $request->input();
+            $new = new Sales_invoice_collection_receipt([
+                'user_id' => auth()->user()->id,
+                'customer_id' => $request->input('customer_id'),
+                'agent_id' => $request->input('agent_id'),
+                'check_ref_cash' => $request->input('check_ref_cash'),
+                'official_receipt' => $request->input('official_receipt_no'),
+                'bank' => $request->input('bank'),
+                'payment_date' => $request->input('payment_date'),
+            ]);
+
+            $new->save();
+
+            $new_jer = new Sales_invoice_collection_jer([
+                'sicrd_id' => $new->id,
+                'debit_record' => $request->input('debit_record'),
+                'credit_record' => $request->input('credit_record'),
+            ]);
+
+            $new_jer->save();
+
+            foreach ($request->input('amount_collected') as $key => $value) {
+                $new_details = new Sales_invoice_collection_receipt_details([
+                    'sicrd_id' => $new->id,
+                    'si_id' => $key,
+                    'ar_balance' => $request->input('outstanding_balance')[$key],
+                    'amount_collected' => $value,
+                    'outstanding_balance' => $request->input('new_outstanding_balance')[$key],
+                    'remarks' => $request->input('remarks')[$key],
+                ]);
+
+                $new_details->save();
+
+                $sales_invoice_checker = Sales_invoice::select('total_payment', 'total', 'principal_id')->find($key);
+
+                $total_payment = $sales_invoice_checker->total_payment + $value;
+
+                if ($total_payment == $sales_invoice_checker->total) {
+                    Sales_invoice::where('id', $key)
+                        ->update([
+                            'total_payment' => $total_payment,
+                            'payment_status' => 'paid',
+                        ]);
+                } else {
+                    Sales_invoice::where('id', $key)
+                        ->update([
+                            'total_payment' => $total_payment,
+                            'payment_status' => 'partial',
+                        ]);
+                }
+
+                $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $sales_invoice_checker->principal_id)
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                if ($get_last_row_sales_invoice_accounts_receivable) {
+                    $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $value;
+                } else {
+                    $sales_invoice_ar_running_balance = $value;
+                }
+
+                $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                    'user_id' => auth()->user()->id,
+                    'principal_id' => $sales_invoice_checker->principal_id,
+                    'customer_id' => $request->input('customer_id'),
+                    'transaction' => 'collection receipt',
+                    'all_id' => $new->id,
+                    'debit_record' => 0,
+                    'credit_record' => $value,
+                    'running_balance' => $sales_invoice_ar_running_balance,
+                ]);
+
+                $new_sales_invoice_accounts_receivable->save();
+            }
         }
-
-
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
-            ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')->take(1)->first();
-
-        if ($ap_ledger_last_transaction) {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('amount');
-        } else {
-            $ap_ledger_running_balance = $request->input('amount');
-        }
-        $new_ap_ledger = new Ap_ledger([
-            'principal_id' => $request->input('principal_id'),
-            'user_id' => auth()->user()->id,
-            'transaction_date' => $date,
-            'description' => 'Payment to Principal',
-            'debit_record' => $request->input('amount'),
-            'credit_record' => 0,
-            'running_balance' => $ap_ledger_running_balance,
-            'transaction' => 'payment to principal',
-            'reference' => $new->id,
-            'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
-        ]);
-
-        $new_ap_ledger->save();
     }
 }

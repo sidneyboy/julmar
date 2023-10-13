@@ -112,6 +112,8 @@
                     <td>
                         @if ($data->transaction == 'sales invoice')
                             {{ $data->sales_invoice->delivery_receipt }}
+                        @elseif($data->transaction == 'collection receipt')
+                            {{ $data->sales_invoice_collection_receipt->official_receipt }}
                         @elseif($data->transaction == 'migration')
                             Migration
                         @endif
