@@ -307,8 +307,10 @@
                     <tr>
                         <td>{{ $data->account_name }}</td>
                         <td></td>
-                        <td><input type="text" class="form-control form-control-sm" name="debit_record[{{ $data->id }}]"></td>
-                        <td><input type="text" class="form-control form-control-sm" name="credit_record[{{ $data->id }}]"></td>
+                        <td><input type="text" onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                name="debit_record[{{ $data->id }}]"></td>
+                        <td><input type="text" onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                name="credit_record[{{ $data->id }}]"></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -317,5 +319,14 @@
 
     <script>
         $('#reservation').daterangepicker()
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode != 46 && charCode > 31 &&
+                (charCode < 48 || charCode > 57))
+                return false;
+
+            return true;
+        }
     </script>
 @endif
