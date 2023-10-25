@@ -852,6 +852,8 @@ Route::post('/van_selling_reports_and_dashboard_productive_calls_generate', 'Van
 
 
 
+Route::get('/van_selling_export_sales_and_os', 'Van_selling_export_sales_and_os_controller@index');
+Route::post('/van_selling_export_sales_and_os_generate', 'Van_selling_export_sales_and_os_controller@van_selling_export_sales_and_os_generate')->name('van_selling_export_sales_and_os_generate');
 
 
 Route::get('/customer_ledger', 'Customer_ledger_controller@index');

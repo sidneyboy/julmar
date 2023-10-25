@@ -843,11 +843,18 @@
                                         </p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        <li class="nav-item">
+                                        {{-- <li class="nav-item">
                                             <a href="{{ url('van_selling_reports_and_dashboard') }}"
                                                 class="nav-link {{ $active_tab == 'van_selling_reports_and_dashboard' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
                                                 <p>Dashboard</p>
+                                            </a>
+                                        </li> --}}
+                                        <li class="nav-item">
+                                            <a href="{{ url('van_selling_export_sales_and_os') }}"
+                                                class="nav-link {{ $active_tab == 'van_selling_export_sales_and_os' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Export Sales & OS</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -868,7 +875,7 @@
                                             <a href="{{ url('van_selling_import_data') }}"
                                                 class="nav-link {{ $active_tab == 'van_selling_import_data' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Upload Sales</p>
+                                                <p>Upload File</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

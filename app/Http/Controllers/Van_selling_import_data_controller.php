@@ -7,6 +7,8 @@ use App\Vs_inventory_ledger;
 use App\Van_selling_upload;
 use App\Vs_sales;
 use App\Sku_add;
+use App\Vs_os_data;
+use App\Vs_os_details;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +43,7 @@ class Van_selling_import_data_controller extends Controller
             }
         }
 
-        //return $csv;
+
         if ($csv[0][5] == 'VAN SELLING EXPORT') {
             $van_selling_upload = Van_selling_upload::select('van_selling_export_code')->where('van_selling_export_code', $csv[1][3])->first();
             if ($van_selling_upload) {
@@ -97,6 +99,34 @@ class Van_selling_import_data_controller extends Controller
                 ]);
 
                 $van_selling_upload_save->save();
+            }
+        } elseif ($csv[0][0] == 'VAN SELLING OS REPORT') {
+            $checker = Vs_os_data::where('export_code', $csv[0][3])
+                ->count();
+
+            if ($checker > 0) {
+                return 'Existing File';
+            } else {
+                $new_os_data = new Vs_os_data([
+                    'export_code' => $csv[0][3],
+                    'user_id' => auth()->user()->id,
+                    'customer_id' => $csv[0][2],
+                ]);
+
+                $new_os_data->save();
+
+                for ($i = 2; $i < count($csv); $i++) {
+                    $new_os_details = new Vs_os_details([
+                        'vs_os_id' => $new_os_data->id,
+                        'sku_id' => $csv[$i][3],
+                        'store_name' => $csv[$i][1],
+                        'quantity' => $csv[$i][4],
+                        'date' => $csv[$i][0],
+                        'unit_price' => $csv[$i][5],
+                    ]);
+
+                    $new_os_details->save();
+                }
             }
         } else {
             return 'Existing File';
