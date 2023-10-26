@@ -30,7 +30,7 @@
                 <form id="van_selling_export_sales_and_os_generate">
                     @csrf
                     <div class="row">
-                        <div class="col-md-12" style="margin-bottom: 10px;">
+                        <div class="col-md-6">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
@@ -40,7 +40,15 @@
                                 <input type="text" class="form-control float-right" name="date_range" id="reservation">
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <select name="report_type" class="form-control" required>
+                                <option value="" default>Select Report</option>
+                                <option value="os">OS Report</option>
+                                <option value="van_selling_sales">Van Sales</option>
+                            </select>
+                        </div>
                         <div class="col-md-12">
+                            <br />
                             <button class="btn btn-info float-right btn-sm" type="submit">Generate Report</button>
                         </div>
                     </div>
@@ -73,7 +81,7 @@
 
         $("#van_selling_export_sales_and_os_generate").on('submit', (function(e) {
             e.preventDefault();
-            //$('#loader').show();
+            $('#loader').show();
             $.ajax({
                 url: "van_selling_export_sales_and_os_generate",
                 type: "POST",

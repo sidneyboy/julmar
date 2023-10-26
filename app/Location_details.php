@@ -16,4 +16,9 @@ class Location_details extends Model
     {
     	return $this->belongsTo('App\Location', 'location_id');
     }
+
+    public function location_van_selling_sales()
+    {
+    	return $this->belongsTo('App\Location', 'location_id')->select('location');
+    }
 }

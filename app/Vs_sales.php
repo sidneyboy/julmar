@@ -22,7 +22,17 @@ class Vs_sales extends Model
 
     public function principal()
     {
-        return $this->belongsTo('App\Sku_principal', 'principal_id');
+        return $this->belongsTo('App\Sku_principal', 'principal_id')->select('id','principal');
+    }
+
+    public function sku()
+    {
+        return $this->belongsTo('App\Sku_add', 'sku_id')->select('sku_code','description','sku_type');
+    }
+
+    public function location_details()
+    {
+        return $this->belongsTo('App\Location_details', 'location')->select('location_id');
     }
 
     public function customer()
