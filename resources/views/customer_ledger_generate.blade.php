@@ -117,6 +117,7 @@
                         @elseif($data->transaction == 'migration')
                             Migration
                         @endif
+                        {{-- {{ $data->sales_invoice->delivery_receipt }} --}}
                     </td>
                     <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}</td>
                     <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}</td>

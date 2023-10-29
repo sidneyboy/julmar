@@ -285,7 +285,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_principal_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Principal
+                                            Principal
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -336,7 +336,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_warehouse_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Warehouse
+                                            Warehousing
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -392,7 +392,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_logistics_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Logistics
+                                            Logistics
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -433,7 +433,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_sku_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage SKU
+                                            Stock Keeping Unit
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -570,7 +570,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_adjustments_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Adjustments
+                                            Adjustments
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -695,7 +695,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_customer_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Customer
+                                            Customers
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -762,7 +762,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_booking_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Booking
+                                            Encoder Booking
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -838,7 +838,7 @@
                                         class="nav-link {{ $sub_tab == 'manage_van_selling_sub_tab' ? 'active' : '' }}">
                                         <i class="nav-icon fas fa-solid fa-folder fa-2xs"></i>
                                         <p>
-                                            Manage Van Selling
+                                            Encoder Van Selling
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>

@@ -55,11 +55,19 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                $('#show_draft').html(data);
-                $('#sku_quantity').val('');
-                $("#sku_barcode").val('').trigger('change');
-                $('#barcode').val('');
-                $('#quantity').val('');
+                if (data == 'Quantity is greater than remaining balance') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Quantity received is greater than remaining quantity',
+                        'error'
+                    )
+                } else {
+                    $('#show_draft').html(data);
+                    $('#sku_quantity').val('');
+                    $("#sku_barcode").val('').trigger('change');
+                    $('#barcode').val('');
+                    $('#quantity').val('');
+                }
             },
             error: function(error) {
                 $('#loader').hide();

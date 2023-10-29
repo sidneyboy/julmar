@@ -16,7 +16,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">BOOKING PCM</h3>
+                <h3 class="card-title" style="font-weight: bold;">BOOKING PCM FOR DRIVER</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                         title="Collapse">
@@ -33,7 +33,7 @@
                             <label for="">PCM Type:</label>
                             <select name="pcm_type" class="form-control" required style="width:100%;">
                                 <option value="" default>Select</option>
-                                <option value="RGS">RGS</option>
+                                {{-- <option value="RGS">RGS</option> --}}
                                 <option value="BO">BO</option>
                             </select>
                         </div>

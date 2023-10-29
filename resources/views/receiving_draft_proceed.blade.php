@@ -8,8 +8,8 @@
                             <th colspan="2">Purchase Order (Not Yet Received)</th>
                         </tr>
                         <tr>
-                            <th>Desc</th>
-                            <th>Confirmed QTY</th>
+                            <th style="text-align: center;">Desc</th>
+                            <th style="text-align: center;">Confirmed QTY</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,6 +22,9 @@
                                             {{ $po_data->sku->description }}</td>
                                         <td style="text-align: center">
                                             {{ $po_data->confirmed_quantity - $po_data->receive }}
+                                            @php
+                                                $sum_confirmed_quantity[] = $po_data->confirmed_quantity - $po_data->receive;
+                                            @endphp
                                             <input type="hidden" name="confirmed_quantity[{{ $po_data->sku->id }}]" value="{{ $po_data->confirmed_quantity - $po_data->receive }}">
                                         </td>
                                     </tr>
@@ -30,12 +33,22 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td style="text-align: center">{{ $po_data->confirmed_quantity }}</td>
+                                        <td style="text-align: center">{{ $po_data->confirmed_quantity }}
+                                            @php
+                                                $sum_confirmed_quantity[] = $po_data->confirmed_quantity;
+                                            @endphp
+                                        </td>
                                     </tr>
                                 @endif
                             @endif
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th style="text-align: center">{{ array_sum($sum_confirmed_quantity) }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -47,10 +60,10 @@
                             <th colspan="5">Scanned SKU(Draft)</th>
                         </tr>
                         <tr>
-                            <th>Desc</th>
-                            <th>U/C(VAT EXT)</th>
-                            <th>Freight</th>
-                            <th>Received</th>
+                            <th style="text-align: center;">Desc</th>
+                            <th style="text-align: center;">U/C(VAT EXT)</th>
+                            <th style="text-align: center;">Freight</th>
+                            <th style="text-align: center;">Received</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,7 +78,6 @@
                                 <td><input style="text-align: center" type="number" min="0"
                                         value="{{ $draft_data->quantity }}" class="form-control form-control-sm"
                                         name="quantity_received[{{ $draft_data->sku_id }}]">
-                                    
                                     @php
                                         $sum_quantity[] = $draft_data->quantity;
                                     @endphp

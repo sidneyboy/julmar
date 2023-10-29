@@ -39,7 +39,7 @@ class Receiving_draft_controller extends Controller
                     ->get();
             }
 
-      
+
             return view('receiving_draft', [
                 'user' => $user,
                 'purchase_order' => $purchase_order,
@@ -56,7 +56,7 @@ class Receiving_draft_controller extends Controller
     public function receiving_draft_sku_selection(Request $request)
     {
         //return $request->input();
-        $purchase_order_details = Purchase_order_details::select('sku_id', 'purchase_order_id','receive','confirmed_quantity')
+        $purchase_order_details = Purchase_order_details::select('sku_id', 'purchase_order_id', 'receive', 'confirmed_quantity')
             ->where('purchase_order_id', $request->input('purchase_id'))
             ->get();
 
@@ -81,71 +81,76 @@ class Receiving_draft_controller extends Controller
         }
 
 
-
         if ($sku) {
-            $check_po_details = Purchase_order_details::select('freight', 'unit_cost')
+            $check_po_details = Purchase_order_details::select('freight', 'unit_cost', 'quantity', 'receive')
                 ->where('purchase_order_id', $request->input('purchase_order_id'))
                 ->where('sku_id', $sku->id)
                 ->first();
 
-            if ($check_po_details) {
-                $check_draft = Receiving_draft::where('sku_id', $sku->id)->where('session_id', $request->input('session_id'))->count();
-                if ($check_draft == 0) {
-                    $new_draft = new Receiving_draft([
-                        'sku_id' => $sku->id,
-                        'session_id' => $request->input('session_id'),
-                        'user_id' => auth()->user()->id,
-                        'unit_cost' => $check_po_details->unit_cost,
-                        'freight' => $check_po_details->freight,
-                        'quantity' => $quantity,
-                    ]);
+            $remaining_balance = $check_po_details->quantity - $check_po_details->receive;
 
-                    $new_draft->save();
+            if ($remaining_balance >= $quantity) {
+                if ($check_po_details) {
+                    $check_draft = Receiving_draft::where('sku_id', $sku->id)->where('session_id', $request->input('session_id'))->count();
+                    if ($check_draft == 0) {
+                        $new_draft = new Receiving_draft([
+                            'sku_id' => $sku->id,
+                            'session_id' => $request->input('session_id'),
+                            'user_id' => auth()->user()->id,
+                            'unit_cost' => $check_po_details->unit_cost,
+                            'freight' => $check_po_details->freight,
+                            'quantity' => $quantity,
+                        ]);
 
-                    Purchase_order_details::where('sku_id', $sku->id)
-                        ->where('purchase_order_id', $request->input('purchase_order_id'))
-                        ->update(['scanned_remarks' => 'scanned']);
+                        $new_draft->save();
 
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
+                        Purchase_order_details::where('sku_id', $sku->id)
+                            ->where('purchase_order_id', $request->input('purchase_order_id'))
+                            ->update(['scanned_remarks' => 'scanned']);
 
-                    $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
-                        ->where('purchase_order_id', $request->input('purchase_order_id'))
-                        ->get();
+                        $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
 
-                    if ($purchase_order_details) {
-                        return view('receiving_draft_proceed', [
-                            'receiving_draft' => $receiving_draft,
-                            'purchase_order_details' => $purchase_order_details,
-                            'check_po_details' => $check_po_details,
-                        ])->with('session_id', $request->input('session_id'))
-                            ->with('purchase_order_id', $request->input('purchase_order_id'));
+                        $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
+                            ->where('purchase_order_id', $request->input('purchase_order_id'))
+                            ->get();
+
+                        if ($purchase_order_details) {
+                            return view('receiving_draft_proceed', [
+                                'receiving_draft' => $receiving_draft,
+                                'purchase_order_details' => $purchase_order_details,
+                                'check_po_details' => $check_po_details,
+                            ])->with('session_id', $request->input('session_id'))
+                                ->with('purchase_order_id', $request->input('purchase_order_id'));
+                        } else {
+                            return 'sku_received';
+                        }
                     } else {
-                        return 'sku_received';
+                        Receiving_draft::where('session_id', $request->input('session_id'))
+                            ->where('sku_id', $sku->id)
+                            ->update(['quantity' => $quantity]);
+
+                        $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
+
+                        $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
+                            ->where('purchase_order_id', $request->input('purchase_order_id'))
+                            ->get();
+
+                        if (count($purchase_order_details) != 0) {
+                            return view('receiving_draft_proceed', [
+                                'receiving_draft' => $receiving_draft,
+                                'purchase_order_details' => $purchase_order_details,
+                                'check_po_details' => $check_po_details,
+                            ])->with('session_id', $request->input('session_id'))
+                                ->with('purchase_order_id', $request->input('purchase_order_id'));
+                        } else {
+                            return 'sku_received';
+                        }
                     }
                 } else {
-                    Receiving_draft::where('session_id', $request->input('session_id'))
-                        ->where('sku_id', $sku->id)
-                        ->update(['quantity' => $quantity]);
-
-                    $receiving_draft = Receiving_draft::select('id', 'sku_id', 'user_id', 'session_id', 'unit_cost', 'freight', 'quantity')->where('session_id', $request->input('session_id'))->get();
-
-                    $purchase_order_details = Purchase_order_details::select('purchase_order_id', 'quantity', 'sku_id', 'scanned_remarks', 'receive', 'confirmed_quantity')
-                        ->where('purchase_order_id', $request->input('purchase_order_id'))
-                        ->get();
-
-                    if (count($purchase_order_details) != 0) {
-                        return view('receiving_draft_proceed', [
-                            'receiving_draft' => $receiving_draft,
-                            'purchase_order_details' => $purchase_order_details,
-                            'check_po_details' => $check_po_details,
-                        ])->with('session_id', $request->input('session_id'))
-                            ->with('purchase_order_id', $request->input('purchase_order_id'));
-                    } else {
-                        return 'sku_received';
-                    }
+                    return 'Sku Not in the PO';
                 }
             } else {
-                return 'Sku Not in the PO';
+                return '<b style="color:red;text-align:center;">Quantity is greater than remaining balance ' . $remaining_balance .'</b>';
             }
         } else {
             return 'Non Existing SKU Barcode';
