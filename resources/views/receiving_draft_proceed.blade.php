@@ -33,9 +33,9 @@
                                         <td><span style="font-weight:bold">{{ $po_data->sku->sku_code }}</span>
                                             -
                                             {{ $po_data->sku->description }}</td>
-                                        <td style="text-align: center">{{ $po_data->confirmed_quantity }}
+                                        <td style="text-align: center">{{ $po_data->confirmed_quantity - $po_data->receive }}
                                             @php
-                                                $sum_confirmed_quantity[] = $po_data->confirmed_quantity;
+                                                $sum_confirmed_quantity[] = $po_data->confirmed_quantity - $po_data->receive;
                                             @endphp
                                         </td>
                                     </tr>
