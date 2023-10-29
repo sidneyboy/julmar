@@ -1,6 +1,10 @@
 use Illuminate\Support\Facades\DB;
 
-
+{
+                    extend: 'csvHtml5',
+                    filename: 'Booking Customer',
+                    title: 'BOOKING CUSTOMER',
+                },
 
 $(document).ready(function() {
     var table = $('#example1').DataTable({

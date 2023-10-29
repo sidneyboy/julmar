@@ -47,7 +47,7 @@ class Sku_extract_inventory_controller extends Controller
             ])->with('extract_for', $request->input('extract_for'));
         } elseif ($request->input('extract_for') == 'BOOKING') {
             $principal_id = $request->input('principal');
-            return $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
+            $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
             WHERE principal_id = '$principal_id' GROUP BY sku_id)");
 
             for ($i = 0; $i < count($sku_ledger); $i++) {

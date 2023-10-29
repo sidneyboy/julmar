@@ -69,7 +69,7 @@
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
-                            <table id="example2" class="table table-bordered table-striped">
+                            <table class="table table-bordered table-striped" id="example1">
                                 <thead>
                                     <tr>
                                         <th style="text-align: center;">ID #</th>
@@ -102,6 +102,23 @@
     @parent
 
     </body>
+    <script>
+        $(document).ready(function() {
+            var table = $('#example1').DataTable({
+                responsive: true,
+                paging: false,
+                ordering: true,
+                info: false,
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'csvHtml5',
+                    filename: 'Principal',
+                    title: 'Principal',
+                }, ]
+            });
+            new $.fn.dataTable.FixedHeader(table);
+        });
+    </script>
 
     </html>
 @endsection

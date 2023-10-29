@@ -41,7 +41,7 @@
                                     @foreach ($data->location_details as $details)
                                         <tr>
                                             <td>{{ $details->id }}</td>
-                                            <td>{{ $data->location ." - ". $details->barangay }}</td>
+                                            <td>{{ $data->location . ' - ' . $details->barangay }}</td>
                                         </tr>
                                     @endforeach
                                 @endforeach
@@ -79,9 +79,11 @@
                 ordering: true,
                 info: false,
                 dom: 'Bfrtip',
-                buttons: [
-                    'csvHtml5',
-                ]
+                buttons: [{
+                    extend: 'csvHtml5',
+                    filename: 'Sales Area',
+                    title: 'Sales Area',
+                }, ]
             });
             new $.fn.dataTable.FixedHeader(table);
         });

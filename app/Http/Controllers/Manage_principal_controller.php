@@ -14,7 +14,8 @@ class Manage_principal_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal_data = Sku_principal::get();
+            $principal_data = Sku_principal::where('principal','!=','none')
+                        ->get();
             return view('new_principal', [
                 'user' => $user,
                 'principal_data' => $principal_data,
