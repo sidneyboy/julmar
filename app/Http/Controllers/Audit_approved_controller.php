@@ -73,7 +73,7 @@ class Audit_approved_controller extends Controller
     public function audit_approved_customer_process(Request $request)
     {
         $user = User::select('id', 'password', 'position')->find(auth()->user()->id);
-        if ($user->position == 'admin' or $user->position == 'audit') {
+        if ($user->position == 'admin' or $user->position == 'audit' or $user->position == 'om') {
             $hashedPassword = $user->password;
             if (Hash::check($request->input('password'), $hashedPassword)) {
                 Customer::where('id', $request->input('customer_id'))

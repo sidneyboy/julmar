@@ -768,13 +768,13 @@
                                     </a>
                                     <ul class="nav nav-treeview">
 
-                                        <li class="nav-item">
+                                        {{-- <li class="nav-item">
                                             <a href="{{ url('upload_raw_data') }}"
                                                 class="nav-link {{ $active_tab == 'upload_raw_data' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
                                                 <p>Upload Raw Data</p>
                                             </a>
-                                        </li>
+                                        </li> --}}
                                         <li class="nav-item">
                                             <a href="{{ url('sales_order') }}"
                                                 class="nav-link {{ $active_tab == 'sales_order_migrate' ? 'active' : '' }}">

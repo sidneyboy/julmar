@@ -136,7 +136,8 @@
                         </td>
                         <td style="text-align: right">
                             @php
-                                echo $sub_total = $details->quantity * $unit_price;
+                                 $sub_total = $details->quantity * $unit_price;
+                                 echo number_format($sub_total, 2, '.', ',');
                             @endphp
                         </td>
                     </tr>

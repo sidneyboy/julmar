@@ -108,11 +108,11 @@ class Sales_order_controller extends Controller
                         $sales_order_details->save();
                     }
                     //return redirect('sales_order')->with('success', 'Success');
+                    return 'saved';
                 } else {
                     return 'file_already_uploaded';
                 }
             } else {
-
                 return 'incorrect_file_uploaded';
             }
         } else {
@@ -258,8 +258,6 @@ class Sales_order_controller extends Controller
         $time = date('h:i:s a');
         $date_receipt = date('Y-m');
 
-
-
         if ($request->input('principal') == 'GCI') {
             $dr_checker = Sales_invoice::select('delivery_receipt')
                 ->where('delivery_receipt', $request->input('delivery_receipt_for_gci'))->count();
@@ -319,6 +317,8 @@ class Sales_order_controller extends Controller
         } else {
             $delivery_receipt = $delivery_receipt_data;
         }
+
+      
 
         return view('sales_order_draft_proceed_to_final_summary', [
             'sales_order_draft' => $sales_order_draft,

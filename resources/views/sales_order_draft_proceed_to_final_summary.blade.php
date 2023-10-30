@@ -39,9 +39,11 @@
                     <th>Qty</th>
                     <th>U/P</th>
                     <th>Sub Total</th>
-                    @foreach ($customer_discount as $item_discount_rate)
-                        <th>Less - {{ $item_discount_rate }}%</th>
-                    @endforeach
+                    @if ($customer_discount != 0)
+                        @foreach ($customer_discount as $item_discount_rate)
+                            <th>Less - {{ $item_discount_rate }}%</th>
+                        @endforeach
+                    @endif
                     <th>Total Discount</th>
                     <th>Final Total</th>
                     <th>Avg Cost</th>
@@ -82,45 +84,68 @@
                         </td>
                         @php
                             $total = $sub_total;
-                            
+
                             $discount_value_holder = $total;
                             $discount_value_holder_history = [];
                             $discount_value_holder_history_for_bo_allowance = [];
                             $totalArray = [];
                             $percent = [];
                         @endphp
-                        @foreach ($customer_discount as $item_discount_rate)
+                        @if ($customer_discount != 0)
+                            @foreach ($customer_discount as $item_discount_rate)
+                                @php
+                                    $discount_value_holder_dummy = $discount_value_holder;
+                                    $less_percentage_by = $item_discount_rate / 100;
+
+                                    $discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                                    $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+
+                                    $discount_value_holder_history[] = $discount_rate_answer;
+                                    $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                                    echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                @endphp
+                            @endforeach
+                        @else
                             @php
-                                $discount_value_holder_dummy = $discount_value_holder;
-                                $less_percentage_by = $item_discount_rate / 100;
-                                
-                                $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                                
-                                $discount_value_holder_history[] = $discount_rate_answer;
-                                $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                $discount_value_holder_history[] = 0;
+                                $discount_value_holder_history_for_bo_allowance[] = 0;
                             @endphp
-                        @endforeach
+                        @endif
                         <td style="text-align:right">
-                            @php
-                                $total_discount_per_sku = $sub_total - end($discount_value_holder_history_for_bo_allowance);
-                            @endphp
+                            @if ($customer_discount == 0)
+                                @php
+                                    $total_discount_per_sku = 0;
+                                @endphp
+                            @else
+                                @php
+                                    $total_discount_per_sku = $sub_total - end($discount_value_holder_history_for_bo_allowance);
+                                @endphp
+                            @endif
+
                             {{ number_format($total_discount_per_sku, 2, '.', ',') }}
                             <input type="hidden" name="total_discount_per_sku[{{ $details->sku_id }}]"
                                 value="{{ $total_discount_per_sku }}">
                         </td>
                         <td style="text-align: right">
-                            {{ number_format($sub_total - $total_discount_per_sku, 2, '.', ',') }}
+                            @if ($customer_discount == 0)
+                                @php
+                                    $final_total_per_sku = 0;
+                                @endphp
+                            @else
+                                @php
+                                    $final_total_per_sku = $sub_total - $total_discount_per_sku;
+                                @endphp
+                            @endif
+                            {{ number_format($final_total_per_sku, 2, '.', ',') }}
                             @php
-                                $sum_total_discount_per_sku[] = $sub_total - $total_discount_per_sku;
+                                $sum_total_discount_per_sku[] = $final_total_per_sku;
                             @endphp
                         </td>
                         <td style="text-align: right">
                             @php
                                 $unit_cost_sub_total = $details->sku->sku_ledger_get_average_cost->running_amount / $details->sku->sku_ledger_get_average_cost->running_balance;
                                 $sum_unit_cost_sub_total[] = $unit_cost_sub_total * $final_quantity[$details->sku_id];
-                                
+
                                 echo number_format($unit_cost_sub_total, 2, '.', ',');
                             @endphp
                         </td>
@@ -215,6 +240,8 @@
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="final_total">
                             <input type="hidden" value="{{ 0 }}" name="customer_discount">
                         </th>
+                        <th></th>
+                        <th></th>
                         <th></th>
                         <th style="text-align: right">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
