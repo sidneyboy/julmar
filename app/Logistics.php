@@ -24,6 +24,7 @@ class Logistics extends Model
         'sg_departure_noted_by',
         'sg_arrival_noted_by',
         'fuel_given_amount',
+        'fuel_given_updated_by',
         'remarks',
         'user_id',
         'trucking_company',
@@ -59,7 +60,7 @@ class Logistics extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo('App\User', 'user_id')->select('name');
     }
 
     public function loading_date_updated_by_user()
@@ -75,5 +76,15 @@ class Logistics extends Model
     public function arrival_date_updated_by_user()
     {
         return $this->belongsTo('App\User', 'arrival_date_updated_by');
+    }
+
+    public function fuel_given_updated_by_user()
+    {
+        return $this->belongsTo('App\User', 'fuel_given_updated_by');
+    }
+
+    public function total_expense_updated_by_user()
+    {
+        return $this->belongsTo('App\User', 'total_expense_updated_by');
     }
 }

@@ -826,9 +826,14 @@ Route::post('/truck_load_lost_update_total_expense', 'Truck_load_list_controller
 Route::get('/truck_load_list_print/{id}', 'Truck_load_list_controller@truck_load_list_print')->name('truck_load_list_print');
 Route::get('/truck_load_list_driver_print/{id}', 'Truck_load_list_controller@truck_load_list_driver_print')->name('truck_load_list_driver_print');
 
+Route::post('/truck_logistics_details_show', 'Truck_load_list_controller@truck_logistics_details_show')->name('truck_logistics_details_show');
+Route::post('/truck_load_list_update_data', 'Truck_load_list_controller@truck_load_list_update_data')->name('truck_load_list_update_data');
+
+
 
 Route::get('/truck_load_report', 'Truck_load_report_controller@index');
 Route::post('/truck_load_report_show', 'truck_load_report_controller@truck_load_report_show')->name('truck_load_report_show');
+
 
 
 

@@ -8,7 +8,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title" style="font-weight: bold;">AGENT SALES ORDER</h3>
+                <h3 class="card-title" style="font-weight: bold;">EXPORT SALES REGISTER</h3>
             </div>
             <div class="card-body">
                 <form id="sales_order_register_generate_sales_register" enctype="multipart/form-data" method="post">

@@ -65,8 +65,8 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
+                    $('#loader').hide();
                     if (data == 'Existing Data') {
-                        $('#loader').hide();
                         Swal.fire(
                             'Cannot Proceed',
                             'Existing PCM Number',

@@ -419,6 +419,7 @@
                                                 <p>Truck Load List</p>
                                             </a>
                                         </li>
+                                        
                                         <li class="nav-item">
                                             <a href="{{ url('/truck_load_report') }}"
                                                 class="nav-link {{ $active_tab == 'truck_load_report' ? 'active' : '' }}">

@@ -15,7 +15,7 @@ class Sales_invoice_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $sales_invoice = Sales_invoice::select('total', 'agent_id', 'customer_id', 'principal_id', 'delivery_receipt', 'id')->where('status', 'invoice')->get();
+            $sales_invoice = Sales_invoice::select('delivery_receipt', 'id')->where('status', 'invoice')->get();
             return view('sales_invoice', [
                 'user' => $user,
                 'sales_invoice' => $sales_invoice,

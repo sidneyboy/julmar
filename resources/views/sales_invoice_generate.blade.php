@@ -28,7 +28,7 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            
+
             /* for demo */
             background: yellow;
             /* for demo */
@@ -72,7 +72,7 @@
     </style>
 </head>
 
-<body>
+<body onafterprint="myFunction()">
 
     <br />
 
@@ -300,7 +300,7 @@
                                     @php
                                         $discount_value_holder_dummy = $discount_value_holder;
                                         $less_percentage_by = $data_discount / 100;
-                                        
+
                                         $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                                         $discount_holder[] = $discount_value_holder;
@@ -338,8 +338,8 @@
         <br /><br /><br /><br />
         <hr style="border-top: 1px solid black;">
         <div class="container float-left" style="width:50%;">
-            
-          
+
+
 
             RECEIVED FROM JULMAR COMMERCIAL, INC. (<b>{{ $sales_invoice->principal->principal }}</b>)<br />
             THE FOLLOWING MERCHANDISE AS ORDERED ABOVE IN GOOD ORDER<br />
@@ -376,6 +376,10 @@
 
     <script>
         window.print();
+
+        function myFunction() {
+            window.location.replace("sales_invoice");
+        }
     </script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->

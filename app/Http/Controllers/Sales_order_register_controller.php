@@ -34,7 +34,7 @@ class Sales_order_register_controller extends Controller
     {
         $sales_order = Sales_invoice::select('customer_id')
             ->where('agent_id', $request->input('agent_id'))
-            ->groupBy('agent_id')
+            ->where('payment_status',null)
             ->orderBy('id', 'desc')
             ->get();
 
