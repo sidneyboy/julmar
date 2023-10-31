@@ -6,6 +6,7 @@ use App\User;
 use App\Logistics;
 use App\Logistics_details;
 use App\Logistics_invoices;
+use App\Sales_invoice;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,13 +57,14 @@ class Truck_load_list_controller extends Controller
 
     public function truck_logistics_details_show(Request $request)
     {
-        
-        $logistics_details = Logistics_invoices::select('sales_invoice_id','id')->where('logistics_id', $request->input('logistic_id'))
+        $logistics_details = Logistics_invoices::select('sales_invoice_id', 'id')
+            ->where('logistics_id', $request->input('logistic_id'))
+            ->where('delivered_date', null)
             ->get();
 
         return view('truck_logistics_details_show', [
             'logistics_details' => $logistics_details,
-        ]);
+        ])->with('logistics_id', $request->input('logistic_id'));
     }
 
     public function truck_load_list_update_data(Request $request)
@@ -154,6 +156,30 @@ class Truck_load_list_controller extends Controller
             } else {
                 return redirect('truck_load_list')->with('error', 'Cannot proceed. No value');
             }
+        }
+    }
+
+    public function truck_load_list_update_delivery_status(Request $request)
+    {
+        $delivery_array = $request->input('delivery_date');
+        if (isset($delivery_array)) {
+            foreach ($request->input('delivery_date') as $key => $data) {
+                Logistics_invoices::where('id', $key)
+                    ->update(['delivered_date' => $data]);
+
+                Sales_invoice::where('id', $request->input('sales_invoice_id')[$key])
+                    ->update([
+                        'delivered_date' => $data,
+                        'delivery_status' => 'delivered',
+                        'truck_load_status' => 'delivery success',
+                    ]);
+            }
+        }
+
+
+        if ($request->input('mark_as_status') != null) {
+            Logistics::where('id', $request->input('logistics_id'))
+                ->update(['status' => $request->input('mark_as_status')]);
         }
     }
 

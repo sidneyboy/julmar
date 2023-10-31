@@ -17,6 +17,7 @@ class Logistics_invoices extends Model
         'percentage',
         'equivalent',
         'weight',
+        'delivered_date',
     ];
 
     public function sales_invoice()

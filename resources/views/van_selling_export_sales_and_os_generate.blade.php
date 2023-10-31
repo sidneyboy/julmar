@@ -69,7 +69,7 @@
                         <td>{{ $data->date_sold }}</td>
                         <td>{{ $data->principal->principal }}</td>
                         <td>{{ $data->location_details->location_van_selling_sales->location }}</td>
-                        <td>{{ $data->area }}</td>
+                        <td>{{ $data->location_details->barangay }}</td>
                         <td>{{ $data->customer->store_name }}</td>
                         <td>{{ $data->reference }}</td>
                         <td>{{ $data->customer_store_name }}</td>
@@ -78,12 +78,12 @@
                         <td>{{ $data->sku->sku_type }}</td>
                         <td style="text-align: right">{{ $data->quantity }}</td>
                         <td style="text-align: right">
-                            {{ number_format($data->unit_price,2,".",",") }}
+                            {{ number_format($data->unit_price, 2, '.', ',') }}
                         </td>
-                        <td>
+                        <td style="text-align: right">
                             @php
                                 $sub_total = $data->quantity * $data->unit_price;
-                                echo  number_format($sub_total,2,".",",")
+                                echo number_format($sub_total, 2, '.', ',');
                             @endphp
                         </td>
                     </tr>
@@ -103,7 +103,11 @@
             dom: 'Bfrtip',
             buttons: [
                 'excelHtml5',
-                'csvHtml5',
+                {
+                    extend: 'csvHtml5',
+                    filename: 'Van Selling Sales Raw Data',
+                    title: 'Van Selling Sales Raw Data',
+                },
             ]
         });
         new $.fn.dataTable.FixedHeader(table);

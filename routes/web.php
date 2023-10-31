@@ -828,6 +828,7 @@ Route::get('/truck_load_list_driver_print/{id}', 'Truck_load_list_controller@tru
 
 Route::post('/truck_logistics_details_show', 'Truck_load_list_controller@truck_logistics_details_show')->name('truck_logistics_details_show');
 Route::post('/truck_load_list_update_data', 'Truck_load_list_controller@truck_load_list_update_data')->name('truck_load_list_update_data');
+Route::post('/truck_load_list_update_delivery_status', 'Truck_load_list_controller@truck_load_list_update_delivery_status')->name('truck_load_list_update_delivery_status');
 
 
 

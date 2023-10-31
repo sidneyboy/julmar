@@ -32,7 +32,7 @@ class Vs_sales extends Model
 
     public function location_details()
     {
-        return $this->belongsTo('App\Location_details', 'location')->select('location_id');
+        return $this->belongsTo('App\Location_details', 'location')->select('location_id','barangay');
     }
 
     public function customer()
