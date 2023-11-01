@@ -77,4 +77,9 @@ class Sales_invoice extends Model
         return $this->hasMany('App\Sales_invoice_status_logs', 'sales_invoice_id')->orderBy('id','desc');
     }
 
+    public function logistics_invoices()
+    {
+        return $this->hasOne('App\Logistics_invoices', 'sales_invoice_id')->select('logistics_id');
+    }
+
 }

@@ -877,4 +877,6 @@ Route::post('/collection_show_customers', 'Collection_controller@collection_show
 Route::post('/collection_proceed', 'Collection_controller@collection_proceed')->name('collection_proceed');
 Route::post('/collection_final_summary', 'Collection_controller@collection_final_summary')->name('collection_final_summary');
 Route::post('/collection_saved', 'Collection_controller@collection_saved')->name('collection_saved');
+Route::get('/collection_sales_invoice_show_copy/{id}', 'Collection_controller@collection_sales_invoice_show_copy')->name('collection_sales_invoice_show_copy');
+
 

@@ -46,6 +46,8 @@
         <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
+                    <th style="text-align: center">DRIVER</th>
+                    <th style="text-align: center">INVOICE DATE</th>
                     <th style="text-align: center">INVOICE NO</th>
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">A/R BALANCE</th>
@@ -56,7 +58,13 @@
             <tbody>
                 @foreach ($sales_invoice as $data)
                     <tr>
-                        <td>{{ $data->delivery_receipt }}</td>
+                        <td>{{ $data->logistics_invoices->logistics_driver->driver }}</td>
+                        <td>{{ $data->sales_invoice_printed }}</td>
+                        <td>
+                            <a target="_blank" href="{{ url('collection_sales_invoice_show_copy', ['id' => $data->id]) }}">
+                                {{ $data->delivery_receipt }} 
+                            </a>
+                        </td>
                         <td>{{ $data->principal->principal }}</td>
                         <td style="text-align: right">
                             @php

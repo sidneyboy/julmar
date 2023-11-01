@@ -2,24 +2,24 @@
     <table class="table table-bordered table-sm table-striped" id="example1" style="width:100%;font-size:13px;">
         <thead>
             <tr>
-                <th>Invoice</th>
-                <th>Principal</th>
-                <th>Description</th>
-                <th>Type</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Gross Sales</th>
-                <th>Total Disc</th>
-                <th>Sales Return</th>
-                <th>Net Sales</th>
-                <th>U/C</th>
-                <th>Gross Cost of Sales</th>
-                <th>Cost of Return</th>
-                <th>Cost of Sales</th>
-                <th>Net Profit</th>
-                <th>Salesman</th>
-                <th>Sales Area</th>
-                <th>KOB</th>
+                <th style="text-align: center;">Invoice</th>
+                <th style="text-align: center;">Principal</th>
+                <th style="text-align: center;">Description</th>
+                <th style="text-align: center;">Type</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: center;">Price</th>
+                <th style="text-align: center;">Gross Sales</th>
+                <th style="text-align: center;">Total Disc</th>
+                <th style="text-align: center;">Sales Return</th>
+                <th style="text-align: center;">Net Sales</th>
+                <th style="text-align: center;">U/C</th>
+                <th style="text-align: center;">Gross Cost of Sales</th>
+                <th style="text-align: center;">Cost of Return</th>
+                <th style="text-align: center;">Cost of Sales</th>
+                <th style="text-align: center;">Net Profit</th>
+                <th style="text-align: center;">Salesman</th>
+                <th style="text-align: center;">Sales Area</th>
+                <th style="text-align: center;">KOB</th>
             </tr>
         </thead>
         <tbody>
@@ -100,10 +100,10 @@
     <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
         <thead>
             <tr>
-                <th>Reference</th>
-                <th>DR</th>
-                <th>CR</th>
-                <th>Running Balance</th>
+                <th style="text-align: center;">Reference</th>
+                <th style="text-align: center;">DR</th>
+                <th style="text-align: center;">CR</th>
+                <th style="text-align: center;">Running Balance</th>
             </tr>
         </thead>
         <tbody>
@@ -130,10 +130,10 @@
     <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
         <thead>
             <tr>
-                <th>Reference</th>
-                <th>DR</th>
-                <th>CR</th>
-                <th>Running Balance</th>
+                <th style="text-align: center;">Reference</th>
+                <th style="text-align: center;">DR</th>
+                <th style="text-align: center;">CR</th>
+                <th style="text-align: center;">Running Balance</th>
             </tr>
         </thead>
         <tbody>
@@ -157,10 +157,10 @@
     <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
         <thead>
             <tr>
-                <th>Reference</th>
-                <th>DR</th>
-                <th>CR</th>
-                <th>Running Balance</th>
+                <th style="text-align: center;">Reference</th>
+                <th style="text-align: center;">DR</th>
+                <th style="text-align: center;">CR</th>
+                <th style="text-align: center;">Running Balance</th>
             </tr>
         </thead>
         <tbody>
