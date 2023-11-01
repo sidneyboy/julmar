@@ -245,6 +245,13 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="{{ url('/collection') }}"
+                                                class="nav-link {{ $active_tab == 'collection' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Collection</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('customer_ledger') }}"
                                                 class="nav-link {{ $active_tab == 'customer_ledger' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

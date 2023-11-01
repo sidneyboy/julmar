@@ -10,7 +10,7 @@
                     <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title" style="font-weight: bold;">DISBURSEMENT</h3>
+                            <h3 class="card-title" style="font-weight: bold;">COLLECTION</h3>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -21,33 +21,33 @@
                                 </button>
                             </div>
                         </div>
-                        <form id="disbursement_proceed">
+                        <form id="collection_proceed">
                             @csrf
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label for="">Disbursement:</label>
-                                        <select name="disbursement" id="disbursement" class="form-control" required>
+                                        <label for="">Agent</label>
+                                        <select name="agent_id" id="agent_id" style="width:100%;" class="form-control select2bs4" required>
                                             <option value="" default>Select</option>
-                                            <option value="payment to principal">Principal Payment</option>
-                                            {{-- <option value="collection">Collection</option> --}}
-                                            <option value="others">Others</option>
+                                            @foreach ($agent as $agent_data)
+                                                <option value="{{ $agent_data->id }}">{{ $agent_data->full_name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <div id="disbursement_show_selection"></div>
+                                       
+                                        <div id="collection_show_customers"></div>
                                     </div>
                                     <div class="col-md-12">
                                         <br />
                                         <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
                                     </div>
-
                                 </div>
                             </div>
                         </form>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                            <div id="disbursement_proceed_page"></div>
+                            <div id="collection_proceed_page"></div>
                         </div>
                         <!-- /.card-footer-->
                     </div>
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div id="disbursement_final_summary_page"></div>
+                            <div id="collection_final_summary_page"></div>
                         </div>
                     </div>
                     <!-- /.card -->
@@ -93,14 +93,14 @@
             }
         });
 
-        $("#disbursement").change(function() {
-            var disbursement = $(this).val();
+        $("#agent_id").change(function() {
+            var agent_id = $(this).val();
             $.post({
                 type: "POST",
-                url: "/disbursement_show_selection",
-                data: 'disbursement=' + disbursement,
+                url: "/collection_show_customers",
+                data: 'agent_id=' + agent_id,
                 success: function(data) {
-                    $('#disbursement_show_selection').html(data);
+                    $('#collection_show_customers').html(data);
                 },
                 error: function(error) {
                     console.log(error);
@@ -108,19 +108,19 @@
             });
         });
 
-        $("#disbursement_proceed").on('submit', (function(e) {
+        $("#collection_proceed").on('submit', (function(e) {
             e.preventDefault();
             $('#loader').show();
             $.ajax({
-                url: "disbursement_proceed",
+                url: "collection_proceed",
                 type: "POST",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    $('#disbursement_proceed_page').html(data);
                     $('#loader').hide();
+                    $('#collection_proceed_page').html(data);
                 },
                 error: function(error) {
                     $('#loader').hide();

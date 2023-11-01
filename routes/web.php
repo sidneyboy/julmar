@@ -871,3 +871,10 @@ Route::post('/van_selling_export_sales_and_os_generate', 'Van_selling_export_sal
 
 Route::get('/customer_ledger', 'Customer_ledger_controller@index');
 Route::post('/customer_ledger_generate', 'Customer_ledger_controller@customer_ledger_generate')->name('customer_ledger_generate');
+
+Route::get('/collection', 'Collection_controller@index');
+Route::post('/collection_show_customers', 'Collection_controller@collection_show_customers')->name('collection_show_customers');
+Route::post('/collection_proceed', 'Collection_controller@collection_proceed')->name('collection_proceed');
+Route::post('/collection_final_summary', 'Collection_controller@collection_final_summary')->name('collection_final_summary');
+Route::post('/collection_saved', 'Collection_controller@collection_saved')->name('collection_saved');
+
