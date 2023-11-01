@@ -422,11 +422,14 @@ Route::post('/van_selling_adjustmnets_export_save', 'Van_selling_adjustments_exp
 Route::get('/pcm_upload', 'Pcm_upload_controller@index');
 Route::post('/pcm_upload_save', 'Pcm_upload_controller@pcm_upload_save')->name('pcm_upload_save');
 
+
 Route::get('/pcm_upload_report', 'Pcm_upload_report_controller@index');
 Route::post('/pcm_upload_report_generate', 'Pcm_upload_report_controller@pcm_upload_report_generate')->name('pcm_upload_report_generate');
 Route::post('/pcm_upload_report_generate_details', 'Pcm_upload_report_controller@pcm_upload_report_generate_details')->name('pcm_upload_report_generate_details');
 Route::post('/pcm_upload_report_rgs_save', 'Pcm_upload_report_controller@pcm_upload_report_rgs_save')->name('pcm_upload_report_rgs_save');
 Route::post('/pcm_upload_report_bo_save', 'Pcm_upload_report_controller@pcm_upload_report_bo_save')->name('pcm_upload_report_bo_save');
+
+
 
 
 
@@ -775,6 +778,10 @@ Route::post('/booking_pcm_proceed', 'Booking_pcm_controller@booking_pcm_proceed'
 Route::post('/booking_pcm_proceed_final_summary', 'Booking_pcm_controller@booking_pcm_proceed_final_summary')->name('booking_pcm_proceed_final_summary');
 Route::post('/booking_pcm_save', 'Booking_pcm_controller@booking_pcm_save')->name('booking_pcm_save');
 
+
+
+
+
 Route::get('/warehouse_pcm', 'Warehouse_pcm_controller@index')->name('warehouse_pcm');
 Route::post('/warehouse_pcm_proceed', 'Warehouse_pcm_controller@warehouse_pcm_proceed')->name('warehouse_pcm_proceed');
 Route::post('/warehouse_pcm_final_summary', 'Warehouse_pcm_controller@warehouse_pcm_final_summary')->name('warehouse_pcm_final_summary');
@@ -800,7 +807,7 @@ Route::get('/van_selling_customer_list_show_map/{location_id}', 'Van_selling_cus
 
 Route::get('/booking_pcm_upload', 'Booking_pcm_upload_controller@index')->name('booking_pcm_upload');
 Route::post('/booking_pcm_upload_process', 'Booking_pcm_upload_controller@booking_pcm_upload_process')->name('booking_pcm_upload_process');
-
+Route::post('/booking_pcm_upload_final_process', 'Booking_pcm_upload_controller@booking_pcm_upload_final_process')->name('booking_pcm_upload_final_process');
 
 Route::get('/truck_register', 'Truck_controller@index');
 Route::post('/truck_register_save', 'Truck_controller@truck_register_save')->name('truck_register_save');

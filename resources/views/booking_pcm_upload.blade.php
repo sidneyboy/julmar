@@ -42,6 +42,23 @@
                 </form>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" style="font-weight: bold;">DETAILS</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                        <i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip"
+                        title="Remove">
+                        <i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="booking_pcm_upload_process_page"></div>
+            </div>
+        </div>
     </section>
 
 @endsection
@@ -56,7 +73,7 @@
 
         $("#booking_pcm_upload_process").on('submit', (function(e) {
             e.preventDefault();
-            $('#loader').show();
+            //$('#loader').show();
             $.ajax({
                 url: "booking_pcm_upload_process",
                 type: "POST",
@@ -73,15 +90,16 @@
                             'error'
                         )
                     } else {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: 'Your work has been saved',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        // Swal.fire({
+                        //     position: 'top-end',
+                        //     icon: 'success',
+                        //     title: 'Your work has been saved',
+                        //     showConfirmButton: false,
+                        //     timer: 1500
+                        // });
 
-                        location.reload();
+                        // location.reload();
+                        $('#booking_pcm_upload_process_page').html(data);
                     }
                 },
                 error: function(error) {
