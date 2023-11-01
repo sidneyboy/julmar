@@ -367,7 +367,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li
+                                {{-- <li
                                     class="nav-item {{ $main_tab == 'manage_pcm_custodian_main_tab' ? 'menu-open' : '' }}">
                                     <a href="#"
                                         class="nav-link {{ $sub_tab == 'manage_pcm_custodian_sub_tab' ? 'active' : '' }}">
@@ -386,7 +386,7 @@
                                             </a>
                                         </li>
                                     </ul>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item {{ $main_tab == 'manage_logistics_main_tab' ? 'menu-open' : '' }}">
                                     <a href="#"
                                         class="nav-link {{ $sub_tab == 'manage_logistics_sub_tab' ? 'active' : '' }}">
