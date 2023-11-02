@@ -33,8 +33,8 @@
                             <label for="">PCM Type:</label>
                             <select name="pcm_type" class="form-control" required style="width:100%;">
                                 <option value="" default>Select</option>
-                                {{-- <option value="RGS">RGS</option> --}}
-                                <option value="BO">BO</option>
+                                <option value="RGS">RGS</option>
+                                {{-- <option value="BO">BO</option> --}}
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -55,15 +55,6 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="">Agent:</label>
-                            <select name="agent_id" class="form-control select2bs4" required style="width:100%;">
-                                <option value="" default>Select</option>
-                                @foreach ($agent as $data)
-                                    <option value="{{ $data->id }}">{{ $data->full_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-12">
                             <label for="">Customer:</label>
                             <select name="customer_id" class="form-control select2bs4" required style="width:100%;">
                                 <option value="" default>Select</option>

@@ -50,7 +50,6 @@ class Customer_ledger_controller extends Controller
                 'sales_invoice' => $sales_invoice,
             ])->with('report', $request->input('report'));
         } elseif ($request->input('report') == 'Accounts Receivable') {
-            //return $request->input();
             $accounts_receivable = Sales_invoice_accounts_receivable::where('principal_id', $request->input('principal_id'))
                 ->where('customer_id', $request->input('customer_id'))
                 ->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])

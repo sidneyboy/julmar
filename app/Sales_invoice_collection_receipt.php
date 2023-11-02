@@ -15,4 +15,9 @@ class Sales_invoice_collection_receipt extends Model
         'bank',
         'payment_date',
     ];
+
+    public function sales_invoice_collection_receipt_details()
+    {
+        return $this->hasOne('App\Sales_invoice_collection_receipt_details', 'id')->select('si_id','remarks','payment_status');
+    }
 }

@@ -22,12 +22,12 @@ class Booking_pcm_controller extends Controller
         if (Auth::check()) {
             \Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $agent = Agent::select('id', 'full_name')->get();
+            // $agent = Agent::select('id', 'full_name')->get();
             $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             $customer = Customer::select('id', 'store_name')->where('kind_of_business', '!=', 'VAN SELLING')->get();
             return view('booking_pcm', [
                 'user' => $user,
-                'agent' => $agent,
+                // 'agent' => $agent,
                 'customer' => $customer,
                 'principal' => $principal,
                 'main_tab' => 'manage_booking_main_tab',

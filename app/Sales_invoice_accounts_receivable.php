@@ -24,6 +24,6 @@ class Sales_invoice_accounts_receivable extends Model
 
     public function sales_invoice_collection_receipt()
     {
-        return $this->belongsTo('App\Sales_invoice_collection_receipt', 'all_id')->select('official_receipt');
+        return $this->belongsTo('App\Sales_invoice_collection_receipt', 'all_id')->select('official_receipt','id');
     }
 }

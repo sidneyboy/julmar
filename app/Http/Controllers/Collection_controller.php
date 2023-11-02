@@ -52,7 +52,7 @@ class Collection_controller extends Controller
 
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'sales_invoice_printed')
+        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date')
             ->where('customer_id', $request->input('customer_id'))
             ->where('payment_status', null)
             ->orWhere('payment_status', 'partial')
@@ -77,7 +77,7 @@ class Collection_controller extends Controller
         }
 
         $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
-        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'sales_invoice_printed')
+        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date')
             ->whereIn('id', array_keys($amount_collected))
             ->get();
         return view('collection_final_summary', [
@@ -116,17 +116,6 @@ class Collection_controller extends Controller
         $new_jer->save();
 
         foreach ($request->input('amount_collected') as $key => $value) {
-            $new_details = new Sales_invoice_collection_receipt_details([
-                'sicrd_id' => $new->id,
-                'si_id' => $key,
-                'ar_balance' => $request->input('outstanding_balance')[$key],
-                'amount_collected' => $value,
-                'outstanding_balance' => $request->input('new_outstanding_balance')[$key],
-                'remarks' => $request->input('remarks')[$key],
-            ]);
-
-            $new_details->save();
-
             $sales_invoice_checker = Sales_invoice::select('total_payment', 'total', 'principal_id')->find($key);
 
             $total_payment = $sales_invoice_checker->total_payment + $value;
@@ -137,12 +126,36 @@ class Collection_controller extends Controller
                         'total_payment' => $total_payment,
                         'payment_status' => 'paid',
                     ]);
+
+                $new_details = new Sales_invoice_collection_receipt_details([
+                    'sicrd_id' => $new->id,
+                    'si_id' => $key,
+                    'ar_balance' => $request->input('outstanding_balance')[$key],
+                    'amount_collected' => $value,
+                    'outstanding_balance' => $request->input('new_outstanding_balance')[$key],
+                    'remarks' => $request->input('remarks')[$key],
+                    'status' => 'paid',
+                ]);
+
+                $new_details->save();
             } else {
                 Sales_invoice::where('id', $key)
                     ->update([
                         'total_payment' => $total_payment,
                         'payment_status' => 'partial',
                     ]);
+
+                $new_details = new Sales_invoice_collection_receipt_details([
+                    'sicrd_id' => $new->id,
+                    'si_id' => $key,
+                    'ar_balance' => $request->input('outstanding_balance')[$key],
+                    'amount_collected' => $value,
+                    'outstanding_balance' => $request->input('new_outstanding_balance')[$key],
+                    'remarks' => $request->input('remarks')[$key],
+                    'status' => 'partial',
+                ]);
+
+                $new_details->save();
             }
 
             $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
@@ -178,7 +191,7 @@ class Collection_controller extends Controller
             ->where('principal_id', $sales_invoice->principal_id)
             ->first();
 
-        return view('collection_sales_invoice_show_copy',[
+        return view('collection_sales_invoice_show_copy', [
             'sales_invoice' => $sales_invoice,
             'customer_principal_code' => $customer_principal_code,
         ]);

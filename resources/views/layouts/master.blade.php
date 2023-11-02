@@ -369,7 +369,7 @@
                                             <a href="{{ url('warehouse_pcm') }}"
                                                 class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>PCM</p>
+                                                <p>PCM </p>
                                             </a>
                                         </li>
                                     </ul>
@@ -815,7 +815,7 @@
                                             <a href="{{ url('booking_pcm') }}"
                                                 class="nav-link {{ $active_tab == 'booking_pcm' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>PCM</p>
+                                                <p>PCM Manual</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

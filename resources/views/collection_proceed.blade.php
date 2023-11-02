@@ -47,11 +47,12 @@
             <thead>
                 <tr>
                     <th style="text-align: center">DRIVER</th>
-                    <th style="text-align: center">INVOICE DATE</th>
+                    <th style="text-align: center">DELIVERED DATE</th>
                     <th style="text-align: center">INVOICE NO</th>
                     <th style="text-align: center">PRINCIPAL</th>
-                    <th style="text-align: center">A/R BALANCE</th>
-                    <th style="text-align: center">AMOUNT COLLECTED</th>
+                    <th style="text-align: center">BALANCE</th>
+                    <th style="text-align: center">COLLECTION</th>
+                    <th style="text-align: center">AGING</th>
                     <th style="text-align: center">REMARKS</th>
                 </tr>
             </thead>
@@ -59,10 +60,11 @@
                 @foreach ($sales_invoice as $data)
                     <tr>
                         <td>{{ $data->logistics_invoices->logistics_driver->driver }}</td>
-                        <td>{{ $data->sales_invoice_printed }}</td>
+                        <td>{{ $data->delivered_date }}</td>
                         <td>
-                            <a target="_blank" href="{{ url('collection_sales_invoice_show_copy', ['id' => $data->id]) }}">
-                                {{ $data->delivery_receipt }} 
+                            <a target="_blank"
+                                href="{{ url('collection_sales_invoice_show_copy', ['id' => $data->id]) }}">
+                                {{ $data->delivery_receipt }}
                             </a>
                         </td>
                         <td>{{ $data->principal->principal }}</td>
@@ -78,6 +80,24 @@
                             <input style="text-align: right" type="text"
                                 class="form-control form-control-sm amount_collected" min="0"
                                 name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
+                        </td>
+                        <td style="text-align: center;">
+                            @php
+                                $now = time(); // or your date as well
+                                $your_date = strtotime($data->delivered_date);
+                                $datediff = $now - $your_date;
+
+                                $aging = round($datediff / (60 * 60 * 24));
+                            @endphp
+
+                            @if ($aging <= 15)
+                                <span style="font-size:14px;" class="badge badge-success">{{ $aging }}</span>
+                            @elseif($aging <= 30)
+                                <span style="font-size:14px;" class="badge badge-warning">{{ $aging }}</span>
+                            @elseif($aging > 30)
+                                <span style="font-size:14px;" class="badge badge-danger">{{ $aging }}</span>
+                            @endif
+
                         </td>
                         <td>
                             <input type="text" class="form-control form-control-sm"

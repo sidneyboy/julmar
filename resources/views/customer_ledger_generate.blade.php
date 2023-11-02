@@ -89,7 +89,7 @@
                             @endphp
                         </td>
                         <td>{{ $data->sales_invoice_agent->full_name }}</td>
-                        <td>{{ $data->sales_invoice_customer->location->location  }}</td>
+                        <td>{{ $data->sales_invoice_customer->location->location }}</td>
                         <td>{{ $data->sales_invoice_customer->kind_of_business }}</td>
                     </tr>
                 @endforeach
@@ -100,16 +100,26 @@
     <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
         <thead>
             <tr>
-                <th style="text-align: center;">Reference</th>
+                <th style="text-align: center;">DATE</th>
+                <th style="text-align: center;">APPLIED</th>
+                <th style="text-align: center;">REFERENCE</th>
                 <th style="text-align: center;">DR</th>
                 <th style="text-align: center;">CR</th>
-                <th style="text-align: center;">Running Balance</th>
+                <th style="text-align: center;">BALANCE</th>
+                <th style="text-align: center;">STATUS</th>
+                <th style="text-align: center;">REMARKS</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($accounts_receivable as $data)
                 <tr>
-                    <td>
+                    <td style="text-align: center;">{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                    <td style="text-align: center;">
+                        @if ($data->transaction == 'collection receipt')
+                            {{ $data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->sales_invoice->delivery_receipt }}
+                        @endif
+                    </td>
+                    <td style="text-align: center;">
                         @if ($data->transaction == 'sales invoice')
                             {{ $data->sales_invoice->delivery_receipt }}
                         @elseif($data->transaction == 'collection receipt')
@@ -117,11 +127,20 @@
                         @elseif($data->transaction == 'migration')
                             Migration
                         @endif
-                        {{-- {{ $data->sales_invoice->delivery_receipt }} --}}
                     </td>
                     <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}</td>
                     <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}</td>
                     <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
+                    <td style="text-align: center;">
+                        @if ($data->transaction == 'collection receipt')
+                            {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->payment_status) }}
+                        @endif
+                    </td>
+                    <td style="text-align: left">
+                        @if ($data->transaction == 'collection receipt')
+                            {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->remarks) }}
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>
