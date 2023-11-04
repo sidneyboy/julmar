@@ -12,6 +12,7 @@ use App\Return_good_stock_details;
 use App\Bad_order;
 use App\Bad_order_details;
 use App\Sales_invoice;
+use App\Sales_invoice_details;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,7 @@ class Booking_pcm_controller extends Controller
         }
     }
 
-    public function booking_pcm_show_customer(Request $request)
+    public function booking_pcm_show_invoice(Request $request)
     {
         $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')
             ->where('agent_id', $request->input('agent_id'))
@@ -47,18 +48,15 @@ class Booking_pcm_controller extends Controller
             ->orWhere('payment_status', 'partial')
             ->get();
 
-        return view('booking_pcm_show_customer', [
+        return view('booking_pcm_show_invoice', [
             'sales_invoice' => $sales_invoice,
         ]);
     }
 
     public function booking_pcm_proceed(Request $request)
     {
-        $sales_invoice = Sales_invoice::find($request->input('sales_invoice_id'));
-        // $sku = Sku_add::select('id', 'description', 'sku_type', 'sku_code')
-        //     ->where('sku_type', $request->input('sku_type'))
-        //     ->where('principal_id', $request->input('principal_id'))
-        //     ->get();
+        $sales_invoice = Sales_invoice::select('id', 'customer_id', 'agent_id', 'delivery_receipt', 'sku_type', 'principal_id')
+            ->find($request->input('sales_invoice_id'));
 
         return view('booking_pcm_proceed', [
             'sales_invoice' => $sales_invoice,
@@ -67,50 +65,35 @@ class Booking_pcm_controller extends Controller
 
     public function booking_pcm_proceed_final_summary(Request $request)
     {
-        //return $request->input();
-        $sku = Sku_add::select('id', 'description', 'sku_code')->find($request->input('sku_id'));
-        $checker = Cart::session(auth()->user()->id)->getContent($sku->id);
-
-        if ($checker) {
-            \Cart::session(auth()->user()->id)->remove($sku->id);
-
-            \Cart::session(auth()->user()->id)->add(array(
-                'id' => $sku->id,
-                'name' => $sku->description,
-                'price' => $request->input('unit_price'),
-                'quantity' => $request->input('quantity'),
-                'attributes' => array(),
-                'associatedModel' => $sku,
-            ));
-        } else {
-            \Cart::session(auth()->user()->id)->add(array(
-                'id' => $sku->id,
-                'name' => $sku->description,
-                'price' => $request->input('unit_price'),
-                'quantity' => $request->input('quantity'),
-                'attributes' => array(),
-                'associatedModel' => $sku,
-            ));
+        $quantity_returned = array_filter($request->input('quantity_returned'));
+        foreach ($quantity_returned as $key => $quantity_data) {
+            if ($request->input('quantity')[$key] < $quantity_data) {
+                return 'quantity_exceed';
+            }
         }
 
-
-        $cart =  \Cart::session(auth()->user()->id)->getContent();
+        $sales_invoice_details = Sales_invoice_details::whereIn('id', array_keys($quantity_returned))
+            ->get();
 
         return view('booking_pcm_proceed_final_summary', [
-            'cart' => $cart,
             'principal_id' => $request->input('principal_id'),
+            'sales_invoice_id' => $request->input('sales_invoice_id'),
             'sku_type' => $request->input('sku_type'),
             'agent_id' => $request->input('agent_id'),
             'customer_id' => $request->input('customer_id'),
-            'pcm_type' => $request->input('pcm_type'),
+            'quantity_returned' => $quantity_returned,
+            'sales_invoice_details' => $sales_invoice_details,
         ]);
     }
 
     public function booking_pcm_save(Request $request)
     {
-        //return $request->input();
-        $cart =  \Cart::session(auth()->user()->id)->getContent();
-        if ($request->input('pcm_type') == 'RGS') {
+        $checker = Return_good_stock::select('pcm_number')->where('pcm_number', $request->input('pcm_number'))
+            ->first();
+
+        if ($checker) {
+           return 'existing pcm number';
+        } else {
             $new_rgs = new Return_good_stock([
                 'delivery_receipt' => $request->input('delivery_receipt'),
                 'user_id' => auth()->user()->id,
@@ -120,43 +103,23 @@ class Booking_pcm_controller extends Controller
                 'pcm_number' => $request->input('pcm_number'),
                 'agent_id' => $request->input('agent_id'),
                 'customer_id' => $request->input('customer_id'),
+                'si_id' => $request->input('sales_invoice_id'),
+                'returned_by' => strtoupper($request->input('returned_by')),
             ]);
 
             $new_rgs->save();
 
-            foreach ($cart as $key => $data) {
+            foreach ($request->input('quantity_returned') as $key => $data) {
                 $new_rgs_details = new Return_good_stock_details([
                     'return_good_stock_id' => $new_rgs->id,
-                    'sku_id' => $data->id,
-                    'quantity' => $data->quantity,
-                    'unit_price' => $data->price,
+                    'sku_id' => $key,
+                    'quantity' => $data,
+                    'unit_price' => $request->input('unit_price')[$key],
+                    'user_id' => auth()->user()->id,
+                    'remarks' => $request->input('remarks')[$key],
                 ]);
 
                 $new_rgs_details->save();
-            }
-        } else {
-            $new_bo = new Bad_order([
-                'delivery_receipt' => $request->input('delivery_receipt'),
-                'user_id' => auth()->user()->id,
-                'principal_id' => $request->input('principal_id'),
-                'sku_type' => $request->input('sku_type'),
-                'total_amount' => $request->input('total_amount'),
-                'pcm_number' => $request->input('pcm_number'),
-                'agent_id' => $request->input('agent_id'),
-                'customer_id' => $request->input('customer_id'),
-            ]);
-
-            $new_bo->save();
-
-            foreach ($cart as $key => $data) {
-                $new_bo_details = new Bad_order_details([
-                    'bad_order_id' => $new_bo->id,
-                    'sku_id' => $data->id,
-                    'quantity' => $data->quantity,
-                    'unit_price' => $data->price,
-                ]);
-
-                $new_bo_details->save();
             }
         }
     }

@@ -114,7 +114,7 @@
             var agent_id = $('#agent_id').val();
             $.post({
                 type: "POST",
-                url: "/booking_pcm_show_customer",
+                url: "/booking_pcm_show_invoice",
                 data: 'agent_id=' + agent_id,
                 success: function(data) {
                     $('.loading').hide();

@@ -18,6 +18,8 @@ class Return_good_stock extends Model
         'status',
         'verified_date',
         'verified_by',
+        'si_id',
+        'returned_by',
     ];
 
     public function return_good_stock_details()
