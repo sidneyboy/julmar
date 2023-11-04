@@ -27,20 +27,28 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="">Agent</label>
-                        <select name="agent_id" id="agent_id" class="form-control select2bs4" required>
-                            <option value="" default>Select</option>
-                            @foreach ($agent as $agent_data)
-                                <option value="{{ $agent_data->id }}">{{ $agent_data->full_name }}</option>
-                            @endforeach
-                        </select>
+                <form id="booking_pcm_proceed">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="">Agent</label>
+                            <select name="agent_id" id="agent_id" class="form-control select2bs4" style="width:100%;"
+                                required>
+                                <option value="" default>Select</option>
+                                @foreach ($agent as $agent_data)
+                                    <option value="{{ $agent_data->id }}">{{ $agent_data->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="booking_pcm_show_invoice_page"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <br />
+                            <button class="btn float-right btn-sm btn-info" type="submit">Proceed</button>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <div id="booking_pcm_show_invoice_page"></div>
-                    </div>
-                </div>
+                </form>
             </div>
             <div class="card-footer">
                 <div id="booking_pcm_proceed_page"></div>

@@ -1,32 +1,42 @@
 <form id="booking_pcm_proceed_final_summary">
-    <div class="row">
-        <div class="col-md-4">
-            <label for="">SKU:</label>
-            <select name="sku_id" id="sku_id" class="form-control select2bs4" style="width:100%;" required>
-                <option value="" default>Select</option>
-                @foreach ($sku as $data)
-                    <option value="{{ $data->id }}">[{{ $data->sku_code }}] - {{ $data->description }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="">Quantity:</label>
-            <input type="number" min="1" class="form-control" id="quantity" required name="quantity">
-        </div>
-        <div class="col-md-4">
-            <label for="">Unit Price:</label>
-            <input type="text" class="form-control" required id="unit_price" name="unit_price" onkeypress="return isNumberKey(event)">
-        </div>
-        <div class="col-md-12">
-            <br />
-            <input type="hidden" value="{{ $principal_id }}" name="principal_id">
-            <input type="hidden" value="{{ $sku_type }}" name="sku_type">
-            <input type="hidden" value="{{ $pcm_type }}" name="pcm_type">
-            <input type="hidden" value="{{ $agent_id }}" name="agent_id">
-            <input type="hidden" value="{{ $customer_id }}" name="customer_id">
-            <button class="btn btn-sm float-right btn-info" type="submit">Final Summary</button>
-        </div>
-    </div>
+
+    <table class="table table-bordered table-hover table-sm table-striped">
+        <thead>
+            <tr>
+                <td>Customer:</td>
+                <th style="text-align: center;">{{ $sales_invoice->customer->store_name }}</th>
+                <td>Principal:</td>
+                <th style="text-align: center;">{{ $sales_invoice->principal->principal }}</th>
+                <td>Delivery Receipt:</td>
+                <th style="text-align: center;">{{ $sales_invoice->delivery_receipt }}</th>
+                <td>Sku Type:</td>
+                <th style="text-align: center;">{{ $sales_invoice->sku_type }}</th>
+            </tr>
+        </thead>
+    </table>
+    <table class="table table-bordered table-hover table-sm table-striped">
+        <thead>
+            <tr>
+                <th style="text-align: center;">Code</th>
+                <th style="text-align: center;">Description</th>
+                <th style="text-align: center;">Quantity</th>
+                <th style="text-align: center;">Unit Price</th>
+                <th style="text-align: center;">Quantity Returned</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($sales_invoice->sales_invoice_details as $details)
+                <tr>
+                    <td>{{ $details->sku->sku_code }}</td>
+                    <td>{{ $details->sku->description }}</td>
+                    <td style="text-align: right">{{ $details->quantity }}</td>
+                    <td style="text-align: right">{{ number_format($details->unit_price, 2, '.', ',') }}</td>
+                    <td><input type="number" min="0" class="form-control form-control-sm"
+                            name="quantity_returned[{{ $details->id }}]"></td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </form>
 
 <script>
@@ -57,7 +67,7 @@
                 console.log(data);
                 $('#unit_price').val('');
                 $('#quantity').val('');
-                $("#sku_id").val('').trigger('change') ;
+                $("#sku_id").val('').trigger('change');
                 $('#booking_pcm_proceed_final_summary_page').html(data);
                 $('#loader').hide();
             },
@@ -68,7 +78,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                
+
             }
         });
     }));

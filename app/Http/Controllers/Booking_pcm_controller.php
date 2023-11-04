@@ -24,7 +24,7 @@ class Booking_pcm_controller extends Controller
             \Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $agent = Agent::select('id', 'full_name')
-                ->where('status','active')->get();
+                ->where('status', 'active')->get();
             // $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             // $customer = Customer::select('id', 'store_name')->where('kind_of_business', '!=', 'VAN SELLING')->get();
             return view('booking_pcm', [
@@ -41,23 +41,28 @@ class Booking_pcm_controller extends Controller
 
     public function booking_pcm_show_customer(Request $request)
     {
-        return $sales_invoice = Sales_invoice::where('payment_status','!=','paid')->get();
+        $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')
+            ->where('agent_id', $request->input('agent_id'))
+            ->where('payment_status', null)
+            ->orWhere('payment_status', 'partial')
+            ->get();
+
+        return view('booking_pcm_show_customer', [
+            'sales_invoice' => $sales_invoice,
+        ]);
     }
 
     public function booking_pcm_proceed(Request $request)
     {
-        $sku = Sku_add::select('id', 'description', 'sku_type', 'sku_code')
-            ->where('sku_type', $request->input('sku_type'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->get();
+        $sales_invoice = Sales_invoice::find($request->input('sales_invoice_id'));
+        // $sku = Sku_add::select('id', 'description', 'sku_type', 'sku_code')
+        //     ->where('sku_type', $request->input('sku_type'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->get();
 
         return view('booking_pcm_proceed', [
-            'sku' => $sku
-        ])->with('pcm_type', $request->input('pcm_type'))
-            ->with('sku_type', $request->input('sku_type'))
-            ->with('principal_id', $request->input('principal_id'))
-            ->with('agent_id', $request->input('agent_id'))
-            ->with('customer_id', $request->input('customer_id'));
+            'sales_invoice' => $sales_invoice,
+        ]);
     }
 
     public function booking_pcm_proceed_final_summary(Request $request)
