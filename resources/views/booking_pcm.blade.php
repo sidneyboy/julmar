@@ -27,46 +27,20 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="booking_pcm_proceed">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="">PCM Type:</label>
-                            <select name="pcm_type" class="form-control" required style="width:100%;">
-                                <option value="" default>Select</option>
-                                <option value="RGS">RGS</option>
-                                {{-- <option value="BO">BO</option> --}}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">SKU Type:</label>
-                            <select name="sku_type" class="form-control" required>
-                                <option value="" default>Select</option>
-                                <option value="Butal">Butal</option>
-                                <option value="Case">Case</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">Principal:</label>
-                            <select name="principal_id" class="form-control" required style="width:100%;">
-                                <option value="" default>Select</option>
-                                @foreach ($principal as $data)
-                                    <option value="{{ $data->id }}">{{ $data->principal }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">Customer:</label>
-                            <select name="customer_id" class="form-control select2bs4" required style="width:100%;">
-                                <option value="" default>Select</option>
-                                @foreach ($customer as $data)
-                                    <option value="{{ $data->id }}">{{ $data->store_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="">Agent</label>
+                        <select name="agent_id" id="agent_id" class="form-control select2bs4" required>
+                            <option value="" default>Select</option>
+                            @foreach ($agent as $agent_data)
+                                <option value="{{ $agent_data->id }}">{{ $agent_data->full_name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <br />
-                    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
-                </form>
+                    <div class="col-md-6">
+                        <div id="booking_pcm_show_invoice_page"></div>
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div id="booking_pcm_proceed_page"></div>
@@ -123,10 +97,26 @@
                         'Please Contact IT Support',
                         'error'
                     )
-                   
+
                 }
             });
         }));
+
+        $("#agent_id").change(function() {
+            var agent_id = $('#agent_id').val();
+            $.post({
+                type: "POST",
+                url: "/booking_pcm_show_customer",
+                data: 'agent_id=' + agent_id,
+                success: function(data) {
+                    $('.loading').hide();
+                    $('#booking_pcm_show_invoice_page').html(data);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
     </script>
     </body>
 

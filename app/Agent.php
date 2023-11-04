@@ -13,6 +13,7 @@ class Agent extends Model
     	'full_address',
     	'email_address',
     	'user_id',
+        'status',
     ];
 
     public function principal()

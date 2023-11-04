@@ -1,3 +1,53 @@
+<form id="booking_pcm_proceed">
+    <div class="row">
+        <div class="col-md-3">
+            <label for="">PCM Type:</label>
+            <select name="pcm_type" class="form-control" required style="width:100%;">
+                <option value="" default>Select</option>
+                <option value="RGS">RGS</option>
+                {{-- <option value="BO">BO</option> --}}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="">SKU Type:</label>
+            <select name="sku_type" class="form-control" required>
+                <option value="" default>Select</option>
+                <option value="Butal">Butal</option>
+                <option value="Case">Case</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="">Principal:</label>
+            <select name="principal_id" class="form-control" required style="width:100%;">
+                <option value="" default>Select</option>
+                @foreach ($principal as $data)
+                    <option value="{{ $data->id }}">{{ $data->principal }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="">Customer:</label>
+            <select name="customer_id" class="form-control select2bs4" required style="width:100%;">
+                <option value="" default>Select</option>
+                @foreach ($customer as $data)
+                    <option value="{{ $data->id }}">{{ $data->store_name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
+</form>
+
+
+
+
+
+
+
+
+
+
 
 use Illuminate\Support\Facades\DB;
 

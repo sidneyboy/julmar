@@ -11,6 +11,7 @@ use App\Return_good_stock;
 use App\Return_good_stock_details;
 use App\Bad_order;
 use App\Bad_order_details;
+use App\Sales_invoice;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,14 +23,13 @@ class Booking_pcm_controller extends Controller
         if (Auth::check()) {
             \Cart::session(auth()->user()->id)->clear();
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            // $agent = Agent::select('id', 'full_name')->get();
-            $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
-            $customer = Customer::select('id', 'store_name')->where('kind_of_business', '!=', 'VAN SELLING')->get();
+            $agent = Agent::select('id', 'full_name')
+                ->where('status','active')->get();
+            // $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
+            // $customer = Customer::select('id', 'store_name')->where('kind_of_business', '!=', 'VAN SELLING')->get();
             return view('booking_pcm', [
                 'user' => $user,
-                // 'agent' => $agent,
-                'customer' => $customer,
-                'principal' => $principal,
+                'agent' => $agent,
                 'main_tab' => 'manage_booking_main_tab',
                 'sub_tab' => 'manage_booking_sub_tab',
                 'active_tab' => 'booking_pcm',
@@ -37,6 +37,11 @@ class Booking_pcm_controller extends Controller
         } else {
             return redirect('/')->with('error', 'Session Expired. Please Login');
         }
+    }
+
+    public function booking_pcm_show_customer(Request $request)
+    {
+        return $sales_invoice = Sales_invoice::where('payment_status','!=','paid')->get();
     }
 
     public function booking_pcm_proceed(Request $request)
@@ -124,7 +129,7 @@ class Booking_pcm_controller extends Controller
 
                 $new_rgs_details->save();
             }
-        }else{
+        } else {
             $new_bo = new Bad_order([
                 'delivery_receipt' => $request->input('delivery_receipt'),
                 'user_id' => auth()->user()->id,

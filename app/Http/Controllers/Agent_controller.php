@@ -43,6 +43,7 @@ class Agent_controller extends Controller
 			'full_address' => strtoupper($request->input('full_address')),
 			'email_address' => $request->input('email_address'),
 			'user_id' => auth()->user()->id,
+            'status' => 'active',
 		]);
 
 		$agent_saved->save();
