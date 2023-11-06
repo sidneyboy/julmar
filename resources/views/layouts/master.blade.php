@@ -252,6 +252,13 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="{{ url('/post_credit_memo') }}"
+                                                class="nav-link {{ $active_tab == 'post_credit_memo' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>POST CM</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('customer_ledger') }}"
                                                 class="nav-link {{ $active_tab == 'customer_ledger' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

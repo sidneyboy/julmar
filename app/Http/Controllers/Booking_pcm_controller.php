@@ -92,7 +92,7 @@ class Booking_pcm_controller extends Controller
             ->first();
 
         if ($checker) {
-           return 'existing pcm number';
+            return 'existing pcm number';
         } else {
             $new_rgs = new Return_good_stock([
                 'delivery_receipt' => $request->input('delivery_receipt'),
@@ -105,6 +105,9 @@ class Booking_pcm_controller extends Controller
                 'customer_id' => $request->input('customer_id'),
                 'si_id' => $request->input('sales_invoice_id'),
                 'returned_by' => strtoupper($request->input('returned_by')),
+                'verified_by_name' => strtoupper($request->input('verified_by')),
+                'verified_date' => $request->input('verified_date'),
+                'status' => 'verified',
             ]);
 
             $new_rgs->save();
@@ -113,7 +116,7 @@ class Booking_pcm_controller extends Controller
                 $new_rgs_details = new Return_good_stock_details([
                     'return_good_stock_id' => $new_rgs->id,
                     'sku_id' => $key,
-                    'quantity' => $data,
+                    'confirmed_quantity' => $data,
                     'unit_price' => $request->input('unit_price')[$key],
                     'user_id' => auth()->user()->id,
                     'remarks' => $request->input('remarks')[$key],

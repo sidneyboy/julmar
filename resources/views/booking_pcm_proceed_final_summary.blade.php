@@ -4,6 +4,15 @@
             <thead>
                 <tr>
                     <th colspan="5">
+                        <input type="text" name="verified_by" style="text-transform:uppercase" class="form-control"
+                            required placeholder="Verified By ?">
+                    </th>
+                    <th colspan="5">
+                        <input type="date" name="verified_date" class="form-control" required>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="5">
                         <input type="text" name="returned_by" style="text-transform:uppercase" class="form-control"
                             required placeholder="Returned By ?">
                     </th>

@@ -880,3 +880,6 @@ Route::post('/collection_proceed', 'Collection_controller@collection_proceed')->
 Route::post('/collection_final_summary', 'Collection_controller@collection_final_summary')->name('collection_final_summary');
 Route::post('/collection_saved', 'Collection_controller@collection_saved')->name('collection_saved');
 Route::get('/collection_sales_invoice_show_copy/{id}', 'Collection_controller@collection_sales_invoice_show_copy')->name('collection_sales_invoice_show_copy');
+
+Route::get('/post_credit_memo', 'Post_credit_memo_controller@index');
+Route::post('/credit_memo_proceed', 'Post_credit_memo_controller@credit_memo_proceed')->name('credit_memo_proceed');
