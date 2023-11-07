@@ -240,6 +240,7 @@ class Warehouse_pcm_controller extends Controller
                     'verified_by' => auth()->user()->id,
                     'total_amount' => $request->input('total_amount'),
                 ]);
+                
             foreach ($cart as $key => $data) {
                 Return_good_stock_details::where('sku_id', $data->id)
                     ->where('return_good_stock_id', $request->input('id'))

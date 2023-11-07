@@ -32,14 +32,14 @@
                                             @foreach ($return_good_stock as $return_good_stock_data)
                                                 <option value="{{ 'RGS-' . $return_good_stock_data->id }}">
                                                     @php
-                                                        echo str_replace('PCM-',' ',$return_good_stock_data->pcm_number)
+                                                        echo Str::upper(str_replace('PCM-',' ',$return_good_stock_data->pcm_number))
                                                     @endphp
                                                 </option>
                                             @endforeach
                                             @foreach ($bad_order as $bad_order_data)
                                                 <option value="{{ 'BO-' . $bad_order_data->id }}">
                                                     @php
-                                                        echo str_replace('PCM-',' ',$bad_order_data->pcm_number)
+                                                        echo Str::upper(str_replace('PCM-',' ',$bad_order_data->pcm_number))
                                                     @endphp
                                                 </option>
                                             @endforeach

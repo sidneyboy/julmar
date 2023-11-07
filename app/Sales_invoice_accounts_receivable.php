@@ -22,8 +22,13 @@ class Sales_invoice_accounts_receivable extends Model
         return $this->belongsTo('App\Sales_invoice', 'all_id')->select('delivery_receipt');
     }
 
+    public function return_good_stock()
+    {
+        return $this->belongsTo('App\Return_good_stock', 'all_id')->select('pcm_number','si_id');
+    }
+
     public function sales_invoice_collection_receipt()
     {
-        return $this->belongsTo('App\Sales_invoice_collection_receipt', 'all_id')->select('official_receipt','id');
+        return $this->belongsTo('App\Sales_invoice_collection_receipt', 'all_id')->select('official_receipt', 'id');
     }
 }

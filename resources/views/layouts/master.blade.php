@@ -255,7 +255,7 @@
                                             <a href="{{ url('/post_credit_memo') }}"
                                                 class="nav-link {{ $active_tab == 'post_credit_memo' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>POST CM</p>
+                                                <p>Credit Memo</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">

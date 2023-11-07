@@ -11,11 +11,14 @@ use App\Return_good_stock;
 use App\Return_good_stock_details;
 use App\Bad_order;
 use App\Bad_order_details;
+use App\Return_good_stock_discounts;
 use App\Sales_invoice;
 use App\Sales_invoice_details;
+use App\Sku_ledger;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Booking_pcm_controller extends Controller
 {
@@ -75,6 +78,12 @@ class Booking_pcm_controller extends Controller
         $sales_invoice_details = Sales_invoice_details::whereIn('id', array_keys($quantity_returned))
             ->get();
 
+        if ($sales_invoice_details[0]->sales_invoice->discount_rate == 'none') {
+            $customer_discount = 0;
+        } else {
+            $customer_discount = explode('-', $sales_invoice_details[0]->sales_invoice->discount_rate);
+        }
+
         return view('booking_pcm_proceed_final_summary', [
             'principal_id' => $request->input('principal_id'),
             'sales_invoice_id' => $request->input('sales_invoice_id'),
@@ -83,11 +92,13 @@ class Booking_pcm_controller extends Controller
             'customer_id' => $request->input('customer_id'),
             'quantity_returned' => $quantity_returned,
             'sales_invoice_details' => $sales_invoice_details,
+            'customer_discount' => $customer_discount,
         ]);
     }
 
     public function booking_pcm_save(Request $request)
     {
+        //return $request->input();
         $checker = Return_good_stock::select('pcm_number')->where('pcm_number', $request->input('pcm_number'))
             ->first();
 
@@ -100,7 +111,7 @@ class Booking_pcm_controller extends Controller
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $request->input('sku_type'),
                 'total_amount' => $request->input('total_amount'),
-                'pcm_number' => $request->input('pcm_number'),
+                'pcm_number' => strtoupper($request->input('pcm_number')),
                 'agent_id' => $request->input('agent_id'),
                 'customer_id' => $request->input('customer_id'),
                 'si_id' => $request->input('sales_invoice_id'),
@@ -123,6 +134,41 @@ class Booking_pcm_controller extends Controller
                 ]);
 
                 $new_rgs_details->save();
+
+
+                $sku_id_data = $key;
+                $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id_data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+
+
+                $running_balance = $ledger_results[0]->running_balance + $data;
+                $unit_cost_per_sku = $data * $request->input('unit_price')[$sku_id_data];
+                $running_amount = $ledger_results[0]->running_amount + $unit_cost_per_sku;
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $sku_id_data,
+                    'quantity' => $data,
+                    'running_balance' => $running_balance,
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'booking cm',
+                    'all_id' => $new_rgs->id,
+                    'principal_id' => $request->input('principal_id'),
+                    'sku_type' => strtoupper($request->input('sku_type')),
+                    'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
+                    'amount' => $unit_cost_per_sku,
+                    'running_amount' => $running_amount,
+                ]);
+
+                $new_sku_ledger->save();
+            }
+
+            if (count($request->input('customer_discount')) > 0) {
+                foreach ($request->input('customer_discount') as $key => $discount_rate) {
+                    $new_discount_rate_rgs = new Return_good_stock_discounts([
+                        'return_good_stock_id' => $new_rgs->id,
+                        'discount_rate' => $discount_rate,
+                    ]);
+
+                    $new_discount_rate_rgs->save();
+                }
             }
         }
     }

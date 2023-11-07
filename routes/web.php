@@ -883,3 +883,5 @@ Route::get('/collection_sales_invoice_show_copy/{id}', 'Collection_controller@co
 
 Route::get('/post_credit_memo', 'Post_credit_memo_controller@index');
 Route::post('/credit_memo_proceed', 'Post_credit_memo_controller@credit_memo_proceed')->name('credit_memo_proceed');
+Route::post('/post_credit_memo_save', 'Post_credit_memo_controller@post_credit_memo_save')->name('post_credit_memo_save');
+

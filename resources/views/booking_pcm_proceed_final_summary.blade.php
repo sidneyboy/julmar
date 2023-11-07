@@ -72,27 +72,76 @@
                             $sum_quantity[] = $quantity_returned[$details->id];
                             echo number_format($sub_total, 2, '.', ',');
                         @endphp
-                        <input type="hidden" name="quantity_returned[{{ $details->id }}]"
+                        <input type="hidden" name="quantity_returned[{{ $details->sku_id }}]"
                             value="{{ $quantity_returned[$details->id] }}">
-                        <input type="hidden" name="unit_price[{{ $details->id }}]"
+                        <input type="hidden" name="unit_price[{{ $details->sku_id }}]"
                             value="{{ $details->unit_price }}">
                     </td>
-                    <td><input type="text" class="form-control form-control-sm" name="remarks[{{ $details->id }}]">
+                    <td><input type="text" class="form-control form-control-sm" name="remarks[{{ $details->sku_id }}]">
                     </td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
-            <tr>
-                <th></th>
-                <th></th>
-                <th style="text-align: right">{{ array_sum($sum_quantity) }}</th>
-                <th></th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
-            </tr>
+            @if ($customer_discount == 0)
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
+                    <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
+                </tr>
+                <input type="hidden" name="customer_discount[]" value="0">
+            @else
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
+                </tr>
+                @php
+                    $total = array_sum($sum_total);
+                    $discount_holder = [];
+                    $discount_value_holder = $total;
+                @endphp
+                @foreach ($customer_discount as $data_discount)
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th style="text-align: right">Less - {{ $data_discount }}%</th>
+                        <th style="text-align: right">
+                            @php
+                                $discount_value_holder_dummy = $discount_value_holder;
+                                $less_percentage_by = $data_discount / 100;
+
+                                $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                $discount_amount = $discount_value_holder_dummy * $less_percentage_by;
+                                $discount_holder[] = $discount_value_holder;
+                                echo number_format($discount_amount, 2, '.', ',');
+                            @endphp
+                            <input type="hidden" value="{{ $data_discount }}" name="customer_discount[]">
+                        </th>
+                        <th></th>
+                    </tr>
+                @endforeach
+                <tr>
+                    <th colspan="4" style="text-align: right">Final Total</th>
+                    <th style="text-align: right;text-decoration: overline">
+                        {{ number_format(end($discount_holder), 2, '.', ',') }}
+                        @php
+                            $final_total = end($discount_holder);
+                        @endphp
+                        <input type="hidden" value="{{ $final_total }}" name="total_amount">
+                    </th>
+                    <th></th>
+                </tr>
+            @endif
         </tfoot>
     </table>
-    <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
+ 
     <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
 </form>
 

@@ -28,6 +28,11 @@ class Return_good_stock extends Model
         return $this->hasMany('App\Return_good_stock_details', 'return_good_stock_id');
     }
 
+    public function return_good_stock_discount()
+    {
+        return $this->hasMany('App\Return_good_stock_discounts', 'return_good_stock_id')->select('discount_rate');
+    }
+
     public function principal()
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id')->select('principal');
