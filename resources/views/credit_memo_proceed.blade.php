@@ -155,6 +155,7 @@
             </tfoot>
         </table>
     </div>
+    <input type="hidden" name="transaction" value="{{ $transaction }}">
     <input type="hidden" name="principal_id" value="{{ $cm_data->principal_id }}">
     <input type="hidden" name="customer_id" value="{{ $cm_data->customer_id }}">
     <input type="hidden" name="cm_id" value="{{ $cm_data->id }}">

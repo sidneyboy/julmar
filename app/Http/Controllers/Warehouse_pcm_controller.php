@@ -206,15 +206,15 @@ class Warehouse_pcm_controller extends Controller
 
                     $cart = Cart::session(auth()->user()->id)->getContent();
 
-                    $customer_discount = Customer_discount::select('id', 'customer_discount')
-                        ->where('customer_id', $request->input('customer_id'))
-                        ->where('principal_id', $request->input('principal_id'))
-                        ->get();
+                    // $customer_discount = Customer_discount::select('id', 'customer_discount')
+                    //     ->where('customer_id', $request->input('customer_id'))
+                    //     ->where('principal_id', $request->input('principal_id'))
+                    //     ->get();
 
                     return view('warehouse_pcm_final_summary', [
                         'pcm' => $pcm,
                         'cart' => $cart,
-                        'customer_discount' => $customer_discount,
+                        // 'customer_discount' => $customer_discount,
                     ])->with('type', $request->input('type'))
                         ->with('id', $request->input('id'));
                 } else {
@@ -267,14 +267,14 @@ class Warehouse_pcm_controller extends Controller
                 $new_sku_ledger->save();
             }
 
-            foreach ($request->input('discount_rate') as $key => $discount_rate) {
-                $new_discount_rate_rgs = new Return_good_stock_discounts([
-                    'return_good_stock_id' => $request->input('id'),
-                    'discount_rate' => $discount_rate,
-                ]);
+            // foreach ($request->input('discount_rate') as $key => $discount_rate) {
+            //     $new_discount_rate_rgs = new Return_good_stock_discounts([
+            //         'return_good_stock_id' => $request->input('id'),
+            //         'discount_rate' => $discount_rate,
+            //     ]);
 
-                $new_discount_rate_rgs->save();
-            }
+            //     $new_discount_rate_rgs->save();
+            // }
         } else {
             $cart = Cart::session(auth()->user()->id)->getContent();
             Bad_order::where('id', $request->input('id'))
@@ -293,14 +293,14 @@ class Warehouse_pcm_controller extends Controller
                     ]);
             }
 
-            foreach ($request->input('discount_rate') as $key => $discount_rate) {
-                $new_discount_rate_bo = new Bad_order_discounts([
-                    'bad_order_id' => $request->input('id'),
-                    'discount_rate' => $discount_rate,
-                ]);
+            // foreach ($request->input('discount_rate') as $key => $discount_rate) {
+            //     $new_discount_rate_bo = new Bad_order_discounts([
+            //         'bad_order_id' => $request->input('id'),
+            //         'discount_rate' => $discount_rate,
+            //     ]);
 
-                $new_discount_rate_bo->save();
-            }
+            //     $new_discount_rate_bo->save();
+            // }
         }
     }
 }

@@ -17,6 +17,7 @@ class Bad_order extends Model
         'status',
         'verified_date',
         'verified_by',
+        'final_status',
     ];
 
     public function bad_order_details()

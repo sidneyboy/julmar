@@ -20,10 +20,12 @@ class Post_credit_memo_controller extends Controller
             $user = User::select('name', 'position')->find(Auth()->user()->id);
             $return_good_stock = Return_good_stock::select('pcm_number', 'id')
                 ->where('status', 'verified')
+                ->where('final_status', null)
                 ->get();
 
             $bad_order = Bad_order::select('pcm_number', 'id')
                 ->where('status', 'verified')
+                ->where('final_status', null)
                 ->get();
 
             return view('post_credit_memo', [
@@ -58,6 +60,8 @@ class Post_credit_memo_controller extends Controller
             $cm_data = Bad_order::find($cm_id);
         }
 
+       
+
 
 
         return view('credit_memo_proceed', [
@@ -69,38 +73,46 @@ class Post_credit_memo_controller extends Controller
 
     public function post_credit_memo_save(Request $request)
     {
-        // return $request->input();
-        foreach ($request->input('quantity_returned') as $key => $quantity) {
-            Sales_invoice_details::where('sales_invoice_id', $request->input('si_id'))
-                ->where('sku_id', $key)
-                ->update(['quantity_returned' => $quantity]);
+         return $request->input();
+
+
+        if ($request->input('transaction') == 'RGS') {
+            foreach ($request->input('quantity_returned') as $key => $quantity) {
+                Sales_invoice_details::where('sales_invoice_id', $request->input('si_id'))
+                    ->where('sku_id', $key)
+                    ->update(['quantity_returned' => $quantity]);
+            }
+
+            Return_good_stock::where('id', $request->input('cm_id'))
+                ->update(['final_status' => 'posted']);
+
+
+            Sales_invoice::where('id', $request->input('si_id'))
+                ->update(['total_returned_amount' => $request->input('total_amount')]);
+
+            $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($get_last_row_sales_invoice_accounts_receivable) {
+                $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
+            } else {
+                $sales_invoice_ar_running_balance = $request->input('total_amount');
+            }
+
+            $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                'user_id' => auth()->user()->id,
+                'principal_id' => $request->input('principal_id'),
+                'customer_id' => $request->input('customer_id'),
+                'transaction' => 'credit memo rgs',
+                'all_id' => $request->input('cm_id'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_amount'),
+                'running_balance' => $sales_invoice_ar_running_balance,
+            ]);
+
+            $new_sales_invoice_accounts_receivable->save();
         }
-
-        Sales_invoice::where('id', $request->input('si_id'))
-            ->update(['total_returned_amount' => $request->input('total_amount')]);
-
-        $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($get_last_row_sales_invoice_accounts_receivable) {
-            $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-        } else {
-            $sales_invoice_ar_running_balance = $request->input('total_amount');
-        }
-
-        $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-            'user_id' => auth()->user()->id,
-            'principal_id' => $request->input('principal_id'),
-            'customer_id' => $request->input('customer_id'),
-            'transaction' => 'credit memo rgs',
-            'all_id' => $request->input('cm_id'),
-            'debit_record' => 0,
-            'credit_record' => $request->input('total_amount'),
-            'running_balance' => $sales_invoice_ar_running_balance,
-        ]);
-
-        $new_sales_invoice_accounts_receivable->save();
     }
 }

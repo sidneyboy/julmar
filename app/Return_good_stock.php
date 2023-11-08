@@ -21,6 +21,7 @@ class Return_good_stock extends Model
         'si_id',
         'returned_by',
         'verified_by_name',
+        'final_status',
     ];
 
     public function return_good_stock_details()

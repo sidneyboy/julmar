@@ -153,9 +153,11 @@
                         <th colspan="1">Total</th>
                         <th style="text-align: right"></th>
                         <th></th>
-                        <th style="text-align: right">{{ number_format(array_sum($sum_cart_total), 2, '.', ',') }}</th>
+                        <th style="text-align: right">{{ number_format(array_sum($sum_cart_total), 2, '.', ',') }}
+                            <input type="hidden" value="{{ array_sum($sum_cart_total) }}" name="total_amount">
+                        </th>
                     </tr>
-                    @php
+                    {{-- @php
                         $total = array_sum($sum_cart_total);
                         $discount_holder = [];
                         $discount_value_holder = $total;
@@ -177,17 +179,17 @@
                                 <input type="hidden" value="{{ $data_discount->customer_discount }}" name="discount_rate[]">
                             </th>
                         </tr>
-                    @endforeach
-                    <tr>
+                    @endforeach --}}
+                    {{-- <tr>
                         <th colspan="3" style="text-align: right">Final Total</th>
                         <th style="text-align: right;text-decoration: overline">
-                            {{ number_format(end($discount_holder), 2, '.', ',') }}
+                            {{ number_format(array_sum($sum_cart_total), 2, '.', ',') }}
                             @php
-                                $final_total = end($discount_holder);
+                                $final_total = array_sum($sum_cart_total);
                             @endphp
-                            <input type="hidden" value="{{ $final_total }}" name="total_amount">
+                          
                         </th>
-                    </tr>
+                    </tr> --}}
                 </tfoot>
             </table>
         </div>
