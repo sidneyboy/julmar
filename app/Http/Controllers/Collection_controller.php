@@ -46,13 +46,27 @@ class Collection_controller extends Controller
         ]);
     }
 
+    public function collection_sales_invoice_show_copy(Request $request)
+    {
+        //return $request->input();
+        $sales_invoice = Sales_invoice::select('user_id', 'discount_rate', 'total', 'agent_id', 'customer_id', 'principal_id', 'delivery_receipt', 'created_at', 'sales_order_draft_id', 'mode_of_transaction', 'id')->find($request->input('sales_invoice_id'));
+        $customer_principal_code = Customer_principal_code::where('customer_id', $sales_invoice->customer_id)
+            ->where('principal_id', $sales_invoice->principal_id)
+            ->first();
+
+        return view('collection_sales_invoice_show_copy', [
+            'sales_invoice' => $sales_invoice,
+            'customer_principal_code' => $customer_principal_code,
+        ]);
+    }
+
     public function collection_proceed(Request $request)
     {
         //return $request->input();
 
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date')
+        $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date','total_returned_amount')
             ->where('customer_id', $request->input('customer_id'))
             ->where('payment_status', null)
             ->orWhere('payment_status', 'partial')
@@ -182,18 +196,5 @@ class Collection_controller extends Controller
 
             $new_sales_invoice_accounts_receivable->save();
         }
-    }
-
-    public function collection_sales_invoice_show_copy($id)
-    {
-        $sales_invoice = Sales_invoice::select('user_id', 'discount_rate', 'total', 'agent_id', 'customer_id', 'principal_id', 'delivery_receipt', 'created_at', 'sales_order_draft_id', 'mode_of_transaction', 'id')->find($id);
-        $customer_principal_code = Customer_principal_code::where('customer_id', $sales_invoice->customer_id)
-            ->where('principal_id', $sales_invoice->principal_id)
-            ->first();
-
-        return view('collection_sales_invoice_show_copy', [
-            'sales_invoice' => $sales_invoice,
-            'customer_principal_code' => $customer_principal_code,
-        ]);
     }
 }

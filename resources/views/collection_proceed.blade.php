@@ -59,18 +59,28 @@
             <tbody>
                 @foreach ($sales_invoice as $data)
                     <tr>
-                        <td>{{ $data->logistics_invoices->logistics_driver->driver }}</td>
-                        <td>{{ $data->delivered_date }}</td>
                         <td>
-                            <a target="_blank"
-                                href="{{ url('collection_sales_invoice_show_copy', ['id' => $data->id]) }}">
-                                {{ $data->delivery_receipt }}
-                            </a>
+                            @if (!isset($data->logistics_invoices->logistics_driver))
+                                Not yet updated
+                            @else
+                                {{ $data->logistics_invoices->logistics_driver->driver }}
+                            @endif
+                        </td>
+                        <td>
+                            @if (!isset($data->delivered_date))
+                                Not yet updated
+                            @else
+                                {{ $data->delivered_date }}
+                            @endif
+                        </td>
+                        <td>
+                            <button value="{{ $data->id }}" name="button"
+                                class="btn btn-block btn-sm btn-info show_dr">{{ $data->delivery_receipt }}</button>
                         </td>
                         <td>{{ $data->principal->principal }}</td>
                         <td style="text-align: right">
                             @php
-                                $outstanding_balance = $data->total - $data->total_payment;
+                                $outstanding_balance = ($data->total - $data->total_returned_amount) - $data->total_payment;
                                 echo number_format($outstanding_balance, 2, '.', ',');
                             @endphp
                             <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
@@ -82,13 +92,19 @@
                                 name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
                         </td>
                         <td style="text-align: center;">
-                            @php
-                                $now = time(); // or your date as well
-                                $your_date = strtotime($data->delivered_date);
-                                $datediff = $now - $your_date;
+                            @if (!isset($data->delivered))
+                                @php
+                                    $aging = 0;
+                                @endphp
+                            @else
+                                @php
+                                    $now = time(); // or your date as well
+                                    $your_date = strtotime($data->delivered_date);
+                                    $datediff = $now - $your_date;
 
-                                $aging = round($datediff / (60 * 60 * 24));
-                            @endphp
+                                    $aging = round($datediff / (60 * 60 * 24));
+                                @endphp
+                            @endif
 
                             @if ($aging <= 15)
                                 <span style="font-size:14px;" class="badge badge-success">{{ $aging }}</span>
@@ -109,6 +125,8 @@
         </table>
     </div>
 
+    <div id="collection_sales_invoice_show_copy_page"></div>
+
 
     <input type="hidden" value="{{ $disbursement }}" name="disbursement">
     <input type="hidden" value="{{ $customer_id }}" name="customer_id">
@@ -125,6 +143,22 @@
 
         return true;
     }
+
+    $(".show_dr").click(function() {
+        // alert($('.show_dr').val());
+        var sales_invoice_id = $(this).val();
+        $.post({
+            type: "POST",
+            url: "/collection_sales_invoice_show_copy",
+            data: 'sales_invoice_id=' + sales_invoice_id,
+            success: function(data) {
+                $('#collection_sales_invoice_show_copy_page').html(data);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
 
     $("#collection_final_summary").on('submit', (function(e) {
         e.preventDefault();

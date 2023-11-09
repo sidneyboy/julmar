@@ -34,12 +34,16 @@
                 <tr>
                     <td>{{ $details->sku->sku_code }}</td>
                     <td>{{ $details->sku->description }}</td>
-                    <td style="text-align: right">{{ $details->quantity }}</td>
+                    <td style="text-align: right">
+                        @php
+                            echo $quantity = $details->quantity - $details->quantity_returned;
+                        @endphp
+                    </td>
                     <td style="text-align: right">{{ number_format($details->unit_price, 2, '.', ',') }}</td>
                     <td>
                         <input type="number" min="0" class="form-control form-control-sm"
                             name="quantity_returned[{{ $details->id }}]">
-                        <input type="hidden" min="0" value="{{ $details->quantity }}"
+                        <input type="hidden" min="0" value="{{ $quantity }}"
                             class="form-control form-control-sm" name="quantity[{{ $details->id }}]">
                     </td>
                 </tr>

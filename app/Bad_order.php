@@ -34,4 +34,9 @@ class Bad_order extends Model
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
+
+    public function customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id');
+    }
 }

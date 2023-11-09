@@ -27,7 +27,8 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="">Agent</label>
-                                        <select name="agent_id" id="agent_id" style="width:100%;" class="form-control select2bs4" required>
+                                        <select name="agent_id" id="agent_id" style="width:100%;"
+                                            class="form-control select2bs4" required>
                                             <option value="" default>Select</option>
                                             @foreach ($agent as $agent_data)
                                                 <option value="{{ $agent_data->id }}">{{ $agent_data->full_name }}</option>
@@ -35,7 +36,6 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                       
                                         <div id="collection_show_customers"></div>
                                     </div>
                                     <div class="col-md-12">

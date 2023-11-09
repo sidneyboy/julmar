@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-12">
                     <!-- Default box -->
                     <div class="card">
@@ -83,7 +83,7 @@
                     </div>
                     <!-- /.card -->
                 </div>
-            </div>
+            </div> --}}
         </div>
     </section>
     <!-- /.content -->

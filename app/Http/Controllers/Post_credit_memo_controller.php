@@ -58,9 +58,10 @@ class Post_credit_memo_controller extends Controller
             }
         } elseif ($transaction == 'BO') {
             $cm_data = Bad_order::find($cm_id);
+            $customer_discount = 0;
         }
 
-       
+
 
 
 
@@ -73,22 +74,29 @@ class Post_credit_memo_controller extends Controller
 
     public function post_credit_memo_save(Request $request)
     {
-         return $request->input();
+        //return $request->input();
 
 
         if ($request->input('transaction') == 'RGS') {
             foreach ($request->input('quantity_returned') as $key => $quantity) {
+                $sales_invoice_details_data = Sales_invoice_details::select('quantity_returned')->where('sales_invoice_id', $request->input('si_id'))
+                    ->where('sku_id', $key)
+                    ->first();
+
+                $new_quantity = $sales_invoice_details_data->quantity_returned + $quantity;
+
                 Sales_invoice_details::where('sales_invoice_id', $request->input('si_id'))
                     ->where('sku_id', $key)
-                    ->update(['quantity_returned' => $quantity]);
+                    ->update(['quantity_returned' => $new_quantity]);
             }
 
             Return_good_stock::where('id', $request->input('cm_id'))
                 ->update(['final_status' => 'posted']);
 
-
+            $sales_invoice_data = Sales_invoice::select('total_returned_amount')->find($request->input('si_id'));
+            $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
             Sales_invoice::where('id', $request->input('si_id'))
-                ->update(['total_returned_amount' => $request->input('total_amount')]);
+                ->update(['total_returned_amount' => $new_total_returned_amount]);
 
             $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
                 ->where('principal_id', $request->input('principal_id'))
