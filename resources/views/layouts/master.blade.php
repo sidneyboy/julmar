@@ -265,6 +265,13 @@
                                                 <p>Customer Ledger</p>
                                             </a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="{{ url('agent_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'agent_ledger' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Agent Ledger</p>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item {{ $main_tab == 'manage_ledger_main_tab' ? 'menu-open' : '' }}">
@@ -433,7 +440,7 @@
                                                 <p>Truck Load List</p>
                                             </a>
                                         </li>
-                                        
+
                                         <li class="nav-item">
                                             <a href="{{ url('/truck_load_report') }}"
                                                 class="nav-link {{ $active_tab == 'truck_load_report' ? 'active' : '' }}">

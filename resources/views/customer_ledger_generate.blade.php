@@ -119,6 +119,7 @@
                             {{ $data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->sales_invoice->delivery_receipt }}
                         @elseif($data->transaction == 'credit memo rgs')
                             {{ $data->return_good_stock->sales_invoice->delivery_receipt }}
+                            
                         @endif
                     </td>
                     <td style="text-align: center;">
@@ -127,7 +128,7 @@
                         @elseif($data->transaction == 'collection receipt')
                             {{ $data->sales_invoice_collection_receipt->official_receipt }}
                         @elseif($data->transaction == 'credit memo rgs')
-                            {{ $data->return_good_stock->pcm_number }}
+                            CM-{{ $data->return_good_stock->pcm_number }}
                         @elseif($data->transaction == 'migration')
                             Migration
                         @endif

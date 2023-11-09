@@ -46,8 +46,8 @@
             <thead>
                 <tr>
                     <th style="text-align: center">DRIVER</th>
-                    <th style="text-align: center">INVOICE DATE</th>
-                    <th style="text-align: center">INVOICE NO</th>
+                    <th style="text-align: center">DELIVERED DATE</th>
+                    <th style="text-align: center">DELIVERY RECEIPT</th>
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">A/R BALANCE</th>
                     <th style="text-align: center">AMOUNT COLLECTED</th>
@@ -58,13 +58,25 @@
             <tbody>
                 @foreach ($sales_invoice as $data)
                     <tr>
-                        <td>{{ $data->logistics_invoices->logistics_driver->driver }}</td>
-                        <td>{{ $data->sales_invoice_printed }}</td>
+                        <td>
+                            @if (!isset($data->logistics_invoices->logistics_driver))
+                                Not yet updated
+                            @else
+                                {{ $data->logistics_invoices->logistics_driver->driver }}
+                            @endif
+                        </td>
+                        <td>
+                            @if (!isset($data->delivered_date))
+                                Not yet updated
+                            @else
+                                {{ $data->delivered_date }}
+                            @endif
+                        </td>
                         <td>{{ $data->delivery_receipt }}</td>
                         <td>{{ $data->principal->principal }}</td>
                         <td style="text-align: right">
                             @php
-                                $outstanding_balance = $data->total - $data->total_payment;
+                                $outstanding_balance = ($data->total - $data->total_returned_amount) - $data->total_payment;
                                 echo number_format($outstanding_balance, 2, '.', ',');
                             @endphp
 
@@ -101,7 +113,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="3"></th>
+                    <th colspan="5"></th>
                     <th style="text-align: right">
                         {{ number_format(array_sum($sum_amount_collected), 2, '.', ',') }}
                     </th>

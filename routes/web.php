@@ -886,3 +886,7 @@ Route::post('/collection_sales_invoice_show_copy', 'Collection_controller@collec
 Route::get('/post_credit_memo', 'Post_credit_memo_controller@index');
 Route::post('/credit_memo_proceed', 'Post_credit_memo_controller@credit_memo_proceed')->name('credit_memo_proceed');
 Route::post('/post_credit_memo_save', 'Post_credit_memo_controller@post_credit_memo_save')->name('post_credit_memo_save');
+
+
+Route::get('/agent_ledger', 'Agent_ledger_controller@index');
+Route::post('/agent_ledger_generate', 'Agent_ledger_controller@agent_ledger_generate')->name('agent_ledger_generate');
