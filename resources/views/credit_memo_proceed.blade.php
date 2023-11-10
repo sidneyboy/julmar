@@ -2,7 +2,7 @@
     <form id="post_credit_memo_save">
         @csrf
         <div class="table table-responsive">
-            <table class="table table-bordered table-hover table-sm table-striped">
+            <table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
                         <td>Verified By:</td>
@@ -41,8 +41,16 @@
                         <th style="text-align: center;">
                             @if ($cm_data->si_id != null)
                                 {{ $cm_data->sales_invoice->delivery_receipt }}
+                                <input type="text" name="si_id" value="{{ $cm_data->si_id }}">
                             @else
-                                {{ $cm_data->delivery_receipt }}
+                                <select name="si_id" class="form-control form-control-sm" required>
+                                    <option value="" default>Select</option>
+                                    <option value="unidentified">Unidentified</option>
+                                    @foreach ($sales_invoice as $sales_invoice_data)
+                                        <option value="{{ $sales_invoice_data->id }}">
+                                            {{ $sales_invoice_data->delivery_receipt }}</option>
+                                    @endforeach
+                                </select>
                             @endif
                         </th>
                         <td>Sku Type:</td>
@@ -66,11 +74,10 @@
                 </thead>
                 <tbody>
                     @if ($transaction == 'RGS')
-
                         @foreach ($cm_data->return_good_stock_details as $details)
                             <tr>
                                 <td>{{ $details->sku->sku_code }}
-                                    <input type="hidden" name="si_id" value="{{ $cm_data->si_id }}">
+
                                 </td>
                                 <td>{{ $details->sku->description }}</td>
                                 <td style="text-align: right">{{ $details->confirmed_quantity }}</td>
@@ -105,6 +112,7 @@
                             <th></th>
                             <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
+                            <th></th>
                         </tr>
                         <input type="hidden" name="customer_discount[]" value="0">
                     @else
@@ -164,91 +172,125 @@
         <button type="submit" class="btn btn-sm float-right btn-success">Post Credit Memo</button>
     </form>
 @elseif($transaction == 'BO')
-    <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-sm table-striped">
-            <thead>
-                <tr>
-                    <td>Verified By:</td>
-                    <th style="text-align: center;">
-                        @if ($cm_data->verified_by != null)
-                            {{ $cm_data->verified_by }}
-                        @else
-                            {{ $cm_data->verified_by_name }}
-                        @endif
-                    </th>
-                    <td>Verified Date:</td>
-                    <th style="text-align: center;">{{ $cm_data->verified_date }}</th>
-                    <td>Returned By:</td>
-                    <th style="text-align: center;">{{ $cm_data->returned_by }}</th>
-                    <td>PCM Number:</td>
-                    <th style="text-align: center;">{{ $cm_data->pcm_number }}</th>
-                    <td>Amount:</td>
-                    <th style="text-align: center;">{{ number_format($cm_data->total_amount, 2, '.', ',') }}</th>
-                </tr>
-                <tr>
-                    <td>PCM Type:</td>
-                    <th style="text-align: center;">
-                        @if ($transaction == 'RGS')
-                            Return Good Stock
-                        @elseif($transaction == 'BO')
-                            Bad Order
-                        @endif
-                    </th>
-                    <td>Customer:</td>
-                    <th style="text-align: center;">{{ $cm_data->customer->store_name }}
-                    </th>
-                    <td>Principal:</td>
-                    <th style="text-align: center;">{{ $cm_data->principal->principal }}
-                    </th>
-                    <td>Sku Type:</td>
-                    <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-
-    <div class="table table-responsive">
+    <form id="post_credit_memo_save">
         <div class="table table-responsive">
             <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
-                        <th style="text-align: center;">Code</th>
-                        <th style="text-align: center;">Description</th>
-                        <th style="text-align: center;">Quantity</th>
-                        <th style="text-align: center;">Unit Price</th>
-                        <th style="text-align: center;">Sub-Total</th>
-                        <th>Remarks</th>
+                        <td>Verified By:</td>
+                        <th style="text-align: center;">
+                            @if ($cm_data->verified_by != null)
+                                {{ $cm_data->verified_by }}
+                            @else
+                                {{ $cm_data->verified_by_name }}
+                            @endif
+                        </th>
+                        <td>Verified Date:</td>
+                        <th style="text-align: center;">{{ $cm_data->verified_date }}</th>
+                        <td>Returned By:</td>
+                        <th style="text-align: center;">{{ $cm_data->returned_by }}</th>
+                        <td>PCM Number:</td>
+                        <th style="text-align: center;">{{ $cm_data->pcm_number }}</th>
+                        <td>Amount:</td>
+                        <th style="text-align: center;">{{ number_format($cm_data->total_amount, 2, '.', ',') }}</th>
+                    </tr>
+                    <tr>
+                        <td>PCM Type:</td>
+                        <th style="text-align: center;">
+                            @if ($transaction == 'RGS')
+                                Return Good Stock
+                            @elseif($transaction == 'BO')
+                                Bad Order
+                            @endif
+                        </th>
+                        <td>Customer:</td>
+                        <th style="text-align: center;">{{ $cm_data->customer->store_name }}
+                        </th>
+                        <td>Principal:</td>
+                        <th style="text-align: center;">{{ $cm_data->principal->principal }}
+                        </th>
+                        <th>Delivery Receipt</th>
+                        <th style="text-align: center;">
+                            @if ($cm_data->si_id != null)
+                                {{ $cm_data->sales_invoice->delivery_receipt }}
+                                <input type="text" name="si_id" value="{{ $cm_data->si_id }}">
+                            @else
+                                <select name="si_id" class="form-control form-control-sm" required>
+                                    <option value="" default>Select</option>
+                                    <option value="unidentified">Unidentified</option>
+                                    @foreach ($sales_invoice as $sales_invoice_data)
+                                        <option value="{{ $sales_invoice_data->id }}">
+                                            {{ $sales_invoice_data->delivery_receipt }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                        </th>
+                        <td>Sku Type:</td>
+                        <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($cm_data->bad_order_details as $data)
-                        <tr>
-                            <td>{{ $data->sku->sku_code }}</td>
-                            <td>{{ $data->sku->description }}</td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
-                            <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
-                            <td style="text-align: right">
-                                @php
-                                    $sub_total = $data->quantity * $data->unit_price;
-                                    $sum_total[] = $sub_total;
-                                    echo number_format($sub_total, 2, '.', ',');
-                                @endphp
-                            </td>
-                            <td></td>
-                        </tr>
-                    @endforeach
-                </tbody>
             </table>
         </div>
-    </div>
+
+        <div class="table table-responsive">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-hover table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Code</th>
+                            <th style="text-align: center;">Description</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th style="text-align: center;">Unit Price</th>
+                            <th style="text-align: center;">Sub-Total</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cm_data->bad_order_details as $data)
+                            <tr>
+                                <td>{{ $data->sku->sku_code }}</td>
+                                <td>{{ $data->sku->description }}</td>
+                                <td style="text-align: right">{{ $data->quantity }}</td>
+                                <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
+                                <td style="text-align: right">
+                                    @php
+                                        $sub_total = $data->quantity * $data->unit_price;
+                                        $sum_total[] = $sub_total;
+                                        echo number_format($sub_total, 2, '.', ',');
+                                    @endphp
+                                </td>
+                                <td></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
+                            <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
+                            <th></th>
+                        </tr>
+                        <input type="hidden" name="customer_discount[]" value="0">
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <input type="hidden" name="transaction" value="{{ $transaction }}">
+        <input type="hidden" name="principal_id" value="{{ $cm_data->principal_id }}">
+        <input type="hidden" name="customer_id" value="{{ $cm_data->customer_id }}">
+        <input type="hidden" name="cm_id" value="{{ $cm_data->id }}">
+        <button type="submit" class="btn btn-sm float-right btn-success">Post Credit Memo</button>
+    </form>
 @endif
 
 <script>
     $("#post_credit_memo_save").on('submit', (function(e) {
         e.preventDefault();
-        //$('#loader').show();
+        $('#loader').show();
         $.ajax({
             url: "post_credit_memo_save",
             type: "POST",
@@ -258,15 +300,23 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                if (data == 'exceed') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Amount Exceed AR Balance',
+                        'error'
+                    )
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                // location.reload();
+                    location.reload();
+                }
             },
             error: function(error) {
                 $('#loader').hide();

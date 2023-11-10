@@ -120,7 +120,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    $('#collection_proceed_page').html(data);
+                    if (data == 'no_data_found') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'No Data Found!',
+                            'error'
+                        )
+                    } else {
+                        $('#collection_proceed_page').html(data);
+                    }
                 },
                 error: function(error) {
                     $('#loader').hide();

@@ -18,6 +18,7 @@ class Bad_order extends Model
         'verified_date',
         'verified_by',
         'final_status',
+        'si_id',
     ];
 
     public function bad_order_details()
@@ -38,5 +39,10 @@ class Bad_order extends Model
     public function customer()
     {
         return $this->belongsTo('App\Customer', 'customer_id');
+    }
+
+    public function sales_invoice()
+    {
+        return $this->belongsTo('App\Sales_invoice', 'si_id');
     }
 }

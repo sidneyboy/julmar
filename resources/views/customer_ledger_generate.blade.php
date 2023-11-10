@@ -97,59 +97,77 @@
         </tbody>
     </table>
 @elseif($report == 'Accounts Receivable')
-    <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
-        <thead>
-            <tr>
-                <th style="text-align: center;">DATE</th>
-                <th style="text-align: center;">APPLIED</th>
-                <th style="text-align: center;">REFERENCE</th>
-                <th style="text-align: center;">DR</th>
-                <th style="text-align: center;">CR</th>
-                <th style="text-align: center;">BALANCE</th>
-                <th style="text-align: center;">STATUS</th>
-                <th style="text-align: center;">REMARKS</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($accounts_receivable as $data)
+    <div class="table table-responsive">
+        <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
+            <thead>
                 <tr>
-                    <td style="text-align: center;">{{ date('F j, Y', strtotime($data->created_at)) }}</td>
-                    <td style="text-align: center;">
-                        @if ($data->transaction == 'collection receipt')
-                            {{ $data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->sales_invoice->delivery_receipt }}
-                        @elseif($data->transaction == 'credit memo rgs')
-                            {{ $data->return_good_stock->sales_invoice->delivery_receipt }}
-                            
-                        @endif
-                    </td>
-                    <td style="text-align: center;">
-                        @if ($data->transaction == 'sales invoice')
-                            {{ $data->sales_invoice->delivery_receipt }}
-                        @elseif($data->transaction == 'collection receipt')
-                            {{ $data->sales_invoice_collection_receipt->official_receipt }}
-                        @elseif($data->transaction == 'credit memo rgs')
-                            CM-{{ $data->return_good_stock->pcm_number }}
-                        @elseif($data->transaction == 'migration')
-                            Migration
-                        @endif
-                    </td>
-                    <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}</td>
-                    <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}</td>
-                    <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
-                    <td style="text-align: center;">
-                        @if ($data->transaction == 'collection receipt')
-                            {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->payment_status) }}
-                        @endif
-                    </td>
-                    <td style="text-align: left">
-                        @if ($data->transaction == 'collection receipt')
-                            {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->remarks) }}
-                        @endif
-                    </td>
+                    <th style="text-align: center;">DATE</th>
+                    <th style="text-align: center;">APPLIED</th>
+                    <th style="text-align: center;">REFERENCE</th>
+                    <th style="text-align: center;">DR</th>
+                    <th style="text-align: center;">CR</th>
+                    <th style="text-align: center;">BALANCE</th>
+                    <th style="text-align: center;">STATUS</th>
+                    <th style="text-align: center;">REMARKS</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($accounts_receivable as $data)
+                    <tr>
+                        <td style="text-align: center;">{{ date('F j, Y', strtotime($data->created_at)) }}</td>
+                        <td style="text-align: center;">
+                            @if ($data->transaction == 'collection receipt')
+                                {{ $data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->sales_invoice->delivery_receipt }}
+                            @elseif($data->transaction == 'credit memo rgs')
+                                @if ($data->return_good_stock->si_id != null)
+                                    {{ $data->return_good_stock->sales_invoice->delivery_receipt }}
+                                @else
+                                    Unidentified
+                                @endif
+                            @elseif($data->transaction == 'credit memo bo')
+                                @if ($data->bad_order->si_id != null)
+                                    {{ $data->bad_order->sales_invoice->delivery_receipt }}
+                                @else
+                                    Unidentified
+                                @endif
+                            @endif
+                        </td>
+                        <td style="text-align: center;">
+                            @if ($data->transaction == 'sales invoice')
+                                {{ $data->sales_invoice->delivery_receipt }}
+                            @elseif($data->transaction == 'collection receipt')
+                                {{ $data->sales_invoice_collection_receipt->official_receipt }}
+                            @elseif($data->transaction == 'credit memo rgs')
+                                RGS-{{ $data->return_good_stock->pcm_number }}
+                            @elseif($data->transaction == 'credit memo bo')
+                                BO-{{ $data->bad_order->pcm_number }}
+                            @elseif($data->transaction == 'migration')
+                                Migration
+                            @endif
+                        </td>
+                        <td style="text-align: right">{{ number_format($data->debit_record, 2, '.', ',') }}</td>
+                        <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}</td>
+                        <td style="text-align: right">{{ number_format($data->running_balance, 2, '.', ',') }}</td>
+                        <td style="text-align: center;">
+                            {{-- @if ($data->transaction == 'collection receipt')
+                                {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->payment_status) }}
+                            @elseif($data->transaction == 'credit memo rgs')
+                                {{ $data->return_good_stock->sales_invoice->payment_status }}
+                            @elseif($data->transaction == 'credit memo bo')
+                                {{ $data->return_good_stock->sales_invoice->payment_status }}
+                            @endif --}}
+                            {{ $data->status }}
+                        </td>
+                        <td style="text-align: left">
+                            @if ($data->transaction == 'collection receipt')
+                                {{ Str::ucfirst($data->sales_invoice_collection_receipt->sales_invoice_collection_receipt_details->remarks) }}
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 @elseif($report == 'Principal Sales')
     <table class="table table-bordered table-sm table-striped"style="width:100%;font-size:15px;">
         <thead>

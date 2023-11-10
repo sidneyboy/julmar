@@ -15,6 +15,7 @@ class Sales_invoice_accounts_receivable extends Model
         'debit_record',
         'credit_record',
         'running_balance',
+        'status',
     ];
 
     public function sales_invoice()
@@ -24,7 +25,12 @@ class Sales_invoice_accounts_receivable extends Model
 
     public function return_good_stock()
     {
-        return $this->belongsTo('App\Return_good_stock', 'all_id')->select('pcm_number','si_id');
+        return $this->belongsTo('App\Return_good_stock', 'all_id')->select('pcm_number', 'si_id');
+    }
+
+    public function bad_order()
+    {
+        return $this->belongsTo('App\Bad_order', 'all_id')->select('pcm_number', 'si_id');
     }
 
     public function sales_invoice_collection_receipt()

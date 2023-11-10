@@ -383,7 +383,7 @@
                                             <a href="{{ url('warehouse_pcm') }}"
                                                 class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>PCM </p>
+                                                <p>Verify CM </p>
                                             </a>
                                         </li>
                                     </ul>
