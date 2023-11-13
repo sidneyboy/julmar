@@ -237,13 +237,13 @@
                                                 <p>Disbursement</p>
                                             </a>
                                         </li>
-                                        <li class="nav-item">
+                                        {{-- <li class="nav-item">
                                             <a href="{{ url('/disbursement_report') }}"
                                                 class="nav-link {{ $active_tab == 'disbursement_report' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
                                                 <p>Disbursement Report</p>
                                             </a>
-                                        </li>
+                                        </li> --}}
                                         <li class="nav-item">
                                             <a href="{{ url('/ewt_rate') }}"
                                                 class="nav-link {{ $active_tab == 'ewt_rate' ? 'active' : '' }}">

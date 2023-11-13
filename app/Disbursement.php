@@ -24,10 +24,15 @@ class Disbursement extends Model
         'po_rr_id',
         'amount_payable',
         'transaction',
+        'payable_amount',
+        'ewt_amount',
+        'net_payable',
+        'amount_paid',
+        
     ];
 
     public function user()
     {
-    	return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo('App\User', 'user_id');
     }
 }

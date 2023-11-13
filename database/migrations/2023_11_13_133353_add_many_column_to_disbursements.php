@@ -14,8 +14,10 @@ class AddManyColumnToDisbursements extends Migration
     public function up()
     {
         Schema::table('Disbursements', function (Blueprint $table) {
-            $table->double('ewt_amount',15,4)->nullable();
-            $table->double('net_payable',15,4)->nullable();
+            $table->double('payable_amount', 15, 4)->nullable();
+            $table->double('ewt_amount', 15, 4)->nullable();
+            $table->double('net_payable', 15, 4)->nullable();
+            $table->double('amount_paid', 15, 4)->nullable();
         });
     }
 
@@ -27,7 +29,10 @@ class AddManyColumnToDisbursements extends Migration
     public function down()
     {
         Schema::table('Disbursements', function (Blueprint $table) {
-            //
+            $table->dropColumn('payable_amount');
+            $table->dropColumn('ewt_amount');
+            $table->dropColumn('net_payable');
+            $table->dropColumn('amount_paid');
         });
     }
 }

@@ -11,5 +11,9 @@ class Disbursement_jer extends Model
         'debit_record',
         'credit_record',
         'disbursement_id',
+        'journal_entry',
+        'accounts_payable',
+        'cash_in_bank',
+        'withholding_tax',
     ];
 }

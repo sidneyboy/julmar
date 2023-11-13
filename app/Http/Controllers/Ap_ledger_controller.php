@@ -35,7 +35,7 @@ class Ap_ledger_controller extends Controller
         $date_to = date('Y-m-d', strtotime($var[1]));
 
         $ap_ledger = Ap_ledger::where('principal_id', $request->input('principal'))
-            ->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
+            ->whereBetween('transaction_date', [$date_from, $date_to])
             ->get();
 
         return view('ap_ledger_subsidiary_ledger_show_report_list', [
@@ -147,16 +147,17 @@ class Ap_ledger_controller extends Controller
             DB::raw('sum(credit_record) as total_cr'),
         )->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
             ->where('principal_id', $principal_id)
-            ->where('transaction','!=','beginning')
-            ->where('transaction','!=','cut off')
+            ->where('transaction', '!=', 'beginning')
+            ->where('transaction', '!=', 'cut off')
             ->first();
 
 
         $ap_ledger_running_balance = Ap_ledger::select(
-            'running_balance','id',
+            'running_balance',
+            'id',
         )->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
-            ->where('principal_id',$principal_id)
-            
+            ->where('principal_id', $principal_id)
+
             ->first();
 
         // foreach ($ap_ledger_running_balance as $key => $data) {
