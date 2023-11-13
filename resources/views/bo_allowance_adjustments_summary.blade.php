@@ -126,7 +126,7 @@
             </td>
         </tr>
     </table>
-    @if ($net_deduction > 0)
+    @if ($net_deduction < 0)
         <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
@@ -139,7 +139,7 @@
                 <tr>
                     <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $principal_name }}</td>
                     <td></td>
-                    <td style="font-weight: bold;text-align: center;">{{ number_format($net_deduction, 2, '.', ',') }}
+                    <td style="font-weight: bold;text-align: center;">{{ number_format($net_deduction*-1, 2, '.', ',') }}
                     </td>
                     <td></td>
 
@@ -149,7 +149,7 @@
                     <td style="text-align: center;">INVENTORY - {{ $principal_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction, 2, '.', ',') }}
+                        {{ number_format($net_deduction*-1, 2, '.', ',') }}
                     </td>
                 </tr>
             </tbody>
@@ -168,7 +168,7 @@
                     <td style="text-align: center;">INVENTORY - {{ $principal_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
+                        {{ number_format($net_deduction, 2, '.', ',') }}
                     </td>
                     <td></td>
 
@@ -178,7 +178,7 @@
                     <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $principal_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
+                        {{ number_format($net_deduction, 2, '.', ',') }}
                     </td>
                 </tr>
             </tbody>

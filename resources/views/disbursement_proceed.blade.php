@@ -9,6 +9,7 @@
                 <label for="">Purchase Order / RR</label>
                 <select name="po_rr_id" id="po_rr_id" class="form-control select2bs4" required style="width:100%;">
                     <option value="" default>Select</option>
+                    <option value="others-migration">Direct to AP</option>
                     {{-- @foreach ($purchase_order_unpaid as $purchase_order_unpaid_data)
                         <option
                             value="PO - {{ $purchase_order_unpaid_data->id }} | {{ $purchase_order_unpaid_data->purchase_id }}">
@@ -21,13 +22,8 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-9">
                 <div id="show_po_rr_payable_page"></div>
-            </div>
-            <div class="col-md-3">
-                <label for="">Payment Amount</label>
-                <input type="text" class="form-control" style="text-align: right" required name="amount"
-                    onkeypress="return isNumberKey(event)">
             </div>
             <div class="col-md-3">
                 <label for="">Check/Deposit #</label>
@@ -48,14 +44,15 @@
                     <option value="OTHERS">OTHERS</option>
                 </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label for="">Particulars</label>
                 <input type="text" class="form-control" required name="particulars" required>
             </div>
         </div>
         <br />
+        <input type="hidden" value="{{ $ewt }}" id="ewt" name="ewt">
         <input type="hidden" value="{{ $disbursement }}" name="disbursement">
-        <input type="hidden" value="{{ $principal_id }}" name="principal_id">
+        <input type="hidden" value="{{ $principal_id }}" name="principal_id" id="principal_id">
         <button class="btn btn-sm btn-info float-right">Final Summary</button>
     </form>
     <script>
@@ -74,10 +71,12 @@
 
         $("#po_rr_id").change(function() {
             var po_rr_id = $(this).val();
+            var principal_id = $('#principal_id').val();
+            var ewt = $('#ewt').val();
             $.post({
                 type: "POST",
                 url: "/disbursement_show_po_rr_payable",
-                data: 'po_rr_id=' + po_rr_id,
+                data: 'po_rr_id=' + po_rr_id + '&principal_id=' + principal_id + '&ewt=' + ewt,
                 success: function(data) {
                     $('#loader').hide();
                     $('#show_po_rr_payable_page').html(data);
@@ -307,10 +306,10 @@
                     <tr>
                         <td>{{ $data->account_name }}</td>
                         <td></td>
-                        <td><input type="text" onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
-                                name="debit_record[{{ $data->id }}]"></td>
-                        <td><input type="text" onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
-                                name="credit_record[{{ $data->id }}]"></td>
+                        <td><input type="text" onkeypress="return isNumberKey(event)"
+                                class="form-control form-control-sm" name="debit_record[{{ $data->id }}]"></td>
+                        <td><input type="text" onkeypress="return isNumberKey(event)"
+                                class="form-control form-control-sm" name="credit_record[{{ $data->id }}]"></td>
                     </tr>
                 @endforeach
             </tbody>

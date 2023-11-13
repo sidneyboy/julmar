@@ -105,13 +105,14 @@ class Invoice_cost_adjustment_controller extends Controller
             ->where('principal_id', $request->input('principal_id'))
             ->orderBy('id', 'desc')->take(1)->first();
 
-        if ($ap_ledger_last_transaction) {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
-        } else {
-            $ap_ledger_running_balance = $request->input('total_final_cost');
-        }
+        // if ($ap_ledger_last_transaction) {
+        //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
+        // } else {
+        //     $ap_ledger_running_balance = $request->input('total_final_cost');
+        // }
 
         if ($request->input('total_final_cost') > 0) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,
@@ -121,12 +122,13 @@ class Invoice_cost_adjustment_controller extends Controller
                 'credit_record' => $request->input('total_final_cost'),
                 'running_balance' => $ap_ledger_running_balance,
                 'transaction' => 'invoice cost adjustment',
-                'reference' => $new_invoice_cost_adjustment->id,
+                'reference' => 1,
                 'remarks' => $request->input('particulars'),
             ]);
 
             $new_ap_ledger->save();
         } else {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('total_final_cost')*-1);
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,
@@ -136,7 +138,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'credit_record' => 0,
                 'running_balance' => $ap_ledger_running_balance,
                 'transaction' => 'invoice cost adjustment',
-                'reference' => $new_invoice_cost_adjustment->id,
+                'reference' => 1,
                 'remarks' => $request->input('particulars'),
             ]);
 

@@ -38,6 +38,11 @@ class Sales_invoice extends Model
         return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
 
+    public function sales_invoice_jer()
+    {
+        return $this->hasOne('App\Sales_invoice_jer', 'sales_invoice_id');
+    }
+
     public function agent()
     {
         return $this->belongsTo('App\Agent', 'agent_id');

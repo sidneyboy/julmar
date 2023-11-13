@@ -65,7 +65,7 @@
                             $discount_holder[] = $discount_value_holder;
                             echo number_format($discount_value_holder, 2, '.', ',');
                         @endphp
-                       
+
                     </th>
                 </tr>
             @endforeach
@@ -93,6 +93,54 @@
     </table>
 @endif
 
+<table class="table table-bordered table-hover table-sm table-striped">
+    <thead>
+        <tr>
+            <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+            <th style="text-align: center;">DR</th>
+            <th style="text-align: center;">CR</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: center;">ACCOUNTS RECEIVABLE -
+                {{ $sales_invoice->customer->store_name }}
+            </td>
+            <td></td>
+            <td style="font-weight: bold;text-align: center;">
+                {{ number_format($sales_invoice->sales_invoice_jer->debit_record_ar, 2, '.', ',') }}
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="text-align: center;">SALES - {{ $sales_invoice->principal->principal }}
+            </td>
+            <td></td>
+            <td style="font-weight: bold;text-align: center;">
+                {{ number_format($sales_invoice->sales_invoice_jer->credit_record_sales, 2, '.', ',') }}
+            </td>
+        </tr>
 
 
-<br />
+        <tr>
+            <td style="text-align: center;">COST OF SALES -
+                {{ $sales_invoice->principal->principal }}
+            </td>
+            <td></td>
+            <td style="font-weight: bold;text-align: center;">
+                {{ number_format($sales_invoice->sales_invoice_jer->debit_record_cost_of_sales, 2, '.', ',') }}
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="text-align: center;">INVENTORY - {{ $sales_invoice->principal->principal }}
+            </td>
+            <td></td>
+            <td style="font-weight: bold;text-align: center;">
+                {{ number_format($sales_invoice->sales_invoice_jer->credit_record_inventory, 2, '.', ',') }}
+            </td>
+        </tr>
+    </tbody>
+</table>

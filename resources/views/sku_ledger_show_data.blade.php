@@ -139,16 +139,16 @@
                                                             {{ $details->running_balance }}
                                                         </td>
                                                         <td style="text-align: right">
-                                                            {{ number_format($details->final_unit_cost, 2, '.', ',') }}
+                                                            {{ number_format($details->final_unit_cost, 4, '.', ',') }}
                                                         </td>
                                                         <td style="text-align: right">
-                                                            {{ number_format($details->amount, 2, '.', ',') }}
+                                                            {{ number_format($details->amount, 4, '.', ',') }}
                                                         </td>
                                                         <td style="text-align: right">
-                                                            {{ number_format($details->running_amount, 2, '.', ',') }}
+                                                            {{ number_format($details->running_amount, 4, '.', ',') }}
                                                         </td>
                                                         <td style="text-align: right">
-                                                            {{ number_format($details->running_amount / $details->running_balance, 2, '.', ',') }}
+                                                            {{ number_format($details->running_amount / $details->running_balance, 4, '.', ',') }}
                                                         </td>
                                                     </tr>
                                                 @endforeach

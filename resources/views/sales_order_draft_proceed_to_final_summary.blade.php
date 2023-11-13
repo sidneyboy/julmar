@@ -129,7 +129,7 @@
                         <td style="text-align: right">
                             @if ($customer_discount == 0)
                                 @php
-                                    $final_total_per_sku = 0;
+                                    $final_total_per_sku = $sub_total;
                                 @endphp
                             @else
                                 @php

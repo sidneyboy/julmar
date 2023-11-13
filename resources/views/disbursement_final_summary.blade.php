@@ -74,7 +74,9 @@
         <table class="table table-bordered table-hover table-sm">
             <thead>
                 <tr>
-                    <th style="text-align: center;">Total PO/RR Amount</th>
+                    <th style="text-align: center;">Payable Amount</th>
+                    <th style="text-align: center">EWT Amount</th>
+                    <th style="text-align: center;">Net Payable</th>
                     <th style="text-align: center;">Amount Paid</th>
                     <th style="text-align: center;">Outstanding Balance</th>
                 </tr>
@@ -82,10 +84,16 @@
             <tbody>
                 <tr>
                     <td style="text-align: right">{{ number_format($amount_payable, 2, '.', ',') }}</td>
-                    <td style="text-align: right">{{ number_format($amount, 2, '.', ',') }}</td>
                     <td style="text-align: right">
                         @php
-                            $outstanding_balance = $amount_payable - $amount;
+                            echo number_format($ewt_amount, 2, '.', ',');
+                        @endphp
+                    </td>
+                    <td style="text-align: right">{{ number_format($net_payable_amount, 2, '.', ',') }}</td>
+                    <td style="text-align: right;">{{ number_format($amount, 2, '.', ',') }}</td>
+                    <td style="text-align: right">
+                        @php
+                            $outstanding_balance = $net_payable_amount - $amount;
                             echo number_format($outstanding_balance, 2, '.', ',');
                         @endphp
                         <input type="hidden" value="{{ $outstanding_balance }}" name="outstanding_balance">
@@ -108,15 +116,21 @@
                     <td style="text-align: center;">AP -
                         {{ $principal_name->principal }}</td>
                     <td></td>
-                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($amount, 2, '.', ','); ?></td>
+                    <td style="font-weight: bold;text-align: right;"><?php echo number_format($ewt_amount + $amount, 2, '.', ','); ?></td>
                     <td></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: center;">CASH IN BANK
+                    <td>CASH IN BANK
                         {{ $bank }}</td>
                     <td></td>
-                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($amount, 2, '.', ','); ?></td>
+                    <td style="font-weight: bold;text-align: right;"><?php echo number_format($amount, 2, '.', ','); ?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DUE TO BIR - CREDITABLE WITHHOLDING TAX</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: right;"><?php echo number_format($ewt_amount, 2, '.', ','); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -125,16 +139,15 @@
         <input type="hidden" name="po_rr_id" value="{{ $po_rr_id }}">
         <input type="hidden" name="bank" value="{{ $bank }}">
         <input type="hidden" name="check_deposit_slip" value="{{ $check_deposit_slip }}">
-        <input type="hidden" name="amount" value="{{ $amount }}">
-        <input type="hidden" name="amount_payable" value="{{ $amount_payable }}">
+        <input type="text" name="amount" value="{{ $amount_payable }}">
+        <input type="hidden" name="amount_payable" value="{{ $net_payable_amount }}">
         <input type="hidden" name="outstanding_balance" value="{{ $outstanding_balance }}">
         <input type="hidden" name="cv_number" value="{{ $cv_number }}">
-        <input type="hidden" name="amount" value="{{ $amount }}">
         <input type="hidden" name="particulars" value="{{ $particulars }}">
         <input type="hidden" name="cv_number" value="{{ $cv_number }}">
         <input type="hidden" name="principal_id" value="{{ $principal_id }}">
 
-
+        
         <button class="btn btn-sm float-right btn-success" type="submit">Submit</button>
     </form>
 
@@ -151,15 +164,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();
@@ -331,15 +344,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();

@@ -1,5 +1,5 @@
 <div class="table table-responsive">
-    <table class="table table-bordered table-striped table-sm" style="width:100%;font-size:13px;" id="example1">
+    <table class="table table-bordered table-striped table-sm" style="width:100%;font-size:11px;" id="example1">
         <thead>
             <tr>
                 <th>Principal</th>
@@ -24,12 +24,20 @@
                                 @php
                                     $total_dr[] = $data->debit_record;
                                 @endphp
+                            @else
+                                @php
+                                    $total_dr[] = 0;
+                                @endphp
                             @endif
                         </td>
                         <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
                             @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
                                 @php
                                     $total_cr[] = $data->credit_record;
+                                @endphp
+                            @else
+                                @php
+                                    $total_cr[] = 0;
                                 @endphp
                             @endif
                         </td>
@@ -47,12 +55,20 @@
                                 @php
                                     $total_dr[] = $data->debit_record;
                                 @endphp
+                            @else
+                                @php
+                                    $total_dr[] = 0;
+                                @endphp
                             @endif
                         </td>
                         <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
                             @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
                                 @php
                                     $total_cr[] = $data->credit_record;
+                                @endphp
+                            @else
+                                @php
+                                    $total_cr[] = 0;
                                 @endphp
                             @endif
                         </td>
@@ -70,12 +86,20 @@
                                 @php
                                     $total_dr[] = $data->debit_record;
                                 @endphp
+                            @else
+                                @php
+                                    $total_dr[] = 0;
+                                @endphp
                             @endif
                         </td>
                         <td style="text-align: right">{{ number_format($data->credit_record, 2, '.', ',') }}
                             @if ($data->transaction != 'cut off' and $data->transaction != 'beginning')
                                 @php
                                     $total_cr[] = $data->credit_record;
+                                @endphp
+                            @else
+                                @php
+                                    $total_cr[] = 0;
                                 @endphp
                             @endif
                         </td>

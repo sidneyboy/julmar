@@ -3,6 +3,7 @@
         id="example1">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Code</th>
                 <th>Description</th>
                 <th>Category</th>
@@ -23,6 +24,7 @@
         <tbody>
             @foreach ($sku as $data)
                 <tr>
+                    <td>{{ $data->id }}</td>
                     <td>{{ $data->sku_code }}</td>
                     <td>{{ $data->description }}</td>
                     <td>

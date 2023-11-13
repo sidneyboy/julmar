@@ -93,26 +93,27 @@ class Bo_allowance_adjustments_controller extends Controller
         ]);
 
         $bo_allowance_adjustments_save->save();
-
+            
         $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
         $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
             ->where('principal_id', $request->input('principal_id'))
             ->orderBy('id', 'desc')->take(1)->first();
 
-        if ($ap_ledger_last_transaction) {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('net_deduction');
-        } else {
-            $ap_ledger_running_balance = $request->input('net_deduction');
-        }
+        // if ($ap_ledger_last_transaction) {
+        //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('net_deduction');
+        // } else {
+        //     $ap_ledger_running_balance = $request->input('net_deduction');
+        // }
 
         if ($request->input('net_deduction') > 0) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('net_deduction');
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,
                 'transaction_date' => $date,
                 'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-                'debit_record' => $request->input('net_deduction'),
-                'credit_record' => 0,
+                'debit_record' => 0,
+                'credit_record' => $request->input('net_deduction'),
                 'running_balance' => $ap_ledger_running_balance,
                 'transaction' => 'bo allowance adjustment',
                 'reference' => $bo_allowance_adjustments_save->id,
@@ -120,14 +121,15 @@ class Bo_allowance_adjustments_controller extends Controller
             ]);
 
             $new_ap_ledger->save();
-        } else {
+        } else if($request->input('net_deduction') < 0) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('net_deduction')*-1);
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,
                 'transaction_date' => $date,
                 'description' => 'Bo Allowance Adjustment from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
-                'debit_record' => 0,
-                'credit_record' => $request->input('net_deduction') * -1,
+                'debit_record' => $request->input('net_deduction') * -1,
+                'credit_record' => 0,
                 'running_balance' => $ap_ledger_running_balance,
                 'transaction' => 'bo allowance adjustment',
                 'reference' => $bo_allowance_adjustments_save->id,
@@ -151,9 +153,9 @@ class Bo_allowance_adjustments_controller extends Controller
 
             $bo_allowance_adjustments_details->save();
 
-            Received_purchase_order_details::where('received_id', $request->input('received_id'))
-                ->where('sku_id', $sku)
-                ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
+            // Received_purchase_order_details::where('received_id', $request->input('received_id'))
+            //     ->where('sku_id', $sku)
+            //     ->update(['final_unit_cost' => $request->input('adjusted_amount')[$sku]]);
 
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
 

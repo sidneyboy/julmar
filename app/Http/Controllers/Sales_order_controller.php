@@ -463,6 +463,8 @@ class Sales_order_controller extends Controller
             ]);
 
             $sales_invoice_details->save();
+
+            
         }
 
         $so_draft_update = Sales_order_draft::find($request->input('sales_order_draft_id'));

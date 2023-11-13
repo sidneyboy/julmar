@@ -49,7 +49,7 @@ class Collection_controller extends Controller
     public function collection_sales_invoice_show_copy(Request $request)
     {
         //return $request->input();
-        $sales_invoice = Sales_invoice::select('user_id', 'discount_rate', 'total', 'agent_id', 'customer_id', 'principal_id', 'delivery_receipt', 'created_at', 'sales_order_draft_id', 'mode_of_transaction', 'id')->find($request->input('sales_invoice_id'));
+        $sales_invoice = Sales_invoice::select('id','user_id', 'discount_rate', 'total', 'agent_id', 'customer_id', 'principal_id', 'delivery_receipt', 'created_at', 'sales_order_draft_id', 'mode_of_transaction', 'id')->find($request->input('sales_invoice_id'));
         $customer_principal_code = Customer_principal_code::where('customer_id', $sales_invoice->customer_id)
             ->where('principal_id', $sales_invoice->principal_id)
             ->first();

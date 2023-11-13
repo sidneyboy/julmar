@@ -66,7 +66,7 @@ class Disbursement_controller extends Controller
     {
         if ($request->input('disbursement') == 'payment to principal') {
             // $purchase_order_unpaid = Purchase_order::select('id', 'purchase_id')
-            // ->where('principal_id',$request->input('principal_id'))
+            //     ->where('principal_id', $request->input('principal_id'))
             //     ->where('payment_term', 'cash with order')
             //     ->where('payment_status', null)
             //     ->orWhere('payment_status', 'partial')
@@ -81,6 +81,7 @@ class Disbursement_controller extends Controller
             return view('disbursement_proceed', [
                 // 'purchase_order_unpaid' => $purchase_order_unpaid,
                 'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
+                'ewt' => $request->input('ewt'),
             ])->with('disbursement', $request->input('disbursement'))
                 ->with('principal_id', $request->input('principal_id'));
         } elseif ($request->input('disbursement') == 'collection') {
@@ -114,6 +115,7 @@ class Disbursement_controller extends Controller
 
     public function disbursement_show_po_rr_payable(Request $request)
     {
+        //return $request->input();
         $explode = explode('|', $request->input('po_rr_id'));
         $po_rr_data = $explode[0];
 
@@ -124,9 +126,21 @@ class Disbursement_controller extends Controller
 
 
         if ($transaction == "RR ") {
-            $checker = Received_purchase_order::select('payment_status')
+            $checker = Received_purchase_order::select('id', 'payment_status')
                 ->where('id', $po_rr_id)
                 ->first();
+
+            foreach ($checker->return_to_principal as $key => $return_data) {
+                $sum_return[] = $return_data->total_final_cost;
+            }
+
+            foreach ($checker->bo_allowance_adjustment as $key_2 => $bo_data) {
+                $sum_bo_allowance[] = $bo_data->net_deduction;
+            }
+
+            foreach ($checker->invoice_cost_adjustment as $key_3 => $invoice_data) {
+                $sum_invoice_cost[] = $invoice_data->total_final_cost;
+            }
 
             if ($checker->payment_status == 'partial') {
                 $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
@@ -135,16 +149,23 @@ class Disbursement_controller extends Controller
                 $receive_purchase_order_unpaid_amount = Received_jer::select('dr')
                     ->where('received_id', $po_rr_id)
                     ->first();
+                $ewt_rate = $request->input('ewt') / 100;
+                $amount_payable = $receive_purchase_order_unpaid_amount->dr - $prev_payment + array_sum($sum_return) + array_sum($sum_bo_allowance) + array_sum($sum_invoice_cost);
 
-                $amount_payable = $receive_purchase_order_unpaid_amount->dr - $prev_payment;
+                $ewt_amount = $amount_payable * $ewt_rate;
             } else {
                 $receive_purchase_order_unpaid_amount = Received_jer::select('dr')
                     ->where('received_id', $po_rr_id)
                     ->first();
 
-                $amount_payable = $receive_purchase_order_unpaid_amount->dr;
+                $ewt_rate = $request->input('ewt') / 100;
+
+                $amount_payable = $receive_purchase_order_unpaid_amount->dr  + array_sum($sum_return) + array_sum($sum_bo_allowance) + array_sum($sum_invoice_cost);
+
+                $ewt_amount = $amount_payable * $ewt_rate;
             }
-        } else {
+        } elseif ($transaction == "PO ") {
+
             $checker = Purchase_order::select('payment_status')
                 ->where('id', $po_rr_id)
                 ->first();
@@ -158,29 +179,41 @@ class Disbursement_controller extends Controller
                     ->first();
 
                 $amount_payable = $amount_payable->amount_payable - $prev_payment;
-            } else {
-                $receive_purchase_order_unpaid_amount = Purchase_order::select('dr')
-                    ->where('received_id', $po_rr_id)
+            } else if ($checker->payment_status == null) {
+                $receive_purchase_order_unpaid_amount = Purchase_order::select('total_final_cost')
+                    ->where('id', $po_rr_id)
                     ->first();
 
-                $amount_payable = $receive_purchase_order_unpaid_amount->dr;
+                $amount_payable = $receive_purchase_order_unpaid_amount->total_final_cost;
             }
+        } elseif ($transaction == 'others') {
+            $ap_ledger = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->latest()->first();
+            $amount_payable = $ap_ledger->running_balance;
         }
 
+
+
         return view('disbursement_show_po_rr_payable')
-            ->with('amount_payable', $amount_payable);
+            ->with('amount_payable', $amount_payable)
+            ->with('ewt_amount', $ewt_amount);
     }
 
     public function disbursement_final_summary(Request $request)
     {
-
+       // return $request->input();
         if ($request->input('disbursement') == 'payment to principal') {
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
+            //return $request->input();
 
-            $explode = explode('|', $request->input('po_rr_id'));
-            $po_rr_id = $explode[0];
-            $po_rr = $explode[1];
+            if ($request->input('po_rr_id') == 'others-migration') {
+                $po_rr_id = 'direct to ap payment';
+                $po_rr = 'direct to ap payment';
+            } else {
+                $explode = explode('|', $request->input('po_rr_id'));
+                $po_rr_id = $explode[0];
+                $po_rr = $explode[1];
+            }
 
             $principal_name = Sku_principal::select('principal')
                 ->find($request->input('principal_id'));
@@ -189,6 +222,9 @@ class Disbursement_controller extends Controller
                 ->with('bank', $request->input('bank'))
                 ->with('po_rr_id', $po_rr_id)
                 ->with('po_rr', $po_rr)
+                ->with('ewt', $request->input('ewt'))
+                ->with('ewt_amount', str_replace(',','',$request->input('ewt_amount')))
+                ->with('net_payable_amount', str_replace(',','',$request->input('net_payable_amount')))
                 ->with('particulars', $request->input('particulars'))
                 ->with('amount', str_replace(',', '', $request->input('amount')))
                 ->with('amount_payable', str_replace(',', '', $request->input('amount_payable')))
@@ -235,9 +271,14 @@ class Disbursement_controller extends Controller
         $date = date('Y-m-d');
 
         if ($request->input('disbursement') == 'payment to principal') {
-            $explode = explode('-', $request->input('po_rr_id'));
-            $transaction = $explode[0];
-            $po_rr_id = $explode[1];
+            if ($request->input('po_rr_id') == 'direct to ap payment') {
+                $transaction = 'others';
+                $po_rr_id = 'direct to ap payment';
+            } else {
+                $explode = explode('-', $request->input('po_rr_id'));
+                $transaction = $explode[0];
+                $po_rr_id = $explode[1];
+            }
 
             $new = new Disbursement([
                 'user_id' => auth()->user()->id,
@@ -264,8 +305,6 @@ class Disbursement_controller extends Controller
 
             $new_jer->save();
 
-
-
             if ($transaction == 'PO') {
                 if ($request->input('outstanding_balance') != 0) {
                     Purchase_order::where('id', $po_rr_id)
@@ -274,7 +313,7 @@ class Disbursement_controller extends Controller
                     Purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'paid']);
                 }
-            } else {
+            } elseif ($transaction == 'RR') {
                 if ($request->input('outstanding_balance') != 0) {
                     Received_purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'partial']);

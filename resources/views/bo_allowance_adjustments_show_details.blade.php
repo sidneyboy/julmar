@@ -114,7 +114,7 @@
                         <td style="font-weight: bold;">BO ALLOWANCE</td>
                         <td style="font-weight: bold; text-align: right;font-size: 15px;">
 
-                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->bo_allowance_deduction, 2, '.', ',') }}
+                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->bo_allowance_deduction*-1, 2, '.', ',') }}
 
                         </td>
                     </tr>
@@ -122,7 +122,7 @@
                         <td style="font-weight: bold;">NET DEDUCTION</td>
                         <td
                             style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
-                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                            {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction*-1, 2, '.', ',') }}
                         </td>
                     </tr>
                 </table>
@@ -140,7 +140,7 @@
                                 {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
                             <td></td>
                             <td style="font-weight: bold;text-align: center;">
-                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction*-1, 2, '.', ',') }}
                             </td>
                             <td></td>
                         </tr>
@@ -150,7 +150,7 @@
                                 {{ $bo_adjustments_details[0]->bo_allowance_adjustment->principal->principal }}</td>
                             <td></td>
                             <td style="font-weight: bold;text-align: center;">
-                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction, 2, '.', ',') }}
+                                {{ number_format($bo_adjustments_details[0]->bo_allowance_adjustment->net_deduction*-1, 2, '.', ',') }}
                             </td>
                         </tr>
                     </tbody>

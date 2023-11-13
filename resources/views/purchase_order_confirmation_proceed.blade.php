@@ -53,48 +53,51 @@
         </div>
     </div>
     <br />
-    <table class="table table-bordered table-sm table-striped" id="example1">
-        <thead>
-            <tr>
-                <th>Desc</th>
-                <th>Quantity</th>
-                <th>Confirmed Quantity</th>
-                <th>U/C(VAT EX)</th>
-                <th>Freight</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($purchase_order->purchase_order_details as $data)
+    <div class="table table-responsive">
+        <table class="table table-bordered table-sm table-striped" id="example1">
+            <thead>
                 <tr>
-                    <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
-                    <td>{{ $data->quantity }}</td>
-                    <td><input style="text-align: right" type="number" min="0"
-                            class="form-control form-control-sm" required name="quantity_confirmed[{{ $data->sku_id }}]"
-                            value="0"></td>
-                    <td>
-
-                        @if ($data->sku->sku_price_details_one)
-                            <input style="text-align: right" type="text" class="form-control form-control-sm"
-                                required value="{{ $data->sku->sku_price_details_one->unit_cost }}"
-                                name="unit_cost[{{ $data->sku_id }}]" onkeypress="return isNumberKey(event)">
-                        @else
-                            <input style="text-align: right" type="text" class="form-control form-control-sm"
-                                required value="0"
-                                name="unit_cost[{{ $data->sku_id }}]" onkeypress="return isNumberKey(event)">
-                        @endif
-
-                        <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
-                        <input type="hidden" name="sku_code[{{ $data->sku_id }}]" value="{{ $data->sku->sku_code }}">
-                        <input type="hidden" name="description[{{ $data->sku_id }}]"
-                            value="{{ $data->sku->description }}">
-                    </td>
-                    <td><input style="text-align: right" type="text" class="form-control form-control-sm" required
-                            value="{{ $freight }}" name="freight[{{ $data->sku_id }}]"
-                            onkeypress="return isNumberKey(event)"></td>
+                    <th>Desc</th>
+                    <th>Quantity</th>
+                    <th>Confirmed Quantity</th>
+                    <th>U/C(VAT EX)</th>
+                    <th>Freight</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($purchase_order->purchase_order_details as $data)
+                    <tr>
+                        <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
+                        <td>{{ $data->quantity }}</td>
+                        <td><input style="text-align: right" type="number" min="0"
+                                class="form-control form-control-sm" required
+                                name="quantity_confirmed[{{ $data->sku_id }}]" value="0"></td>
+                        <td>
+
+                            @if ($data->sku->sku_price_details_one)
+                                <input style="text-align: right" type="text" class="form-control form-control-sm"
+                                    required value="{{ $data->sku->sku_price_details_one->unit_cost }}"
+                                    name="unit_cost[{{ $data->sku_id }}]" onkeypress="return isNumberKey(event)">
+                            @else
+                                <input style="text-align: right" type="text" class="form-control form-control-sm"
+                                    required value="0" name="unit_cost[{{ $data->sku_id }}]"
+                                    onkeypress="return isNumberKey(event)">
+                            @endif
+
+                            <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
+                            <input type="hidden" name="sku_code[{{ $data->sku_id }}]"
+                                value="{{ $data->sku->sku_code }}">
+                            <input type="hidden" name="description[{{ $data->sku_id }}]"
+                                value="{{ $data->sku->description }}">
+                        </td>
+                        <td><input style="text-align: right" type="text" class="form-control form-control-sm"
+                                required value="{{ $freight }}" name="freight[{{ $data->sku_id }}]"
+                                onkeypress="return isNumberKey(event)"></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
     <br />
     <input type="hidden" name="purchase_order_id" value="{{ $purchase_order->id }}">

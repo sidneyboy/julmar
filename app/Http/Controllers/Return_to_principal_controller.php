@@ -106,7 +106,7 @@ class Return_to_principal_controller extends Controller
             'vatable_purchase' => $request->input('vatable_purchase'),
             'vat' => $request->input('vat'),
             'freight' => $request->input('freight'),
-            'total_final_cost' => $request->input('total_final_cost'),
+            'total_final_cost' => $request->input('total_final_cost')*-1,
             'total_less_other_discount' => $request->input('total_less_other_discount'),
             'net_payable' => $request->input('net_payable'),
         ]);
