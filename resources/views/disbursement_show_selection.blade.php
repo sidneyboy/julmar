@@ -11,7 +11,12 @@
         </div>
         <div class="col-md-6">
             <label for="">EWT Rate</label>
-            <input type="text" class="form-control" required name="ewt">
+            <select name="ewt" class="form-control" required>
+                <option value="" default>Select</option>
+                @foreach ($ewt_rate as $data_ewt)
+                    <option value="{{ $data_ewt->ewt_rate }}">{{ $data_ewt->ewt_rate / 100 }}</option>
+                @endforeach
+            </select>
         </div>
     </div>
 @elseif ($disbursement == 'collection')

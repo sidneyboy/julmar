@@ -890,3 +890,7 @@ Route::post('/post_credit_memo_save', 'Post_credit_memo_controller@post_credit_m
 
 Route::get('/agent_ledger', 'Agent_ledger_controller@index');
 Route::post('/agent_ledger_generate', 'Agent_ledger_controller@agent_ledger_generate')->name('agent_ledger_generate');
+
+Route::get('/ewt_rate', 'Ewt_rate_controller@index');
+Route::post('/ewt_rate_process', 'Ewt_rate_controller@ewt_rate_process')->name('ewt_rate_process');
+

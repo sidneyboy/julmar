@@ -56,14 +56,17 @@ class Bo_allowance_adjustments_controller extends Controller
 
     public function bo_allowance_adjustments_show_summary(Request $request)
     {
-        //return $request->input();
+
         $unit_cost_adjustment = str_replace(',', '', $request->input('unit_cost_adjustment'));
         $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
-        $sku_add_details = Received_purchase_order_details::where('received_id', $request->input('received_id'))->get();
+        $sku_add_details = Received_purchase_order_details::where('received_id', $request->input('received_id'))
+            ->whereIn('sku_id', $request->input('checkbox_entry'))
+            ->get();
         return view('bo_allowance_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
         ])->with('received_id', $request->input('received_id'))
             ->with('unit_cost_adjustment', $unit_cost_adjustment)
+            ->with('checkbox_entry', $request->input('checkbox_entry'))
             ->with('description', $request->input('description'))
             ->with('quantity', $request->input('quantity'))
             ->with('unit_of_measurement', $request->input('unit_of_measurement'))
@@ -93,7 +96,7 @@ class Bo_allowance_adjustments_controller extends Controller
         ]);
 
         $bo_allowance_adjustments_save->save();
-            
+
         $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
         $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
             ->where('principal_id', $request->input('principal_id'))
@@ -121,8 +124,8 @@ class Bo_allowance_adjustments_controller extends Controller
             ]);
 
             $new_ap_ledger->save();
-        } else if($request->input('net_deduction') < 0) {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('net_deduction')*-1);
+        } else if ($request->input('net_deduction') < 0) {
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('net_deduction') * -1);
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,

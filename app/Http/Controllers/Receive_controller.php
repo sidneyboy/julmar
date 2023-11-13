@@ -241,7 +241,7 @@ class Receive_controller extends Controller
         $new_ap_ledger = new Ap_ledger([
             'principal_id' => $request->input('principal_id'),
             'user_id' => auth()->user()->id,
-            'transaction_date' => $date,
+            'transaction_date' => $request->input('invoice_date'),
             'description' => 'Received PO#: ' . $po->purchase_id,
             'debit_record' => 0,
             'credit_record' => $request->input('total_final_cost'),

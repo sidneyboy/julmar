@@ -79,16 +79,6 @@
             }
         });
 
-        var hasSuccess = '<?php echo Session::has('success'); ?>';
-        if (hasSuccess) {
-            toastr.success('New Sku Information Saved!')
-        }
-
-        var deleteSuccess = '<?php echo Session::has('deleteSuccess'); ?>';
-        if (deleteSuccess) {
-            toastr.warning('Sku Information Deleted!')
-        }
-
         $('#generate').on('click', function(e) {
             var date = $('#reservation').val();
             var principal = $('#principal').val();

@@ -39,7 +39,6 @@ class Receiving_draft_controller extends Controller
                     ->get();
             }
 
-
             return view('receiving_draft', [
                 'user' => $user,
                 'purchase_order' => $purchase_order,

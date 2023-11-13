@@ -3,7 +3,7 @@
         <label for="">Bo Cost Adjustment</label>
         <input type="text" class="form-control form-control-sm" name="unit_cost_adjustment">
     </div>
-    
+
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
@@ -13,6 +13,8 @@
                     <th>Sku Type</th>
                     <th>Qty Received</th>
                     <th>Final Unit Cost</th>
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" />
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +23,7 @@
                         <td style="text-transform: uppercase;">{{ $data->sku->sku_code }}</td>
                         <td style="text-transform: uppercase;">{{ $data->sku->description }}</td>
                         <td style="text-transform: uppercase;">{{ $data->sku->sku_type }}</td>
-                        <td>
+                        <td style="text-align: right">
                             @php
                                 $quantity = $data->quantity - $data->quantity_returned;
                             @endphp
@@ -41,6 +43,10 @@
                                 name="category_id[{{ $data->sku_id }}]">
                             <input type="hidden" value="{{ $data->sku->sku_type }}"
                                 name="sku_type[{{ $data->sku_id }}]">
+                        </td>
+                        <td>
+                            <center><input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"
+                                    class="big-checkbox" /></center>
                         </td>
                     </tr>
                 @endforeach
@@ -67,6 +73,14 @@
             return false;
 
         return true;
+    }
+
+    function toggle(source) {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i] != source)
+                checkboxes[i].checked = source.checked;
+        }
     }
 
 

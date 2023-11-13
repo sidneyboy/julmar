@@ -98,7 +98,7 @@
 
     <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
         <tr>
-            <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
+            <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY:
             </td>
         </tr>
         <tr>
