@@ -30,7 +30,11 @@
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
-                    <th colspan="12">DR: {{ $delivery_receipt }}</th>
+                    @if ($customer_discount != 0)
+                        <th colspan="{{ 10 + count($customer_discount) }}">DR: {{ $delivery_receipt }}</th>
+                    @else
+                        <th colspan="10">DR: {{ $delivery_receipt }}</th>
+                    @endif
                 </tr>
                 <tr>
                     <th>Code</th>
@@ -79,8 +83,7 @@
                                 value="{{ $final_quantity[$details->sku_id] }}">
                             <input type="hidden" name="kilograms[{{ $details->sku_id }}]"
                                 value="{{ $details->sku->kilograms }}">
-                            <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
-                                value="{{ $sub_total }}">
+
                         </td>
                         @php
                             $total = $sub_total;
@@ -140,6 +143,8 @@
                             @php
                                 $sum_total_discount_per_sku[] = $final_total_per_sku;
                             @endphp
+                            <input type="hidden" name="total_amount_per_sku[{{ $details->sku_id }}]"
+                                value="{{ $final_total_per_sku }}">
                         </td>
                         <td style="text-align: right">
                             @php
@@ -166,8 +171,11 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
-                        <th></th>
+                        @if ($customer_discount != 0)
+                            @for ($i = 0; $i < count($customer_discount); $i++)
+                                <th></th>
+                            @endfor
+                        @endif
                     </tr>
                     @php
                         $total = array_sum($sum_total);
@@ -183,7 +191,7 @@
                                 @php
                                     $discount_value_holder_dummy = $discount_value_holder;
                                     $less_percentage_by = $data_discount / 100;
-                                    
+
                                     $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                     $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
                                     $customer_discount_holder[] = $discount_value_holder_dummy * $less_percentage_by;
@@ -196,8 +204,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
+                            @if ($customer_discount != 0)
+                                @for ($i = 0; $i < count($customer_discount); $i++)
+                                    <th></th>
+                                @endfor
+                            @endif
                         </tr>
                     @endforeach
                     <tr>
@@ -216,9 +227,11 @@
                                 name="customer_discount">
                         </th>
                         <th></th>
-                        <th></th>
-
-                        <th></th>
+                        @if ($customer_discount != 0)
+                            @for ($i = 0; $i < count($customer_discount); $i++)
+                                <th></th>
+                            @endfor
+                        @endif
                         <th style="text-align: right;text-decoration: overline;color:red;">
 
                             {{ number_format(array_sum($sum_total_discount_per_sku), 2, '.', ',') }}

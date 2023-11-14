@@ -54,7 +54,6 @@
                     <th>UOM</th>
                     <th>Qty</th>
                     <th>U/P</th>
-                    <th>Sub Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -133,12 +132,6 @@
 
                             <input type="hidden" name="unit_price[{{ $details->sku_id }}]"
                                 value="{{ $unit_price }}">
-                        </td>
-                        <td style="text-align: right">
-                            @php
-                                 $sub_total = $details->quantity * $unit_price;
-                                 echo number_format($sub_total, 2, '.', ',');
-                            @endphp
                         </td>
                     </tr>
                 @endforeach

@@ -47,6 +47,7 @@ class Booking_pcm_controller extends Controller
     {
         $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')
             ->where('agent_id', $request->input('agent_id'))
+            ->where('status','out')
             ->where('payment_status', null)
             ->orWhere('payment_status', 'partial')
             ->get();
