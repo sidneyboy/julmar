@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Bad_order;
+use App\Bad_order_details;
+use App\Customer_principal_price;
 use App\Return_good_stock;
+use App\Return_good_stock_details;
+use App\Return_good_stock_discounts;
 use App\Sales_invoice;
 use App\Sales_invoice_accounts_receivable;
 use App\Sales_invoice_details;
+use App\Sku_price_details;
+use App\Sku_price_history;
 use App\User;
-use App\Sales_invoice_collection_receipt_details;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,7 +47,7 @@ class Post_credit_memo_controller extends Controller
         }
     }
 
-    public function credit_memo_proceed(Request $request)
+    public function post_credit_memo_proceed(Request $request)
     {
         $explode = explode('-', $request->input('cm_id'));
         $transaction = $explode[0];
@@ -49,45 +55,110 @@ class Post_credit_memo_controller extends Controller
 
         if ($transaction == 'RGS') {
             $cm_data = Return_good_stock::find($cm_id);
-            if (count($cm_data->return_good_stock_discount) != 0) {
-                foreach ($cm_data->return_good_stock_discount as $key => $discount_rate_data) {
-                    $customer_discount[] = $discount_rate_data->discount_rate;
-                }
-            } else {
-                $customer_discount = 0;
-            }
-
             $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')->where('customer_id', $cm_data->customer_id)
                 ->where('payment_status',  null)
                 ->orWhere('payment_status', 'partial')
                 ->get();
         } elseif ($transaction == 'BO') {
             $cm_data = Bad_order::find($cm_id);
-            $customer_discount = 0;
-
             $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')->where('customer_id', $cm_data->customer_id)
                 ->where('payment_status',  null)
                 ->orWhere('payment_status', 'partial')
                 ->get();
         }
 
-        return view('credit_memo_proceed', [
+        return view('post_credit_memo_proceed', [
             'cm_data' => $cm_data,
             'cm_id' => $cm_id,
-            'customer_discount' => $customer_discount,
             'sales_invoice' => $sales_invoice,
         ])->with('transaction', $transaction);
     }
 
+    public function post_credit_generate_final_summary(Request $request)
+    {
+        if ($request->input('transaction') == 'RGS') {
+            $cm_data = Return_good_stock::find($request->input('cm_id'));
+        } else if ($request->input('transaction') == 'BO') {
+            $cm_data = Bad_order::find($request->input('cm_id'));
+        }
+
+
+        if ($request->input('si_id') == 'unidentified') {
+            $sales_invoice = $request->input('si_id');
+            $customer_discount = 0;
+            $customer_price_level = Customer_principal_price::select('price_level')
+                ->where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->first();
+
+            $total_invoice_amount = 0;
+
+            foreach ($cm_data->return_good_stock_details as $key => $details) {
+                $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                    ->where('sku_id', $details->sku_id)
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                if ($price_history) {
+                    $unit_price[$details->sku_id] = $price_history->price_level;
+                } else {
+
+                    $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                        ->where('sku_id', $key)
+                        ->first();
+
+                    $unit_price[$details->sku_id] = $price_details->price_level;
+                }
+            }
+        } else {
+            $sales_invoice = Sales_invoice::select('id', 'discount_rate', 'delivery_receipt', 'total', 'total_returned_amount')->find($request->input('si_id'));
+            $customer_discount = explode('-', $sales_invoice->discount_rate);
+            $customer_price_level = Customer_principal_price::select('price_level')
+                ->where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->first();
+
+            $total_invoice_amount = $sales_invoice->total + $sales_invoice->total_returned_amount;
+
+            foreach ($cm_data->return_good_stock_details as $key => $details) {
+                $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                    ->where('sku_id', $details->sku_id)
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                if ($price_history) {
+                    $unit_price[$details->sku_id] = $price_history->price_level;
+                } else {
+
+                    $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                        ->where('sku_id', $key)
+                        ->first();
+
+                    $unit_price[$details->sku_id] = $price_details->price_level;
+                }
+            }
+        }
+
+        return view('post_credit_generate_final_summary', [
+            'cm_data' => $cm_data,
+            'sales_invoice' => $sales_invoice,
+            'unit_price' => $unit_price,
+            'customer_discount' => $customer_discount,
+            'total_invoice_amount' => $total_invoice_amount,
+        ])->with('transaction', $request->input('transaction'))
+            ->with('si_id', $request->input('si_id'));
+    }
+
     public function post_credit_memo_save(Request $request)
     {
-        // return $request->input();
-        $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        //return $request->input();
+        $checker = Sales_invoice_accounts_receivable::select('running_balance')
+            ->where('customer_id', $request->input('customer_id'))
             ->where('principal_id', $request->input('principal_id'))
             ->orderBy('id', 'desc')
             ->first();
 
-        if ($request->input('total_amount') > $get_last_row_sales_invoice_accounts_receivable) {
+        if ($request->input('total_amount') > $checker->running_balance) {
             return 'exceed';
         } else {
             if ($request->input('transaction') == 'RGS') {
@@ -129,7 +200,24 @@ class Post_credit_memo_controller extends Controller
                         Sales_invoice_details::where('sales_invoice_id', $request->input('si_id'))
                             ->where('sku_id', $key)
                             ->update(['quantity_returned' => $new_quantity]);
+
+                        Return_good_stock_details::where('return_good_stock_id', $request->input('cm_id'))
+                            ->where('sku_id', $key)
+                            ->update(['unit_price' => $request->input('unit_price')[$key]]);
                     }
+
+                    if ($request->input('customer_discount') != 0) {
+                        foreach ($request->input('customer_discount') as $key_2 => $final_customer_discount) {
+                            $add_new_cm_discount = new Return_good_stock_discounts([
+                                'return_good_stock_id' => $request->input('cm_id'),
+                                'discount_rate' => $final_customer_discount,
+                            ]);
+
+                            $add_new_cm_discount->save();
+                        }
+                    }
+
+
 
                     Return_good_stock::where('id', $request->input('cm_id'))
                         ->update([
@@ -230,6 +318,23 @@ class Post_credit_memo_controller extends Controller
 
                     $new_sales_invoice_accounts_receivable->save();
                 } else {
+                    foreach ($request->input('quantity_returned') as $key => $quantity) {
+                        Bad_order_details::where('bad_order_id', $request->input('cm_id'))
+                            ->where('sku_id', $key)
+                            ->update(['unit_price' => $request->input('unit_price')[$key]]);
+                    }
+
+                    if ($request->input('customer_discount') != 0) {
+                        foreach ($request->input('customer_discount') as $key_2 => $final_customer_discount) {
+                            $add_new_cm_discount = new Return_good_stock_discounts([
+                                'bad_order_id' => $request->input('cm_id'),
+                                'discount_rate' => $final_customer_discount,
+                            ]);
+
+                            $add_new_cm_discount->save();
+                        }
+                    }
+
                     Bad_order::where('id', $request->input('cm_id'))
                         ->update([
                             'final_status' => 'posted',

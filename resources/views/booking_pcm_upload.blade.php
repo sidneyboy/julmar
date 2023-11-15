@@ -89,6 +89,12 @@
                             'Existing PCM Number',
                             'error'
                         )
+                    } else if (data == 'Incorrect File') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'Incorrect File',
+                            'error'
+                        )
                     } else {
                         // Swal.fire({
                         //     position: 'top-end',
@@ -106,7 +112,7 @@
                     $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
-                        'Please Contact IT Support',
+                        'Please Contact IT Support or Check if the file is correct',
                         'error'
                     )
 

@@ -1,5 +1,5 @@
 @if ($transaction == 'RGS')
-    <form id="post_credit_memo_save">
+    <form id="post_credit_generate_final_summary">
         @csrf
         <div class="table table-responsive">
             <table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px;">
@@ -67,9 +67,9 @@
                         <th style="text-align: center;">Code</th>
                         <th style="text-align: center;">Description</th>
                         <th style="text-align: center;">Quantity</th>
-                        <th style="text-align: center;">Unit Price</th>
+                        {{-- <th style="text-align: center;">Unit Price</th>
                         <th style="text-align: center;">Sub-Total</th>
-                        <th>Remarks</th>
+                        <th>Remarks</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -80,8 +80,11 @@
 
                                 </td>
                                 <td>{{ $details->sku->description }}</td>
-                                <td style="text-align: right">{{ $details->confirmed_quantity }}</td>
-                                <td style="text-align: right">{{ number_format($details->unit_price, 2, '.', ',') }}
+                                <td style="text-align: right">{{ $details->confirmed_quantity }}
+                                    <input type="hidden" name="quantity_returned[{{ $details->sku_id }}]"
+                                        value="{{ $details->confirmed_quantity }}">
+                                </td>
+                                {{-- <td style="text-align: right">{{ number_format($details->unit_price, 2, '.', ',') }}
                                 </td>
                                 <td style="text-align: right">
                                     @php
@@ -90,20 +93,19 @@
                                         $sum_quantity[] = $details->confirmed_quantity;
                                         echo number_format($sub_total, 2, '.', ',');
                                     @endphp
-                                    <input type="hidden" name="quantity_returned[{{ $details->sku_id }}]"
-                                        value="{{ $details->confirmed_quantity }}">
+
                                 </td>
                                 <td>
                                     @if ($details->remarks != 'scanned')
                                         {{ $details->remarks }}
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     @else
                     @endif
                 </tbody>
-                <tfoot>
+                {{-- <tfoot>
                     @if ($customer_discount == 0)
                         <tr>
                             <th></th>
@@ -162,7 +164,7 @@
                             <th></th>
                         </tr>
                     @endif
-                </tfoot>
+                </tfoot> --}}
             </table>
         </div>
         <input type="hidden" name="transaction" value="{{ $transaction }}">
@@ -172,7 +174,7 @@
         <button type="submit" class="btn btn-sm float-right btn-success">Post Credit Memo</button>
     </form>
 @elseif($transaction == 'BO')
-    <form id="post_credit_memo_save">
+    <form id="post_credit_generate_final_summary">
         <div class="table table-responsive">
             <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
@@ -240,9 +242,9 @@
                             <th style="text-align: center;">Code</th>
                             <th style="text-align: center;">Description</th>
                             <th style="text-align: center;">Quantity</th>
-                            <th style="text-align: center;">Unit Price</th>
+                            {{-- <th style="text-align: center;">Unit Price</th>
                             <th style="text-align: center;">Sub-Total</th>
-                            <th>Remarks</th>
+                            <th>Remarks</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -251,7 +253,7 @@
                                 <td>{{ $data->sku->sku_code }}</td>
                                 <td>{{ $data->sku->description }}</td>
                                 <td style="text-align: right">{{ $data->quantity }}</td>
-                                <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
+                                {{-- <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
                                 <td style="text-align: right">
                                     @php
                                         $sub_total = $data->quantity * $data->unit_price;
@@ -259,11 +261,11 @@
                                         echo number_format($sub_total, 2, '.', ',');
                                     @endphp
                                 </td>
-                                <td></td>
+                                <td></td> --}}
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
+                    {{-- <tfoot>
                         <tr>
                             <th></th>
                             <th></th>
@@ -274,7 +276,7 @@
                             <th></th>
                         </tr>
                         <input type="hidden" name="customer_discount[]" value="0">
-                    </tfoot>
+                    </tfoot> --}}
                 </table>
             </div>
         </div>
@@ -288,11 +290,11 @@
 @endif
 
 <script>
-    $("#post_credit_memo_save").on('submit', (function(e) {
+    $("#post_credit_generate_final_summary").on('submit', (function(e) {
         e.preventDefault();
         $('#loader').show();
         $.ajax({
-            url: "post_credit_memo_save",
+            url: "post_credit_generate_final_summary",
             type: "POST",
             data: new FormData(this),
             contentType: false,
@@ -307,15 +309,16 @@
                         'error'
                     )
                 } else {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    $('#post_credit_memo_proceed_final_summary_page').html(data);
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 }
             },
             error: function(error) {

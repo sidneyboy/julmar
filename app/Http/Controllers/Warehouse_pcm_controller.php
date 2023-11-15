@@ -238,7 +238,7 @@ class Warehouse_pcm_controller extends Controller
                     'status' => 'verified',
                     'verified_date' => $date,
                     'verified_by' => auth()->user()->id,
-                    'total_amount' => $request->input('total_amount'),
+                    'total_amount' => 0,
                 ]);
                 
             foreach ($cart as $key => $data) {
@@ -282,7 +282,7 @@ class Warehouse_pcm_controller extends Controller
                     'status' => 'verified',
                     'verified_date' => $date,
                     'verified_by' => auth()->user()->id,
-                    'total_amount' => $request->input('total_amount'),
+                    'total_amount' => 0,
                 ]);
             foreach ($cart as $key => $data) {
                 Bad_order_details::where('sku_id', $data->id)

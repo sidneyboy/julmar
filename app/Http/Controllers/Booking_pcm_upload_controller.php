@@ -44,8 +44,9 @@ class Booking_pcm_upload_controller extends Controller
             }
         }
 
-        //return $csv;
+
         $counter = count($csv);
+
         $explode = explode('-', $csv[0][5]);
         $transaction = $explode[1];
 
@@ -116,47 +117,57 @@ class Booking_pcm_upload_controller extends Controller
                 ]);
 
                 $new_rgs->save();
-
-                $customer_price_level = Customer_principal_price::select('price_level')
-                    ->where('customer_id', $request->input('customer_id'))
-                    ->where('principal_id', $request->input('principal_id'))
-                    ->first();
-
-
                 foreach ($request->input('quantity') as $key => $data_quantity) {
-                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as unit_price')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
-                        ->where('sku_id', $key)
-                        ->orderBy('id', 'desc')
-                        ->first();
+                    $new_details = new Return_good_stock_details([
+                        'return_good_stock_id' => $new_rgs->id,
+                        'sku_id' => $key,
+                        'quantity' => $data_quantity,
+                        'unit_price' => 0,
+                        'user_id' => auth()->user()->id,
+                    ]);
 
-
-
-                    if ($price_history) {
-                        $new_details = new Return_good_stock_details([
-                            'return_good_stock_id' => $new_rgs->id,
-                            'sku_id' => $key,
-                            'quantity' => $data_quantity,
-                            'unit_price' => $price_history->unit_price,
-                            'user_id' => auth()->user()->id,
-                        ]);
-
-                        $new_details->save();
-                    } else {
-                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as unit_price')
-                            ->where('sku_id', $key)
-                            ->first();
-
-                        $new_details = new Return_good_stock_details([
-                            'return_good_stock_id' => $new_rgs->id,
-                            'sku_id' => $key,
-                            'quantity' => $data_quantity,
-                            'unit_price' => $price_details->unit_price,
-                            'user_id' => auth()->user()->id,
-                        ]);
-
-                        $new_details->save();
-                    }
+                    $new_details->save();
                 }
+
+                // $customer_price_level = Customer_principal_price::select('price_level')
+                //     ->where('customer_id', $request->input('customer_id'))
+                //     ->where('principal_id', $request->input('principal_id'))
+                //     ->first();
+
+
+
+                // foreach ($request->input('quantity') as $key => $data_quantity) {
+                //     $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as unit_price')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                //         ->where('sku_id', $key)
+                //         ->orderBy('id', 'desc')
+                //         ->first();
+
+                //     if ($price_history) {
+                //         $new_details = new Return_good_stock_details([
+                //             'return_good_stock_id' => $new_rgs->id,
+                //             'sku_id' => $key,
+                //             'quantity' => $data_quantity,
+                //             'unit_price' => $price_history->unit_price,
+                //             'user_id' => auth()->user()->id,
+                //         ]);
+
+                //         $new_details->save();
+                //     } else {
+                //         $price_details = Sku_price_details::select($customer_price_level->price_level . ' as unit_price')
+                //             ->where('sku_id', $key)
+                //             ->first();
+
+                //         $new_details = new Return_good_stock_details([
+                //             'return_good_stock_id' => $new_rgs->id,
+                //             'sku_id' => $key,
+                //             'quantity' => $data_quantity,
+                //             'unit_price' => $price_details->unit_price,
+                //             'user_id' => auth()->user()->id,
+                //         ]);
+
+                //         $new_details->save();
+                //     }
+                // }
             } else {
                 return 'Existing Data';
             }
@@ -176,43 +187,56 @@ class Booking_pcm_upload_controller extends Controller
 
                 $new_bo->save();
 
-                $customer_price_level = Customer_principal_price::select('price_level')
-                    ->where('customer_id', $request->input('customer_id'))
-                    ->where('principal_id', $request->input('principal_id'))
-                    ->first();
-
                 foreach ($request->input('quantity') as $key => $data_quantity) {
-                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
-                        ->where('sku_id', $key)
-                        ->orderBy('id', 'desc')
-                        ->first();
 
-                    if ($price_history) {
-                        $new_details = new Bad_order_details([
-                            'bad_order_id' => $new_bo->id,
-                            'sku_id' => $key,
-                            'quantity' => $data_quantity,
-                            'unit_price' => $price_history->price_level,
-                            'user_id' => auth()->user()->id,
-                        ]);
+                    $new_details = new Bad_order_details([
+                        'bad_order_id' => $new_bo->id,
+                        'sku_id' => $key,
+                        'quantity' => $data_quantity,
+                        'unit_price' => 0,
+                        'user_id' => auth()->user()->id,
+                    ]);
 
-                        $new_details->save();
-                    } else {
-                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
-                            ->where('sku_id', $key)
-                            ->first();
-
-                        $new_details = new Bad_order_details([
-                            'bad_order_id' => $new_bo->id,
-                            'sku_id' => $key,
-                            'quantity' => $data_quantity,
-                            'unit_price' => $price_details->price_level,
-                            'user_id' => auth()->user()->id,
-                        ]);
-
-                        $new_details->save();
-                    }
+                    $new_details->save();
                 }
+
+                // $customer_price_level = Customer_principal_price::select('price_level')
+                //     ->where('customer_id', $request->input('customer_id'))
+                //     ->where('principal_id', $request->input('principal_id'))
+                //     ->first();
+
+                // foreach ($request->input('quantity') as $key => $data_quantity) {
+                //     $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                //         ->where('sku_id', $key)
+                //         ->orderBy('id', 'desc')
+                //         ->first();
+
+                //     if ($price_history) {
+                //         $new_details = new Bad_order_details([
+                //             'bad_order_id' => $new_bo->id,
+                //             'sku_id' => $key,
+                //             'quantity' => $data_quantity,
+                //             'unit_price' => $price_history->price_level,
+                //             'user_id' => auth()->user()->id,
+                //         ]);
+
+                //         $new_details->save();
+                //     } else {
+                //         $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                //             ->where('sku_id', $key)
+                //             ->first();
+
+                //         $new_details = new Bad_order_details([
+                //             'bad_order_id' => $new_bo->id,
+                //             'sku_id' => $key,
+                //             'quantity' => $data_quantity,
+                //             'unit_price' => $price_details->price_level,
+                //             'user_id' => auth()->user()->id,
+                //         ]);
+
+                //         $new_details->save();
+                //     }
+                // }
             } else {
                 return 'Existing Data';
             }

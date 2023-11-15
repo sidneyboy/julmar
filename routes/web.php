@@ -884,7 +884,8 @@ Route::post('/collection_sales_invoice_show_copy', 'Collection_controller@collec
 
 
 Route::get('/post_credit_memo', 'Post_credit_memo_controller@index');
-Route::post('/credit_memo_proceed', 'Post_credit_memo_controller@credit_memo_proceed')->name('credit_memo_proceed');
+Route::post('/post_credit_memo_proceed', 'Post_credit_memo_controller@post_credit_memo_proceed')->name('post_credit_memo_proceed');
+Route::post('/post_credit_generate_final_summary', 'Post_credit_memo_controller@post_credit_generate_final_summary')->name('post_credit_generate_final_summary');
 Route::post('/post_credit_memo_save', 'Post_credit_memo_controller@post_credit_memo_save')->name('post_credit_memo_save');
 
 
@@ -893,4 +894,3 @@ Route::post('/agent_ledger_generate', 'Agent_ledger_controller@agent_ledger_gene
 
 Route::get('/ewt_rate', 'Ewt_rate_controller@index');
 Route::post('/ewt_rate_process', 'Ewt_rate_controller@ewt_rate_process')->name('ewt_rate_process');
-

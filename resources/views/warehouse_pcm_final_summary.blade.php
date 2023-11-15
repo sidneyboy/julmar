@@ -7,8 +7,8 @@
                         <tr>
                             <th>Desc</th>
                             <th>QTY</th>
-                            <th>U/P</th>
-                            <th>Sub-Total</th>
+                            {{-- <th>U/P</th>
+                            <th>Sub-Total</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -21,15 +21,11 @@
                                             {{ $data->sku->description }}
                                         </td>
                                         <td style="text-align: right">{{ $data->quantity }}</td>
-                                        <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}
+                                        {{-- <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}
                                         </td>
                                         <td style="text-align: right">
-                                            @php
-                                                $total = $data->quantity * $data->unit_price;
-                                                $sum_total[] = $total;
-                                                echo number_format($data->unit_price, 2, '.', ',');
-                                            @endphp
-                                        </td>
+                                          
+                                        </td> --}}
                                     </tr>
                                 @else
                                     <tr>
@@ -43,7 +39,7 @@
                                                 $sum_quantity[] = $data->quantity;
                                             @endphp --}}
                                         </td>
-                                        <td style="text-align: right">
+                                        {{-- <td style="text-align: right">
                                             {{ number_format($data->unit_price, 2, '.', ',') }}
                                         </td>
                                         <td style="text-align: right">
@@ -52,7 +48,7 @@
                                                 $sum_total[] = $total;
                                                 echo number_format($total, 2, '.', ',');
                                             @endphp
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endif
                             @endforeach
@@ -65,7 +61,7 @@
                                             {{ $data->sku->description }}
                                         </td>
                                         <td style="text-align: right">{{ $data->quantity }}</td>
-                                        <td style="text-align: right">
+                                        {{-- <td style="text-align: right">
                                             {{ number_format($data->unit_price, 2, '.', ',') }}
                                         </td>
                                         <td style="text-align: right">
@@ -74,7 +70,7 @@
                                                 $sum_total[] = $total;
                                                 echo number_format($data->unit_price, 2, '.', ',');
                                             @endphp
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @else
                                     <tr>
@@ -88,7 +84,7 @@
                                         $sum_quantity[] = $data->quantity;
                                     @endphp --}}
                                         </td>
-                                        <td style="text-align: right">
+                                        {{-- <td style="text-align: right">
                                             {{ number_format($data->unit_price, 2, '.', ',') }}
                                         </td>
                                         <td style="text-align: right">
@@ -97,20 +93,20 @@
                                                 $sum_total[] = $total;
                                                 echo number_format($total, 2, '.', ',');
                                             @endphp
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endif
                             @endforeach
                         @endif
                     </tbody>
-                    <tfoot>
+                    {{-- <tfoot>
                         <tr>
                             <th colspan="1">Total</th>
                             <th style="text-align: right"></th>
                             <th></th>
                             <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                         </tr>
-                    </tfoot>
+                    </tfoot> --}}
                 </table>
             </div>
         </div>
@@ -120,8 +116,8 @@
                     <tr>
                         <th>Desc</th>
                         <th>QTY</th>
-                        <th>U/P</th>
-                        <th>Sub-Total</th>
+                        {{-- <th>U/P</th>
+                        <th>Sub-Total</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -136,7 +132,7 @@
                                     $sum_cart_quantity[] = $data->quantity;
                                 @endphp
                             </td>
-                            <td style="text-align: right">{{ number_format($data->price, 2, '.', ',') }}
+                            {{-- <td style="text-align: right">{{ number_format($data->price, 2, '.', ',') }}
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -144,19 +140,19 @@
                                     $sum_cart_total[] = $cart_total;
                                     echo number_format($cart_total, 2, '.', ',');
                                 @endphp
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr>
+                    {{-- <tr>
                         <th colspan="1">Total</th>
                         <th style="text-align: right"></th>
                         <th></th>
                         <th style="text-align: right">{{ number_format(array_sum($sum_cart_total), 2, '.', ',') }}
                             <input type="hidden" value="{{ array_sum($sum_cart_total) }}" name="total_amount">
                         </th>
-                    </tr>
+                    </tr> --}}
                     {{-- @php
                         $total = array_sum($sum_cart_total);
                         $discount_holder = [];

@@ -5,8 +5,8 @@
                 <tr>
                     <th>Desc</th>
                     <th>Quantity</th>
-                    <th>U/P</th>
-                    <th>Sub-Total</th>
+                    {{-- <th>U/P</th>
+                    <th>Sub-Total</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -16,15 +16,23 @@
                             <td>[<span style="color:green">{{ $data->sku->sku_code }}</span>] -
                                 {{ $data->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
-                            <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $data->quantity }}
+                                @php
+                                    $total = $data->quantity * $data->unit_price;
+                                    $sum_total[] = $total;
+
+                                    // number_format($data->unit_price, 2, '.', ',');
+                                @endphp
+                            </td>
+                            {{-- <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
                                     $total = $data->quantity * $data->unit_price;
                                     $sum_total[] = $total;
-                                    echo number_format($data->unit_price, 2, '.', ',');
+                                    
+                                    number_format($data->unit_price, 2, '.', ',');
                                 @endphp
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 @else
@@ -33,25 +41,32 @@
                             <td>[<span style="color:green">{{ $data->sku->sku_code }}</span>] -
                                 {{ $data->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $data->quantity }}</td>
-                            <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ $data->quantity }}
+                                @php
+                                    $total = $data->quantity * $data->unit_price;
+                                    $sum_total[] = $total;
+
+                                    // number_format($data->unit_price, 2, '.', ',');
+                                @endphp
+                            </td>
+                            {{-- <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
                                     $total = $data->quantity * $data->unit_price;
                                     $sum_total[] = $total;
                                     echo number_format($data->unit_price, 2, '.', ',');
                                 @endphp
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 @endif
             </tbody>
-            <tfoot>
+            {{-- <tfoot>
                 <tr>
                     <th colspan="3">Total</th>
                     <th style="text-align: right">{{ number_format(array_sum($sum_total), 2, '.', ',') }}</th>
                 </tr>
-            </tfoot>
+            </tfoot> --}}
         </table>
     </div>
     <br />

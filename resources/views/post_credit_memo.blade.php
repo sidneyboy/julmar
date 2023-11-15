@@ -21,7 +21,7 @@
                                 </button>
                             </div>
                         </div>
-                        <form id="credit_memo_proceed">
+                        <form id="post_credit_memo_proceed">
                             @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -54,7 +54,7 @@
                         </form>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                            <div id="credit_memo_proceed_page"></div>
+                            <div id="post_credit_memo_proceed_page"></div>
                         </div>
                         <!-- /.card-footer-->
                     </div>
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            {{-- <div class="row">
+            <div class="row">
                 <div class="col-12">
                     <!-- Default box -->
                     <div class="card">
@@ -78,12 +78,12 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div id="collection_final_summary_page"></div>
+                            <div id="post_credit_memo_proceed_final_summary_page"></div>
                         </div>
                     </div>
                     <!-- /.card -->
                 </div>
-            </div> --}}
+            </div>
         </div>
     </section>
     <!-- /.content -->
@@ -100,11 +100,11 @@
             }
         });
 
-        $("#credit_memo_proceed").on('submit', (function(e) {
+        $("#post_credit_memo_proceed").on('submit', (function(e) {
             e.preventDefault();
             $('#loader').show();
             $.ajax({
-                url: "credit_memo_proceed",
+                url: "post_credit_memo_proceed",
                 type: "POST",
                 data: new FormData(this),
                 contentType: false,
@@ -112,7 +112,7 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    $('#credit_memo_proceed_page').html(data);
+                    $('#post_credit_memo_proceed_page').html(data);
                 },
                 error: function(error) {
                     $('#loader').hide();
