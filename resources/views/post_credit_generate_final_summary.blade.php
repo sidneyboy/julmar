@@ -64,12 +64,12 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
                                         @php
-                                            $sub_total = $data->quantity * $unit_price[$data->sku_id];
+                                            $sub_total = $data->confirmed_quantity * $unit_price[$data->sku_id];
                                             $sum_total[] = $sub_total;
                                             echo number_format($sub_total, 2, '.', ',');
                                         @endphp
@@ -163,12 +163,12 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
                                         @php
-                                            $sub_total = $data->quantity * $unit_price[$data->sku_id];
+                                            $sub_total = $data->confirmed_quantity * $unit_price[$data->sku_id];
                                             $sum_total[] = $sub_total;
                                             echo number_format($sub_total, 2, '.', ',');
                                         @endphp
@@ -264,17 +264,17 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
                                         @php
-                                            $sub_total = $data->quantity * $unit_price[$data->sku_id];
+                                            $sub_total = $data->confirmed_quantity * $unit_price[$data->sku_id];
                                             $sum_total[] = $sub_total;
                                             echo number_format($sub_total, 2, '.', ',');
                                         @endphp
                                         <input type="hidden" name="quantity_returned[{{ $data->sku_id }}]"
-                                            value="{{ $data->quantity }}">
+                                            value="{{ $data->confirmed_quantity }}">
                                         <input type="hidden" name="unit_price[{{ $data->sku_id }}]"
                                             value="{{ $unit_price[$data->sku_id] }}">
                                     </td>
@@ -426,17 +426,17 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
                                         @php
-                                            $sub_total = $data->quantity * $unit_price[$data->sku_id];
+                                            $sub_total = $data->confirmed_quantity * $unit_price[$data->sku_id];
                                             $sum_total[] = $sub_total;
                                             echo number_format($sub_total, 2, '.', ',');
                                         @endphp
                                         <input type="hidden" name="quantity_returned[{{ $data->sku_id }}]"
-                                            value="{{ $data->quantity }}">
+                                            value="{{ $data->confirmed_quantity }}">
                                         <input type="hidden" name="unit_price[{{ $data->sku_id }}]"
                                             value="{{ $unit_price[$data->sku_id] }}">
                                     </td>
@@ -545,15 +545,15 @@
                         'error'
                     )
                 } else {
-                    // Swal.fire({
-                    //     position: 'top-end',
-                    //     icon: 'success',
-                    //     title: 'Your work has been saved',
-                    //     showConfirmButton: false,
-                    //     timer: 1500
-                    // });
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                    // location.reload();
+                    location.reload();
                 }
             },
             error: function(error) {

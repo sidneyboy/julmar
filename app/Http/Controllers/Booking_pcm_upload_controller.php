@@ -44,7 +44,7 @@ class Booking_pcm_upload_controller extends Controller
             }
         }
 
-
+        
         $counter = count($csv);
 
         $explode = explode('-', $csv[0][5]);
@@ -96,6 +96,8 @@ class Booking_pcm_upload_controller extends Controller
             } else {
                 return 'Existing Data';
             }
+        }else{
+            return 'Incorrect File';
         }
     }
 
