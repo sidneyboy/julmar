@@ -331,4 +331,84 @@
             });
         }));
     </script>
+@elseif($disbursement == 'others')
+    <center>
+        <h3 style="font-weight: bold;">OTHERS</h3>
+    </center>
+    <br />
+    <table class="table table-bordered table-sm table-striped">
+        <tr>
+            <th>PAYEE</th>
+            <td style="text-align: center;">{{ strtoupper($payee) }}</td>
+            <th>DATE</th>
+            <td style="text-align: center;">{{ $date }}</td>
+        </tr>
+        <tr>
+            <th>INVOICE NO/REF</th>
+            <td style="text-align: center;">{{ strtoupper($invoice_no_ref) }}</td>
+            <th>CHECK REF/CASH</th>
+            <td style="text-align: center;">{{ strtoupper($check_ref_cash) }}</td>
+        </tr>
+        <tr>
+            <th>DESCRIPTION</th>
+            <td style="text-align: center;">{{ $description }}</td>
+            <th>BANK</th>
+            <td style="text-align: center;">{{ strtoupper($bank) }}</td>
+        </tr>
+        <tr>
+            <th>PERIOD</th>
+            <td colspan="3" style="text-align:center;">
+                {{ $date_range }}
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-bordered table-hover table-striped table-sm" id="myTable">
+        <thead>
+            <tr>
+                <th style="text-align: center;">ACCOUNT NAME</th>
+                <th style="text-align: center;">DR AMOUNT</th>
+                <th style="text-align: center;">CR AMOUNT</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for ($n = 0; $n < count($new_account_name); $n++)
+                <tr>
+                    <td style="text-align: center;">{{ $new_account_name[$n] }}</td>
+                    <td style="text-align: right;">{{ number_format($new_debit_record[$n], 2, '.', ',') }}
+                        @php
+                            $sum_debit[] = $new_debit_record[$n];
+                        @endphp
+                    </td>
+                    <td style="text-align: right;">{{ number_format($new_credit_record[$n], 2, '.', ',') }}
+                        @php
+                            $sum_credit[] = $new_credit_record[$n];
+                        @endphp
+                    </td>
+                </tr>
+            @endfor
+            @for ($i = 0; $i < count($account_name); $i++)
+                <tr>
+                    <td style="text-align: center;">{{ $account_name[$i] }}</td>
+                    <td style="text-align: right;">{{ number_format($debit_record[$i], 2, '.', ',') }}
+                        @php
+                            $sum_debit[] = $debit_record[$i];
+                        @endphp
+                    </td>
+                    <td style="text-align: right;">{{ number_format($credit_record[$i], 2, '.', ',') }}
+                        @php
+                            $sum_credit[] = $credit_record[$i];
+                        @endphp
+                    </td>
+                </tr>
+            @endfor
+        </tbody>
+        <tfoot>
+            <tr>
+                <td style="text-align:center;">TOTAL</td>
+                <td style="text-align: right;">{{ number_format(array_sum($sum_debit), 2, '.', ',') }}</td>
+                <td style="text-align: right;">{{ number_format(array_sum($sum_credit), 2, '.', ',') }}</td>
+            </tr>
+        </tfoot>
+    </table>
 @endif

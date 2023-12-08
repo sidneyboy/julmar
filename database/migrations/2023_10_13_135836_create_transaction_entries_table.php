@@ -18,6 +18,7 @@ class CreateTransactionEntriesTable extends Migration
             $table->string('description');
             $table->text('account_name');
             $table->string('account_number')->nullable();
+            $table->string('transaction')->nullable();
             $table->timestamps();
         });
     }

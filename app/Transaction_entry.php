@@ -10,5 +10,6 @@ class Transaction_entry extends Model
         'description',
         'account_name',
         'account_number',
+        'transaction'
     ];
 }

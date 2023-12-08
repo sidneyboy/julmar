@@ -253,71 +253,159 @@
     </center>
     <br />
 
-    <table class="table table-bordered table-sm table-striped">
-        <tr>
-            <th>PAYEE</th>
-            <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
-                    name="payee" required></td>
-            <th>DATE</th>
-            <td style="text-align: center;">{{ $date }}</td>
-        </tr>
-        <tr>
-            <th>INVOICE NO/REF</th>
-            <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
-                    name="invoice_no_ref" required></td>
-            <th>CHECK REF/CASH</th>
-            <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
-                    name="check_ref_cash" required></td>
-        </tr>
-        <tr>
-            <th>DESCRIPTION</th>
-            <td style="text-align: center;">{{ $description }}</td>
-            <th>BANK</th>
-            <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
-                    name="bank" required></td>
-        </tr>
-        <tr>
-            <th>PERIOD</th>
-            <td colspan="3">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="far fa-calendar-alt"></i>
-                        </span>
+    <form id="disbursement_final_summary">
+        @csrf
+        <table class="table table-bordered table-sm table-striped">
+            <tr>
+                <th>PAYEE</th>
+                <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
+                        name="payee" required></td>
+                <th>DATE</th>
+                <td style="text-align: center;">{{ $date }}</td>
+            </tr>
+            <tr>
+                <th>INVOICE NO/REF</th>
+                <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
+                        name="invoice_no_ref" required></td>
+                <th>CHECK REF/CASH</th>
+                <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
+                        name="check_ref_cash" required></td>
+            </tr>
+            <tr>
+                <th>DESCRIPTION</th>
+                <td style="text-align: center;">{{ $description }}</td>
+                <th>BANK</th>
+                <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
+                        name="bank" required></td>
+            </tr>
+            <tr>
+                <th>PERIOD</th>
+                <td colspan="3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="far fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control form-control-sm" name="date_range"
+                            id="reservation">
                     </div>
-                    <input type="text" class="form-control form-control-sm" name="date_range" id="reservation">
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <div class="table table-responsive">
-        <table class="table table-bordered table-hover table-striped table-sm">
-            <thead>
-                <tr>
-                    <th style="text-align: center;">ACCOUNT NAME</th>
-                    <th style="text-align: center;">ACCOUNT CODE</th>
-                    <th style="text-align: center;">DR AMOUNT</th>
-                    <th style="text-align: center;">CR AMOUNT</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($transaction_entry as $data)
-                    <tr>
-                        <td>{{ $data->account_name }}</td>
-                        <td></td>
-                        <td><input type="text" onkeypress="return isNumberKey(event)"
-                                class="form-control form-control-sm" name="debit_record[{{ $data->id }}]"></td>
-                        <td><input type="text" onkeypress="return isNumberKey(event)"
-                                class="form-control form-control-sm" name="credit_record[{{ $data->id }}]"></td>
-                    </tr>
-                @endforeach
-            </tbody>
+                </td>
+            </tr>
         </table>
-    </div>
+        <div class="form-group">
+            <a id="btn" class="btn float-right btn-danger btn-sm" onclick="removeRow()"
+                style="margin-left:10px"> Remove Row </a>
+            <a id="btn" class="btn float-right btn-warning btn-sm" onclick="addRow()"> Add Row </a>
+        </div>
+        <div class="table table-responsive">
+            <br />
+            <table class="table table-bordered table-hover table-striped table-sm" id="myTable">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">ACCOUNT NAME</th>
+                        <th style="text-align: center;">DR AMOUNT</th>
+                        <th style="text-align: center;">CR AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($transaction_entry as $data)
+                        <tr>
+                            <td style="text-align: center;">{{ $data->account_name }}
+                                <input type="hidden" value="{{ $data->account_name }}" name="account_name[]">
+                            </td>
+                            @if ($data->transaction == 'DEBIT')
+                                <td><input style="text-align: center;" type="text"
+                                        onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                        name="debit_record[]"></td>
+                                <td>
+                                    <input style="text-align: center;" type="hidden"
+                                        value="0" class="form-control form-control-sm"
+                                        name="credit_record[]">
+                                </td>
+                            @else
+                                <td><input style="text-align: center;" type="hidden"
+                                        value="0" class="form-control form-control-sm"
+                                        name="debit_record[]"></td>
+                                <td><input style="text-align: center;" type="text"
+                                        onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                        name="credit_record[]"></td>
+                            @endif
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td style="text-align: center">CASH IN BANK
+                            <input type="hidden" value="CASH IN BANK" name="account_name[]">
+                        </td>
+                        <td><input style="text-align: center;" type="hidden"
+                            value="0" class="form-control form-control-sm"
+                            name="debit_record[]"></td>
+                        <td><input style="text-align: center;" type="text" onkeypress="return isNumberKey(event)"
+                                class="form-control form-control-sm" name="credit_record[]"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" value="{{ $description }}" name="description">
+        <input type="hidden" value="{{ $disbursement }}" name="disbursement">
+        <button class="btn float-right btn-sm btn-info">Proceed</button>
+    </form>
 
     <script>
         $('#reservation').daterangepicker()
+
+        $("#disbursement_final_summary").on('submit', (function(e) {
+            e.preventDefault();
+            $('#loader').show();
+            $.ajax({
+                url: "disbursement_final_summary",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    if (data == 'cannot proceed') {
+                        $('#loader').hide();
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'One of your collection exceeds the invoice outstanding balance',
+                            'error'
+                        )
+                    } else {
+                        $('#disbursement_final_summary_page').html(data);
+                        $('#loader').hide();
+                    }
+                },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+
+                }
+            });
+        }));
+
+        function removeRow() {
+            document.getElementById("myTable").deleteRow(1);
+        }
+
+        function addRow() {
+            var table = document.getElementById("myTable");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            cell1.innerHTML =
+                "<input style='text-align: center;' class='form-control form-control-sm' name='new_account_name[]'>";
+            cell2.innerHTML =
+                "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_debit_record[]'>";
+            cell3.innerHTML =
+                "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_credit_record[]'>";
+        }
 
         function isNumberKey(evt) {
             var charCode = (evt.which) ? evt.which : evt.keyCode;

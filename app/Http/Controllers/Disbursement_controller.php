@@ -60,7 +60,12 @@ class Disbursement_controller extends Controller
                 'customer' => $customer,
             ])->with('disbursement', $request->input('disbursement'));
         } elseif ($request->input('disbursement') == 'others') {
-            return view('disbursement_show_selection')->with('disbursement', $request->input('disbursement'));
+            $transaction_entry = Transaction_entry::select('id', 'description')
+                ->groupBy('description')
+                ->get();
+            return view('disbursement_show_selection', [
+                'transaction_entry' => $transaction_entry,
+            ])->with('disbursement', $request->input('disbursement'));
         }
     }
 
@@ -104,7 +109,8 @@ class Disbursement_controller extends Controller
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
 
-            $transaction_entry = Transaction_entry::where('description', $request->input('description'))
+            $transaction_entry = Transaction_entry::select('id', 'description', 'account_name', 'transaction')
+                ->where('description', $request->input("description"))
                 ->get();
 
             return view('disbursement_proceed', [
@@ -280,6 +286,25 @@ class Disbursement_controller extends Controller
                 ->with('official_receipt_no', strtoupper($request->input('official_receipt_no')))
                 ->with('payment_date', $request->input('payment_date'))
                 ->with('remarks', $request->input('remarks'));
+        } elseif ($request->input('disbursement') == 'others') {
+            date_default_timezone_set('Asia/Manila');
+            $date = date('Y-m-d');
+          
+            return view('disbursement_final_summary')
+                ->with('disbursement', $request->input('disbursement'))
+                ->with('payee', $request->input('payee'))
+                ->with('description', $request->input('description'))
+                ->with('date',$date)
+                ->with('invoice_no_ref', $request->input('invoice_no_ref'))
+                ->with('check_ref_cash', $request->input('check_ref_cash'))
+                ->with('bank', $request->input('bank'))
+                ->with('date_range', $request->input('date_range'))
+                ->with('new_account_name', $request->input('new_account_name'))
+                ->with('account_name', $request->input('account_name'))
+                ->with('new_debit_record', $request->input('new_debit_record'))
+                ->with('new_credit_record', $request->input('new_credit_record'))
+                ->with('debit_record', $request->input('debit_record'))
+                ->with('credit_record', $request->input('credit_record'));
         }
     }
 
@@ -392,7 +417,7 @@ class Disbursement_controller extends Controller
                 $ap_ledger_running_balance = str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount');
             }
 
-        
+
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,

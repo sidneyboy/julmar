@@ -30,12 +30,9 @@
     <label for="">Description</label>
     <select name="description" class="form-control select2bs4" style="width:100%;" required>
         <option value="" default>Select</option>
-        <option value="payroll">Payroll</option>
-        <option value="water utilities">Water Utilities</option>
-        <option value="electric utilities">Electricity</option>
-        <option value="communication allowance">Communication Allowance</option>
-        <option value="per diem">Per Diem</option>
-        <option value="cash advance">Cash Advance</option>
+        @foreach ($transaction_entry as $data)
+            <option value="{{ $data->description }}">{{ $data->description }}</option>
+        @endforeach
     </select>
 @endif
 
