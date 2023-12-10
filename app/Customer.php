@@ -22,6 +22,7 @@ class Customer extends Model
         'latitude',
         'allowed_number_of_sales_order',
         'location_details_id',
+        'account_number',
     ];
 
     public function location()

@@ -311,7 +311,7 @@
                 <tbody>
                     @foreach ($transaction_entry as $data)
                         <tr>
-                            <td style="text-align: center;">{{ $data->account_name }}
+                            <td>{{ $data->account_name }}
                                 <input type="hidden" value="{{ $data->account_name }}" name="account_name[]">
                             </td>
                             @if ($data->transaction == 'DEBIT')
@@ -334,7 +334,7 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td style="text-align: center">CASH IN BANK
+                        <td>CASH IN BANK
                             <input type="hidden" value="CASH IN BANK" name="account_name[]">
                         </td>
                         <td><input style="text-align: center;" type="hidden"
@@ -400,7 +400,7 @@
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
             cell1.innerHTML =
-                "<input style='text-align: center;' class='form-control form-control-sm' name='new_account_name[]'>";
+                "<input class='form-control form-control-sm' name='new_account_name[]'>";
             cell2.innerHTML =
                 "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_debit_record[]'>";
             cell3.innerHTML =

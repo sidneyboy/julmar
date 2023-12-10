@@ -231,6 +231,13 @@
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
+                                            <a href="{{ url('/chart_of_accounts') }}"
+                                                class="nav-link {{ $active_tab == 'chart_of_accounts' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>New Chart of Accounts</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('/disbursement') }}"
                                                 class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

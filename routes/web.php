@@ -894,3 +894,11 @@ Route::post('/agent_ledger_generate', 'Agent_ledger_controller@agent_ledger_gene
 
 Route::get('/ewt_rate', 'Ewt_rate_controller@index');
 Route::post('/ewt_rate_process', 'Ewt_rate_controller@ewt_rate_process')->name('ewt_rate_process');
+
+
+Route::get('/chart_of_accounts', 'Chart_of_accounts_controller@index');
+Route::post('/chart_of_accounts_transaction', 'Chart_of_accounts_controller@chart_of_accounts_transaction')->name('chart_of_accounts_transaction');
+Route::post('/chart_of_accounts_transaction_proceed', 'Chart_of_accounts_controller@chart_of_accounts_transaction_proceed')->name('chart_of_accounts_transaction_proceed');
+Route::post('/chart_of_accounts_final_summary', 'Chart_of_accounts_controller@chart_of_accounts_final_summary')->name('chart_of_accounts_final_summary');
+Route::post('/chart_of_accounts_save', 'Chart_of_accounts_controller@chart_of_accounts_save')->name('chart_of_accounts_save');
+
