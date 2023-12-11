@@ -27,13 +27,26 @@
         @endforeach
     </select>
 @elseif($disbursement == 'others')
-    <label for="">Description</label>
-    <select name="description" class="form-control select2bs4" style="width:100%;" required>
-        <option value="" default>Select</option>
-        @foreach ($transaction_entry as $data)
-            <option value="{{ $data->description }}">{{ $data->description }}</option>
-        @endforeach
-    </select>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="">Chart of Account</label>
+            <select name="description" class="form-control select2bs4" style="width:100%;" required>
+                <option value="" default>Select</option>
+                @foreach ($transaction_entry as $data)
+                    <option value="{{ $data->id }}">{{ $data->account_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="">Bank</label>
+            <select name="cash_in_bank_id" class="form-control" required>
+                <option value="" default>Select</option>
+                @foreach ($transaction_cash_in_bank as $data)
+                    <option value="{{ $data->id }}">{{ $data->account_name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
 @endif
 
 <script>

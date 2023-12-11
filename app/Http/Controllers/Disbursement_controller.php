@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Ap_ledger;
+use App\Chart_of_accounts;
+use App\Chart_of_accounts_details;
 use App\Customer;
 use App\User;
 use App\Sku_principal;
@@ -60,11 +62,16 @@ class Disbursement_controller extends Controller
                 'customer' => $customer,
             ])->with('disbursement', $request->input('disbursement'));
         } elseif ($request->input('disbursement') == 'others') {
-            $transaction_entry = Transaction_entry::select('id', 'description')
-                ->groupBy('description')
+            $transaction_entry = Chart_of_accounts::select('id', 'account_name')
                 ->get();
+
+            $transaction_cash_in_bank = Chart_of_accounts_details::select('id', 'account_name')
+                ->where('account_name', 'like', '%CASH IN BANK%')
+                ->get();
+
             return view('disbursement_show_selection', [
                 'transaction_entry' => $transaction_entry,
+                'transaction_cash_in_bank' => $transaction_cash_in_bank,
             ])->with('disbursement', $request->input('disbursement'));
         }
     }
@@ -109,12 +116,20 @@ class Disbursement_controller extends Controller
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
 
-            $transaction_entry = Transaction_entry::select('id', 'description', 'account_name', 'transaction')
-                ->where('description', $request->input("description"))
+            $transaction_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')
+                ->where('chart_of_accounts_id', $request->input("description"))
                 ->get();
+
+            $transaction_insert_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')
+                ->where('chart_of_accounts_id', '!=', $request->input('description'))
+                ->get();
+
+            $transaction_cash_in_bank = Chart_of_accounts_details::select('account_name', 'account_number')->find($request->input('cash_in_bank_id'));
 
             return view('disbursement_proceed', [
                 'transaction_entry' => $transaction_entry,
+                'transaction_insert_entry' => $transaction_insert_entry,
+                'transaction_cash_in_bank' => $transaction_cash_in_bank,
             ])->with('description', strtoupper($request->input('description')))
                 ->with('disbursement', $request->input('disbursement'))
                 ->with('date', $date);
@@ -289,12 +304,12 @@ class Disbursement_controller extends Controller
         } elseif ($request->input('disbursement') == 'others') {
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
-          
+
             return view('disbursement_final_summary')
                 ->with('disbursement', $request->input('disbursement'))
                 ->with('payee', $request->input('payee'))
                 ->with('description', $request->input('description'))
-                ->with('date',$date)
+                ->with('date', $date)
                 ->with('invoice_no_ref', $request->input('invoice_no_ref'))
                 ->with('check_ref_cash', $request->input('check_ref_cash'))
                 ->with('bank', $request->input('bank'))

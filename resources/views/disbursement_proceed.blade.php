@@ -276,7 +276,7 @@
                 <td style="text-align: center;">{{ $description }}</td>
                 <th>BANK</th>
                 <td><input style="text-align: center;" type="text" class="form-control form-control-sm"
-                        name="bank" required></td>
+                        name="bank" value="{{ $transaction_cash_in_bank->account_name }}" required></td>
             </tr>
             <tr>
                 <th>PERIOD</th>
@@ -314,34 +314,29 @@
                             <td>{{ $data->account_name }}
                                 <input type="hidden" value="{{ $data->account_name }}" name="account_name[]">
                             </td>
-                            @if ($data->transaction == 'DEBIT')
-                                <td><input style="text-align: center;" type="text"
-                                        onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
-                                        name="debit_record[]"></td>
-                                <td>
-                                    <input style="text-align: center;" type="hidden"
-                                        value="0" class="form-control form-control-sm"
-                                        name="credit_record[]">
-                                </td>
-                            @else
-                                <td><input style="text-align: center;" type="hidden"
-                                        value="0" class="form-control form-control-sm"
-                                        name="debit_record[]"></td>
-                                <td><input style="text-align: center;" type="text"
-                                        onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
-                                        name="credit_record[]"></td>
-                            @endif
+                            {{-- <td style="text-align: center;">{{ $data->account_number }}
+                                <input type="hidden" value="{{ $data->account_number }}" name="account_number[]">
+                            </td> --}}
+                            <td><input style="text-align: center;" type="text" value="0" min="0"
+                                    class="form-control form-control-sm" onkeypress="return isNumberKey(event)"
+                                    name="debit_record[]"></td>
+                            <td><input style="text-align: center;" value="0" min="0" type="text"
+                                    onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                    name="credit_record[]"></td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td>CASH IN BANK
-                            <input type="hidden" value="CASH IN BANK" name="account_name[]">
+                        <td>
+                            {{ $transaction_cash_in_bank->account_name }}
+                            <input type="hidden" value="{{ $transaction_cash_in_bank->account_name }}"
+                                name="account_name[]">
                         </td>
-                        <td><input style="text-align: center;" type="hidden"
-                            value="0" class="form-control form-control-sm"
-                            name="debit_record[]"></td>
-                        <td><input style="text-align: center;" type="text" onkeypress="return isNumberKey(event)"
-                                class="form-control form-control-sm" name="credit_record[]"></td>
+                        <td><input style="text-align: center;" type="text" value="0" min="0"
+                                class="form-control form-control-sm" onkeypress="return isNumberKey(event)"
+                                name="debit_record[]"></td>
+                        <td><input style="text-align: center;" type="text" value="0" min="0"
+                                onkeypress="return isNumberKey(event)" class="form-control form-control-sm"
+                                name="credit_record[]"></td>
                     </tr>
                 </tbody>
             </table>
@@ -393,14 +388,18 @@
             document.getElementById("myTable").deleteRow(1);
         }
 
+
+
         function addRow() {
+            var list = "<select class='form-control form-control-sm' name='new_account_name[]'>" +
+                "<option >" + {{ 'asdasd' }} + "</option>"
+            "<\/select>";
             var table = document.getElementById("myTable");
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
-            cell1.innerHTML =
-                "<input class='form-control form-control-sm' name='new_account_name[]'>";
+            cell1.innerHTML = list;
             cell2.innerHTML =
                 "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_debit_record[]'>";
             cell3.innerHTML =
@@ -412,6 +411,7 @@
             if (charCode != 46 && charCode > 31 &&
                 (charCode < 48 || charCode > 57))
                 return false;
+
 
             return true;
         }
