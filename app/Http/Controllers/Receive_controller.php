@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Ap_ledger;
+use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Principal_ledger;
 use App\Purchase_order;
 use App\Purchase_order_details;
@@ -17,6 +19,7 @@ use App\Received_discount_details;
 use App\Received_other_discount_details;
 use App\Purchase_order_discount_details;
 use App\Sku_price_details;
+use App\Sku_principal;
 use DB;
 use App\User;
 use Illuminate\Http\Request;
@@ -91,9 +94,21 @@ class Receive_controller extends Controller
     public function receive_order_data_final_summary(Request $request)
     {
 
-        //return $request->input('cwo_discount_selected');
+        //return $request->input();
         $unit_cost = str_replace(',', '', $request->input('unit_cost'));
         $discount_selected = Purchase_order_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
+        $get_principal = Sku_principal::select('principal')->find($request->input('principal_id'));
+
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number')
+            ->where('account_name', 'MERCHANDISE INVENTORY - ' . $get_principal->principal)
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+        $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number')
+            ->where('account_name', 'ACCOUNTS PAYABLE - ' . $get_principal->principal)
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
         $check_less_other_discounts = $request->input('less_other_discount_selected');
         if (isset($check_less_other_discounts)) {
             $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();
@@ -126,7 +141,9 @@ class Receive_controller extends Controller
                 ->with('remarks', $request->input('remarks'))
                 ->with('branch', $request->input('branch'))
                 ->with('scanned_by', $request->input('scanned_by'))
-                ->with('draft_session_id', $request->input('draft_session_id'));
+                ->with('draft_session_id', $request->input('draft_session_id'))
+                ->with('get_accounts_payable', $get_accounts_payable)
+                ->with('get_merchandise_inventory', $get_merchandise_inventory);
         } else {
             return view('receive_order_show_data_final_summary')
                 ->with('sku_id', $request->input('sku_id'))
@@ -155,7 +172,9 @@ class Receive_controller extends Controller
                 ->with('remarks', $request->input('remarks'))
                 ->with('branch', $request->input('branch'))
                 ->with('scanned_by', $request->input('scanned_by'))
-                ->with('draft_session_id', $request->input('draft_session_id'));
+                ->with('draft_session_id', $request->input('draft_session_id'))
+                ->with('get_accounts_payable', $get_accounts_payable)
+                ->with('get_merchandise_inventory', $get_merchandise_inventory);
         }
     }
 
@@ -165,6 +184,26 @@ class Receive_controller extends Controller
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
+
+        // $new_general_ledger = new General_ledger([
+        //     'principal_id' => $request->input('principal_id'),
+        //     'account_name' => $request->input('account_name'),
+        //     'account_number' => $request->input('account_number'),
+        //     'debit_record' => $request->input('debit_record'),
+        //     'credit_record' => $request->input('credit_record'),
+        //     'user_id' => auth()->user()->id,
+        //     'transaction_date' => $request->input('transaction_date'),
+        // ]);
+
+        // $new_general_ledger->save();
+
+        // return $get_general_merchandise = General_ledger::select('')->where('account_name', $request->input('merchandise_inventory_account_name'))
+        //     ->where('account_number', $request->input('merchandise_inventory_account_number'))
+        //     ->orderBy('id', 'DESC')
+        //     ->first();
+
+
+
 
         $po = Purchase_order::select('purchase_id', 'payment_status')->find($request->input('purchase_order_id'));
 

@@ -367,14 +367,16 @@
         <thead>
             <tr>
                 <th style="text-align: center;">ACCOUNT NAME</th>
+                <th style="text-align: center;">ACCOUNT NO</th>
                 <th style="text-align: center;">DR AMOUNT</th>
                 <th style="text-align: center;">CR AMOUNT</th>
             </tr>
         </thead>
         <tbody>
-            @for ($n = 0; $n < count($new_account_name); $n++)
+            @for ($n = 0; $n < count($transaction_insert_entry); $n++)
                 <tr>
-                    <td>{{ $new_account_name[$n] }}</td>
+                    <td>{{ $transaction_insert_entry[$n]->account_name }}</td>
+                    <td style="text-align: center;">{{ $transaction_insert_entry[$n]->account_number }}</td>
                     <td style="text-align: right;">{{ number_format($new_debit_record[$n], 2, '.', ',') }}
                         @php
                             $sum_debit[] = $new_debit_record[$n];
@@ -390,6 +392,7 @@
             @for ($i = 0; $i < count($account_name); $i++)
                 <tr>
                     <td>{{ $account_name[$i] }}</td>
+                    <td style="text-align: center;">{{ $transaction_entry[$i]->account_number }}</td>
                     <td style="text-align: right;">{{ number_format($debit_record[$i], 2, '.', ',') }}
                         @php
                             $sum_debit[] = $debit_record[$i];
@@ -406,6 +409,7 @@
         <tfoot>
             <tr>
                 <th style="text-align:center;">TOTAL</th>
+                <th></th>
                 <th style="text-align: right;">{{ number_format(array_sum($sum_debit), 2, '.', ',') }}</th>
                 <th style="text-align: right;">{{ number_format(array_sum($sum_credit), 2, '.', ',') }}</th>
             </tr>

@@ -10,7 +10,6 @@ class Chart_of_accounts_details extends Model
         'chart_of_accounts_id',
         'account_name',
         'account_number',
-        'debit_record',
-        'credit_record',
+        'principal_id',
     ];
 }

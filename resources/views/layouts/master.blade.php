@@ -380,7 +380,7 @@
                                             <a href="{{ url('/receiving_draft') }}"
                                                 class="nav-link {{ $active_tab == 'receiving_draft' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Received as Draft</p>
+                                                <p>Received Principal Delivery</p>
                                             </a>
                                         </li>
 

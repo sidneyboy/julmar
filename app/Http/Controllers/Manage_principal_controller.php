@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Chart_of_accounts;
+use App\Chart_of_accounts_details;
 use App\User;
 use App\Sku_principal;
 use App\Sku_category;
 use App\Sku_sub_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class Manage_principal_controller extends Controller
 {
     public function index()
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal_data = Sku_principal::where('principal','!=','none')
-                        ->get();
+            $principal_data = Sku_principal::where('principal', '!=', 'none')
+                ->get();
             return view('new_principal', [
                 'user' => $user,
                 'principal_data' => $principal_data,
@@ -36,6 +39,25 @@ class Manage_principal_controller extends Controller
         ]);
 
         if ($new->save()) {
+            $get_chart_of_accounts = Chart_of_accounts::select('id', 'account_name', 'account_number')->where('principal', 1)
+                ->get();
+
+            foreach ($get_chart_of_accounts as $key => $data) {
+                $get_latest_chart_of_accounts_details = Chart_of_accounts_details::select('account_number')
+                    ->where('chart_of_accounts_id', $data->id)
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                $new_chart_of_accounts_details = new Chart_of_accounts_details([
+                    'chart_of_accounts_id' => $data->id,
+                    'account_name' => $data->account_name . " - " . strtoupper($new->principal),
+                    'account_number' => $get_latest_chart_of_accounts_details->account_number + 1,
+                    'principal_id' => $data->id,
+                ]);
+
+                $new_chart_of_accounts_details->save();
+            }
+
             return redirect('new_principal')->with('success', 'Successfully Added New Principal');
         } else {
             return redirect('new_principal')->with('success', 'Error. Please Call IT Support');
@@ -46,7 +68,7 @@ class Manage_principal_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $principal = Sku_principal::select('id','principal')->where('principal','!=','none')->get();
+            $principal = Sku_principal::select('id', 'principal')->where('principal', '!=', 'none')->get();
             $category = Sku_category::get();
 
             return view('new_principal_categories', [

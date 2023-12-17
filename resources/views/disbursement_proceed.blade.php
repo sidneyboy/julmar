@@ -312,11 +312,9 @@
                     @foreach ($transaction_entry as $data)
                         <tr>
                             <td>{{ $data->account_name }}
+                                <input type="hidden" name="id[]" value="{{ $data->id }}">
                                 <input type="hidden" value="{{ $data->account_name }}" name="account_name[]">
                             </td>
-                            {{-- <td style="text-align: center;">{{ $data->account_number }}
-                                <input type="hidden" value="{{ $data->account_number }}" name="account_number[]">
-                            </td> --}}
                             <td><input style="text-align: center;" type="text" value="0" min="0"
                                     class="form-control form-control-sm" onkeypress="return isNumberKey(event)"
                                     name="debit_record[]"></td>
@@ -330,6 +328,7 @@
                             {{ $transaction_cash_in_bank->account_name }}
                             <input type="hidden" value="{{ $transaction_cash_in_bank->account_name }}"
                                 name="account_name[]">
+                            <input type="hidden" name="id[]" value="{{ $transaction_cash_in_bank->id }}">
                         </td>
                         <td><input style="text-align: center;" type="text" value="0" min="0"
                                 class="form-control form-control-sm" onkeypress="return isNumberKey(event)"
@@ -391,19 +390,32 @@
 
 
         function addRow() {
-            var list = "<select class='form-control form-control-sm' name='new_account_name[]'>" +
-                "<option >" + {{ 'asdasd' }} + "</option>"
-            "<\/select>";
+            const jsonData = {!! json_encode($transaction_insert_entry) !!};
+
             var table = document.getElementById("myTable");
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
-            cell1.innerHTML = list;
+
+
+            var selectBox = document.createElement("select");
+            selectBox.classList.add("form-control", "form-control-sm");
+            selectBox.name = "new_account_name[]";
+            for (var i = 0; i < jsonData.length; i++) {
+                var option = document.createElement("option");
+                option.value = jsonData[i].id;
+                option.text = jsonData[i].account_name;
+                selectBox.add(option);
+            }
+            cell1.appendChild(selectBox);
+
+
+
             cell2.innerHTML =
-                "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_debit_record[]'>";
+                "<input style='text-align: center;' value='0' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_debit_record[]'>";
             cell3.innerHTML =
-                "<input style='text-align: center;' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_credit_record[]'>";
+                "<input style='text-align: center;' value='0' class='form-control form-control-sm' onkeypress='return isNumberKey(event)' name='new_credit_record[]'>";
         }
 
         function isNumberKey(evt) {

@@ -38,8 +38,6 @@ class Chart_of_accounts_controller extends Controller
 
     public function chart_of_accounts_transaction_proceed(Request $request)
     {
-
-
         return view('chart_of_accounts_transaction_proceed')
             ->with('transaction', $request->input('transaction'))
             ->with('first_input', strtoupper($request->input('first_input')));
@@ -56,7 +54,12 @@ class Chart_of_accounts_controller extends Controller
             $fetch_chart_of_account = '';
         }
 
-        $second_input = array_filter($request->input('second_input'));
+        $second_input_checker = $request->input('second_input');
+        if (isset($second_input_checker)) {
+            $second_input = array_filter($request->input('second_input'));
+        } else {
+            $second_input = 0;
+        }
 
         return view('chart_of_accounts_final_summary', [
             'fetch_chart_of_account' => $fetch_chart_of_account,
@@ -71,6 +74,7 @@ class Chart_of_accounts_controller extends Controller
         //return $request->input();
 
         if ($request->input('transaction') == 'new_general_ledger') {
+            //return $request->input();
             $new = new Chart_of_accounts([
                 'account_name' => strtoupper($request->input('general_ledger_account_name')),
                 'account_number' => $request->input('general_ledger_account_number'),
@@ -78,17 +82,18 @@ class Chart_of_accounts_controller extends Controller
 
             $new->save();
 
-            for ($i = 0; $i < count($request->input('subsidiary_ledger_account_name')); $i++) {
-                $details = new Chart_of_accounts_details([
-                    'chart_of_accounts_id' => $new->id,
-                    'account_name' => strtoupper($request->input('subsidiary_ledger_account_name')[$i]),
-                    'account_number' => $request->input('subsidiary_ledger_account_number')[$i],
-                ]);
+            if ($request->input('subsidiary_ledger_account_name')) {
+                for ($i = 0; $i < count($request->input('subsidiary_ledger_account_name')); $i++) {
+                    $details = new Chart_of_accounts_details([
+                        'chart_of_accounts_id' => $new->id,
+                        'account_name' => strtoupper($request->input('subsidiary_ledger_account_name')[$i]),
+                        'account_number' => $request->input('subsidiary_ledger_account_number')[$i],
+                    ]);
 
-                $details->save();
+                    $details->save();
+                }
             }
         } else {
-            return $request->input();
             for ($i = 0; $i < count($request->input('subsidiary_ledger_account_name')); $i++) {
                 $details = new Chart_of_accounts_details([
                     'chart_of_accounts_id' => $request->input('chart_account_id'),

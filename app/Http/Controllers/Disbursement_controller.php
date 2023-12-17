@@ -116,15 +116,15 @@ class Disbursement_controller extends Controller
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
 
-            $transaction_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')
+            $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
                 ->where('chart_of_accounts_id', $request->input("description"))
                 ->get();
 
-            $transaction_insert_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')
+            $transaction_insert_entry = Chart_of_accounts_details::select('id', 'account_name')
                 ->where('chart_of_accounts_id', '!=', $request->input('description'))
                 ->get();
 
-            $transaction_cash_in_bank = Chart_of_accounts_details::select('account_name', 'account_number')->find($request->input('cash_in_bank_id'));
+            $transaction_cash_in_bank = Chart_of_accounts_details::select('id', 'account_name')->find($request->input('cash_in_bank_id'));
 
             return view('disbursement_proceed', [
                 'transaction_entry' => $transaction_entry,
@@ -302,11 +302,21 @@ class Disbursement_controller extends Controller
                 ->with('payment_date', $request->input('payment_date'))
                 ->with('remarks', $request->input('remarks'));
         } elseif ($request->input('disbursement') == 'others') {
+            return 'asdasd';
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
 
-            return view('disbursement_final_summary')
-                ->with('disbursement', $request->input('disbursement'))
+            $transaction_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')
+                ->whereIn('id', $request->input("id"))
+                ->get();
+
+            $transaction_insert_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number')->whereIn('id', $request->input('new_account_name'))
+                ->get();
+
+            return view('disbursement_final_summary', [
+                'transaction_insert_entry' => $transaction_insert_entry,
+                'transaction_entry' => $transaction_entry,
+            ])->with('disbursement', $request->input('disbursement'))
                 ->with('payee', $request->input('payee'))
                 ->with('description', $request->input('description'))
                 ->with('date', $date)

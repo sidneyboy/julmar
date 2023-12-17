@@ -1,27 +1,48 @@
 @if ($transaction == 'new_general_ledger')
     <form id="chart_of_accounts_save">
         @csrf
-        <table class="table table-bordered table-striped table-sm">
-            <thead>
-                <tr>
-                    <th>Account Name</th>
-                    <th>Account Number</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for ($i = 0; $i < count($second_input); $i++)
+        @if ($second_input != 0)
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
                     <tr>
-                        <td style="text-transform: uppercase">{{ $second_input[$i] }}
-                            <input type="hidden" value="{{ $second_input[$i] }}" name="subsidiary_ledger_account_name[]">
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" value="{{ $general_account_number + $i + 1 }}"
-                                name="subsidiary_ledger_account_number[]">
-                        </td>
+                        <th colspan="2">{{ $first_input }}</th>
                     </tr>
-                @endfor
-            </tbody>
-        </table>
+                    <tr>
+                        <th>Account Name</th>
+                        <th>Account Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for ($i = 0; $i < count($second_input); $i++)
+                        <tr>
+                            <td style="text-transform: uppercase">{{ $second_input[$i] }}
+                                <input type="hidden" value="{{ $second_input[$i] }}"
+                                    name="subsidiary_ledger_account_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" value="{{ $general_account_number + $i + 1 }}"
+                                    name="subsidiary_ledger_account_number[]">
+                            </td>
+                        </tr>
+                    @endfor
+                </tbody>
+            </table>
+        @else
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th colspan="2">{{ $first_input }}</th>
+                    </tr>
+                    <tr>
+                        <th>Account Name</th>
+                        <th>Account Number
+                            <input type="hidden" value="0"
+                                name="subsidiary_ledger_account_name">
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        @endif
         <input type="hidden" name="transaction" value="{{ $transaction }}">
         <input type="hidden" name="general_ledger_account_name" value="{{ $first_input }}">
         <input type="hidden" name="general_ledger_account_number" value="{{ $general_account_number }}">
