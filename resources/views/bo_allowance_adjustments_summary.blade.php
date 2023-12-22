@@ -90,6 +90,7 @@
             </tbody>
         </table>
     </div>
+    <input type="hidden" value="{{ $transaction_date }}" name="transaction_date">
     <input type="hidden" value="{{ $received_id }}" name="received_id">
     <input type="hidden" value="{{ $principal_name }}" name="principal_name">
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
@@ -137,7 +138,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $principal_name }}</td>
+                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">{{ number_format($net_deduction*-1, 2, '.', ',') }}
                     </td>
@@ -146,7 +147,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: center;">INVENTORY - {{ $principal_name }}</td>
+                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
                         {{ number_format($net_deduction*-1, 2, '.', ',') }}
@@ -165,7 +166,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">INVENTORY - {{ $principal_name }}</td>
+                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
                         {{ number_format($net_deduction, 2, '.', ',') }}
@@ -175,7 +176,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: center;">ACCOUNTS PAYABLE - {{ $principal_name }}</td>
+                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
                         {{ number_format($net_deduction, 2, '.', ',') }}
@@ -186,6 +187,18 @@
     @endif
     <div class="row">
         <div class="col-md-12">
+            <input type="hidden" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
+            <input type="hidden" value="{{ $get_accounts_payable->account_number }}"
+                name="accounts_payable_account_number">
+            <input type="hidden" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
+                name="accounts_payable_general_account_number">
+            <input type="hidden" value="{{ $get_merchandise_inventory->account_name }}"
+                name="merchandise_inventory_account_name">
+            <input type="hidden" value="{{ $get_merchandise_inventory->account_number }}"
+                name="merchandise_inventory_account_number">
+            <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+                name="merchandise_inventory_general_account_number">
+          
             <button class="btn btn-success btn-sm float-right" type="submit">Submit</button>
         </div>
     </div>

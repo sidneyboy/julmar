@@ -868,10 +868,14 @@
     <input type="hidden" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
     <input type="hidden" value="{{ $get_accounts_payable->account_number }}"
         name="accounts_payable_account_number">
+    <input type="hidden" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
+        name="accounts_payable_general_account_number">
     <input type="hidden" value="{{ $get_merchandise_inventory->account_name }}"
         name="merchandise_inventory_account_name">
     <input type="hidden" value="{{ $get_merchandise_inventory->account_number }}"
         name="merchandise_inventory_account_number">
+    <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+        name="merchandise_inventory_general_account_number">
 
     <input type="hidden" value="{{ $discount_type }}" name="discount_type">
     <input type="hidden" value="{{ $discount_type }}" name="discount_type">
@@ -911,15 +915,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'success',
-                //     title: 'Your work has been saved',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Your work has been saved',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
-                // location.reload();
+                location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

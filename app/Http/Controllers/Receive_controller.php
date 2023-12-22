@@ -99,12 +99,12 @@ class Receive_controller extends Controller
         $discount_selected = Purchase_order_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('discount_selected'))->get();
         $get_principal = Sku_principal::select('principal')->find($request->input('principal_id'));
 
-        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number')
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
             ->where('account_name', 'MERCHANDISE INVENTORY - ' . $get_principal->principal)
             ->where('principal_id', $request->input('principal_id'))
             ->first();
 
-        $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number')
+        $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
             ->where('account_name', 'ACCOUNTS PAYABLE - ' . $get_principal->principal)
             ->where('principal_id', $request->input('principal_id'))
             ->first();
@@ -185,26 +185,89 @@ class Receive_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
-        // $new_general_ledger = new General_ledger([
-        //     'principal_id' => $request->input('principal_id'),
-        //     'account_name' => $request->input('account_name'),
-        //     'account_number' => $request->input('account_number'),
-        //     'debit_record' => $request->input('debit_record'),
-        //     'credit_record' => $request->input('credit_record'),
-        //     'user_id' => auth()->user()->id,
-        //     'transaction_date' => $request->input('transaction_date'),
-        // ]);
+        $get_general_merchandise = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('merchandise_inventory_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('merchandise_inventory_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
-        // $new_general_ledger->save();
+        if ($get_general_merchandise) {
+            $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
 
-        // return $get_general_merchandise = General_ledger::select('')->where('account_name', $request->input('merchandise_inventory_account_name'))
-        //     ->where('account_number', $request->input('merchandise_inventory_account_number'))
-        //     ->orderBy('id', 'DESC')
-        //     ->first();
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RECEIVED SKU',
+            ]);
 
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RECEIVED SKU',
+            ]);
 
+            $new_general_ledger->save();
+        }
+       
+        $get_accounts_payable = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('accounts_payable_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('accounts_payable_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
+        if ($get_accounts_payable) {
+            $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
 
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RECEIVED SKU',
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RECEIVED SKU',
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+        
         $po = Purchase_order::select('purchase_id', 'payment_status')->find($request->input('purchase_order_id'));
 
 

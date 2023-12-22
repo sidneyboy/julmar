@@ -223,7 +223,7 @@
                 </tr>
                 @php
                     $total = $total_final_cost;
-                    
+
                     $discount_value_holder = $total;
                     $discount_value_holder_history = [];
                     $less_discount_value_holder_history_for_bo_allowance = [];
@@ -234,7 +234,7 @@
                         $less_percentage_by = $data_discount->discount_rate / 100;
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                        
+
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
@@ -444,7 +444,7 @@
                             </td>
                             @php
                                 $total = $total_amount;
-                                
+
                                 $discount_value_holder = $total;
                                 $discount_value_holder_history = [];
                                 $discount_value_holder_history_for_bo_allowance = [];
@@ -453,10 +453,10 @@
                                 foreach ($received_purchase_order->received_discount_details as $data_discount) {
                                     $discount_value_holder_dummy = $discount_value_holder;
                                     $less_percentage_by = $data_discount->discount_rate / 100;
-                                
+
                                     $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                     $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                                
+
                                     $discount_value_holder_history[] = $discount_rate_answer;
                                     $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                                     echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
@@ -473,7 +473,7 @@
 
                             <td style="text-align: right;">
                                 @php
-                                    
+
                                     $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
                                     $sum_vat_per_sku[] = $vat;
                                 @endphp
@@ -526,20 +526,20 @@
                         </th>
                         @php
                             $total = array_sum($sum_total_amount);
-                            
+
                             $discount_value_holder = $total;
                             $discount_value_holder_history = [];
-                            
+
                             $totalArray = [];
                             $percent = [];
                             foreach ($received_purchase_order->received_discount_details as $data_discount) {
                                 $discount_value_holder_dummy = $discount_value_holder;
                                 $less_percentage_by = $data_discount->discount_rate / 100;
-                            
+
                                 // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                 $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                            
+
                                 $discount_value_holder_history[] = $discount_rate_answer;
                                 echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
                             }
@@ -592,7 +592,7 @@
                 </tr>
                 @php
                     $total = $gross_purchases;
-                    
+
                     $discount_value_holder = $total;
                     $discount_value_holder_history = [];
                     $less_discount_value_holder_history_for_bo_allowance = [];
@@ -602,11 +602,11 @@
                         echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
-                    
+
                         // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                    
+
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
@@ -662,7 +662,7 @@
                 </tr>
                 @php
                     $total = $total_final_cost;
-                    
+
                     $discount_value_holder = $total;
                     $discount_value_holder_history = [];
                     $less_discount_value_holder_history_for_bo_allowance = [];
@@ -675,11 +675,11 @@
                     @php
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
-                        
+
                         // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                        
+
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                     @endphp
@@ -705,8 +705,7 @@
                         @endphp
                         {{ number_format($net_payable, 2, '.', ',') }}
                         <input type="hidden" value="{{ $net_payable }}" name="net_payable_updated">
-                        <input type="hidden" name="total_less_other_discount"
-                            value="{{ $total_other_discounts }}">
+                        <input type="hidden" name="total_less_other_discount" value="{{ $total_other_discounts }}">
                     </td>
                 </tr>
             </table>
@@ -754,7 +753,7 @@
                 </tr>
                 @php
                     $total = $gross_purchases;
-                    
+
                     $discount_value_holder = $total;
                     $discount_value_holder_history = [];
                     $less_discount_value_holder_history_for_bo_allowance = [];
@@ -764,11 +763,11 @@
                         echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
-                    
+
                         // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
                         $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
-                    
+
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                         echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
@@ -914,10 +913,20 @@
 
 
 
+    <input type="hidden" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
+    <input type="hidden" value="{{ $get_accounts_payable->account_number }}"
+        name="accounts_payable_account_number">
+    <input type="hidden" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
+        name="accounts_payable_general_account_number">
+    <input type="hidden" value="{{ $get_merchandise_inventory->account_name }}"
+        name="merchandise_inventory_account_name">
+    <input type="hidden" value="{{ $get_merchandise_inventory->account_number }}"
+        name="merchandise_inventory_account_number">
+    <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+        name="merchandise_inventory_general_account_number">
 
 
-
-
+    <input type="hidden" value="{{ $transaction_date }}" name="transaction_date">
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $remarks }}" name="remarks">
     <input type="hidden" value="{{ $received_id }}" name="received_id">

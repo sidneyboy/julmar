@@ -1,7 +1,17 @@
 <form id="bo_allowance_adjustments_show_summary">
-    <div class="form-group">
-        <label for="">Bo Cost Adjustment</label>
-        <input type="text" class="form-control form-control-sm" name="unit_cost_adjustment">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="">Bo Cost Adjustment</label>
+                <input type="text" class="form-control form-control-sm" name="unit_cost_adjustment">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="">Transaction Date</label>
+                <input type="date" class="form-control" required name="transaction_date">
+            </div>
+        </div>
     </div>
 
     <div class="table table-responsive">
@@ -13,7 +23,8 @@
                     <th>Sku Type</th>
                     <th>Qty Received</th>
                     <th>Final Unit Cost</th>
-                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);" class="big-checkbox" />
+                    <th style="text-align: center;"><input type="checkbox" onclick="toggle(this);"
+                            class="big-checkbox" />
                     </th>
                 </tr>
             </thead>

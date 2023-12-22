@@ -10,9 +10,19 @@
             <option value="Near Expire">Near Expire</option>
         </select>
     </div>
-    <div class="form-group">
-        <label>Driver</label>
-        <input type="text" name="personnel" class="form-control" required>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Driver</label>
+                <input type="text" name="personnel" class="form-control" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Transaction Date</label>
+                <input type="date" class="form-control" name="transaction_date" required>
+            </div>
+        </div>
     </div>
     <input type="hidden" value="{{ $principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $received_id }}" name="received_id">

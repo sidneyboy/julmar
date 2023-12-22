@@ -59,8 +59,17 @@
     <input type="hidden" value="{{ $purchase_id }}" name="purchase_id">
     <input type="hidden" value="{{ $dr_si }}" name="dr_si"> --}}
 
-    <label>Particulars</label>
-    <input type="text" class="form-control" name="particulars" required><br />
+    <div class="row">
+        <div class="col-md-6">
+            <label>Particulars</label>
+            <input type="text" class="form-control" name="particulars" required>
+        </div>
+        <div class="col-md-6">
+            <label for="">Transaction Date</label>
+            <input type="date" class="form-control" name="transaction_date" required>
+        </div>
+    </div>
+    <br />
     <button class="float-right btn btn-info btn-sm " type="submit" style="font-weight: bold;">Generate</button>
 </form>
 

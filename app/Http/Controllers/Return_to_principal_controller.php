@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Received_purchase_order;
 use App\Received_purchase_order_details;
 use App\Ap_ledger;
+use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Personnel_description;
 use App\Personnel_add;
 use App\Sku_ledger;
@@ -15,6 +17,7 @@ use App\Return_to_principal_jer;
 use App\User;
 use App\Principal_discount;
 use App\Principal_ledger;
+use App\Sku_principal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,12 +70,27 @@ class Return_to_principal_controller extends Controller
             }
 
             $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
-            // return $request->input();
+
+            $get_principal = Sku_principal::select('principal')->find($request->input('principal_id'));
+
+            $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'MERCHANDISE INVENTORY - ' . $get_principal->principal)
+                ->where('principal_id', $request->input('principal_id'))
+                ->first();
+
+            $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'ACCOUNTS PAYABLE - ' . $get_principal->principal)
+                ->where('principal_id', $request->input('principal_id'))
+                ->first();
+
 
             return view('return_to_principal_summary', [
                 'received_purchase_order' => $received_purchase_order,
+                'get_merchandise_inventory' => $get_merchandise_inventory,
+                'get_accounts_payable' => $get_accounts_payable,
             ])->with('quantity', $request->input('quantity'))
                 ->with('unit_cost', $request->input('unit_cost'))
+                ->with('transaction_date', $request->input('transaction_date'))
                 ->with('remarks', $request->input('remarks'))
                 ->with('freight', $request->input('freight'))
                 ->with('code', $request->input('code'))
@@ -93,6 +111,89 @@ class Return_to_principal_controller extends Controller
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
+        $get_accounts_payable = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('accounts_payable_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('accounts_payable_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_accounts_payable) {
+            $running_balance = $get_accounts_payable->running_balance - $request->input('total_final_cost');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('transaction_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RETURN TO PRINCIPAL',
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('transaction_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RETURN TO PRINCIPAL',
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+        $get_general_merchandise = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('merchandise_inventory_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('merchandise_inventory_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_general_merchandise) {
+            $running_balance = $get_general_merchandise->running_balance - $request->input('total_final_cost');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('transaction_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RETURN TO PRINCIPAL',
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('transaction_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RETURN TO PRINCIPAL',
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+
 
         $return_to_principal_save = new Return_to_principal([
             'principal_id' => $request->input('principal_id'),
@@ -106,17 +207,17 @@ class Return_to_principal_controller extends Controller
             'vatable_purchase' => $request->input('vatable_purchase'),
             'vat' => $request->input('vat'),
             'freight' => $request->input('freight'),
-            'total_final_cost' => $request->input('total_final_cost')*-1,
+            'total_final_cost' => $request->input('total_final_cost') * -1,
             'total_less_other_discount' => $request->input('total_less_other_discount'),
             'net_payable' => $request->input('net_payable'),
         ]);
 
         $return_to_principal_save->save();
 
-        $reference = Received_purchase_order::select('id','purchase_order_id')->find($request->input('received_id'));
+        $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
         $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
-                ->where('principal_id',$request->input('principal_id'))    
-                ->orderBy('id', 'desc')->take(1)->first();
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'desc')->take(1)->first();
 
         if ($ap_ledger_last_transaction) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - $request->input('total_final_cost');
@@ -128,13 +229,13 @@ class Return_to_principal_controller extends Controller
             'principal_id' => $request->input('principal_id'),
             'user_id' => auth()->user()->id,
             'transaction_date' => $date,
-            'description' => 'Return to principal from PO#: ' . $reference->purchase_order->purchase_id .' and RR#: '. $reference->id,
+            'description' => 'Return to principal from PO#: ' . $reference->purchase_order->purchase_id . ' and RR#: ' . $reference->id,
             'debit_record' => $request->input('total_final_cost'),
             'credit_record' => 0,
             'running_balance' => $ap_ledger_running_balance,
             'transaction' => 'return to principal',
             'reference' => $return_to_principal_save->id,
-            'remarks' => $request->input('remarks') .', returned by '. $request->input('personnel'),
+            'remarks' => $request->input('remarks') . ', returned by ' . $request->input('personnel'),
         ]);
 
         $new_ap_ledger->save();
@@ -220,7 +321,7 @@ class Return_to_principal_controller extends Controller
                     $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,
-                        'quantity' => $request->input('quantity_return')[$data]*-1,
+                        'quantity' => $request->input('quantity_return')[$data] * -1,
                         'running_balance' => $running_balance,
                         'user_id' => auth()->user()->id,
                         'transaction_type' => 'returned',
@@ -228,7 +329,7 @@ class Return_to_principal_controller extends Controller
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => strtoupper($request->input('sku_type')),
                         'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
-                        'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
+                        'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
                         'running_amount' => $running_amount,
                     ]);
 
@@ -238,7 +339,7 @@ class Return_to_principal_controller extends Controller
                     $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,
-                        'quantity' => $request->input('quantity_return')[$data]*-1,
+                        'quantity' => $request->input('quantity_return')[$data] * -1,
                         'running_balance' => $running_balance,
                         'user_id' => auth()->user()->id,
                         'transaction_type' => 'returned',
@@ -246,7 +347,7 @@ class Return_to_principal_controller extends Controller
                         'principal_id' => $request->input('principal_id'),
                         'sku_type' => strtoupper($request->input('sku_type')),
                         'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
-                        'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
+                        'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
                         'running_amount' => $running_amount,
                     ]);
 
@@ -255,7 +356,7 @@ class Return_to_principal_controller extends Controller
             } else {
                 $new_sku_ledger = new Sku_ledger([
                     'sku_id' => $data,
-                    'quantity' => $request->input('quantity_return')[$data]*-1,
+                    'quantity' => $request->input('quantity_return')[$data] * -1,
                     'running_balance' => $request->input('quantity_return')[$data],
                     'user_id' => auth()->user()->id,
                     'transaction_type' => 'returned',
@@ -263,7 +364,7 @@ class Return_to_principal_controller extends Controller
                     'principal_id' => $request->input('principal_id'),
                     'sku_type' => strtoupper($request->input('sku_type')),
                     'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
-                    'amount' => $request->input('final_total_cost_per_sku')[$data]*-1,
+                    'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
                     'running_amount' => $request->input('final_total_cost_per_sku')[$data],
                 ]);
 

@@ -9,6 +9,8 @@ use App\Sku_principal;
 use App\Bo_allowance_adjustments;
 use App\Bo_allowance_adjustments_details;
 use App\Bo_allowance_adjustments_jer;
+use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Sku_ledger;
 use App\Principal_ledger;
 use App\User;
@@ -62,11 +64,28 @@ class Bo_allowance_adjustments_controller extends Controller
         $sku_add_details = Received_purchase_order_details::where('received_id', $request->input('received_id'))
             ->whereIn('sku_id', $request->input('checkbox_entry'))
             ->get();
+
+        $get_principal = Sku_principal::select('principal')->find($request->input('principal_id'));
+
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'MERCHANDISE INVENTORY - ' . $get_principal->principal)
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+        $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'ACCOUNTS PAYABLE - ' . $get_principal->principal)
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+
         return view('bo_allowance_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
+            'get_merchandise_inventory' => $get_merchandise_inventory,
+            'get_accounts_payable' => $get_accounts_payable,
         ])->with('received_id', $request->input('received_id'))
             ->with('unit_cost_adjustment', $unit_cost_adjustment)
             ->with('checkbox_entry', $request->input('checkbox_entry'))
+            ->with('transaction_date', $request->input('transaction_date'))
             ->with('description', $request->input('description'))
             ->with('quantity', $request->input('quantity'))
             ->with('unit_of_measurement', $request->input('unit_of_measurement'))
@@ -109,6 +128,88 @@ class Bo_allowance_adjustments_controller extends Controller
         // }
 
         if ($request->input('net_deduction') > 0) {
+            $get_general_merchandise = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('merchandise_inventory_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('merchandise_inventory_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_general_merchandise) {
+                $running_balance = $get_general_merchandise->running_balance + $request->input('net_deduction');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => $request->input('net_deduction'),
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => $request->input('net_deduction'),
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $request->input('net_deduction'),
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
+            $get_accounts_payable = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('accounts_payable_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('accounts_payable_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_accounts_payable) {
+                $running_balance = $get_accounts_payable->running_balance + $request->input('net_deduction');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('net_deduction'),
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('net_deduction'),
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $request->input('net_deduction'),
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('net_deduction');
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
@@ -124,7 +225,91 @@ class Bo_allowance_adjustments_controller extends Controller
             ]);
 
             $new_ap_ledger->save();
-        } else if ($request->input('net_deduction') < 0) {
+        } else {
+            $get_accounts_payable = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('accounts_payable_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('accounts_payable_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_accounts_payable) {
+                $running_balance = $get_accounts_payable->running_balance + $request->input('net_deduction');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => $request->input('net_deduction') * -1,
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => $request->input('net_deduction') * -1,
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $request->input('net_deduction'),
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
+            $get_general_merchandise = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('merchandise_inventory_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('merchandise_inventory_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+
+
+            if ($get_general_merchandise) {
+                $running_balance = $get_general_merchandise->running_balance + $request->input('net_deduction');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('net_deduction') * -1,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('net_deduction') * -1,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('invoice_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $request->input('net_deduction'),
+                    'transaction' => 'BO ALLOWANCE ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('net_deduction') * -1);
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
@@ -141,9 +326,6 @@ class Bo_allowance_adjustments_controller extends Controller
 
             $new_ap_ledger->save();
         }
-
-
-
 
         foreach ($request->input('sku_id') as $key => $sku) {
             $bo_allowance_adjustments_details = new Bo_allowance_adjustments_details([

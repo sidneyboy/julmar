@@ -14,5 +14,8 @@ class General_ledger extends Model
         'credit_record',
         'user_id',
         'transaction_date',
+        'running_balance',
+        'general_account_number',
+        'transaction',
     ];
 }

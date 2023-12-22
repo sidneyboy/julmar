@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ap_ledger;
+use App\Chart_of_accounts_details;
 use App\Received_purchase_order;
 use App\Sku_principal;
 use App\Invoice_cost_adjustments;
@@ -59,10 +60,28 @@ class Invoice_cost_adjustment_controller extends Controller
     {
         //return $request->input();
         $received_purchase_order = Received_purchase_order::find($request->input('received_id'));
+
+        $get_principal = Sku_principal::select('principal')->find($received_purchase_order->principal_id);
+
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'MERCHANDISE INVENTORY - ' . $get_principal->principal)
+            ->where('principal_id', $received_purchase_order->principal_id)
+            ->first();
+
+        $get_accounts_payable = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'ACCOUNTS PAYABLE - ' . $get_principal->principal)
+            ->where('principal_id', $received_purchase_order->principal_id)
+            ->first();
+
+        
+        
         return view('invoice_cost_adjustments_summary', [
             'received_purchase_order' => $received_purchase_order,
+            'get_merchandise_inventory' => $get_merchandise_inventory,
+            'get_accounts_payable' => $get_accounts_payable,
         ])->with('checkbox_entry', $request->input('checkbox_entry'))
             ->with('unit_cost', $request->input('unit_cost'))
+            ->with('transaction_date', $request->input('transaction_date'))
             ->with('freight', $request->input('freight'))
             ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
             ->with('particulars', $request->input('particulars'))
@@ -128,7 +147,7 @@ class Invoice_cost_adjustment_controller extends Controller
 
             $new_ap_ledger->save();
         } else {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('total_final_cost')*-1);
+            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('total_final_cost') * -1);
             $new_ap_ledger = new Ap_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'user_id' => auth()->user()->id,
