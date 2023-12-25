@@ -78,23 +78,27 @@ class Bo_allowance_adjustments_controller extends Controller
             ->first();
 
 
-        return view('bo_allowance_adjustments_summary', [
-            'received_purchase_order' => $received_purchase_order,
-            'get_merchandise_inventory' => $get_merchandise_inventory,
-            'get_accounts_payable' => $get_accounts_payable,
-        ])->with('received_id', $request->input('received_id'))
-            ->with('unit_cost_adjustment', $unit_cost_adjustment)
-            ->with('checkbox_entry', $request->input('checkbox_entry'))
-            ->with('transaction_date', $request->input('transaction_date'))
-            ->with('description', $request->input('description'))
-            ->with('quantity', $request->input('quantity'))
-            ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-            ->with('sku', $sku_add_details)
-            ->with('code', $request->input('code'))
-            ->with('particulars', $request->input('particulars'))
-            ->with('principal_name', $request->input('principal_name'))
-            ->with('principal_id', $request->input('principal_id'))
-            ->with('unit_cost', $request->input('unit_cost'));
+        if ($get_merchandise_inventory && $get_accounts_payable) {
+            return view('bo_allowance_adjustments_summary', [
+                'received_purchase_order' => $received_purchase_order,
+                'get_merchandise_inventory' => $get_merchandise_inventory,
+                'get_accounts_payable' => $get_accounts_payable,
+            ])->with('received_id', $request->input('received_id'))
+                ->with('unit_cost_adjustment', $unit_cost_adjustment)
+                ->with('checkbox_entry', $request->input('checkbox_entry'))
+                ->with('transaction_date', $request->input('transaction_date'))
+                ->with('description', $request->input('description'))
+                ->with('quantity', $request->input('quantity'))
+                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
+                ->with('sku', $sku_add_details)
+                ->with('code', $request->input('code'))
+                ->with('particulars', $request->input('particulars'))
+                ->with('principal_name', $request->input('principal_name'))
+                ->with('principal_id', $request->input('principal_id'))
+                ->with('unit_cost', $request->input('unit_cost'));
+        } else {
+            return 'No chart of account';
+        }
     }
 
     public function bo_allowance_adjustments_save(Request $request)
@@ -145,7 +149,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => $request->input('net_deduction'),
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -160,7 +164,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => $request->input('net_deduction'),
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
                     'running_balance' => $request->input('net_deduction'),
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -186,7 +190,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => 0,
                     'credit_record' => $request->input('net_deduction'),
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('accounts_payable_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -201,7 +205,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => 0,
                     'credit_record' => $request->input('net_deduction'),
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('accounts_payable_general_account_number'),
                     'running_balance' => $request->input('net_deduction'),
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -243,7 +247,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => $request->input('net_deduction') * -1,
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('accounts_payable_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -258,7 +262,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => $request->input('net_deduction') * -1,
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('accounts_payable_general_account_number'),
                     'running_balance' => $request->input('net_deduction'),
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -286,7 +290,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => 0,
                     'credit_record' => $request->input('net_deduction') * -1,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',
@@ -301,7 +305,7 @@ class Bo_allowance_adjustments_controller extends Controller
                     'debit_record' => 0,
                     'credit_record' => $request->input('net_deduction') * -1,
                     'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('invoice_date'),
+                    'transaction_date' => $request->input('transaction_date'),
                     'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
                     'running_balance' => $request->input('net_deduction'),
                     'transaction' => 'BO ALLOWANCE ADJUSTMENT',

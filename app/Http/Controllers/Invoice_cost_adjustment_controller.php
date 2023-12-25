@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Ap_ledger;
 use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Received_purchase_order;
 use App\Sku_principal;
 use App\Invoice_cost_adjustments;
@@ -73,23 +74,25 @@ class Invoice_cost_adjustment_controller extends Controller
             ->where('principal_id', $received_purchase_order->principal_id)
             ->first();
 
-        
-        
-        return view('invoice_cost_adjustments_summary', [
-            'received_purchase_order' => $received_purchase_order,
-            'get_merchandise_inventory' => $get_merchandise_inventory,
-            'get_accounts_payable' => $get_accounts_payable,
-        ])->with('checkbox_entry', $request->input('checkbox_entry'))
-            ->with('unit_cost', $request->input('unit_cost'))
-            ->with('transaction_date', $request->input('transaction_date'))
-            ->with('freight', $request->input('freight'))
-            ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
-            ->with('particulars', $request->input('particulars'))
-            ->with('code', $request->input('code'))
-            ->with('description', $request->input('description'))
-            ->with('quantity', $request->input('quantity'))
-            ->with('received_id', $request->input('received_id'))
-            ->with('new_freight', $request->input('new_freight'));
+        if ($get_merchandise_inventory && $get_accounts_payable) {
+            return view('invoice_cost_adjustments_summary', [
+                'received_purchase_order' => $received_purchase_order,
+                'get_merchandise_inventory' => $get_merchandise_inventory,
+                'get_accounts_payable' => $get_accounts_payable,
+            ])->with('checkbox_entry', $request->input('checkbox_entry'))
+                ->with('unit_cost', $request->input('unit_cost'))
+                ->with('transaction_date', $request->input('transaction_date'))
+                ->with('freight', $request->input('freight'))
+                ->with('unit_cost_adjustment', $request->input('unit_cost_adjustment'))
+                ->with('particulars', $request->input('particulars'))
+                ->with('code', $request->input('code'))
+                ->with('description', $request->input('description'))
+                ->with('quantity', $request->input('quantity'))
+                ->with('received_id', $request->input('received_id'))
+                ->with('new_freight', $request->input('new_freight'));
+        } else {
+            return 'No chart of accounts';
+        }
     }
 
     public function invoice_cost_adjustments_save(Request $request)
@@ -124,12 +127,6 @@ class Invoice_cost_adjustment_controller extends Controller
             ->where('principal_id', $request->input('principal_id'))
             ->orderBy('id', 'desc')->take(1)->first();
 
-        // if ($ap_ledger_last_transaction) {
-        //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
-        // } else {
-        //     $ap_ledger_running_balance = $request->input('total_final_cost');
-        // }
-
         if ($request->input('total_final_cost') > 0) {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
             $new_ap_ledger = new Ap_ledger([
@@ -146,6 +143,89 @@ class Invoice_cost_adjustment_controller extends Controller
             ]);
 
             $new_ap_ledger->save();
+
+            $get_general_merchandise = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('merchandise_inventory_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('merchandise_inventory_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+
+            if ($get_general_merchandise) {
+                $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => $request->input('total_final_cost'),
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => $request->input('total_final_cost'),
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $request->input('total_final_cost'),
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
+            $get_accounts_payable = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('accounts_payable_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('accounts_payable_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_accounts_payable) {
+                $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('total_final_cost'),
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('total_final_cost'),
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $request->input('total_final_cost'),
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
         } else {
             $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('total_final_cost') * -1);
             $new_ap_ledger = new Ap_ledger([
@@ -162,6 +242,89 @@ class Invoice_cost_adjustment_controller extends Controller
             ]);
 
             $new_ap_ledger->save();
+
+            $get_accounts_payable = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('accounts_payable_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('accounts_payable_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_accounts_payable) {
+                $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => $request->input('total_final_cost') * -1,
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('accounts_payable_account_name'),
+                    'account_number' => $request->input('accounts_payable_account_number'),
+                    'debit_record' => $request->input('total_final_cost') * -1,
+                    'credit_record' => 0,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                    'running_balance' => $request->input('total_final_cost'),
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
+
+
+            $get_general_merchandise = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('merchandise_inventory_account_name'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_number', $request->input('merchandise_inventory_account_number'))
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if ($get_general_merchandise) {
+                $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
+
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('total_final_cost') * -1,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $running_balance,
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            } else {
+                $new_general_ledger = new General_ledger([
+                    'principal_id' => $request->input('principal_id'),
+                    'account_name' => $request->input('merchandise_inventory_account_name'),
+                    'account_number' => $request->input('merchandise_inventory_account_number'),
+                    'debit_record' => 0,
+                    'credit_record' => $request->input('total_final_cost') * -1,
+                    'user_id' => auth()->user()->id,
+                    'transaction_date' => $request->input('transaction_date'),
+                    'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                    'running_balance' => $request->input('total_final_cost'),
+                    'transaction' => 'INVOICE COST ADJUSTMENT',
+                ]);
+
+                $new_general_ledger->save();
+            }
         }
 
         foreach ($request->input('sku_id') as $key => $data) {

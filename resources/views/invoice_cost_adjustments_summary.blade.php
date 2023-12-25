@@ -892,7 +892,7 @@
                 </tr>
             </table>
 
-            
+
             @if ($total_final_cost > 0)
                 <table class="table table-bordered table-hover table-sm table-striped">
                     <thead>
@@ -949,20 +949,20 @@
 
     <br />
 
-    <input type="text" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
-    <input type="text" value="{{ $get_accounts_payable->account_number }}"
+    <input type="hidden" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
+    <input type="hidden" value="{{ $get_accounts_payable->account_number }}"
         name="accounts_payable_account_number">
-    <input type="text" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
+    <input type="hidden" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
         name="accounts_payable_general_account_number">
-    <input type="text" value="{{ $get_merchandise_inventory->account_name }}"
+    <input type="hidden" value="{{ $get_merchandise_inventory->account_name }}"
         name="merchandise_inventory_account_name">
-    <input type="text" value="{{ $get_merchandise_inventory->account_number }}"
+    <input type="hidden" value="{{ $get_merchandise_inventory->account_number }}"
         name="merchandise_inventory_account_number">
-    <input type="text" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+    <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
         name="merchandise_inventory_general_account_number">
 
 
-
+    <input type="hidden" value="{{ $transaction_date }}" name="transaction_date">
     <input type="hidden" value="{{ $received_purchase_order->principal_id }}" name="principal_id">
     <input type="hidden" value="{{ $particulars }}" name="particulars">
     <input type="hidden" value="{{ $received_id }}" name="received_id">

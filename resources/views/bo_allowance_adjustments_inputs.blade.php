@@ -107,8 +107,16 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                $('#show_bo_allowance_adjustments_summary').show();
-                $('#show_bo_allowance_adjustments_summary').html(data);
+                if (data == 'No chart of account') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No chart of account!',
+                        'error'
+                    )
+                } else {
+                    $('#show_bo_allowance_adjustments_summary').show();
+                    $('#show_bo_allowance_adjustments_summary').html(data);
+                }
             },
             error: function(error) {
                 $('#loader').hide();

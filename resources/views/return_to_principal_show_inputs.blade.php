@@ -105,7 +105,12 @@
 
                 } else if (data == 'no personnel') {
                     $('#loader').hide();
-
+                } else if (data == 'No chart of account') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No chart of account!',
+                        'error'
+                    )
                 } else {
                     $('#loader').hide();
                     $('#show_final_summary').show(data);

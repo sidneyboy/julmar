@@ -199,7 +199,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                $('#show_data_final_summary').html(data);
+                if (data == 'No chart of account') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No chart of account!',
+                        'error'
+                    )
+                } else {
+                    $('#show_data_final_summary').html(data);
+                }
             },
             error: function(error) {
                 $('#loader').hide();
@@ -208,7 +216,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-              
+
             }
         });
     }));

@@ -84,24 +84,28 @@ class Return_to_principal_controller extends Controller
                 ->first();
 
 
-            return view('return_to_principal_summary', [
-                'received_purchase_order' => $received_purchase_order,
-                'get_merchandise_inventory' => $get_merchandise_inventory,
-                'get_accounts_payable' => $get_accounts_payable,
-            ])->with('quantity', $request->input('quantity'))
-                ->with('unit_cost', $request->input('unit_cost'))
-                ->with('transaction_date', $request->input('transaction_date'))
-                ->with('remarks', $request->input('remarks'))
-                ->with('freight', $request->input('freight'))
-                ->with('code', $request->input('code'))
-                ->with('description', $request->input('description'))
-                ->with('checkbox_entry', $request->input('checkbox_entry'))
-                ->with('principal_id', $request->input('principal_id'))
-                ->with('received_id', $request->input('received_id'))
-                ->with('sku_type', $request->input('sku_type'))
-                ->with('discount_id', $request->input('discount_id'))
-                ->with('personnel', $request->input('personnel'))
-                ->with('discount_type', $request->input('discount_type'));
+            if ($get_merchandise_inventory && $get_accounts_payable) {
+                return view('return_to_principal_summary', [
+                    'received_purchase_order' => $received_purchase_order,
+                    'get_merchandise_inventory' => $get_merchandise_inventory,
+                    'get_accounts_payable' => $get_accounts_payable,
+                ])->with('quantity', $request->input('quantity'))
+                    ->with('unit_cost', $request->input('unit_cost'))
+                    ->with('transaction_date', $request->input('transaction_date'))
+                    ->with('remarks', $request->input('remarks'))
+                    ->with('freight', $request->input('freight'))
+                    ->with('code', $request->input('code'))
+                    ->with('description', $request->input('description'))
+                    ->with('checkbox_entry', $request->input('checkbox_entry'))
+                    ->with('principal_id', $request->input('principal_id'))
+                    ->with('received_id', $request->input('received_id'))
+                    ->with('sku_type', $request->input('sku_type'))
+                    ->with('discount_id', $request->input('discount_id'))
+                    ->with('personnel', $request->input('personnel'))
+                    ->with('discount_type', $request->input('discount_type'));
+            } else {
+                return 'No chart of account';
+            }
         }
     }
 

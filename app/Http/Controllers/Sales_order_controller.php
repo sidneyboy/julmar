@@ -121,39 +121,44 @@ class Sales_order_controller extends Controller
                 if ($sales_order_number_check != 0) {
                     return 'file_already_uploaded';
                 } else {
-                    $sales_order_save = new Sales_order_draft([
-                        'customer_id' => $csv[1][0],
-                        'sales_order_number' => $csv[1][9],
-                        'agent_id' => $csv[1][4],
-                        'principal_id' => $csv[1][2],
-                        'mode_of_transaction' => $csv[1][6],
-                        'sku_type' => $csv[1][7],
-                        'status' => 'draft',
-                        'user_id' => auth()->user()->id,
-                    ]);
-
-                    $sales_order_save->save();
-
-                    for ($i = 3; $i < $counter; $i++) {
-                        $sales_order_details = new Sales_order_draft_details([
-                            'sales_order_draft_id' => $sales_order_save->id,
-                            'sku_id' => $csv[$i][1],
-                            'quantity' => $csv[$i][4],
+                    $check_customer = Customer::select('id')->find($csv[1][0]);
+                    if ($check_customer) {
+                        $sales_order_save = new Sales_order_draft([
+                            'customer_id' => $csv[1][0],
+                            'sales_order_number' => $csv[1][9],
+                            'agent_id' => $csv[1][4],
+                            'principal_id' => $csv[1][2],
+                            'mode_of_transaction' => $csv[1][6],
+                            'sku_type' => $csv[1][7],
+                            'status' => 'draft',
+                            'user_id' => auth()->user()->id,
                         ]);
 
-                        $sales_order_details->save();
+                        $sales_order_save->save();
+
+                        for ($i = 3; $i < $counter; $i++) {
+                            $sales_order_details = new Sales_order_draft_details([
+                                'sales_order_draft_id' => $sales_order_save->id,
+                                'sku_id' => $csv[$i][1],
+                                'quantity' => $csv[$i][4],
+                            ]);
+
+                            $sales_order_details->save();
+                        }
+
+                        $customer_checker = Customer_principal_code::select('id')->where('customer_id', $csv[1][0])
+                            ->where('principal_id', $csv[1][2])
+                            ->count();
+
+                        if ($customer_checker == 0) {
+                            Customer::where('id', $csv[1][0])
+                                ->update(['status' => 'Pending Approval']);
+                        }
+
+                        return 'saved';
+                    } else {
+                        return 'CUSTOMER ID NOT FOUND';
                     }
-
-                    $customer_checker = Customer_principal_code::select('id')->where('customer_id', $csv[1][0])
-                        ->where('principal_id', $csv[1][2])
-                        ->count();
-
-                    if ($customer_checker == 0) {
-                        Customer::where('id', $csv[1][0])
-                            ->update(['status' => 'Pending Approval']);
-                    }
-
-                    return 'saved';
                 }
             } else {
                 return 'incorrect_file_uploaded';
@@ -318,7 +323,7 @@ class Sales_order_controller extends Controller
             $delivery_receipt = $delivery_receipt_data;
         }
 
-      
+
 
         return view('sales_order_draft_proceed_to_final_summary', [
             'sales_order_draft' => $sales_order_draft,
@@ -463,8 +468,6 @@ class Sales_order_controller extends Controller
             ]);
 
             $sales_invoice_details->save();
-
-            
         }
 
         $so_draft_update = Sales_order_draft::find($request->input('sales_order_draft_id'));

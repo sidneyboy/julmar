@@ -109,72 +109,76 @@ class Receive_controller extends Controller
             ->where('principal_id', $request->input('principal_id'))
             ->first();
 
-        $check_less_other_discounts = $request->input('less_other_discount_selected');
-        if (isset($check_less_other_discounts)) {
-            $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();
+        if ($get_merchandise_inventory && $get_accounts_payable) {
+            $check_less_other_discounts = $request->input('less_other_discount_selected');
+            if (isset($check_less_other_discounts)) {
+                $less_other_discount_selected = Principal_discount_details::select('discount_name', 'discount_rate')->whereIn('id', $request->input('less_other_discount_selected'))->get();
 
-            return view('receive_order_show_data_final_summary')
-                ->with('sku_id', $request->input('sku_id'))
-                ->with('discount_type', $request->input('discount_type'))
-                ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
-                ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
-                ->with('less_other_discount_selected', $less_other_discount_selected)
-                ->with('discount_selected', $discount_selected)
-                ->with('sku_type', $request->input('sku_type'))
-                ->with('received_quantity', $request->input('received_quantity'))
-                ->with('remarks', $request->input('remarks'))
-                ->with('sku_code', $request->input('sku_code'))
-                ->with('description', $request->input('description'))
-                ->with('quantity', $request->input('quantity'))
-                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-                ->with('principal_name', $request->input('principal_name'))
-                ->with('principal_id', $request->input('principal_id'))
-                ->with('purchase_order_id', $request->input('purchase_order_id'))
-                ->with('truck_number', $request->input('truck_number'))
-                ->with('dr_si', $request->input('dr_si'))
-                ->with('courier', $request->input('courier'))
-                ->with('purchase_id', $request->input('purchase_id'))
-                ->with('expiration_date', $request->input('expiration_date'))
-                ->with('unit_cost', $unit_cost)
-                ->with('freight', $request->input('freight'))
-                ->with('invoice_date', $request->input('invoice_date'))
-                ->with('remarks', $request->input('remarks'))
-                ->with('branch', $request->input('branch'))
-                ->with('scanned_by', $request->input('scanned_by'))
-                ->with('draft_session_id', $request->input('draft_session_id'))
-                ->with('get_accounts_payable', $get_accounts_payable)
-                ->with('get_merchandise_inventory', $get_merchandise_inventory);
+                return view('receive_order_show_data_final_summary')
+                    ->with('sku_id', $request->input('sku_id'))
+                    ->with('discount_type', $request->input('discount_type'))
+                    ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                    ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
+                    ->with('less_other_discount_selected', $less_other_discount_selected)
+                    ->with('discount_selected', $discount_selected)
+                    ->with('sku_type', $request->input('sku_type'))
+                    ->with('received_quantity', $request->input('received_quantity'))
+                    ->with('remarks', $request->input('remarks'))
+                    ->with('sku_code', $request->input('sku_code'))
+                    ->with('description', $request->input('description'))
+                    ->with('quantity', $request->input('quantity'))
+                    ->with('unit_of_measurement', $request->input('unit_of_measurement'))
+                    ->with('principal_name', $request->input('principal_name'))
+                    ->with('principal_id', $request->input('principal_id'))
+                    ->with('purchase_order_id', $request->input('purchase_order_id'))
+                    ->with('truck_number', $request->input('truck_number'))
+                    ->with('dr_si', $request->input('dr_si'))
+                    ->with('courier', $request->input('courier'))
+                    ->with('purchase_id', $request->input('purchase_id'))
+                    ->with('expiration_date', $request->input('expiration_date'))
+                    ->with('unit_cost', $unit_cost)
+                    ->with('freight', $request->input('freight'))
+                    ->with('invoice_date', $request->input('invoice_date'))
+                    ->with('remarks', $request->input('remarks'))
+                    ->with('branch', $request->input('branch'))
+                    ->with('scanned_by', $request->input('scanned_by'))
+                    ->with('draft_session_id', $request->input('draft_session_id'))
+                    ->with('get_accounts_payable', $get_accounts_payable)
+                    ->with('get_merchandise_inventory', $get_merchandise_inventory);
+            } else {
+                return view('receive_order_show_data_final_summary')
+                    ->with('sku_id', $request->input('sku_id'))
+                    ->with('discount_type', $request->input('discount_type'))
+                    ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
+                    ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
+                    ->with('discount_selected', $discount_selected)
+                    ->with('sku_type', $request->input('sku_type'))
+                    ->with('received_quantity', $request->input('received_quantity'))
+                    ->with('remarks', $request->input('remarks'))
+                    ->with('sku_code', $request->input('sku_code'))
+                    ->with('description', $request->input('description'))
+                    ->with('quantity', $request->input('quantity'))
+                    ->with('unit_of_measurement', $request->input('unit_of_measurement'))
+                    ->with('principal_name', $request->input('principal_name'))
+                    ->with('principal_id', $request->input('principal_id'))
+                    ->with('purchase_order_id', $request->input('purchase_order_id'))
+                    ->with('truck_number', $request->input('truck_number'))
+                    ->with('dr_si', $request->input('dr_si'))
+                    ->with('courier', $request->input('courier'))
+                    ->with('purchase_id', $request->input('purchase_id'))
+                    ->with('expiration_date', $request->input('expiration_date'))
+                    ->with('unit_cost', $unit_cost)
+                    ->with('freight', $request->input('freight'))
+                    ->with('invoice_date', $request->input('invoice_date'))
+                    ->with('remarks', $request->input('remarks'))
+                    ->with('branch', $request->input('branch'))
+                    ->with('scanned_by', $request->input('scanned_by'))
+                    ->with('draft_session_id', $request->input('draft_session_id'))
+                    ->with('get_accounts_payable', $get_accounts_payable)
+                    ->with('get_merchandise_inventory', $get_merchandise_inventory);
+            }
         } else {
-            return view('receive_order_show_data_final_summary')
-                ->with('sku_id', $request->input('sku_id'))
-                ->with('discount_type', $request->input('discount_type'))
-                ->with('bo_allowance_discount_selected', $request->input('bo_allowance_discount_selected'))
-                ->with('cwo_discount_selected', $request->input('cwo_discount_selected'))
-                ->with('discount_selected', $discount_selected)
-                ->with('sku_type', $request->input('sku_type'))
-                ->with('received_quantity', $request->input('received_quantity'))
-                ->with('remarks', $request->input('remarks'))
-                ->with('sku_code', $request->input('sku_code'))
-                ->with('description', $request->input('description'))
-                ->with('quantity', $request->input('quantity'))
-                ->with('unit_of_measurement', $request->input('unit_of_measurement'))
-                ->with('principal_name', $request->input('principal_name'))
-                ->with('principal_id', $request->input('principal_id'))
-                ->with('purchase_order_id', $request->input('purchase_order_id'))
-                ->with('truck_number', $request->input('truck_number'))
-                ->with('dr_si', $request->input('dr_si'))
-                ->with('courier', $request->input('courier'))
-                ->with('purchase_id', $request->input('purchase_id'))
-                ->with('expiration_date', $request->input('expiration_date'))
-                ->with('unit_cost', $unit_cost)
-                ->with('freight', $request->input('freight'))
-                ->with('invoice_date', $request->input('invoice_date'))
-                ->with('remarks', $request->input('remarks'))
-                ->with('branch', $request->input('branch'))
-                ->with('scanned_by', $request->input('scanned_by'))
-                ->with('draft_session_id', $request->input('draft_session_id'))
-                ->with('get_accounts_payable', $get_accounts_payable)
-                ->with('get_merchandise_inventory', $get_merchandise_inventory);
+            return 'No chart of account';
         }
     }
 
@@ -225,7 +229,7 @@ class Receive_controller extends Controller
 
             $new_general_ledger->save();
         }
-       
+
         $get_accounts_payable = General_ledger::select('running_balance')
             ->where('account_name', $request->input('accounts_payable_account_name'))
             ->where('principal_id', $request->input('principal_id'))
@@ -267,7 +271,7 @@ class Receive_controller extends Controller
             $new_general_ledger->save();
         }
 
-        
+
         $po = Purchase_order::select('purchase_id', 'payment_status')->find($request->input('purchase_order_id'));
 
 

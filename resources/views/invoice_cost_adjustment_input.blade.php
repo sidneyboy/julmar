@@ -104,8 +104,16 @@
             cache: false,
             processData: false,
             success: function(data) {
-                $('#show_invoice_cost_adjustments_summary').html(data);
                 $('#loader').hide();
+                if (data == 'No chart of accounts') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No Chart of accounts!',
+                        'error'
+                    )
+                } else {
+                    $('#show_invoice_cost_adjustments_summary').html(data);
+                }
             },
             error: function(error) {
                 $('#loader').hide();

@@ -78,6 +78,13 @@
                             'INCORRECT FILE',
                             'error'
                         )
+                    } else if (data == 'CUSTOMER ID NOT FOUND') {
+                        $('#loader').hide();
+                        Swal.fire(
+                            'CANNOT PROCEED',
+                            'CUSTOMER ID NOT FOUND!',
+                            'error'
+                        )
                     }
                 },
                 error: function(error) {
