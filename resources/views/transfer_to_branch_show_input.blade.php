@@ -26,20 +26,22 @@
                         <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
                         <td>{{ $data->sku->unit_of_measurement }}</td>
                         <td>
-                            {{ $data->quantity }}
-
+                            @php
+                                $quantity = $data->quantity - $data->quantity_returned;
+                                echo $quantity;
+                            @endphp
                         </td>
                         <td style="text-align: right;">
                             {{ number_format($data->final_unit_cost, 2, '.', ',') }}
                         </td>
                         <td style="text-align: right;">
                             @php
-                                $sum_total_amount[] = $data->quantity * $data->final_unit_cost;
+                                $sum_total_amount[] = $quantity * $data->final_unit_cost;
                             @endphp
-                            {{ number_format($data->quantity * $data->final_unit_cost, 2, '.', ',') }}
+                            {{ number_format($quantity * $data->final_unit_cost, 2, '.', ',') }}
                             <input type="hidden" name="final_unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $data->final_unit_cost }}">
-                            <input type="hidden" name="quantity[{{ $data->sku_id }}]" value="{{ $data->quantity }}">
+                            <input type="hidden" name="quantity[{{ $data->sku_id }}]" value="{{ $quantity }}">
                             <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
                         </td>
                     </tr>
@@ -61,15 +63,15 @@
                 <th>CREDIT</th>
             </tr>
             <tr>
-                <th>INVENTORY - {{ $received_purchase_order->principal->principal }} -
-                    {{ $received_purchase_order->branch }}</th>
+                <th>{{ $get_merchandise_inventory->account_name }} - {{ $transfer_to_branch }}</th>
                 <th></th>
                 <th>{{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}</th>
                 <th></th>
             </tr>
             <tr>
                 <th></th>
-                <th>INVENTORY - {{ $received_purchase_order->principal->principal }} - {{ $transfer_to_branch }}</th>
+                <th>{{ $get_merchandise_inventory->account_name }} -
+                    {{ $received_purchase_order->branch }}</th>
                 <th></th>
                 <th>{{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}</th>
             </tr>
@@ -77,6 +79,13 @@
     </table>
 
     <br />
+    <input type="text" value="{{ $get_merchandise_inventory->account_name }}"
+        name="merchandise_inventory_account_name">
+    <input type="text" value="{{ $get_merchandise_inventory->account_number }}"
+        name="merchandise_inventory_account_number">
+    <input type="text" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+        name="merchandise_inventory_general_account_number">
+    <input type="text" name="transaction_date" value="{{ $transaction_date }}">
     <input type="hidden" name="received_id" value="{{ $id }}">
     <input type="hidden" name="purchase_id" value="{{ $purchase_id }}">
     <input type="hidden" name="principal_id" value="{{ $principal_id }}">
@@ -123,7 +132,7 @@
                     'Please Contact IT Support',
                     'error'
                 )
-                
+
             }
         });
     }));

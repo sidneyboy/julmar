@@ -30,7 +30,7 @@
              <div class="card-body">
                  <form id="transfer_to_branch_show_input">
                      <div class="row">
-                         <div class="col-md-6">
+                         <div class="col-md-4">
                              <label>PO #:</label>
                              <select name="received_id" id="received_id" class="form-control select2bs4"
                                  style="width:100%;">
@@ -43,7 +43,7 @@
                                  @endforeach
                              </select>
                          </div>
-                         <div class="col-md-6">
+                         <div class="col-md-4">
                              <label>Transfer To:</label>
                              <select name="transfer_to_branch" class="form-control" required>
                                  <option value="" default>Select</option>
@@ -51,6 +51,10 @@
                                  <option value="CARAGA">CARAGA</option>
                                  <option value="POD">POD</option>
                              </select>
+                         </div>
+                         <div class="col-md-4">
+                             <label>Transaction Date</label>
+                             <input type="date" class="form-control" required name="transaction_date">
                          </div>
                      </div>
                      <br />
@@ -91,8 +95,16 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
-                     $('#show_return_inputs').html(data);
                      $('#loader').hide();
+                     if (data == 'No chart of account') {
+                        Swal.fire(
+                             'Cannot Proceed',
+                             'No chart of account!',
+                             'error'
+                         )
+                     } else {
+                         $('#show_return_inputs').html(data);
+                     }
                  },
                  error: function(error) {
                      $('#loader').hide();
@@ -101,7 +113,6 @@
                          'Please Contact IT Support',
                          'error'
                      )
-
                  }
              });
          }));

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Chart_of_accounts;
+use App\Chart_of_accounts_details;
 use App\User;
 use App\Location;
 use App\Location_details;
@@ -60,12 +62,13 @@ class Customer_controller extends Controller
 
     public function customer_save(Request $request)
     {
-       // return $request->input();
+        //return $request->input();
         // $location_details = Location_details::select('id', 'location_id')->find($request->input('location_id'));
 
         date_default_timezone_set('Asia/Manila');
         $date = date('Ymd');
         $time = date('His');
+
         $credit_line_amount = str_replace(',', '', $request->input('credit_line_amount'));
         $save_new_customer = new Customer([
             'store_name'    => strtoupper($request->input('store_name')),
@@ -84,6 +87,29 @@ class Customer_controller extends Controller
 
         $save_new_customer->save();
         $save_new_customer_last_id = $save_new_customer->id;
+
+        $check_chart_of_account = Chart_of_accounts::select('id', 'account_number', 'account_name')->where('account_name', 'ACCOUNTS RECEIVABLE')->first();
+
+        if (count($check_chart_of_account->chart_of_accounts_details) == 0) {
+            $new_chart_of_account_details = new Chart_of_accounts_details([
+                'chart_of_accounts_id' => $check_chart_of_account->id,
+                'account_name' => $check_chart_of_account->account_name . " - " . strtoupper($request->input('store_name')),
+                'account_number' => $check_chart_of_account->account_number + 1,
+                'customer_id' => $save_new_customer->id,
+            ]);
+
+            $new_chart_of_account_details->save();
+        } else {
+            $new_account_number = $check_chart_of_account->chart_of_accounts_details[0]->account_number + 1;
+            $new_chart_of_account_details = new Chart_of_accounts_details([
+                'chart_of_accounts_id' => $check_chart_of_account->id,
+                'account_name' => $check_chart_of_account->account_name . " - " . strtoupper($request->input('store_name')),
+                'account_number' => $new_account_number,
+                'customer_id' => $save_new_customer->id,
+            ]);
+
+            $new_chart_of_account_details->save();
+        }
 
         $save_new_customer_ledger = new Customer_ledger([
             'customer_id'    => $save_new_customer_last_id,

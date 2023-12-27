@@ -176,7 +176,7 @@
                  cache: false,
                  processData: false,
                  success: function(data) {
-                     console.log(data);
+                     $('#loader').hide();
                      Swal.fire({
                          position: 'top-end',
                          icon: 'success',
@@ -186,7 +186,6 @@
                      })
 
                      location.reload();
-                     $('#loader').hide();
                  },
                  error: function(error) {
                      $('#loader').hide();

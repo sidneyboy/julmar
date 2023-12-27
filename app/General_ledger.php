@@ -17,5 +17,6 @@ class General_ledger extends Model
         'running_balance',
         'general_account_number',
         'transaction',
+        'branch',
     ];
 }

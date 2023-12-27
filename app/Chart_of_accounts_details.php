@@ -11,6 +11,7 @@ class Chart_of_accounts_details extends Model
         'account_name',
         'account_number',
         'principal_id',
+        'customer_id',
     ];
 
     public function chart_of_accounts()

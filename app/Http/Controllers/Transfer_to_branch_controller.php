@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Received_purchase_order;
 use App\Received_purchase_order_details;
 use App\User;
@@ -43,21 +45,32 @@ class Transfer_to_branch_controller extends Controller
         $remarks = $variable_explode[4];
 
         $branch = str_replace('to be transfer to', '', $remarks);
-
         $received_purchase_order = Received_purchase_order::select('branch', 'principal_id')->find($id);
-        $sku_details = Received_purchase_order_details::where('received_id', $id)->get();
 
-        $user = User::select('name')->find(auth()->user()->id);
-        return view('transfer_to_branch_show_input', [
-            'sku_details' => $sku_details,
-            'received_purchase_order' => $received_purchase_order
-        ])->with('id', $id)
-            ->with('purchase_id', $purchase_id)
-            ->with('transfer_to_branch', $request->input('transfer_to_branch'))
-            ->with('principal_id', $principal_id)
-            ->with('dr_si', $dr_si)
-            ->with('branch', $branch)
-            ->with('sku_type',$request->input('sku_type'));
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'MERCHANDISE INVENTORY - ' . $received_purchase_order->principal->principal)
+            ->where('principal_id', $principal_id)
+            ->first();
+
+        if ($get_merchandise_inventory) {
+
+            $sku_details = Received_purchase_order_details::select('sku_id', 'quantity', 'quantity_returned', 'final_unit_cost')->where('received_id', $id)->get();
+
+            return view('transfer_to_branch_show_input', [
+                'sku_details' => $sku_details,
+                'received_purchase_order' => $received_purchase_order,
+                'get_merchandise_inventory' => $get_merchandise_inventory
+            ])->with('id', $id)
+                ->with('purchase_id', $purchase_id)
+                ->with('transfer_to_branch', $request->input('transfer_to_branch'))
+                ->with('transaction_date', $request->input('transaction_date'))
+                ->with('principal_id', $principal_id)
+                ->with('dr_si', $dr_si)
+                ->with('branch', $branch)
+                ->with('sku_type', $request->input('sku_type'));
+        } else {
+            return 'No chart of account';
+        }
     }
 
     public function transfer_to_branch_saved(Request $request)
@@ -66,6 +79,22 @@ class Transfer_to_branch_controller extends Controller
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
+
+        // $new_general_tranfer_to_ledger = new General_ledger([
+        //     'principal_id' => $request->input('principal_id'),
+        //     'account_name' => $request->input('merchandise_inventory_account_name'),
+        //     'account_number' => $request->input('merchandise_inventory_account_number'),
+        //     'debit_record' => $request->input('total_amount'),
+        //     'credit_record' => 0,
+        //     'user_id' => auth()->user()->id,
+        //     'transaction_date' => $request->input('invoice_date'),
+        //     'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+        //     'running_balance' => $request->input('total_amount'),
+        //     'transaction' => 'TRANSFER TO',
+        //     'branch' => $request->input('transfer_from_branch'),
+        // ]);
+
+        // $new_general_tranfer_to_ledger->save();
 
         $transfer_to_branch_save = new Transfer_to_bran([
             'received_id' => $request->input('received_id'),
@@ -77,6 +106,7 @@ class Transfer_to_branch_controller extends Controller
         ]);
 
         $transfer_to_branch_save->save();
+
 
         foreach ($request->input('sku_id') as $key => $data) {
             $transfer_to_branch_details_save = new Transfer_to_bran_details([
@@ -103,6 +133,49 @@ class Transfer_to_branch_controller extends Controller
             ]);
 
             $out_from_sku_ledger_new_sku_ledger->save();
+        }
+
+        $get_general_merchandise = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('merchandise_inventory_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('merchandise_inventory_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_general_merchandise) {
+            $running_balance = $get_general_merchandise->running_balance - $request->input('total_amount');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_amount'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('transaction_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'TRANSFER TO '. $request->input('transfer_to_branch'),
+                'branch' => $request->input('transfer_from_branch'),
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_amount'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $request->input('total_amount'),
+                'transaction' => 'TRANSFER TO '. $request->input('transfer_to_branch'),
+                'branch' => $request->input('transfer_from_branch'),
+            ]);
+
+            $new_general_ledger->save();
         }
 
         return 'saved';
