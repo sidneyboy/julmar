@@ -276,45 +276,49 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">ACCOUNTS RECEIVABLE -
-                            {{ $sales_order_draft->customer->store_name }}
+                        <td style="text-align: center;">{{ $get_customer_ar->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format($final_total, 2, '.', ',') }}
+                            <input type="hidden" value="{{ $final_total }}" name="customer_ar_total">
                         </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">SALES - {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_sales->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format($final_total, 2, '.', ',') }}
                             <input type="hidden" name="final_gross_amount_jer" value="{{ $final_total }}">
+                            <input type="hidden" value="{{ $final_total }}" name="sales_total">
                         </td>
                     </tr>
 
                     <tr>
-                        <td style="text-align: center;">COST OF SALES -
-                            {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_cost_of_sales->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}"
+                                name="cost_of_sales_total">
                         </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">INVENTORY - {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
                             <input type="hidden" name="final_unit_cost_amount_jer"
                                 value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}"
+                                name="inventory_total">
                         </td>
                     </tr>
                 </tbody>
@@ -330,46 +334,50 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="text-align: center;">ACCOUNTS RECEIVABLE -
-                            {{ $sales_order_draft->customer->store_name }}
+                        <td style="text-align: center;">{{ $get_customer_ar->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_total), 2, '.', ',') }}
+                            <input type="hidden" value="{{ array_sum($sum_total) }}" name="customer_ar_total">
                         </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">SALES - {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_sales->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_total), 2, '.', ',') }}
                             <input type="hidden" name="final_gross_amount_jer" value="{{ array_sum($sum_total) }}">
+                            <input type="hidden" value="{{ array_sum($sum_total) }}" name="sales_total">
                         </td>
                     </tr>
 
 
                     <tr>
-                        <td style="text-align: center;">COST OF SALES -
-                            {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_cost_of_sales->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
+                            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}"
+                                name="cost_of_sales_total">
                         </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: center;">INVENTORY - {{ $sales_order_draft->principal->principal }}
+                        <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}
                         </td>
                         <td></td>
                         <td style="font-weight: bold;text-align: center;">
                             {{ number_format(array_sum($sum_unit_cost_sub_total), 2, '.', ',') }}
                             <input type="hidden" name="final_unit_cost_amount_jer"
                                 value="{{ array_sum($sum_unit_cost_sub_total) }}">
+                            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}"
+                                name="inventory_total">
                         </td>
                     </tr>
                 </tbody>
@@ -381,6 +389,34 @@
     <div class="row">
         <div class="col-md-12">
             <br />
+
+
+            <input type="hidden" value="{{ $get_merchandise_inventory->account_name }}"
+                name="merchandise_inventory_account_name">
+            <input type="hidden" value="{{ $get_merchandise_inventory->account_number }}"
+                name="merchandise_inventory_account_number">
+            <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
+                name="merchandise_inventory_general_account_number">
+
+            <input type="hidden" value="{{ $get_sales->account_name }}" name="sales_account_name">
+            <input type="hidden" value="{{ $get_sales->account_number }}" name="sales_account_number">
+            <input type="hidden" value="{{ $get_sales->chart_of_accounts->account_number }}"
+                name="sales_general_account_number">
+
+            <input type="hidden" value="{{ $get_cost_of_sales->account_name }}" name="cost_of_sales_account_name">
+            <input type="hidden" value="{{ $get_cost_of_sales->account_number }}"
+                name="cost_of_sales_account_number">
+            <input type="hidden" value="{{ $get_cost_of_sales->chart_of_accounts->account_number }}"
+                name="cost_of_sales_general_account_number">
+
+            <input type="hidden" value="{{ $get_customer_ar->account_name }}" name="customer_ar_account_name">
+            <input type="hidden" value="{{ $get_customer_ar->account_number }}" name="customer_ar_account_number">
+            <input type="hidden" value="{{ $get_customer_ar->chart_of_accounts->account_number }}"
+                name="customer_ar_general_account_number">
+
+
+
+
             <input type="hidden" value="{{ $customer_id }}" name="customer_id">
             <input type="hidden" value="{{ $mode_of_transaction }}" name="mode_of_transaction">
             <input type="hidden" value="{{ $sku_type }}" name="sku_type">
@@ -408,12 +444,12 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire(
-                    'Transaction Saved',
-                    '',
-                    'success'
-                )
-                location.reload();
+                // Swal.fire(
+                //     'Transaction Saved',
+                //     '',
+                //     'success'
+                // )
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

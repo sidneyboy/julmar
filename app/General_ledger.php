@@ -18,5 +18,6 @@ class General_ledger extends Model
         'general_account_number',
         'transaction',
         'branch',
+        'customer_id',
     ];
 }

@@ -165,7 +165,7 @@
 
     $("#sales_order_draft_proceed_to_final_summary").on('submit', (function(e) {
         e.preventDefault();
-        // $('#loader').show();
+        $('#loader').show();
         $.ajax({
             url: "sales_order_draft_proceed_to_final_summary",
             type: "POST",
@@ -174,10 +174,17 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 if (data == 'existing dr') {
                     Swal.fire(
                         'Cannot Proceed',
                         'Existing DR',
+                        'error'
+                    )
+                } else if (data == 'No chart of accounts') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'No chart of account!',
                         'error'
                     )
                 } else {

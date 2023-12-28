@@ -19,6 +19,8 @@ use App\Sales_order_print_jer;
 use App\Sales_order_print_jer_details;
 use App\Customer;
 use App\Ar_ledger;
+use App\Chart_of_accounts_details;
+use App\General_ledger;
 use App\Location;
 use App\Sales_invoice_accounts_receivable;
 use App\Sales_invoice_cost_of_sales;
@@ -263,219 +265,422 @@ class Sales_order_controller extends Controller
         $time = date('h:i:s a');
         $date_receipt = date('Y-m');
 
-        if ($request->input('principal') == 'GCI') {
-            $dr_checker = Sales_invoice::select('delivery_receipt')
-                ->where('delivery_receipt', $request->input('delivery_receipt_for_gci'))->count();
-            if ($dr_checker != 0) {
-                return 'existing dr';
+        $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'MERCHANDISE INVENTORY - ' . $request->input('principal'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+        $get_sales = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'SALES - ' . $request->input('principal'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+        $get_cost_of_sales = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'COST OF SALES - ' . $request->input('principal'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->first();
+
+        $get_customer_ar = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('customer_id', $request->input('customer_id'))
+            ->first();
+
+        if ($get_merchandise_inventory && $get_sales && $get_cost_of_sales && $get_customer_ar) {
+            if ($request->input('principal') == 'GCI') {
+                $dr_checker = Sales_invoice::select('delivery_receipt')
+                    ->where('delivery_receipt', $request->input('delivery_receipt_for_gci'))->count();
+                if ($dr_checker != 0) {
+                    return 'existing dr';
+                } else {
+                    $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
+                    $sku_type = strtoupper($request->input('sku_type'));
+                }
             } else {
-                $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
+                $sales_invoice = Sales_invoice::select('delivery_receipt')
+                    ->where('principal_id', $request->input('principal_id'))
+                    ->orderBy('id', 'desc')->first();
                 $sku_type = strtoupper($request->input('sku_type'));
-            }
-        } else {
-            $sales_invoice = Sales_invoice::select('delivery_receipt')
-                ->where('principal_id', $request->input('principal_id'))
-                ->orderBy('id', 'desc')->first();
-            $sku_type = strtoupper($request->input('sku_type'));
 
-            if (!is_null($sales_invoice)) {
-                // $sales_invoice->delivery_receipt;
-                $var_explode = explode('-', $sales_invoice->delivery_receipt);
-                $year_and_month = $var_explode[1] . "-" . $var_explode[2];
-                $series = $var_explode[3];
+                if (!is_null($sales_invoice)) {
+                    // $sales_invoice->delivery_receipt;
+                    $var_explode = explode('-', $sales_invoice->delivery_receipt);
+                    $year_and_month = $var_explode[1] . "-" . $var_explode[2];
+                    $series = $var_explode[3];
 
-                if ($sku_type == 'BUTAL') {
-                    if ($date_receipt != $year_and_month) {
+                    if ($sku_type == 'BUTAL') {
+                        if ($date_receipt != $year_and_month) {
+                            $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
+                        } else {
+                            $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                        }
+                    } else {
+                        if ($date_receipt != $year_and_month) {
+                            $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
+                        } else {
+                            $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
+                        }
+                    }
+                } else {
+                    if ($sku_type == 'BUTAL') {
                         $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
                     } else {
-                        $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
-                    }
-                } else {
-                    if ($date_receipt != $year_and_month) {
                         $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
-                    } else {
-                        $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt . "-" . str_pad($series + 1, 4, 0, STR_PAD_LEFT);
                     }
-                }
-            } else {
-                if ($sku_type == 'BUTAL') {
-                    $delivery_receipt_data = $request->input('principal') . "B-" . $date_receipt  . "-0001";
-                } else {
-                    $delivery_receipt_data = $request->input('principal') . "C-" . $date_receipt  . "-0001";
                 }
             }
-        }
 
-        $discount_checker = $request->input('customer_discount');
+            $discount_checker = $request->input('customer_discount');
 
-        if (isset($discount_checker)) {
-            $customer_discount = $request->input('customer_discount');
+            if (isset($discount_checker)) {
+                $customer_discount = $request->input('customer_discount');
+            } else {
+                $customer_discount[] = 0;
+            }
+
+            $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
+
+            $check_dr = $request->input('delivery_receipt_for_gci');
+            if (isset($check_dr)) {
+                $delivery_receipt = $check_dr;
+            } else {
+                $delivery_receipt = $delivery_receipt_data;
+            }
+
+            return view('sales_order_draft_proceed_to_final_summary', [
+                'get_merchandise_inventory' => $get_merchandise_inventory,
+                'get_sales' => $get_sales,
+                'get_cost_of_sales' => $get_cost_of_sales,
+                'get_customer_ar' => $get_customer_ar,
+                'sales_order_draft' => $sales_order_draft,
+                'delivery_receipt' => $delivery_receipt,
+                'sku_type' => $sku_type,
+                'mode_of_transaction' => $request->input('mode_of_transaction'),
+                'customer_discount' => $request->input('customer_discount'),
+                'agent_id' => $request->input('agent_id'),
+                'principal_id' => $request->input('principal_id'),
+                'customer_principal_price' => $request->input('customer_principal_price'),
+                'final_quantity' => $request->input('final_quantity'),
+                'customer_principal_code' => $request->input('customer_principal_code'),
+                'unit_price' => $request->input('unit_price'),
+                'customer_discount' => $request->input('customer_discount'),
+                'customer_id' => $request->input('customer_id'),
+            ]);
         } else {
-            $customer_discount[] = 0;
+            return 'No chart of accounts';
         }
-
-        $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
-
-        $check_dr = $request->input('delivery_receipt_for_gci');
-        if (isset($check_dr)) {
-            $delivery_receipt = $check_dr;
-        } else {
-            $delivery_receipt = $delivery_receipt_data;
-        }
-
-
-
-        return view('sales_order_draft_proceed_to_final_summary', [
-            'sales_order_draft' => $sales_order_draft,
-            'delivery_receipt' => $delivery_receipt,
-            'sku_type' => $sku_type,
-            'mode_of_transaction' => $request->input('mode_of_transaction'),
-            'customer_discount' => $request->input('customer_discount'),
-            'agent_id' => $request->input('agent_id'),
-            'principal_id' => $request->input('principal_id'),
-            'customer_principal_price' => $request->input('customer_principal_price'),
-            'final_quantity' => $request->input('final_quantity'),
-            'customer_principal_code' => $request->input('customer_principal_code'),
-            'unit_price' => $request->input('unit_price'),
-            'customer_discount' => $request->input('customer_discount'),
-            'customer_id' => $request->input('customer_id'),
-        ]);
     }
 
     public function sales_order_draft_save(Request $request)
     {
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
         //return $request->input();
 
-        $discount_checker = $request->input('discount_rate');
-        if (isset($discount_checker)) {
-            $discount_rate = implode('-', $request->input('discount_rate'));
-        } else {
-            $discount_rate = 'none';
-        }
-        $sales_invoice_save = new Sales_invoice([
-            'customer_id' => $request->input('customer_id'),
-            'principal_id' => $request->input('principal_id'),
-            'agent_id' => $request->input('agent_id'),
-            'mode_of_transaction' => $request->input('mode_of_transaction'),
-            'sku_type' => strtoupper($request->input('sku_type')),
-            'sales_order_number' => $request->input('sales_order_number'),
-            'status' => 'invoice',
-            'user_id' => auth()->user()->id,
-            'discount_rate' => $discount_rate,
-            'total' => $request->input('final_total'),
-            'delivery_receipt' => $request->input('delivery_receipt'),
-            'sales_order_draft_id' => $request->input('sales_order_draft_id'),
-            'customer_discount' => $request->input('customer_discount'),
-        ]);
-
-        $sales_invoice_save->save();
-
-        $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        $get_customer_ar = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('customer_ar_account_name'))
+            ->where('account_number', $request->input('customer_ar_account_number'))
+            ->where('customer_id', $request->input('customer_id'))
             ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'DESC')
             ->first();
 
-        if ($get_last_row_sales_invoice_accounts_receivable) {
-            $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance + $request->input('final_gross_amount_jer');
-        } else {
-            $sales_invoice_ar_running_balance = $request->input('final_gross_amount_jer');
-        }
+        if ($get_customer_ar) {
+            $running_balance_customer_ar = $get_customer_ar->running_balance + $request->input('customer_ar_total');
 
-        $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-            'user_id' => auth()->user()->id,
-            'principal_id' => $request->input('principal_id'),
-            'customer_id' => $request->input('customer_id'),
-            'transaction' => 'sales invoice',
-            'all_id' => $sales_invoice_save->id,
-            'debit_record' => $request->input('final_gross_amount_jer'),
-            'credit_record' => 0,
-            'running_balance' => $sales_invoice_ar_running_balance,
-        ]);
-
-        $new_sales_invoice_accounts_receivable->save();
-
-        $get_last_row_sales_invoice_sales = Sales_invoice_sales::where('customer_id', $request->input('customer_id'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($get_last_row_sales_invoice_sales) {
-            $sales_invoice_sales_running_balance = $get_last_row_sales_invoice_sales->running_balance + $request->input('final_gross_amount_jer');
-        } else {
-            $sales_invoice_sales_running_balance = $request->input('final_gross_amount_jer');
-        }
-
-        $new_sales_invoice_sales = new Sales_invoice_sales([
-            'user_id' => auth()->user()->id,
-            'principal_id' => $request->input('principal_id'),
-            'customer_id' => $request->input('customer_id'),
-            'transaction' => 'sales invoice',
-            'all_id' => $sales_invoice_save->id,
-            'debit_record' => 0,
-            'credit_record' => $request->input('final_gross_amount_jer'),
-            'running_balance' => $sales_invoice_sales_running_balance,
-        ]);
-
-        $new_sales_invoice_sales->save();
-
-        $get_last_row_sales_invoice_cost_of_sales = Sales_invoice_cost_of_sales::where('customer_id', $request->input('customer_id'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($get_last_row_sales_invoice_cost_of_sales) {
-            $sales_invoice_cost_of_sales_running_balance = $get_last_row_sales_invoice_cost_of_sales->running_balance + $request->input('final_unit_cost_amount_jer');
-        } else {
-            $sales_invoice_cost_of_sales_running_balance = $request->input('final_unit_cost_amount_jer');
-        }
-
-        $new_sales_invoice_cost_of_sales = new Sales_invoice_cost_of_sales([
-            'user_id' => auth()->user()->id,
-            'principal_id' => $request->input('principal_id'),
-            'customer_id' => $request->input('customer_id'),
-            'transaction' => 'sales invoice',
-            'all_id' => $sales_invoice_save->id,
-            'debit_record' => $request->input('final_unit_cost_amount_jer'),
-            'credit_record' => 0,
-            'running_balance' => $sales_invoice_cost_of_sales_running_balance,
-        ]);
-
-        $new_sales_invoice_cost_of_sales->save();
-
-
-        $new_sales_invoice_jer = new Sales_invoice_jer([
-            'sales_invoice_id' => $sales_invoice_save->id,
-            'debit_record_ar' => $request->input('final_gross_amount_jer'),
-            'credit_record_sales' => $request->input('final_gross_amount_jer'),
-            'debit_record_cost_of_sales' => $request->input('final_unit_cost_amount_jer'),
-            'credit_record_inventory' => $request->input('final_unit_cost_amount_jer'),
-        ]);
-
-        $new_sales_invoice_jer->save();
-
-        foreach ($request->input('sku_id') as $key => $data) {
-            $sales_invoice_details = new Sales_invoice_details([
-                'sales_invoice_id' => $sales_invoice_save->id,
-                'sku_id' => $data,
-                'quantity' => $request->input('final_quantity')[$data],
-                'unit_price' => $request->input('unit_price')[$data],
-                'total_amount_per_sku' => $request->input('total_amount_per_sku')[$data],
-                'agent_id' => $request->input('agent_id'),
+            $new_general_ledger = new General_ledger([
                 'principal_id' => $request->input('principal_id'),
-                'sku_type' => strtoupper($request->input('sku_type')),
-                'kilograms' => $request->input('kilograms')[$data],
-                'total_discount_per_sku' => $request->input('total_discount_per_sku')[$data],
+                'account_name' => $request->input('customer_ar_account_name'),
+                'account_number' => $request->input('customer_ar_account_number'),
+                'debit_record' => $request->input('customer_ar_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('customer_ar_general_account_number'),
+                'running_balance' => $running_balance_customer_ar,
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
             ]);
 
-            $sales_invoice_details->save();
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('customer_ar_account_name'),
+                'account_number' => $request->input('customer_ar_account_number'),
+                'debit_record' => $request->input('customer_ar_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('customer_ar_general_account_number'),
+                'running_balance' => $request->input('customer_ar_total'),
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
         }
 
-        $so_draft_update = Sales_order_draft::find($request->input('sales_order_draft_id'));
-        $so_draft_update->status = 'invoice';
-        $so_draft_update->save();
+        $get_sales = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('sales_account_name'))
+            ->where('account_number', $request->input('sales_account_number'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_sales) {
+            $running_balance_sales = $get_sales->running_balance + $request->input('sales_total');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('sales_account_name'),
+                'account_number' => $request->input('sales_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('sales_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('sales_general_account_number'),
+                'running_balance' => $running_balance_sales,
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('sales_account_name'),
+                'account_number' => $request->input('sales_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('sales_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('sales_general_account_number'),
+                'running_balance' => $request->input('sales_total'),
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+        $get_cost_of_sales = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('cost_of_sales_account_name'))
+            ->where('account_number', $request->input('cost_of_sales_account_number'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_cost_of_sales) {
+            $running_balance_cost_of_sales = $get_cost_of_sales->running_balance + $request->input('cost_of_sales_total');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('cost_of_sales_account_name'),
+                'account_number' => $request->input('cost_of_sales_account_number'),
+                'debit_record' => $request->input('cost_of_sales_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('cost_of_sales_general_account_number'),
+                'running_balance' => $running_balance_cost_of_sales,
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('cost_of_sales_account_name'),
+                'account_number' => $request->input('cost_of_sales_account_number'),
+                'debit_record' => $request->input('cost_of_sales_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('cost_of_sales_general_account_number'),
+                'running_balance' => $request->input('cost_of_sales_total'),
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+        $get_merchandise_inventory = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('merchandise_inventory_account_name'))
+            ->where('account_number', $request->input('merchandise_inventory_account_number'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_merchandise_inventory) {
+            $running_balance_merchandise_inventory = $get_merchandise_inventory->running_balance - $request->input('inventory_total');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('inventory_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $running_balance_merchandise_inventory,
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('inventory_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $date,
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $request->input('inventory_total'),
+                'transaction' => 'SALES INVOICE',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $new_general_ledger->save();
+        }
 
 
-        return 'saved';
+
+
+        // $discount_checker = $request->input('discount_rate');
+        // if (isset($discount_checker)) {
+        //     $discount_rate = implode('-', $request->input('discount_rate'));
+        // } else {
+        //     $discount_rate = 'none';
+        // }
+        // $sales_invoice_save = new Sales_invoice([
+        //     'customer_id' => $request->input('customer_id'),
+        //     'principal_id' => $request->input('principal_id'),
+        //     'agent_id' => $request->input('agent_id'),
+        //     'mode_of_transaction' => $request->input('mode_of_transaction'),
+        //     'sku_type' => strtoupper($request->input('sku_type')),
+        //     'sales_order_number' => $request->input('sales_order_number'),
+        //     'status' => 'invoice',
+        //     'user_id' => auth()->user()->id,
+        //     'discount_rate' => $discount_rate,
+        //     'total' => $request->input('final_total'),
+        //     'delivery_receipt' => $request->input('delivery_receipt'),
+        //     'sales_order_draft_id' => $request->input('sales_order_draft_id'),
+        //     'customer_discount' => $request->input('customer_discount'),
+        // ]);
+
+        // $sales_invoice_save->save();
+
+        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_accounts_receivable) {
+        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance + $request->input('final_gross_amount_jer');
+        // } else {
+        //     $sales_invoice_ar_running_balance = $request->input('final_gross_amount_jer');
+        // }
+
+        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'sales invoice',
+        //     'all_id' => $sales_invoice_save->id,
+        //     'debit_record' => $request->input('final_gross_amount_jer'),
+        //     'credit_record' => 0,
+        //     'running_balance' => $sales_invoice_ar_running_balance,
+        // ]);
+
+        // $new_sales_invoice_accounts_receivable->save();
+
+        // $get_last_row_sales_invoice_sales = Sales_invoice_sales::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_sales) {
+        //     $sales_invoice_sales_running_balance = $get_last_row_sales_invoice_sales->running_balance + $request->input('final_gross_amount_jer');
+        // } else {
+        //     $sales_invoice_sales_running_balance = $request->input('final_gross_amount_jer');
+        // }
+
+        // $new_sales_invoice_sales = new Sales_invoice_sales([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'sales invoice',
+        //     'all_id' => $sales_invoice_save->id,
+        //     'debit_record' => 0,
+        //     'credit_record' => $request->input('final_gross_amount_jer'),
+        //     'running_balance' => $sales_invoice_sales_running_balance,
+        // ]);
+
+        // $new_sales_invoice_sales->save();
+
+        // $get_last_row_sales_invoice_cost_of_sales = Sales_invoice_cost_of_sales::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_cost_of_sales) {
+        //     $sales_invoice_cost_of_sales_running_balance = $get_last_row_sales_invoice_cost_of_sales->running_balance + $request->input('final_unit_cost_amount_jer');
+        // } else {
+        //     $sales_invoice_cost_of_sales_running_balance = $request->input('final_unit_cost_amount_jer');
+        // }
+
+        // $new_sales_invoice_cost_of_sales = new Sales_invoice_cost_of_sales([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'sales invoice',
+        //     'all_id' => $sales_invoice_save->id,
+        //     'debit_record' => $request->input('final_unit_cost_amount_jer'),
+        //     'credit_record' => 0,
+        //     'running_balance' => $sales_invoice_cost_of_sales_running_balance,
+        // ]);
+
+        // $new_sales_invoice_cost_of_sales->save();
+
+
+        // $new_sales_invoice_jer = new Sales_invoice_jer([
+        //     'sales_invoice_id' => $sales_invoice_save->id,
+        //     'debit_record_ar' => $request->input('final_gross_amount_jer'),
+        //     'credit_record_sales' => $request->input('final_gross_amount_jer'),
+        //     'debit_record_cost_of_sales' => $request->input('final_unit_cost_amount_jer'),
+        //     'credit_record_inventory' => $request->input('final_unit_cost_amount_jer'),
+        // ]);
+
+        // $new_sales_invoice_jer->save();
+
+        // foreach ($request->input('sku_id') as $key => $data) {
+        //     $sales_invoice_details = new Sales_invoice_details([
+        //         'sales_invoice_id' => $sales_invoice_save->id,
+        //         'sku_id' => $data,
+        //         'quantity' => $request->input('final_quantity')[$data],
+        //         'unit_price' => $request->input('unit_price')[$data],
+        //         'total_amount_per_sku' => $request->input('total_amount_per_sku')[$data],
+        //         'agent_id' => $request->input('agent_id'),
+        //         'principal_id' => $request->input('principal_id'),
+        //         'sku_type' => strtoupper($request->input('sku_type')),
+        //         'kilograms' => $request->input('kilograms')[$data],
+        //         'total_discount_per_sku' => $request->input('total_discount_per_sku')[$data],
+        //     ]);
+
+        //     $sales_invoice_details->save();
+        // }
+
+        // $so_draft_update = Sales_order_draft::find($request->input('sales_order_draft_id'));
+        // $so_draft_update->status = 'invoice';
+        // $so_draft_update->save();
+
+
+        // return 'saved';
     }
 
     public function sales_order_draft_update_customer_process(Request $request)
