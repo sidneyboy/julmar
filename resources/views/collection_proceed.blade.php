@@ -25,11 +25,14 @@
             <th>
                 <select name="bank" class="form-control form-control-sm" required style="width:100%;">
                     <option value="" default>Select</option>
-                    <option value="BDO">BDO</option>
+                    {{-- <option value="BDO">BDO</option>
                     <option value="BPI">BPI</option>
                     <option value="METRO BANK">METRO BANK</option>
                     <option value="FIRST VALLEY BANK">FIRST VALLEY BANK</option>
-                    <option value="OTHERS">OTHERS</option>
+                    <option value="OTHERS">OTHERS</option> --}}
+                    @foreach ($get_bank->chart_of_accounts_details as $data)
+                        <option value="{{ $data->id . '|' . $data->account_name }}">{{ $data->account_name }}</option>
+                    @endforeach
                 </select>
             </th>
         </tr>
@@ -80,7 +83,7 @@
                         <td>{{ $data->principal->principal }}</td>
                         <td style="text-align: right">
                             @php
-                                $outstanding_balance = ($data->total - $data->total_returned_amount) - $data->total_payment;
+                                $outstanding_balance = $data->total - $data->total_returned_amount - $data->total_payment;
                                 echo number_format($outstanding_balance, 2, '.', ',');
                             @endphp
                             <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
@@ -171,16 +174,21 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $('#loader').hide();
                 if (data == 'cannot proceed') {
-                    $('#loader').hide();
                     Swal.fire(
                         'Cannot Proceed',
                         'One of your collection exceeds the invoice outstanding balance',
                         'error'
                     )
+                } else if (data == 'No chart of account') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
                 } else {
                     $('#collection_final_summary_page').html(data);
-                    $('#loader').hide();
                 }
             },
             error: function(error) {

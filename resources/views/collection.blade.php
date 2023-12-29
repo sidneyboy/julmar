@@ -126,6 +126,12 @@
                             'No Data Found!',
                             'error'
                         )
+                    } else if (data == 'No chart of account') {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'No chart of account!',
+                            'error'
+                        )
                     } else {
                         $('#collection_proceed_page').html(data);
                     }

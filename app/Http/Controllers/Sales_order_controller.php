@@ -379,7 +379,7 @@ class Sales_order_controller extends Controller
             ->where('account_name', $request->input('customer_ar_account_name'))
             ->where('account_number', $request->input('customer_ar_account_number'))
             ->where('customer_id', $request->input('customer_id'))
-            ->where('principal_id', $request->input('principal_id'))
+            // ->where('principal_id', $request->input('principal_id'))
             ->orderBy('id', 'DESC')
             ->first();
 

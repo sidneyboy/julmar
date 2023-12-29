@@ -137,23 +137,38 @@
         </thead>
         <tbody>
             <tr>
-                <td style="text-align: center;">CASH IN BANK -
+                <td style="text-align: center;">
                     {{ $bank }}</td>
                 <td></td>
                 <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_amount_collected), 2, '.', ','); ?></td>
                 <td><input type="hidden" name="debit_record" value="{{ array_sum($sum_amount_collected) }}">
+                    <input type="hidden" name="cash_in_bank_total" value="{{ array_sum($sum_amount_collected) }}">
                 </td>
             </tr>
             <tr>
                 <td></td>
-                <td style="text-align: center;">ACCOUNTS RECEIVABLE -
-                    {{ $sales_invoice[0]->sales_invoice_customer->store_name }}</td>
+                <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
                 <td><input type="hidden" name="credit_record" value="{{ array_sum($sum_amount_collected) }}">
                 </td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_amount_collected), 2, '.', ','); ?></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_amount_collected), 2, '.', ','); ?>
+                    <input type="hidden" name="customer_ar_total" value="{{ array_sum($sum_amount_collected) }}">
+                </td>
             </tr>
         </tbody>
     </table>
+
+
+    <input type="hidden" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
+    <input type="hidden" value="{{ $get_bank->account_number }}"
+        name="get_bank_account_number">
+    <input type="hidden" value="{{ $get_bank->chart_of_accounts->account_number }}"
+        name="get_bank_general_account_number">
+    <input type="hidden" value="{{ $get_customer_ar->account_name }}"
+        name="get_customer_ar_account_name">
+    <input type="hidden" value="{{ $get_customer_ar->account_number }}"
+        name="get_customer_ar_account_number">
+    <input type="hidden" value="{{ $get_customer_ar->chart_of_accounts->account_number }}"
+        name="get_customer_ar_general_account_number">
 
     <button class="btn btn-sm float-right btn-success">Submit</button>
 </form>

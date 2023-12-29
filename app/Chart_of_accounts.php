@@ -12,6 +12,11 @@ class Chart_of_accounts extends Model
         'principal',
     ];
 
+    public function chart_of_account_bank()
+    {
+        return $this->hasMany('App\Chart_of_accounts_details', 'chart_of_accounts_id')->select('account_name','id');
+    }
+
     public function chart_of_accounts_details()
     {
         return $this->hasMany('App\Chart_of_accounts_details', 'chart_of_accounts_id');
