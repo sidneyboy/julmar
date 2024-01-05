@@ -5,10 +5,11 @@
             <table class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
-                        <th colspan="2">{{ $first_input }}</th>
+                        <th colspan="3">{{ $first_input }}</th>
                     </tr>
                     <tr>
                         <th>Account Name</th>
+                        <th>Normal Balance</th>
                         <th>Account Number</th>
                     </tr>
                 </thead>
@@ -19,8 +20,13 @@
                                 <input type="hidden" value="{{ $second_input[$i] }}"
                                     name="subsidiary_ledger_account_name[]">
                             </td>
+                            <td style="text-transform: uppercase">{{ $normal_balance[$i] }}
+                                <input type="hidden" value="{{ $normal_balance[$i] }}"
+                                    name="subsidiary_ledger_normal_balance[]">
+                            </td>
                             <td>
-                                <input type="text" class="form-control" value="{{ $general_account_number + $i + 1 }}"
+                                <input type="text" class="form-control"
+                                    value="{{ $general_account_number + $i + 1 }}"
                                     name="subsidiary_ledger_account_number[]">
                             </td>
                         </tr>
@@ -36,8 +42,7 @@
                     <tr>
                         <th>Account Name</th>
                         <th>Account Number
-                            <input type="hidden" value="0"
-                                name="subsidiary_ledger_account_name">
+                            <input type="hidden" value="0" name="subsidiary_ledger_account_name">
                         </th>
                     </tr>
                 </thead>
@@ -93,6 +98,7 @@
             <thead>
                 <tr>
                     <th>Account Name</th>
+                    <th>Normal Balance</th>
                     <th>Account Number</th>
                 </tr>
             </thead>
@@ -102,6 +108,10 @@
                         <td style="text-transform: uppercase">{{ $second_input[$i] }}
                             <input type="hidden" value="{{ $second_input[$i] }}"
                                 name="subsidiary_ledger_account_name[]">
+                        </td>
+                        <td style="text-transform: uppercase">{{ $normal_balance[$i] }}
+                            <input type="hidden" value="{{ $normal_balance[$i] }}"
+                                name="subsidiary_ledger_normal_balance[]">
                         </td>
                         <td>
                             <input type="text" class="form-control"

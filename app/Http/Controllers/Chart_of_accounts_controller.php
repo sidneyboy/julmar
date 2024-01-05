@@ -65,6 +65,7 @@ class Chart_of_accounts_controller extends Controller
             'fetch_chart_of_account' => $fetch_chart_of_account,
         ])->with('transaction', $request->input('transaction'))
             ->with('second_input', $second_input)
+            ->with('normal_balance', $request->input('normal_balance'))
             ->with('first_input', strtoupper($request->input('first_input')))
             ->with('general_account_number', $request->input('general_account_number'));
     }
@@ -88,6 +89,7 @@ class Chart_of_accounts_controller extends Controller
                         'chart_of_accounts_id' => $new->id,
                         'account_name' => strtoupper($request->input('subsidiary_ledger_account_name')[$i]),
                         'account_number' => $request->input('subsidiary_ledger_account_number')[$i],
+                        'normal_balance' => $request->input('subsidiary_ledger_normal_balance')[$i],
                     ]);
 
                     $details->save();
@@ -99,6 +101,7 @@ class Chart_of_accounts_controller extends Controller
                     'chart_of_accounts_id' => $request->input('chart_account_id'),
                     'account_name' => strtoupper($request->input('subsidiary_ledger_account_name')[$i]),
                     'account_number' => $request->input('subsidiary_ledger_account_number')[$i],
+                    'normal_balance' => $request->input('subsidiary_ledger_normal_balance')[$i],
                 ]);
 
                 $details->save();

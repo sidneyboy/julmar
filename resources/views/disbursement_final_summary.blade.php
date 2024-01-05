@@ -98,17 +98,17 @@
             </tbody>
         </table>
 
-        <input type="text" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
-        <input type="text" value="{{ $get_bank->account_number }}" name="get_bank_account_number">
-        <input type="text" value="{{ $get_bank->chart_of_accounts->account_number }}"
+        <input type="hidden" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
+        <input type="hidden" value="{{ $get_bank->account_number }}" name="get_bank_account_number">
+        <input type="hidden" value="{{ $get_bank->chart_of_accounts->account_number }}"
             name="get_bank_general_account_number">
-        <input type="text" value="{{ $get_ap->account_name }}" name="get_ap_account_name">
-        <input type="text" value="{{ $get_ap->account_number }}" name="get_ap_account_number">
-        <input type="text" value="{{ $get_ap->chart_of_accounts->account_number }}"
+        <input type="hidden" value="{{ $get_ap->account_name }}" name="get_ap_account_name">
+        <input type="hidden" value="{{ $get_ap->account_number }}" name="get_ap_account_number">
+        <input type="hidden" value="{{ $get_ap->chart_of_accounts->account_number }}"
             name="get_ap_general_account_number">
-        <input type="text" value="{{ $get_bir_due->account_name }}" name="get_bir_due_account_name">
-        <input type="text" value="{{ $get_bir_due->account_number }}" name="get_bir_due_account_number">
-        <input type="text" value="{{ $get_bir_due->chart_of_accounts->account_number }}"
+        <input type="hidden" value="{{ $get_bir_due->account_name }}" name="get_bir_due_account_name">
+        <input type="hidden" value="{{ $get_bir_due->account_number }}" name="get_bir_due_account_number">
+        <input type="hidden" value="{{ $get_bir_due->chart_of_accounts->account_number }}"
             name="get_bir_due_general_account_number">
 
 
@@ -119,7 +119,7 @@
         <input type="hidden" name="po_rr_id" value="{{ $po_rr_id }}">
         <input type="hidden" name="bank" value="{{ $bank }}">
         <input type="hidden" name="check_deposit_slip" value="{{ $check_deposit_slip }}">
-        {{-- <input type="text" name="amount" value="{{ $amount_payable }}"> --}}
+        {{-- <input type="hidden" name="amount" value="{{ $amount_payable }}"> --}}
         {{-- <input type="hidden" name="amount_payable" value="{{ $net_payable_amount }}"> --}}
         <input type="hidden" name="outstanding_balance" value="{{ $outstanding_balance }}">
         <input type="hidden" name="cv_number" value="{{ $cv_number }}">
@@ -144,15 +144,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    // Swal.fire({
-                    //     position: 'top-end',
-                    //     icon: 'success',
-                    //     title: 'Your work has been saved',
-                    //     showConfirmButton: false,
-                    //     timer: 1500
-                    // });
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                    // location.reload();
+                    location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();
@@ -351,83 +351,177 @@
         <h3 style="font-weight: bold;">OTHERS</h3>
     </center>
     <br />
-    <table class="table table-bordered table-sm table-striped">
-        <tr>
-            <th>PAYEE</th>
-            <td style="text-align: center;">{{ strtoupper($payee) }}</td>
-            <th>DATE</th>
-            <td style="text-align: center;">{{ $date }}</td>
-        </tr>
-        <tr>
-            <th>INVOICE NO/REF</th>
-            <td style="text-align: center;">{{ strtoupper($invoice_no_ref) }}</td>
-            <th>CHECK REF/CASH</th>
-            <td style="text-align: center;">{{ strtoupper($check_ref_cash) }}</td>
-        </tr>
-        <tr>
-            <th>DESCRIPTION</th>
-            <td style="text-align: center;">{{ $description }}</td>
-            <th>BANK</th>
-            <td style="text-align: center;">{{ strtoupper($bank) }}</td>
-        </tr>
-        <tr>
-            <th>PERIOD</th>
-            <td colspan="3" style="text-align:center;">
-                {{ $date_range }}
-            </td>
-        </tr>
-    </table>
+    <form id="disbursement_saved">
+        @csrf
+        <table class="table table-bordered table-sm table-striped">
+            <tr>
+                <th>PAYEE</th>
+                <td style="text-align: center;">{{ strtoupper($payee) }}
+                    <input type="hidden" name="payee" value="{{ $payee }}">
+                </td>
+                <th>DATE</th>
+                <td style="text-align: center;">{{ $date }}
+                    <input type="hidden" name="date" value="{{ $date }}">
+                </td>
+            </tr>
+            <tr>
+                <th>INVOICE NO/REF</th>
+                <td style="text-align: center;">{{ strtoupper($invoice_no_ref) }}
+                    <input type="hidden" name="invoice_no_ref" value="{{ $invoice_no_ref }}">
+                </td>
+                <th>CHECK REF/CASH</th>
+                <td style="text-align: center;">{{ strtoupper($check_ref_cash) }}
+                    <input type="hidden" name="check_ref_cash" value="{{ $check_ref_cash }}">
+                </td>
+            </tr>
+            <tr>
+                <th>DESCRIPTION</th>
+                <td style="text-align: center;">{{ $description }}
+                    <input type="hidden" name="description" value="{{ $description }}">
+                </td>
+                <th>BANK</th>
+                <td style="text-align: center;">{{ strtoupper($bank) }}
+                    <input type="hidden" name="bank" value="{{ $bank }}">
+                </td>
+            </tr>
+            <tr>
+                <th>PERIOD</th>
+                <td colspan="3" style="text-align:center;">
+                    {{ $date_range }}
+                    <input type="hidden" name="date_range" value="{{ $date_range }}">
+                </td>
+            </tr>
+        </table>
 
-    <table class="table table-bordered table-hover table-striped table-sm" id="myTable">
-        <thead>
-            <tr>
-                <th style="text-align: center;">ACCOUNT NAME</th>
-                <th style="text-align: center;">ACCOUNT NO</th>
-                <th style="text-align: center;">DR AMOUNT</th>
-                <th style="text-align: center;">CR AMOUNT</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for ($n = 0; $n < count($transaction_insert_entry); $n++)
-                <tr>
-                    <td>{{ $transaction_insert_entry[$n]->account_name }}</td>
-                    <td style="text-align: center;">{{ $transaction_insert_entry[$n]->account_number }}</td>
-                    <td style="text-align: right;">{{ number_format($new_debit_record[$n], 2, '.', ',') }}
-                        @php
-                            $sum_debit[] = $new_debit_record[$n];
-                        @endphp
-                    </td>
-                    <td style="text-align: right;">{{ number_format($new_credit_record[$n], 2, '.', ',') }}
-                        @php
-                            $sum_credit[] = $new_credit_record[$n];
-                        @endphp
-                    </td>
-                </tr>
-            @endfor
-            @for ($i = 0; $i < count($account_name); $i++)
-                <tr>
-                    <td>{{ $account_name[$i] }}</td>
-                    <td style="text-align: center;">{{ $transaction_entry[$i]->account_number }}</td>
-                    <td style="text-align: right;">{{ number_format($debit_record[$i], 2, '.', ',') }}
-                        @php
-                            $sum_debit[] = $debit_record[$i];
-                        @endphp
-                    </td>
-                    <td style="text-align: right;">{{ number_format($credit_record[$i], 2, '.', ',') }}
-                        @php
-                            $sum_credit[] = $credit_record[$i];
-                        @endphp
-                    </td>
-                </tr>
-            @endfor
-        </tbody>
-        <tfoot>
-            <tr>
-                <th style="text-align:center;">TOTAL</th>
-                <th></th>
-                <th style="text-align: right;">{{ number_format(array_sum($sum_debit), 2, '.', ',') }}</th>
-                <th style="text-align: right;">{{ number_format(array_sum($sum_credit), 2, '.', ',') }}</th>
-            </tr>
-        </tfoot>
-    </table>
+        <div class="table table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm" id="myTable">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">ACCOUNT NAME</th>
+                        <th style="text-align: center;">ACCOUNT NO</th>
+                        <th style="text-align: center;">DR AMOUNT</th>
+                        <th style="text-align: center;">CR AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (count($transaction_insert_entry) != 0)
+                        @for ($n = 0; $n < count($transaction_insert_entry); $n++)
+                            <tr>
+                                <td>{{ $transaction_insert_entry[$n]->account_name }}
+
+                                    <input type="hidden" value="{{ $transaction_insert_entry[$n]->account_name }}"
+                                        name="account_name[]">
+                                </td>
+                                <td style="text-align: center;">{{ $transaction_insert_entry[$n]->account_number }}
+                                    <input type="hidden" value="{{ $transaction_insert_entry[$n]->account_number }}"
+                                        name="account_number[]">
+                                </td>
+                                <td style="text-align: right;">{{ number_format($new_debit_record[$n], 2, '.', ',') }}
+                                    @php
+                                        $sum_debit[] = $new_debit_record[$n];
+                                    @endphp
+                                    <input type="hidden" value="{{ $new_debit_record[$n] }}" name="debit_record[]">
+                                </td>
+                                <td style="text-align: right;">
+                                    {{ number_format($new_credit_record[$n], 2, '.', ',') }}
+                                    @php
+                                        $sum_credit[] = $new_credit_record[$n];
+                                    @endphp
+                                    <input type="hidden" value="{{ $new_credit_record[$n] }}"
+                                        name="credit_record[]">
+                                    <input type="hidden" value="{{ $transaction_insert_entry[$n]->normal_balance }}"
+                                        name="normal_balance[]">
+                                    <input type="hidden"
+                                        value="{{ $transaction_insert_entry[$n]->chart_of_accounts_general_account_number->account_number }}"
+                                        name="general_account_number[]">
+
+
+                                </td>
+                            </tr>
+                        @endfor
+                    @endif
+                    @for ($i = 0; $i < count($account_name); $i++)
+                        <tr>
+                            <td>{{ $account_name[$i] }}
+
+                                <input type="hidden" value="{{ $account_name[$i] }}" name="account_name[]">
+                            </td>
+                            <td style="text-align: center;">{{ $transaction_entry[$i]->account_number }}
+                                <input type="hidden" value="{{ $transaction_entry[$i]->account_number }}"
+                                    name="account_number[]">
+                            </td>
+                            <td style="text-align: right;">{{ number_format($debit_record[$i], 2, '.', ',') }}
+                                @php
+                                    $sum_debit[] = $debit_record[$i];
+                                @endphp
+                                <input type="hidden" value="{{ $debit_record[$i] }}" name="debit_record[]">
+                            </td>
+                            <td style="text-align: right;">{{ number_format($credit_record[$i], 2, '.', ',') }}
+                                @php
+                                    $sum_credit[] = $credit_record[$i];
+                                @endphp
+                                <input type="hidden" value="{{ $credit_record[$i] }}" name="credit_record[]">
+                                <input type="hidden" value="{{ $transaction_entry[$i]->normal_balance }}"
+                                    name="normal_balance[]">
+                                <input type="hidden"
+                                    value="{{ $transaction_entry[$i]->chart_of_accounts_general_account_number->account_number }}"
+                                    name="general_account_number[]">
+                            </td>
+                        </tr>
+                    @endfor
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th style="text-align:center;">TOTAL</th>
+                        <th></th>
+                        <th style="text-align: right;">{{ number_format(array_sum($sum_debit), 2, '.', ',') }}</th>
+                        <th style="text-align: right;">{{ number_format(array_sum($sum_credit), 2, '.', ',') }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @if (array_sum($sum_debit) == array_sum($sum_credit))
+            <input type="hidden" name="disbursement" value="{{ $disbursement }}">
+            <button class="btn btn-sm float-right btn-success">Submit</button>
+        @else
+            <h5 class="text-center" style="color:red;">Debit and Credit must be equal. Cannot proceed!</h5>
+        @endif
+    </form>
+
+    <script>
+        $("#disbursement_saved").on('submit', (function(e) {
+            e.preventDefault();
+            $('#loader').show();
+            $.ajax({
+                url: "disbursement_saved",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    $('#loader').hide();
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
+
+                    // location.reload();
+                },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+
+                }
+            });
+        }));
+    </script>
 @endif

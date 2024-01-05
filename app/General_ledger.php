@@ -20,4 +20,9 @@ class General_ledger extends Model
         'branch',
         'customer_id',
     ];
+
+    public function chart_of_account_details()
+    {
+        return $this->belongsTo('App\Chart_of_accounts_details', 'account_number','account_number');
+    }
 }

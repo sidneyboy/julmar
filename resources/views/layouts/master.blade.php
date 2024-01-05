@@ -238,6 +238,13 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="{{ url('/general_ledger') }}"
+                                                class="nav-link {{ $active_tab == 'general_ledger' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Ledger</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('/disbursement') }}"
                                                 class="nav-link {{ $active_tab == 'disbursement' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

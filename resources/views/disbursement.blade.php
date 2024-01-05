@@ -31,7 +31,8 @@
                                             <option value="" default>Select</option>
                                             <option value="payment to principal">Principal Payment</option>
                                             {{-- <option value="collection">Collection</option> --}}
-                                            <option value="others">Others</option>
+                                            <option value="others">Registered Chart of Account</option>
+                                            <option value="unidentified_chart_of_account">Others</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">

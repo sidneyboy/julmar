@@ -22,6 +22,7 @@
             <thead>
                 <tr>
                     <th style="text-align: center;">Subsidiary Account Name</th>
+                    <th style="text-align: center;">Normal Balance</th>
                 </tr>
             </thead>
         </table>
@@ -35,6 +36,24 @@
             var table = document.getElementById("myTable");
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+
+            var selectBox = document.createElement("select");
+            selectBox.classList.add("form-control");
+            selectBox.name = "normal_balance[]";
+
+            var option1 = document.createElement("option");
+            option1.value = "Debit";
+            option1.text = "DEBIT";
+            selectBox.appendChild(option1);
+
+            var option2 = document.createElement("option");
+            option2.value = "Credit";
+            option2.text = "CREDIT";
+            selectBox.appendChild(option2);
+
+            cell1.innerHTML = "<input class='form-control' name='second_input[]' style='text-transform:uppercase'>";
+            cell2.appendChild(selectBox);
             cell1.innerHTML = "<input class='form-control' name='second_input[]' style='text-transform:uppercase'>";
         }
 
@@ -95,6 +114,7 @@
             <thead>
                 <tr>
                     <th style="text-align: center;">Subsidiary Account Name</th>
+                    <th style="text-align: center;">Normal Balance</th>
                 </tr>
             </thead>
         </table>
@@ -108,7 +128,24 @@
             var table = document.getElementById("myTable");
             var row = table.insertRow(1);
             var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+
+            var selectBox = document.createElement("select");
+            selectBox.classList.add("form-control", "form-control-sm");
+            selectBox.name = "normal_balance[]";
+
+            var option1 = document.createElement("option");
+            option1.value = "Debit";
+            option1.text = "DEBIT";
+            selectBox.appendChild(option1);
+
+            var option2 = document.createElement("option");
+            option2.value = "Credit";
+            option2.text = "CREDIT";
+            selectBox.appendChild(option2);
+
             cell1.innerHTML = "<input class='form-control' name='second_input[]' style='text-transform:uppercase'>";
+            cell2.appendChild(selectBox);
         }
 
         function removeRow() {

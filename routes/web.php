@@ -902,3 +902,6 @@ Route::post('/chart_of_accounts_transaction_proceed', 'Chart_of_accounts_control
 Route::post('/chart_of_accounts_final_summary', 'Chart_of_accounts_controller@chart_of_accounts_final_summary')->name('chart_of_accounts_final_summary');
 Route::post('/chart_of_accounts_save', 'Chart_of_accounts_controller@chart_of_accounts_save')->name('chart_of_accounts_save');
 
+Route::get('/general_ledger', 'General_ledger_controller@index');
+Route::post('/general_ledger_generate', 'General_ledger_controller@general_ledger_generate')->name('general_ledger_generate');
+
