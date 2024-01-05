@@ -71,8 +71,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">AP -
-                        {{ $principal_name->principal }}</td>
+                    <td style="text-align: center;">{{ $get_ap->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: right;">
                         <?php echo number_format($ewt_amount + $amount_paid, 2, '.', ','); ?>
@@ -82,8 +81,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td>CASH IN BANK
-                        {{ $bank }}</td>
+                    <td>{{ $get_bank->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: right;"><?php echo number_format($amount_paid, 2, '.', ','); ?>
                         <input type="hidden" value="{{ $amount_paid }}" name="cash_in_bank">
@@ -91,7 +89,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td>DUE TO BIR - CREDITABLE WITHHOLDING TAX</td>
+                    <td>{{ $get_bir_due->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: right;"><?php echo number_format($ewt_amount, 2, '.', ','); ?>
                         <input type="hidden" value="{{ $ewt_amount }}" name="withholding_tax">
@@ -99,6 +97,23 @@
                 </tr>
             </tbody>
         </table>
+
+        <input type="text" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
+        <input type="text" value="{{ $get_bank->account_number }}" name="get_bank_account_number">
+        <input type="text" value="{{ $get_bank->chart_of_accounts->account_number }}"
+            name="get_bank_general_account_number">
+        <input type="text" value="{{ $get_ap->account_name }}" name="get_ap_account_name">
+        <input type="text" value="{{ $get_ap->account_number }}" name="get_ap_account_number">
+        <input type="text" value="{{ $get_ap->chart_of_accounts->account_number }}"
+            name="get_ap_general_account_number">
+        <input type="text" value="{{ $get_bir_due->account_name }}" name="get_bir_due_account_name">
+        <input type="text" value="{{ $get_bir_due->account_number }}" name="get_bir_due_account_number">
+        <input type="text" value="{{ $get_bir_due->chart_of_accounts->account_number }}"
+            name="get_bir_due_general_account_number">
+
+
+
+
 
         <input type="hidden" name="disbursement" value="{{ $disbursement }}">
         <input type="hidden" name="po_rr_id" value="{{ $po_rr_id }}">
@@ -129,15 +144,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();

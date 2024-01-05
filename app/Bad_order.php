@@ -21,6 +21,11 @@ class Bad_order extends Model
         'si_id',
     ];
 
+    public function bad_order_details_sku_id()
+    {
+        return $this->hasMany('App\Bad_order_details', 'bad_order_id')->select('sku_id');
+    }
+
     public function bad_order_details()
     {
         return $this->hasMany('App\Bad_order_details', 'bad_order_id');

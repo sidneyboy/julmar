@@ -76,77 +76,143 @@ class Post_credit_memo_controller extends Controller
 
     public function post_credit_generate_final_summary(Request $request)
     {
+        //return $request->input();
         if ($request->input('transaction') == 'RGS') {
             $cm_data = Return_good_stock::find($request->input('cm_id'));
+
+            if ($request->input('si_id') == 'unidentified') {
+                $sales_invoice = $request->input('si_id');
+                $customer_discount = 0;
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $request->input('principal_id'))
+                    ->first();
+    
+                $total_invoice_amount = 0;
+    
+                foreach ($cm_data->return_good_stock_details as $key => $details) {
+                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                        ->where('sku_id', $details->sku_id)
+                        ->orderBy('id', 'desc')
+                        ->first();
+    
+                    if ($price_history) {
+                        $unit_price[$details->sku_id] = $price_history->price_level;
+                    } else {
+                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                            ->where('sku_id', $details->sku_id)
+                            ->first();
+    
+                        $unit_price[$details->sku_id] = $price_details->price_level;
+                    }
+                }
+            } else {
+                $sales_invoice = Sales_invoice::select('id', 'discount_rate', 'delivery_receipt', 'total', 'total_returned_amount')->find($request->input('si_id'));
+                $customer_discount = explode('-', $sales_invoice->discount_rate);
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $request->input('principal_id'))
+                    ->first();
+    
+                $total_invoice_amount = $sales_invoice->total + $sales_invoice->total_returned_amount;
+    
+                foreach ($cm_data->return_good_stock_details as $key => $details) {
+                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                        ->where('sku_id', $details->sku_id)
+                        ->orderBy('id', 'desc')
+                        ->first();
+    
+                    if ($price_history) {
+                        $unit_price[$details->sku_id] = $price_history->price_level;
+                    } else {
+    
+                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                            ->where('sku_id', $details->sku_id)
+                            ->first();
+    
+                        $unit_price[$details->sku_id] = $price_details->price_level;
+                    }
+                }
+            }
+    
+            return view('post_credit_generate_final_summary', [
+                'cm_data' => $cm_data,
+                'sales_invoice' => $sales_invoice,
+                'unit_price' => $unit_price,
+                'customer_discount' => $customer_discount,
+                'total_invoice_amount' => $total_invoice_amount,
+            ])->with('transaction', $request->input('transaction'))
+                ->with('si_id', $request->input('si_id'));
         } else if ($request->input('transaction') == 'BO') {
             $cm_data = Bad_order::find($request->input('cm_id'));
-        }
 
-
-        if ($request->input('si_id') == 'unidentified') {
-            $sales_invoice = $request->input('si_id');
-            $customer_discount = 0;
-            $customer_price_level = Customer_principal_price::select('price_level')
-                ->where('customer_id', $request->input('customer_id'))
-                ->where('principal_id', $request->input('principal_id'))
-                ->first();
-
-            $total_invoice_amount = 0;
-
-            foreach ($cm_data->return_good_stock_details as $key => $details) {
-                $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
-                    ->where('sku_id', $details->sku_id)
-                    ->orderBy('id', 'desc')
+            if ($request->input('si_id') == 'unidentified') {
+                $sales_invoice = $request->input('si_id');
+                $customer_discount = 0;
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $request->input('principal_id'))
                     ->first();
-
-                if ($price_history) {
-                    $unit_price[$details->sku_id] = $price_history->price_level;
-                } else {
-
-                    $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
-                        ->where('sku_id', $key)
+    
+                $total_invoice_amount = 0;
+    
+                foreach ($cm_data->bad_order_details_sku_id as $key => $details) {
+                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')
+                        ->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                        ->where('sku_id', $details->sku_id)
+                        ->orderBy('id', 'desc')
                         ->first();
 
-                    $unit_price[$details->sku_id] = $price_details->price_level;
+                    
+    
+                    if ($price_history) {
+                        $unit_price[$details->sku_id] = $price_history->price_level;
+                    } else {
+                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                            ->where('sku_id', $details->sku_id)
+                            ->first();
+                       
+                        $unit_price[$details->sku_id] = $price_details->price_level;
+                    }
                 }
-            }
-        } else {
-            $sales_invoice = Sales_invoice::select('id', 'discount_rate', 'delivery_receipt', 'total', 'total_returned_amount')->find($request->input('si_id'));
-            $customer_discount = explode('-', $sales_invoice->discount_rate);
-            $customer_price_level = Customer_principal_price::select('price_level')
-                ->where('customer_id', $request->input('customer_id'))
-                ->where('principal_id', $request->input('principal_id'))
-                ->first();
-
-            $total_invoice_amount = $sales_invoice->total + $sales_invoice->total_returned_amount;
-
-            foreach ($cm_data->return_good_stock_details as $key => $details) {
-                $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
-                    ->where('sku_id', $details->sku_id)
-                    ->orderBy('id', 'desc')
+            } else {
+                $sales_invoice = Sales_invoice::select('id', 'discount_rate', 'delivery_receipt', 'total', 'total_returned_amount')->find($request->input('si_id'));
+                $customer_discount = explode('-', $sales_invoice->discount_rate);
+                $customer_price_level = Customer_principal_price::select('price_level')
+                    ->where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $request->input('principal_id'))
                     ->first();
-
-                if ($price_history) {
-                    $unit_price[$details->sku_id] = $price_history->price_level;
-                } else {
-
-                    $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
-                        ->where('sku_id', $key)
+    
+                $total_invoice_amount = $sales_invoice->total + $sales_invoice->total_returned_amount;
+    
+                foreach ($cm_data->bad_order_details as $key => $details) {
+                    $price_history = Sku_price_history::select('id', $customer_price_level->price_level . ' as price_level')->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
+                        ->where('sku_id', $details->sku_id)
+                        ->orderBy('id', 'desc')
                         ->first();
-
-                    $unit_price[$details->sku_id] = $price_details->price_level;
+    
+                    if ($price_history) {
+                        $unit_price[$details->sku_id] = $price_history->price_level;
+                    } else {
+    
+                        $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
+                            ->where('sku_id', $details->sku_id)
+                            ->first();
+    
+                        $unit_price[$details->sku_id] = $price_details->price_level;
+                    }
                 }
             }
+    
+            return view('post_credit_generate_final_summary', [
+                'cm_data' => $cm_data,
+                'sales_invoice' => $sales_invoice,
+                'unit_price' => $unit_price,
+                'customer_discount' => $customer_discount,
+                'total_invoice_amount' => $total_invoice_amount,
+            ])->with('transaction', $request->input('transaction'))
+                ->with('si_id', $request->input('si_id'));
         }
-
-        return view('post_credit_generate_final_summary', [
-            'cm_data' => $cm_data,
-            'sales_invoice' => $sales_invoice,
-            'unit_price' => $unit_price,
-            'customer_discount' => $customer_discount,
-            'total_invoice_amount' => $total_invoice_amount,
-        ])->with('transaction', $request->input('transaction'))
-            ->with('si_id', $request->input('si_id'));
     }
 
     public function post_credit_memo_save(Request $request)

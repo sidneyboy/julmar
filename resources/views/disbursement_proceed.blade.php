@@ -37,11 +37,9 @@
                 <label for="">Bank</label>
                 <select name="bank" class="form-control" required style="width:100%;">
                     <option value="" default>Select</option>
-                    <option value="BDO">BDO</option>
-                    <option value="BPI">BPI</option>
-                    <option value="METRO BANK">METRO BANK</option>
-                    <option value="FIRST VALLEY BANK">FIRST VALLEY BANK</option>
-                    <option value="OTHERS">OTHERS</option>
+                    @foreach ($get_bank->chart_of_account_bank as $data)
+                        <option value="{{ $data->id ."|". $data->account_name }}">{{ $data->account_name }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
