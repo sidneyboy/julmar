@@ -248,23 +248,6 @@ class Warehouse_pcm_controller extends Controller
                         'confirmed_quantity' => $data->quantity,
                         'user_id' => auth()->user()->id,
                     ]);
-
-                $sku_id_data = $data->id;
-                $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id_data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-                $running_balance = $ledger_results[0]->running_balance + $data->quantity;
-                $new_sku_ledger = new Sku_ledger([
-                    'sku_id' => $sku_id_data,
-                    'quantity' => $data->quantity,
-                    'running_balance' => $running_balance,
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'booking cm',
-                    'all_id' => $request->input('id'),
-                    'principal_id' => $ledger_results[0]->principal_id,
-                    'sku_type' => $ledger_results[0]->sku_type,
-                ]);
-
-                $new_sku_ledger->save();
             }
 
             // foreach ($request->input('discount_rate') as $key => $discount_rate) {

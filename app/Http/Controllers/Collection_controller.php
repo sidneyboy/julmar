@@ -166,89 +166,89 @@ class Collection_controller extends Controller
         $new_jer->save();
 
         $get_bank = General_ledger::select('running_balance')
-                ->where('account_name', $request->input('get_bank_account_name'))
-                ->where('customer_id', $request->input('customer_id'))
-                ->where('account_number', $request->input('get_bank_account_number'))
-                ->orderBy('id', 'DESC')
-                ->first();
+            ->where('account_name', $request->input('get_bank_account_name'))
+            // ->where('customer_id', $request->input('customer_id'))
+            ->where('account_number', $request->input('get_bank_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
-            if ($get_bank) {
-                $running_balance = $get_bank->running_balance + $request->input('cash_in_bank_total');
+        if ($get_bank) {
+            $running_balance = $get_bank->running_balance + $request->input('cash_in_bank_total');
 
-                $new_general_ledger = new General_ledger([
-                    'account_name' => $request->input('get_bank_account_name'),
-                    'account_number' => $request->input('get_bank_account_number'),
-                    'debit_record' => $request->input('cash_in_bank_total'),
-                    'credit_record' => 0,
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('payment_date'),
-                    'general_account_number' => $request->input('get_bank_general_account_number'),
-                    'running_balance' => $running_balance,
-                    'transaction' => 'COLLECTION',
-                    'customer_id' => $request->input('customer_id'),
-                ]);
+            $new_general_ledger = new General_ledger([
+                'account_name' => $request->input('get_bank_account_name'),
+                'account_number' => $request->input('get_bank_account_number'),
+                'debit_record' => $request->input('cash_in_bank_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('payment_date'),
+                'general_account_number' => $request->input('get_bank_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'COLLECTION',
+                'customer_id' => $request->input('customer_id'),
+            ]);
 
-                $new_general_ledger->save();
-            } else {
-                $new_general_ledger = new General_ledger([
-                    'account_name' => $request->input('get_bank_account_name'),
-                    'account_number' => $request->input('get_bank_account_number'),
-                    'debit_record' => $request->input('cash_in_bank_total'),
-                    'credit_record' => 0,
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('payment_date'),
-                    'general_account_number' => $request->input('get_bank_general_account_number'),
-                    'running_balance' => $request->input('cash_in_bank_total'),
-                    'transaction' => 'COLLECTION',
-                    'customer_id' => $request->input('customer_id'),
-                ]);
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'account_name' => $request->input('get_bank_account_name'),
+                'account_number' => $request->input('get_bank_account_number'),
+                'debit_record' => $request->input('cash_in_bank_total'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('payment_date'),
+                'general_account_number' => $request->input('get_bank_general_account_number'),
+                'running_balance' => $request->input('cash_in_bank_total'),
+                'transaction' => 'COLLECTION',
+                'customer_id' => $request->input('customer_id'),
+            ]);
 
-                $new_general_ledger->save();
-            }
+            $new_general_ledger->save();
+        }
 
-            $get_customer_ar = General_ledger::select('running_balance')
-                ->where('account_name', $request->input('get_customer_ar_account_name'))
-                ->where('customer_id', $request->input('customer_id'))
-                ->where('account_number', $request->input('get_customer_ar_account_number'))
-                ->orderBy('id', 'DESC')
-                ->first();
+        $get_customer_ar = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('get_customer_ar_account_name'))
+            ->where('customer_id', $request->input('customer_id'))
+            ->where('account_number', $request->input('get_customer_ar_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
-            if ($get_customer_ar) {
-                $running_balance = $get_customer_ar->running_balance - $request->input('customer_ar_total');
+        if ($get_customer_ar) {
+            $running_balance = $get_customer_ar->running_balance - $request->input('customer_ar_total');
 
-                $new_general_ledger = new General_ledger([
-                    'account_name' => $request->input('get_customer_ar_account_name'),
-                    'account_number' => $request->input('get_customer_ar_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('customer_ar_total'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('payment_date'),
-                    'general_account_number' => $request->input('get_customer_ar_general_account_number'),
-                    'running_balance' => $running_balance,
-                    'transaction' => 'COLLECTION',
-                    'customer_id' => $request->input('customer_id'),
-                ]);
+            $new_general_ledger = new General_ledger([
+                'account_name' => $request->input('get_customer_ar_account_name'),
+                'account_number' => $request->input('get_customer_ar_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('customer_ar_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('payment_date'),
+                'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'COLLECTION',
+                'customer_id' => $request->input('customer_id'),
+            ]);
 
-                $new_general_ledger->save();
-            } else {
-                $new_general_ledger = new General_ledger([
-                    'account_name' => $request->input('get_customer_ar_account_name'),
-                    'account_number' => $request->input('get_customer_ar_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('customer_ar_total'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $request->input('payment_date'),
-                    'general_account_number' => $request->input('get_customer_ar_general_account_number'),
-                    'running_balance' => $request->input('customer_ar_total'),
-                    'transaction' => 'COLLECTION',
-                    'customer_id' => $request->input('customer_id'),
-                ]);
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'account_name' => $request->input('get_customer_ar_account_name'),
+                'account_number' => $request->input('get_customer_ar_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('customer_ar_total'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('payment_date'),
+                'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+                'running_balance' => $request->input('customer_ar_total'),
+                'transaction' => 'COLLECTION',
+                'customer_id' => $request->input('customer_id'),
+            ]);
 
-                $new_general_ledger->save();
-            }
+            $new_general_ledger->save();
+        }
 
         foreach ($request->input('amount_collected') as $key => $value) {
-            $sales_invoice_checker = Sales_invoice::select('total_payment', 'total', 'principal_id','customer_id')->find($key);
+            $sales_invoice_checker = Sales_invoice::select('total_payment', 'total', 'principal_id', 'customer_id')->find($key);
 
             $total_payment = $sales_invoice_checker->total_payment + $value;
 

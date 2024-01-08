@@ -10,7 +10,7 @@
                     <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title" style="font-weight: bold;">COLLECTION</h3>
+                            <h3 class="card-title" style="font-weight: bold;">CREDIT MEMO</h3>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

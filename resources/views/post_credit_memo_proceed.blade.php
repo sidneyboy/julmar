@@ -41,7 +41,7 @@
                         <th style="text-align: center;">
                             @if ($cm_data->si_id != null)
                                 {{ $cm_data->sales_invoice->delivery_receipt }}
-                                <input type="text" name="si_id" value="{{ $cm_data->si_id }}">
+                                <input type="hidden" name="si_id" value="{{ $cm_data->si_id }}">
                             @else
                                 <select name="si_id" class="form-control form-control-sm" required>
                                     <option value="" default>Select</option>
@@ -215,7 +215,7 @@
                         <th style="text-align: center;">
                             @if ($cm_data->si_id != null)
                                 {{ $cm_data->sales_invoice->delivery_receipt }}
-                                <input type="text" name="si_id" value="{{ $cm_data->si_id }}">
+                                <input type="hidden" name="si_id" value="{{ $cm_data->si_id }}">
                             @else
                                 <select name="si_id" class="form-control form-control-sm" required>
                                     <option value="" default>Select</option>
@@ -252,7 +252,7 @@
                             <tr>
                                 <td>{{ $data->sku->sku_code }}</td>
                                 <td>{{ $data->sku->description }}</td>
-                                <td style="text-align: right">{{ $data->quantity }}</td>
+                                <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
                                 {{-- <td style="text-align: right">{{ number_format($data->unit_price, 2, '.', ',') }}</td>
                                 <td style="text-align: right">
                                     @php

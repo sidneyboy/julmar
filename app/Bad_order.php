@@ -18,6 +18,9 @@ class Bad_order extends Model
         'verified_date',
         'verified_by',
         'final_status',
+        'confirmed_date',
+        'confirm_status',
+        'confirmed_by',
         'si_id',
     ];
 
