@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Agent;
+use App\Bad_order;
 use App\Chart_of_accounts;
 use App\Chart_of_accounts_details;
 use App\Customer_principal_code;
 use App\General_ledger;
+use App\Return_good_stock;
 use App\Sales_invoice;
 use App\Sales_invoice_accounts_receivable;
 use App\Sales_invoice_collection_jer;
@@ -77,6 +79,13 @@ class Collection_controller extends Controller
 
         $get_bank = Chart_of_accounts::select('id')->where('account_name', 'CASH IN BANK')->first();
 
+        $get_rgs = Return_good_stock::select('id','pcm_number','total_amount')
+            ->where('confirm_status', 'confirmed')
+            ->get();
+
+        $get_bo = Bad_order::select('id','pcm_number','total_amount')
+            ->where('confirm_status', 'confirmed')
+            ->get();
 
         if ($get_bank) {
             if (count($sales_invoice) == 0) {
@@ -85,6 +94,8 @@ class Collection_controller extends Controller
                 return view('collection_proceed', [
                     'sales_invoice' => $sales_invoice,
                     'get_bank' => $get_bank,
+                    'get_rgs' => $get_rgs,
+                    'get_bo' => $get_bo,
                 ])->with('disbursement', $request->input('disbursement'))
                     ->with('date', $date)
                     ->with('customer_id', $request->input('customer_id'));

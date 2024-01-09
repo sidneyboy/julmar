@@ -25,6 +25,10 @@ class Return_good_stock extends Model
         'returned_by',
         'verified_by_name',
         'final_status',
+        'sales_return_and_allowances',
+        'accounts_receivable',
+        'inventory',
+        'cost_of_goods_sold',
     ];
 
     public function return_good_stock_details()

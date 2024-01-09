@@ -271,9 +271,14 @@ class Post_credit_memo_controller extends Controller
                 if ($request->input('si_id') == 'unidentified') {
                     Return_good_stock::where('id', $request->input('cm_id'))
                         ->update([
+                            'total_amount' => $request->input('total_amount'),
                             'confirmed_date' => $date,
                             'confirm_status' => 'confirmed',
                             'confirmed_by' => auth()->user()->id,
+                            'sales_return_and_allowances' => $request->input('total_amount'),
+                            'accounts_receivable' => $request->input('total_amount'),
+                            'inventory' => $request->input('final_average_cost_total'),
+                            'cost_of_goods_sold' => $request->input('final_average_cost_total'),
                         ]);
 
                     // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
@@ -331,10 +336,15 @@ class Post_credit_memo_controller extends Controller
 
                     Return_good_stock::where('id', $request->input('cm_id'))
                         ->update([
+                            'total_amount' => $request->input('total_amount'),
                             'confirmed_date' => $date,
                             'confirm_status' => 'confirmed',
                             'confirmed_by' => auth()->user()->id,
                             'si_id' => $request->input('si_id'),
+                            'sales_return_and_allowances' => $request->input('total_amount'),
+                            'accounts_receivable' => $request->input('total_amount'),
+                            'inventory' => $request->input('final_average_cost_total'),
+                            'cost_of_goods_sold' => $request->input('final_average_cost_total'),
                         ]);
 
                     // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
@@ -405,9 +415,12 @@ class Post_credit_memo_controller extends Controller
                 if ($request->input('si_id') == 'unidentified') {
                     Bad_order::where('id', $request->input('cm_id'))
                         ->update([
+                            'total_amount' => $request->input('total_amount'),
                             'confirm_status' => 'confirmed',
                             'confirmed_by' => auth()->user()->id,
                             'confirmed_date' => $date,
+                            'spoiled_goods' => $request->input('total_amount'),
+                            'accounts_receivable' => $request->input('total_amount'),
                         ]);
 
                     // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
@@ -453,10 +466,13 @@ class Post_credit_memo_controller extends Controller
 
                     Bad_order::where('id', $request->input('cm_id'))
                         ->update([
+                            'total_amount' => $request->input('total_amount'),
                             'confirm_status' => 'confirmed',
                             'confirmed_by' => auth()->user()->id,
                             'confirmed_date' => $date,
-                            'si_id' => $request->input('si_id')
+                            'si_id' => $request->input('si_id'),
+                            'spoiled_goods' => $request->input('total_amount'),
+                            'accounts_receivable' => $request->input('total_amount'),
                         ]);
 
                     // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));

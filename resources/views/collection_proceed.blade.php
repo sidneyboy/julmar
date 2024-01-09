@@ -55,6 +55,7 @@
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">BALANCE</th>
                     <th style="text-align: center">COLLECTION</th>
+                    <th style="text-align: center">CM</th>
                     <th style="text-align: center">AGING</th>
                     <th style="text-align: center">REMARKS</th>
                 </tr>
@@ -93,6 +94,17 @@
                             <input style="text-align: right" type="text"
                                 class="form-control form-control-sm amount_collected" min="0"
                                 name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
+                        </td>
+                        <td style="width:30%;">
+                            <select name="cm_id" class="form-control form-control-sm select2_own" style="width:100%;">
+                                <option value="" default>Select CM</option>
+                                @foreach ($get_rgs as $rgs_data)
+                                    <option value="{{ $rgs_data->id }}">{{ str_replace('PCM-','',$rgs_data->pcm_number) ." [". $rgs_data->total_amount ."]"  }}</option>
+                                @endforeach
+                                @foreach ($get_bo as $bo_data)
+                                    <option value="{{ $bo_data->id }}">{{ str_replace('PCM-','',$bo_data->pcm_number) ." [". $bo_data->total_amount ."]" }}</option>
+                                @endforeach
+                            </select>
                         </td>
                         <td style="text-align: center;">
                             @if (!isset($data->delivered))
@@ -138,6 +150,12 @@
 </form>
 
 <script>
+    $('.select2_own').select2({
+        theme: 'bootstrap4'
+    })
+
+    // $('.select2').select2()
+
     function isNumberKey(evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         if (charCode != 46 && charCode > 31 &&
