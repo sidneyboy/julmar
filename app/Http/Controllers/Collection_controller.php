@@ -124,15 +124,18 @@ class Collection_controller extends Controller
             ->first();
 
         if ($get_bank && $get_customer_ar) {
-            foreach ($request->input('amount_collected') as $key => $value) {
-                if ($request->input('outstanding_balance')[$key] < str_replace(',', '', $value)) {
-                    return 'cannot proceed';
-                }
-            }
+          
 
-            $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
+            // foreach ($request->input('amount_collected') as $key => $value) {
+            //     if ($request->input('outstanding_balance')[$key] < str_replace(',', '', $value)) {
+            //         return 'cannot proceed';
+            //     }
+            // }
+
+            // $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
             $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
-                ->whereIn('id', array_keys($amount_collected))
+                // ->whereIn('id', array_keys($amount_collected))
+                ->whereIn('id', array_keys($request->input('outstanding_balance')))
                 ->get();
             return view('collection_final_summary', [
                 'amount_collected' => $amount_collected,

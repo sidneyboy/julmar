@@ -92,17 +92,17 @@
                         </td>
                         <td>
                             <input style="text-align: right" type="text"
-                                class="form-control form-control-sm amount_collected" min="0"
+                                class="form-control amount_collected" min="0"
                                 name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
                         </td>
                         <td style="width:30%;">
-                            <select name="cm_id" class="form-control form-control-sm select2_own" style="width:100%;">
+                            <select name="cm_id[{{ $data->id }}]" class="form-control select2bs4" style="width:100%;">
                                 <option value="" default>Select CM</option>
                                 @foreach ($get_rgs as $rgs_data)
-                                    <option value="{{ $rgs_data->id }}">{{ str_replace('PCM-','',$rgs_data->pcm_number) ." [". $rgs_data->total_amount ."]"  }}</option>
+                                    <option value="{{ 'rgs-'. $rgs_data->id }}">{{ str_replace('PCM-','',$rgs_data->pcm_number) ." [". $rgs_data->total_amount ."]"  }}</option>
                                 @endforeach
                                 @foreach ($get_bo as $bo_data)
-                                    <option value="{{ $bo_data->id }}">{{ str_replace('PCM-','',$bo_data->pcm_number) ." [". $bo_data->total_amount ."]" }}</option>
+                                    <option value="{{ 'bo-'.$bo_data->id }}">{{ str_replace('PCM-','',$bo_data->pcm_number) ." [". $bo_data->total_amount ."]" }}</option>
                                 @endforeach
                             </select>
                         </td>
@@ -150,9 +150,9 @@
 </form>
 
 <script>
-    $('.select2_own').select2({
+    $('.select2bs4').select2({
         theme: 'bootstrap4'
-    })
+    });
 
     // $('.select2').select2()
 
