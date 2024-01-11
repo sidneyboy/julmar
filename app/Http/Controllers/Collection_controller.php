@@ -132,10 +132,9 @@ class Collection_controller extends Controller
             //     }
             // }
 
-            // $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
+            $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
             $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
-                // ->whereIn('id', array_keys($amount_collected))
-                ->whereIn('id', array_keys($request->input('outstanding_balance')))
+                ->whereIn('id', array_keys($amount_collected))
                 ->get();
             return view('collection_final_summary', [
                 'amount_collected' => $amount_collected,

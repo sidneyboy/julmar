@@ -1,0 +1,46 @@
+e check ang cm sa accounting kai naay somthing sa quantity!
+
+(------------------------------------------)
+
+e save nalang ugma ang cm nga naay average cost
+
+(------------------------------------------)
+warehouse - verify
+accounting cm
+	- identify to use the unit cost of the DR
+	- save as CM	
+	- status: confirmed by accounting 
+	- add average cost column
+BO - CUSTOMER
+JER
+ACCOUNT NAME	DR	CR
+SPOILED GOODS	1000
+AR			1000
+
+RGS - CUSTOMER
+JER
+ACCOUNT NAME			DR	CR
+
+SALES RETURN & ALLOWANCES	1000
+AR					1000
+INVENTORY - GCI			800(AVERAGE COST INVENTORY)
+COST OF GOODS SOLD			800
+
+
+collection receipt:
+	- add tag column nga applied to
+	- cm status: posted
+	- general ledger
+	- ar ledger
+
+
+
+general disbursement others
+payable amount - debit memo = netpayable
+netpayable * ewt rate = ewt amount
+
+JER	
+AP	DR
+PURCHASE DISCOUNT CR (COST OF GOODS SOLD ANG LEADER)
+CASH IN BANK CR
+DUE TO BIR CR

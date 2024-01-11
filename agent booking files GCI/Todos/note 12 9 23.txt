@@ -1,0 +1,10 @@
+check balik ang kai dadto sa add row ga error
+
+bank dropdown selection
+apil ang account name dropdown sa chart of account nga data gikan
+all data coming from chart of accounts will be saved to the database
+
+
+this data will be saevd to SL and GL
+
+add transaction date sa tanang transaciton dili mag salig sa sa createdAt mga col
