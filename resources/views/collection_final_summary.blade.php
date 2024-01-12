@@ -127,24 +127,136 @@
     <input type="hidden" value="{{ $disbursement }}" name="disbursement">
     <input type="hidden" value="{{ $customer_id }}" name="customer_id">
 
-    @if (array_sum($bo_accounts_receivable) != 0)
-        <table class="table table-bordered table-hover table-sm table-striped">
-            <thead>
-                <tr>
-                    <th colspan="2" style="text-align: center;">JOURNAL ENTRY - BO</th>
-                    <th style="text-align: center;">DR</th>
-                    <th style="text-align: center;">CR</th>
-                </tr>
-            </thead>
-            <tbody>
+
+    <table class="table table-bordered table-hover table-sm table-striped">
+        <thead>
+            <tr>
+                <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
+                <th style="text-align: center;">DR</th>
+                <th style="text-align: center;">CR</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (array_sum($bo_accounts_receivable) != 0)
                 <tr>
                     <td style="text-align: center;">{{ $get_spoiled_goods->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?></td>
-                    <td><input type="hidden" name="bo_spoiled_goods" value="{{ array_sum($bo_poiled_goods) }}">
+                    <td>
+                        <input type="hidden" name="bo_spoiled_goods" value="{{ array_sum($bo_poiled_goods) }}">
+                        <input type="hidden" value="{{ $get_spoiled_goods->account_name }}"
+                            name="get_spoiled_goods_account_name">
+                        <input type="hidden" value="{{ $get_spoiled_goods->account_number }}"
+                            name="get_spoiled_goods_account_number">
+                        <input type="hidden" value="{{ $get_spoiled_goods->chart_of_accounts->account_number }}"
+                            name="get_spoiled_goods_general_account_number">
+
+                        @for ($bo = 0; $bo < count($bo_principal_id); $bo++)
+                            <input type="hidden" name="bo_principal_id[]" value="{{ $bo_principal_id[$bo] }}">
+                            <input type="hidden" name="bo_id[]" value="{{ $bo_id[$bo] }}">
+                        @endfor
                     </td>
                 </tr>
+            @endif
+            @if (array_sum($rgs_accounts_receivable) != 0)
                 <tr>
+                    <td style="text-align: center;">{{ $get_sales_return_and_allowances->account_name }}</td>
+                    <td>
+                        <input type="hidden" value="{{ $get_sales_return_and_allowances->account_name }}"
+                            name="get_sales_return_and_allowances_account_name">
+                        <input type="hidden" value="{{ $get_sales_return_and_allowances->account_number }}"
+                            name="get_sales_return_and_allowances_account_number">
+                        <input type="hidden"
+                            value="{{ $get_sales_return_and_allowances->chart_of_accounts->account_number }}"
+                            name="get_sales_return_and_allowances_general_account_number">
+                    </td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_sales_return_and_allowances), 2, '.', ','); ?></td>
+                    <td><input type="hidden" name="rgs_sales_return_and_allowances"
+                            value="{{ array_sum($rgs_sales_return_and_allowances) }}">
+
+                        @foreach ($rgs_principal_id as $rgs_principal_id_data)
+                            <input type="hidden" name="rgs_principal_id[]" value="{{ $rgs_principal_id_data }}">
+                        @endforeach
+
+                        @foreach ($rgs_id as $rgs_id_data)
+                            <input type="hidden" name="rgs_id[]" value="{{ $rgs_id_data }}">
+                        @endforeach
+                    </td>
+                </tr>
+                @for ($i = 0; $i < count($get_merchandise_inventory_account_name); $i++)
+                    @if ($get_merchandise_inventory_account_name[$i] != '')
+                        <tr>
+                            <td style="text-align: center;">{{ $get_merchandise_inventory_account_name[$i] }}</td>
+                            <td>
+                                <input type="hidden" value="{{ $get_merchandise_inventory_account_name[$i] }}"
+                                    name="get_merchandise_inventory_account_name[]">
+                                <input type="hidden" value="{{ $get_merchandise_inventory_account_number[$i] }}"
+                                    name="get_merchandise_inventory_account_number[]">
+                                <input type="hidden"
+                                    value="{{ $get_merchandise_inventory_chart_of_accounts_id[$i] }}"
+                                    name="get_merchandise_inventory_general_account_number[]">
+                            </td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($rgs_inventory[$i], 2, '.', ',') }}
+                            </td>
+                            <td><input type="hidden" name="rgs_inventory[]" value="{{ $rgs_inventory[$i] }}">
+                            </td>
+                        </tr>
+                    @endif
+                @endfor
+                @for ($j = 0; $j < count($get_cost_of_sales_account_name); $j++)
+                    @if ($get_cost_of_sales_account_name[$j] != '')
+                        <tr>
+                            <td>
+                                <input type="hidden" value="{{ $get_cost_of_sales_account_name[$j] }}"
+                                    name="get_cost_of_sales_account_name[]">
+                                <input type="hidden" value="{{ $get_cost_of_sales_account_number[$j] }}"
+                                    name="get_cost_of_sales_account_number[]">
+                                <input type="hidden"
+                                    value="{{ $get_cost_of_sales_chart_of_accounts_id[$j] }}"
+                                    name="get_cost_of_sales_general_account_number[]">
+                            </td>
+                            <td style="text-align: center;">{{ $get_cost_of_sales_account_name[$j] }}</td>
+                            <td><input type="hidden" name="rgs_cost_of_goods_sold[]"
+                                    value="{{ $rgs_inventory[$j] }}">
+                            </td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($rgs_cost_of_goods_sold[$j], 2, '.', ',') }}
+                            </td>
+                        </tr>
+                    @endif
+                @endfor
+
+            @endif
+            <tr>
+                <td style="text-align: center;">
+                    {{ $bank }}</td>
+                <td></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_amount_collected), 2, '.', ','); ?></td>
+                <td><input type="hidden" name="debit_record" value="{{ array_sum($sum_amount_collected) }}">
+                    <input type="hidden" name="cash_in_bank_total" value="{{ array_sum($sum_amount_collected) }}">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
+                <td><input type="hidden" name="credit_record" value="{{ array_sum($sum_amount_collected) }}">
+                </td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($sum_amount_collected), 2, '.', ','); ?>
+                    <input type="hidden" name="customer_ar_total" value="{{ array_sum($sum_amount_collected) }}">
+                </td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+            {{-- <tr>
                     <td></td>
                     <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
                     <td><input type="hidden" name="credit_record" value="{{ array_sum($bo_poiled_goods) }}">
@@ -153,23 +265,15 @@
                         <?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?>
                         <input type="hidden" name="bo_accounts_receivable" value="{{ array_sum($bo_poiled_goods) }}">
                     </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <input type="text" value="{{ $get_spoiled_goods->account_name }}" name="get_spoiled_goods_account_name">
-        <input type="text" value="{{ $get_spoiled_goods->account_number }}" name="get_spoiled_goods_account_number">
-        <input type="text" value="{{ $get_spoiled_goods->chart_of_accounts->account_number }}"
-            name="get_spoiled_goods_general_account_number">
-
-        @for ($bo = 0; $bo < count($bo_principal_id); $bo++)
-            <input type="text" name="bo_principal_id[]" value="{{ $bo_principal_id[$bo] }}">
-            <input type="text" name="bo_id[]" value="{{ $bo_id[$bo] }}">
-        @endfor
-
-    @endif
+                </tr> --}}
+        </tbody>
+    </table>
 
 
+
+
+
+    {{-- 
 
     @if (array_sum($rgs_accounts_receivable) != 0)
         <table class="table table-bordered table-hover table-sm table-striped">
@@ -192,7 +296,8 @@
                 <tr>
                     <td></td>
                     <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
-                    <td><input type="hidden" name="credit_record" value="{{ array_sum($rgs_accounts_receivable) }}">
+                    <td><input type="hidden" name="credit_record"
+                            value="{{ array_sum($rgs_accounts_receivable) }}">
                     </td>
                     <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_accounts_receivable), 2, '.', ','); ?>
                         <input type="hidden" name="rgs_accounts_receivable"
@@ -208,7 +313,6 @@
                                 {{ number_format($rgs_inventory[$i], 2, '.', ',') }}
                             </td>
                             <td><input type="hidden" name="rgs_inventory[]" value="{{ $rgs_inventory[$i] }}">
-                                <input type="text" name="bo_principal_id[]" value="{{ $rgs_principal_id[$rgs] }}">
                             </td>
                         </tr>
                     @endif
@@ -229,10 +333,20 @@
                 @endfor
             </tbody>
         </table>
-    @endif
+
+        @foreach ($rgs_principal_id as $rgs_principal_id_data)
+            <input type="text" name="rgs_principal_id[]" value="{{ $rgs_principal_id_data }}">
+        @endforeach
+
+        @foreach ($rgs_id as $rgs_id_data)
+            <input type="text" name="rgs_id[]" value="{{ $rgs_id_data }}">
+        @endforeach
 
 
-    <table class="table table-bordered table-hover table-sm table-striped">
+    @endif --}}
+
+
+    {{-- <table class="table table-bordered table-hover table-sm table-striped">
         <thead>
             <tr>
                 <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -261,7 +375,7 @@
                 </td>
             </tr>
         </tbody>
-    </table>
+    </table> --}}
 
 
     <input type="hidden" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
