@@ -118,7 +118,7 @@
                     <th style="text-align: right">
                         {{ number_format(array_sum($sum_amount_collected), 2, '.', ',') }}
                     </th>
-                    <th colspan="2"></th>
+                    <th colspan="3"></th>
                 </tr>
             </tfoot>
         </table>
