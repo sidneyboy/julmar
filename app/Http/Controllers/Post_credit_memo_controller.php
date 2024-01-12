@@ -347,69 +347,69 @@ class Post_credit_memo_controller extends Controller
                             'cost_of_goods_sold' => $request->input('final_average_cost_total'),
                         ]);
 
-                    // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
-                    // $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
-                    // $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
+                    $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
+                    $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
+                    $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
 
-                    // if ($sales_invoice_data->total == $amount_checker) {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update([
-                    //             'total_returned_amount' => $new_total_returned_amount,
-                    //             'payment_status' => 'paid',
-                    //         ]);
+                    if ($sales_invoice_data->total == $amount_checker) {
+                        Sales_invoice::where('id', $request->input('si_id'))
+                            ->update([
+                                'total_returned_amount' => $new_total_returned_amount,
+                                'payment_status' => 'paid',
+                            ]);
 
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
+                        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                        //     ->where('principal_id', $request->input('principal_id'))
+                        //     ->orderBy('id', 'desc')
+                        //     ->first();
 
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
+                        // if ($get_last_row_sales_invoice_accounts_receivable) {
+                        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
+                        // } else {
+                        //     $sales_invoice_ar_running_balance = $request->input('total_amount');
+                        // }
 
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo rgs',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //         'status' => 'paid',
-                    //     ]);
+                        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                        //     'user_id' => auth()->user()->id,
+                        //     'principal_id' => $request->input('principal_id'),
+                        //     'customer_id' => $request->input('customer_id'),
+                        //     'transaction' => 'credit memo rgs',
+                        //     'all_id' => $request->input('cm_id'),
+                        //     'debit_record' => 0,
+                        //     'credit_record' => $request->input('total_amount'),
+                        //     'running_balance' => $sales_invoice_ar_running_balance,
+                        //     'status' => 'paid',
+                        // ]);
 
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // } else {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update(['total_returned_amount' => $new_total_returned_amount]);
+                        // $new_sales_invoice_accounts_receivable->save();
+                    } else {
+                        Sales_invoice::where('id', $request->input('si_id'))
+                            ->update(['total_returned_amount' => $new_total_returned_amount]);
 
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
+                        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                        //     ->where('principal_id', $request->input('principal_id'))
+                        //     ->orderBy('id', 'desc')
+                        //     ->first();
 
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
+                        // if ($get_last_row_sales_invoice_accounts_receivable) {
+                        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
+                        // } else {
+                        //     $sales_invoice_ar_running_balance = $request->input('total_amount');
+                        // }
 
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo rgs',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //     ]);
+                        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                        //     'user_id' => auth()->user()->id,
+                        //     'principal_id' => $request->input('principal_id'),
+                        //     'customer_id' => $request->input('customer_id'),
+                        //     'transaction' => 'credit memo rgs',
+                        //     'all_id' => $request->input('cm_id'),
+                        //     'debit_record' => 0,
+                        //     'credit_record' => $request->input('total_amount'),
+                        //     'running_balance' => $sales_invoice_ar_running_balance,
+                        // ]);
 
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // }
+                        // $new_sales_invoice_accounts_receivable->save();
+                    }
                 }
             } else if ($request->input('transaction') == 'BO') {
                 if ($request->input('si_id') == 'unidentified') {
@@ -475,69 +475,69 @@ class Post_credit_memo_controller extends Controller
                             'accounts_receivable' => $request->input('total_amount'),
                         ]);
 
-                    // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
-                    // $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
-                    // $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
+                    $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
+                    $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
+                    $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
 
-                    // if ($sales_invoice_data->total == $amount_checker) {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update([
-                    //             'total_returned_amount' => $new_total_returned_amount,
-                    //             'payment_status' => 'paid',
-                    //         ]);
+                    if ($sales_invoice_data->total == $amount_checker) {
+                        Sales_invoice::where('id', $request->input('si_id'))
+                            ->update([
+                                'total_returned_amount' => $new_total_returned_amount,
+                                'payment_status' => 'paid',
+                            ]);
 
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
+                        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                        //     ->where('principal_id', $request->input('principal_id'))
+                        //     ->orderBy('id', 'desc')
+                        //     ->first();
 
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
+                        // if ($get_last_row_sales_invoice_accounts_receivable) {
+                        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
+                        // } else {
+                        //     $sales_invoice_ar_running_balance = $request->input('total_amount');
+                        // }
 
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo bo',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //         'status' => 'paid',
-                    //     ]);
+                        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                        //     'user_id' => auth()->user()->id,
+                        //     'principal_id' => $request->input('principal_id'),
+                        //     'customer_id' => $request->input('customer_id'),
+                        //     'transaction' => 'credit memo bo',
+                        //     'all_id' => $request->input('cm_id'),
+                        //     'debit_record' => 0,
+                        //     'credit_record' => $request->input('total_amount'),
+                        //     'running_balance' => $sales_invoice_ar_running_balance,
+                        //     'status' => 'paid',
+                        // ]);
 
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // } else {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update(['total_returned_amount' => $new_total_returned_amount]);
+                        // $new_sales_invoice_accounts_receivable->save();
+                    } else {
+                        Sales_invoice::where('id', $request->input('si_id'))
+                            ->update(['total_returned_amount' => $new_total_returned_amount]);
 
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
+                        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                        //     ->where('principal_id', $request->input('principal_id'))
+                        //     ->orderBy('id', 'desc')
+                        //     ->first();
 
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
+                        // if ($get_last_row_sales_invoice_accounts_receivable) {
+                        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
+                        // } else {
+                        //     $sales_invoice_ar_running_balance = $request->input('total_amount');
+                        // }
 
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo bo',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //     ]);
+                        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                        //     'user_id' => auth()->user()->id,
+                        //     'principal_id' => $request->input('principal_id'),
+                        //     'customer_id' => $request->input('customer_id'),
+                        //     'transaction' => 'credit memo bo',
+                        //     'all_id' => $request->input('cm_id'),
+                        //     'debit_record' => 0,
+                        //     'credit_record' => $request->input('total_amount'),
+                        //     'running_balance' => $sales_invoice_ar_running_balance,
+                        // ]);
 
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // }
+                        // $new_sales_invoice_accounts_receivable->save();
+                    }
                 }
             }
         }

@@ -127,7 +127,7 @@
     <input type="hidden" value="{{ $disbursement }}" name="disbursement">
     <input type="hidden" value="{{ $customer_id }}" name="customer_id">
 
-    @if ($bo_cm_number != 0)
+    @if (array_sum($bo_accounts_receivable) != 0)
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
@@ -149,15 +149,29 @@
                     <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
                     <td><input type="hidden" name="credit_record" value="{{ array_sum($bo_poiled_goods) }}">
                     </td>
-                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?>
+                    <td style="font-weight: bold;text-align: center;">
+                        <?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?>
                         <input type="hidden" name="bo_accounts_receivable" value="{{ array_sum($bo_poiled_goods) }}">
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <input type="text" value="{{ $get_spoiled_goods->account_name }}" name="get_spoiled_goods_account_name">
+        <input type="text" value="{{ $get_spoiled_goods->account_number }}" name="get_spoiled_goods_account_number">
+        <input type="text" value="{{ $get_spoiled_goods->chart_of_accounts->account_number }}"
+            name="get_spoiled_goods_general_account_number">
+
+        @for ($bo = 0; $bo < count($bo_principal_id); $bo++)
+            <input type="text" name="bo_principal_id[]" value="{{ $bo_principal_id[$bo] }}">
+            <input type="text" name="bo_id[]" value="{{ $bo_id[$bo] }}">
+        @endfor
+
     @endif
 
-    @if ($rgs_cm_number != 0)
+
+
+    @if (array_sum($rgs_accounts_receivable) != 0)
         <table class="table table-bordered table-hover table-sm table-striped">
             <thead>
                 <tr>
@@ -186,26 +200,39 @@
                     </td>
                 </tr>
                 @for ($i = 0; $i < count($get_merchandise_inventory_account_name); $i++)
-                    <tr>
-                        <td style="text-align: center;">{{ $get_merchandise_inventory_account_name[$i] }}</td>
-                        <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs_inventory[$i], 2, '.', ','); ?></td>
-                        <td><input type="hidden" name="rgs_inventory" value="{{ $rgs_inventory[$i] }}">
-                        </td>
-                    </tr>
+                    @if ($get_merchandise_inventory_account_name[$i] != '')
+                        <tr>
+                            <td style="text-align: center;">{{ $get_merchandise_inventory_account_name[$i] }}</td>
+                            <td></td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($rgs_inventory[$i], 2, '.', ',') }}
+                            </td>
+                            <td><input type="hidden" name="rgs_inventory[]" value="{{ $rgs_inventory[$i] }}">
+                                <input type="text" name="bo_principal_id[]" value="{{ $rgs_principal_id[$rgs] }}">
+                            </td>
+                        </tr>
+                    @endif
                 @endfor
-                {{-- @for ($i = 0; $i < count($get_cost_of_sales_account_name); $i++)
-                    <tr>
-                        <td></td>
-                        <td style="text-align: center;">{{ $get_cost_of_sales_account_name[$i] }}</td>
-                    </tr>
-                @endfor --}}
+                @for ($j = 0; $j < count($get_cost_of_sales_account_name); $j++)
+                    @if ($get_cost_of_sales_account_name[$j] != '')
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center;">{{ $get_cost_of_sales_account_name[$j] }}</td>
+                            <td><input type="hidden" name="rgs_cost_of_goods_sold[]"
+                                    value="{{ $rgs_inventory[$j] }}">
+                            </td>
+                            <td style="font-weight: bold;text-align: center;">
+                                {{ number_format($rgs_cost_of_goods_sold[$j], 2, '.', ',') }}
+                            </td>
+                        </tr>
+                    @endif
+                @endfor
             </tbody>
         </table>
     @endif
 
 
-    {{-- <table class="table table-bordered table-hover table-sm table-striped">
+    <table class="table table-bordered table-hover table-sm table-striped">
         <thead>
             <tr>
                 <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -244,7 +271,7 @@
     <input type="hidden" value="{{ $get_customer_ar->account_name }}" name="get_customer_ar_account_name">
     <input type="hidden" value="{{ $get_customer_ar->account_number }}" name="get_customer_ar_account_number">
     <input type="hidden" value="{{ $get_customer_ar->chart_of_accounts->account_number }}"
-        name="get_customer_ar_general_account_number"> --}}
+        name="get_customer_ar_general_account_number">
 
     <button class="btn btn-sm float-right btn-success">Submit</button>
 </form>
@@ -262,15 +289,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                //Swal.fire({
+                // position: 'top-end',
+                //icon: 'success',
+                //title: 'Your work has been saved',
+                //showConfirmButton: false,
+                //timer: 1500
+                //});
 
-                location.reload();
+                //location.reload();
             },
             error: function(error) {
                 $('#loader').hide();
