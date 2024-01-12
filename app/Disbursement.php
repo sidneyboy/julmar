@@ -28,6 +28,7 @@ class Disbursement extends Model
         'ewt_amount',
         'net_payable',
         'amount_paid',
+        'purchase_discount',
         
     ];
 

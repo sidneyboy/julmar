@@ -1,6 +1,6 @@
 @if ($disbursement == 'payment to principal')
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label for="">Principal:</label>
             <select name="principal_id" class="form-control" required>
                 <option value="" default>Select</option>
@@ -9,7 +9,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label for="">EWT Rate</label>
             <select name="ewt" class="form-control" required>
                 <option value="" default>Select</option>
@@ -17,6 +17,10 @@
                     <option value="{{ $data_ewt->ewt_rate }}">{{ $data_ewt->ewt_rate / 100 }}</option>
                 @endforeach
             </select>
+        </div>
+        <div class="col-md-4">
+            <label>Purchase Discount</label>
+            <input type="text" class="form-control" required name="purchase_discount"  onkeypress="return isNumberKey(event)">
         </div>
     </div>
 @elseif ($disbursement == 'collection')
@@ -32,9 +36,13 @@
             <label for="">Chart of Account</label>
             <select name="description" class="form-control select2bs4" style="width:100%;" required>
                 <option value="" default>Select</option>
-                @foreach ($transaction_entry as $data)
+                <option value="PAYROLL">PAYROLL</option>
+                <option value="WATER UTILITIES">WATER UTILITIES</option>
+                <option value="ELECTRICITY">ELECTRICITY</option>
+                <option value="COMMUNICATION ALLOWANCES">COMMUNICATION ALLOWANCES</option>
+                {{-- @foreach ($transaction_entry as $data)
                     <option value="{{ $data->id . '|' . $data->account_name }}">{{ $data->account_name }}</option>
-                @endforeach
+                @endforeach --}}
             </select>
         </div>
         <div class="col-md-6">
@@ -65,4 +73,13 @@
     $('.select2bs4').select2({
         theme: 'bootstrap4'
     })
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
 </script>

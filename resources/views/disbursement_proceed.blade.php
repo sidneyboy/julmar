@@ -5,7 +5,7 @@
     <br />
     <form id="disbursement_final_summary">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-12">
                 <label for="">Purchase Order / RR</label>
                 <select name="po_rr_id" id="po_rr_id" class="form-control select2bs4" required style="width:100%;">
                     <option value="" default>Select</option>
@@ -21,8 +21,9 @@
                             RR - {{ $receive_purchase_order_unpaid_data->id }}</option>
                     @endforeach
                 </select>
+                <input type="hidden" value="{{ $purchase_discount }}" id="purchase_discount" name="purchase_discount">
             </div>
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div id="show_po_rr_payable_page"></div>
             </div>
             <div class="col-md-3">
@@ -71,14 +72,14 @@
             var po_rr_id = $(this).val();
             var principal_id = $('#principal_id').val();
             var ewt = $('#ewt').val();
+            var purchase_discount = $('#purchase_discount').val();
             $.post({
                 type: "POST",
                 url: "/disbursement_show_po_rr_payable",
-                data: 'po_rr_id=' + po_rr_id + '&principal_id=' + principal_id + '&ewt=' + ewt,
+                data: 'po_rr_id=' + po_rr_id + '&principal_id=' + principal_id + '&ewt=' + ewt + '&purchase_discount=' + purchase_discount,
                 success: function(data) {
                     $('#loader').hide();
                     $('#show_po_rr_payable_page').html(data);
-
                 },
                 error: function(error) {
                     console.log(error);

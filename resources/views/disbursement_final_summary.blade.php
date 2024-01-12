@@ -25,6 +25,7 @@
                 <thead>
                     <tr>
                         <th style="text-align: center;">Payable Amount</th>
+                        <th style="text-align: center">Purchase Discount</th>
                         <th style="text-align: center">EWT Amount</th>
                         <th style="text-align: center;">Net Payable</th>
                         <th style="text-align: center;">Amount Paid</th>
@@ -35,6 +36,12 @@
                     <tr>
                         <td style="text-align: right">{{ number_format($amount_payable, 2, '.', ',') }}
                             <input type="hidden" name="payable_amount" value="{{ $amount_payable }}">
+                        </td>
+                        <td style="text-align: right">
+                            @php
+                                echo number_format($purchase_discount, 2, '.', ',');
+                            @endphp
+                            <input type="hidden" name="purchase_discount" value="{{ $purchase_discount }}">
                         </td>
                         <td style="text-align: right">
                             @php
@@ -71,6 +78,15 @@
             </thead>
             <tbody>
                 <tr>
+                    <td style="text-align: center;">{{ $get_purchase_discount->account_name }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: right;">
+                        <?php echo number_format($purchase_discount, 2, '.', ','); ?>
+                        <input type="hidden" value="{{ $purchase_discount }}" name="purchase_discount">
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td style="text-align: center;">{{ $get_ap->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: right;">
@@ -98,6 +114,10 @@
             </tbody>
         </table>
 
+        <input type="hidden" value="{{ $get_purchase_discount->account_name }}" name="get_purchase_discount_account_name">
+        <input type="hidden" value="{{ $get_purchase_discount->account_number }}" name="get_purchase_discount_account_number">
+        <input type="hidden" value="{{ $get_purchase_discount->chart_of_accounts->account_number }}"
+            name="get_bank_general_account_number">
         <input type="hidden" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
         <input type="hidden" value="{{ $get_bank->account_number }}" name="get_bank_account_number">
         <input type="hidden" value="{{ $get_bank->chart_of_accounts->account_number }}"
@@ -144,15 +164,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                    // Swal.fire({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Your work has been saved',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // });
 
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();
@@ -404,7 +424,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (count($transaction_insert_entry) != 0)
+                    @if (array_sum($transaction_insert_entry) != 0)
                         @for ($n = 0; $n < count($transaction_insert_entry); $n++)
                             <tr>
                                 <td>{{ $transaction_insert_entry[$n]->account_name }}

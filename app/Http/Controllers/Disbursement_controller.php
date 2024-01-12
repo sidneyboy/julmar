@@ -65,15 +65,11 @@ class Disbursement_controller extends Controller
                 'customer' => $customer,
             ])->with('disbursement', $request->input('disbursement'));
         } elseif ($request->input('disbursement') == 'others') {
-            $transaction_entry = Chart_of_accounts::select('id', 'account_name')
-                ->get();
-
             $transaction_cash_in_bank = Chart_of_accounts_details::select('id', 'account_name')
                 ->where('account_name', 'like', '%CASH IN BANK%')
                 ->get();
 
             return view('disbursement_show_selection', [
-                'transaction_entry' => $transaction_entry,
                 'transaction_cash_in_bank' => $transaction_cash_in_bank,
             ])->with('disbursement', $request->input('disbursement'));
         } else if ($request->input('disbursement') == 'unidentified_chart_of_account') {
@@ -97,6 +93,8 @@ class Disbursement_controller extends Controller
             //     ->orWhere('payment_status', 'partial')
             //     ->get();
 
+            // return $request->input();
+
             $get_bank = Chart_of_accounts::select('id')->where('account_name', 'CASH IN BANK')->first();
 
             $receive_purchase_order_unpaid = Received_purchase_order::select('id')
@@ -111,7 +109,8 @@ class Disbursement_controller extends Controller
                 'receive_purchase_order_unpaid' => $receive_purchase_order_unpaid,
                 'ewt' => $request->input('ewt'),
             ])->with('disbursement', $request->input('disbursement'))
-                ->with('principal_id', $request->input('principal_id'));
+                ->with('principal_id', $request->input('principal_id'))
+                ->with('purchase_discount', $request->input('purchase_discount'));
         } elseif ($request->input('disbursement') == 'collection') {
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
@@ -127,12 +126,36 @@ class Disbursement_controller extends Controller
                 ->with('date', $date)
                 ->with('customer_id', $request->input('customer_id'));
         } elseif ($request->input('disbursement') == 'others') {
+
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
 
-            $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
-                ->where('chart_of_accounts_id', $request->input("description"))
-                ->get();
+            if ($request->input('description') == 'PAYROLL') {
+                $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
+                    ->where('account_name', 'SALARIES AND WAGES')
+                    ->orWhere('account_name', 'DUE TO BIR - Withholding Tax Compensation')
+                    ->orWhere('account_name', 'DUE TO SSS - Contribution')
+                    ->orWhere('account_name', 'DUE TO SSS - Employees Loan')
+                    ->orWhere('account_name', 'DUE TO PAG-IBIG - Contribution')
+                    ->orWhere('account_name', 'DUE TO PAG-IBIG - Employees Loan')
+                    ->orWhere('account_name', 'DUE TO PHILHEALTH - Contribution')
+                    ->orWhere('account_name', 'VALE DUE FROM OFFICERS AND  EMPLOYEES')
+                    ->orWhere('account_name', 'OTHER RECEIVABLES - CHARGES EMPLOYEES')
+                    ->orWhere('account_name', 'DUE TO OFFICERS AND  EMPLOYEES - DEPOSIT')
+                    ->get();
+            } else if ($request->input('description') == 'WATER UTILITIES') {
+                $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
+                    ->where('account_name', 'UTILITIES EXPENSE - WATER UTILITIES')
+                    ->get();
+            } else if ($request->input('description') == 'ELECTRICITY') {
+                $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
+                    ->where('account_name', 'UTILITIES EXPENSE - ELECTRICITY')
+                    ->get();
+            } else if ($request->input('description') == 'COMMUNICATION ALLOWANCES') {
+                $transaction_entry = Chart_of_accounts_details::select('id', 'account_name')
+                    ->where('account_name', 'COMMUNICATION EXPENSES')
+                    ->get();
+            }
 
             $transaction_insert_entry = Chart_of_accounts_details::select('id', 'account_name')
                 ->where('chart_of_accounts_id', '!=', $request->input('description'))
@@ -140,8 +163,7 @@ class Disbursement_controller extends Controller
 
             $transaction_cash_in_bank = Chart_of_accounts_details::select('id', 'account_name')->find($request->input('cash_in_bank_id'));
 
-            $description_explode = explode("|", $request->input('description'));
-            $description = $description_explode[1];
+            $description = $request->input('description');
 
             return view('disbursement_proceed', [
                 'transaction_entry' => $transaction_entry,
@@ -179,8 +201,6 @@ class Disbursement_controller extends Controller
                 ->where('id', $po_rr_id)
                 ->first();
 
-
-
             if (count($checker->return_to_principal) != 0) {
                 foreach ($checker->return_to_principal as $key => $return_data) {
                     $sum_return[] = $return_data->total_final_cost;
@@ -205,7 +225,6 @@ class Disbursement_controller extends Controller
                 $sum_invoice_cost[] = 0;
             }
 
-
             if ($checker->payment_status == 'partial') {
                 $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
                     ->sum('amount');
@@ -216,7 +235,9 @@ class Disbursement_controller extends Controller
                 $ewt_rate = $request->input('ewt') / 100;
                 $amount_payable = $receive_purchase_order_unpaid_amount->dr - $prev_payment + array_sum($sum_return) + array_sum($sum_bo_allowance) + array_sum($sum_invoice_cost);
 
-                $ewt_amount = $amount_payable * $ewt_rate;
+                $net_payable = $amount_payable - $request->input('purchase_discount');
+
+                $ewt_amount = $net_payable * $ewt_rate;
             } else {
                 $receive_purchase_order_unpaid_amount = Received_jer::select('dr')
                     ->where('received_id', $po_rr_id)
@@ -226,10 +247,11 @@ class Disbursement_controller extends Controller
 
                 $amount_payable = $receive_purchase_order_unpaid_amount->dr  + array_sum($sum_return) + array_sum($sum_bo_allowance) + array_sum($sum_invoice_cost);
 
-                $ewt_amount = $amount_payable * $ewt_rate;
+                $net_payable = $amount_payable - $request->input('purchase_discount');
+
+                $ewt_amount = $net_payable * $ewt_rate;
             }
         } elseif ($transaction == "PO ") {
-
             $checker = Purchase_order::select('payment_status')
                 ->where('id', $po_rr_id)
                 ->first();
@@ -254,19 +276,22 @@ class Disbursement_controller extends Controller
             $ap_ledger = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->latest()->first();
             $ewt_rate = $request->input('ewt') / 100;
             $amount_payable = $ap_ledger->running_balance;
-            $ewt_amount = $amount_payable * $ewt_rate;
+            $net_payable = $amount_payable - $request->input('purchase_discount');
+            $ewt_amount = $net_payable * $ewt_rate;
         }
 
 
 
         return view('disbursement_show_po_rr_payable')
+            ->with('purchase_discount', $request->input('purchase_discount'))
+            ->with('net_payable', $net_payable)
             ->with('amount_payable', $amount_payable)
             ->with('ewt_amount', $ewt_amount);
     }
 
     public function disbursement_final_summary(Request $request)
     {
-        // return $request->input();
+        //return $request->input();
         if ($request->input('disbursement') == 'payment to principal') {
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
@@ -300,9 +325,15 @@ class Disbursement_controller extends Controller
                 ->where('account_name', 'DUE TO BIR - CREDITABLE WITHHOLDING TAX')
                 ->first();
 
+            $get_purchase_discount = Chart_of_accounts_details::select('account_name', 'chart_of_accounts_id', 'id', 'account_number')
+                ->where('principal_id', $request->input('principal_id'))
+                ->where('account_name', 'PURCHASE DISCOUNT - ' . $principal_name->principal)
+                ->first();
+
             return view('disbursement_final_summary')
                 ->with('bank', $request->input('bank'))
                 ->with('bank_id', $bank_id)
+                ->with('get_purchase_discount', $get_purchase_discount)
                 ->with('get_ap', $get_ap)
                 ->with('get_bank', $get_bank)
                 ->with('get_bir_due', $get_bir_due)
@@ -322,6 +353,7 @@ class Disbursement_controller extends Controller
                 ->with('disbursement', $request->input('disbursement'))
                 ->with('principal_id', $request->input('principal_id'))
                 ->with('purchase_id', $request->input('purchase_id'))
+                ->with('purchase_discount',  str_replace(',', '', $request->input('purchase_discount')))
                 ->with('principal_name', $principal_name);
         } elseif ($request->input('disbursement') == 'collection') {
             date_default_timezone_set('Asia/Manila');
@@ -363,11 +395,8 @@ class Disbursement_controller extends Controller
                     ->whereIn('id', $request->input('new_account_name'))
                     ->get();
             } else {
-                $transaction_insert_entry = 0;
+                $transaction_insert_entry[] = 0;
             }
-
-
-
 
 
             return view('disbursement_final_summary', [
@@ -397,141 +426,142 @@ class Disbursement_controller extends Controller
         $date = date('Y-m-d');
         //return $request->input();
         if ($request->input('disbursement') == 'payment to principal') {
-            if ($request->input('po_rr_id') == 'direct to ap payment') {
-                $transaction = 'others';
-                $po_rr_id = 'direct to ap payment';
-            } else {
-                $explode = explode('-', $request->input('po_rr_id'));
-                $transaction = $explode[0];
-                $po_rr_id = $explode[1];
-            }
+            // if ($request->input('po_rr_id') == 'direct to ap payment') {
+            //     $transaction = 'others';
+            //     $po_rr_id = 'direct to ap payment';
+            // } else {
+            //     $explode = explode('-', $request->input('po_rr_id'));
+            //     $transaction = $explode[0];
+            //     $po_rr_id = $explode[1];
+            // }
 
-            $new = new Disbursement([
-                'user_id' => auth()->user()->id,
-                'disbursement' => $request->input('disbursement'),
-                'bank' => $request->input('bank'),
-                'check_deposit_slip' => $request->input('check_deposit_slip'),
-                'principal_id' => $request->input('principal_id'),
-                'particulars' => $request->input('particulars'),
-                'cv_number' => $request->input('cv_number'),
-                'po_rr_id' => $po_rr_id,
-                'transaction' => $transaction,
-                'payable_amount' => str_replace(',', '', $request->input('payable_amount',)),
-                'ewt_amount' => str_replace(',', '', $request->input('ewt_amount',)),
-                'net_payable' => str_replace(',', '', $request->input('net_payable',)),
-                'amount_paid' => str_replace(',', '', $request->input('amount_paid')),
-            ]);
+            // $new = new Disbursement([
+            //     'user_id' => auth()->user()->id,
+            //     'disbursement' => $request->input('disbursement'),
+            //     'bank' => $request->input('bank'),
+            //     'check_deposit_slip' => $request->input('check_deposit_slip'),
+            //     'principal_id' => $request->input('principal_id'),
+            //     'particulars' => $request->input('particulars'),
+            //     'cv_number' => $request->input('cv_number'),
+            //     'po_rr_id' => $po_rr_id,
+            //     'transaction' => $transaction,
+            //     'payable_amount' => str_replace(',', '', $request->input('payable_amount',)),
+            //     'ewt_amount' => str_replace(',', '', $request->input('ewt_amount',)),
+            //     'net_payable' => str_replace(',', '', $request->input('net_payable',)),
+            //     'amount_paid' => str_replace(',', '', $request->input('amount_paid')),
+            //     'purchase_discount' => str_replace(',', '', $request->input('purchase_discount')),
+            // ]);
 
-            $new->save();
+            // $new->save();
 
-            $new_jer = new Disbursement_jer([
-                'disbursement_id' => $new->id,
-                'principal_id' => $request->input('principal_id'),
-                'accounts_payable' => $request->input('accounts_payable'),
-                'cash_in_bank' => $request->input('cash_in_bank'),
-                'withholding_tax' => $request->input('withholding_tax'),
-            ]);
+            // $new_jer = new Disbursement_jer([
+            //     'disbursement_id' => $new->id,
+            //     'principal_id' => $request->input('principal_id'),
+            //     'accounts_payable' => $request->input('accounts_payable'),
+            //     'cash_in_bank' => $request->input('cash_in_bank'),
+            //     'withholding_tax' => $request->input('withholding_tax'),
+            // ]);
 
-            $new_jer->save();
+            // $new_jer->save();
 
-            if ($transaction == 'PO') {
-                if ($request->input('outstanding_balance') != 0) {
-                    Purchase_order::where('id', $po_rr_id)
-                        ->update(['payment_status' => 'partial']);
-                } else {
-                    Purchase_order::where('id', $po_rr_id)
-                        ->update(['payment_status' => 'paid']);
-                }
-            } elseif ($transaction == 'RR') {
-                if ($request->input('outstanding_balance') != 0) {
-                    Received_purchase_order::where('id', $po_rr_id)
-                        ->update(['payment_status' => 'partial']);
-                } else {
-                    Received_purchase_order::where('id', $po_rr_id)
-                        ->update(['payment_status' => 'paid']);
-                }
-            }
+            // if ($transaction == 'PO') {
+            //     if ($request->input('outstanding_balance') != 0) {
+            //         Purchase_order::where('id', $po_rr_id)
+            //             ->update(['payment_status' => 'partial']);
+            //     } else {
+            //         Purchase_order::where('id', $po_rr_id)
+            //             ->update(['payment_status' => 'paid']);
+            //     }
+            // } elseif ($transaction == 'RR') {
+            //     if ($request->input('outstanding_balance') != 0) {
+            //         Received_purchase_order::where('id', $po_rr_id)
+            //             ->update(['payment_status' => 'partial']);
+            //     } else {
+            //         Received_purchase_order::where('id', $po_rr_id)
+            //             ->update(['payment_status' => 'paid']);
+            //     }
+            // }
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new->id,
-                    'transaction' => $request->input('disbursement'),
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => 0,
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' =>  str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                ]);
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new->id,
+            //         'transaction' => $request->input('disbursement'),
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => 0,
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' =>  str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new->id,
-                    'transaction' => $request->input('disbursement'),
-                    'accounts_payable_beginning' => 0,
-                    'received' => 0,
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                    'accounts_payable_end' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount') * -1,
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new->id,
+            //         'transaction' => $request->input('disbursement'),
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => 0,
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //         'accounts_payable_end' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount') * -1,
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
 
-            $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            // $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            //     ->where('principal_id', $request->input('principal_id'))
+            //     ->orderBy('id', 'desc')->take(1)->first();
+
+            // if ($ap_ledger_last_transaction) {
+            //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - (str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'));
+            // } else {
+            //     $ap_ledger_running_balance = str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount');
+            // }
+
+            // $new_ap_ledger = new Ap_ledger([
+            //     'principal_id' => $request->input('principal_id'),
+            //     'user_id' => auth()->user()->id,
+            //     'transaction_date' => $date,
+            //     'description' => 'Payment to Principal',
+            //     'debit_record' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //     'credit_record' => 0,
+            //     'running_balance' => $ap_ledger_running_balance,
+            //     'transaction' => 'payment to principal',
+            //     'reference' => 2,
+            //     'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
+            // ]);
+
+            // $new_ap_ledger->save();
+
+            $get_purchase_discount = General_ledger::select('running_balance')
+                ->where('account_name', $request->input('get_purchase_discount_account_name'))
                 ->where('principal_id', $request->input('principal_id'))
-                ->orderBy('id', 'desc')->take(1)->first();
-
-            if ($ap_ledger_last_transaction) {
-                $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - (str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'));
-            } else {
-                $ap_ledger_running_balance = str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount');
-            }
-
-            $new_ap_ledger = new Ap_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $date,
-                'description' => 'Payment to Principal',
-                'debit_record' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                'credit_record' => 0,
-                'running_balance' => $ap_ledger_running_balance,
-                'transaction' => 'payment to principal',
-                'reference' => 2,
-                'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
-            ]);
-
-            $new_ap_ledger->save();
-
-            $get_ap = General_ledger::select('running_balance')
-                ->where('account_name', $request->input('get_ap_account_name'))
-                ->where('principal_id', $request->input('principal_id'))
-                ->where('account_number', $request->input('get_ap_account_number'))
+                ->where('account_number', $request->input('get_purchase_discount_account_number'))
                 ->orderBy('id', 'DESC')
                 ->first();
 
-            if ($get_ap) {
-                $running_balance = $get_ap->running_balance - $request->input('accounts_payable');
+            if ($get_purchase_discount) {
+                $running_balance = $get_purchase_discount->running_balance + $request->input('purchase_discount');
 
                 $new_general_ap_ledger = new General_ledger([
                     'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_ap_account_name'),
-                    'account_number' => $request->input('get_ap_account_number'),
-                    'debit_record' => $request->input('accounts_payable'),
+                    'account_name' => $request->input('get_purchase_discount_account_name'),
+                    'account_number' => $request->input('get_purchase_discount_account_number'),
+                    'debit_record' => $request->input('purchase_discount'),
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
                     'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_ap_general_account_number'),
+                    'general_account_number' => $request->input('get_purchase_discount_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'PAYMENT TO PRINCIPAL',
                 ]);
@@ -540,99 +570,140 @@ class Disbursement_controller extends Controller
             } else {
                 $new_general_ap_ledger = new General_ledger([
                     'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_ap_account_name'),
-                    'account_number' => $request->input('get_ap_account_number'),
-                    'debit_record' => $request->input('accounts_payable'),
+                    'account_name' => $request->input('get_purchase_discount_account_name'),
+                    'account_number' => $request->input('get_purchase_discount_account_number'),
+                    'debit_record' => $request->input('purchase_discount'),
                     'credit_record' => 0,
                     'user_id' => auth()->user()->id,
                     'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_ap_general_account_number'),
-                    'running_balance' => $request->input('accounts_payable'),
+                    'general_account_number' => $request->input('get_purchase_discount_general_account_number'),
+                    'running_balance' => $request->input('purchase_discount'),
                     'transaction' => 'PAYMENT TO PRINCIPAL',
                 ]);
 
                 $new_general_ap_ledger->save();
             }
 
-            $get_bank = General_ledger::select('running_balance')
-                ->where('account_name', $request->input('get_bank_account_name'))
-                ->where('account_number', $request->input('get_bank_account_number'))
-                ->orderBy('id', 'DESC')
-                ->first();
+            // $get_ap = General_ledger::select('running_balance')
+            //     ->where('account_name', $request->input('get_ap_account_name'))
+            //     ->where('principal_id', $request->input('principal_id'))
+            //     ->where('account_number', $request->input('get_ap_account_number'))
+            //     ->orderBy('id', 'DESC')
+            //     ->first();
 
-            if ($get_bank) {
-                $running_balance = $get_bank->running_balance - $request->input('cash_in_bank');
+            // if ($get_ap) {
+            //     $running_balance = $get_ap->running_balance - $request->input('accounts_payable');
 
-                $new_general_due_bir_ledger = new General_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_bank_account_name'),
-                    'account_number' => $request->input('get_bank_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('cash_in_bank'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_bank_general_account_number'),
-                    'running_balance' => $running_balance,
-                    'transaction' => 'PAYMENT TO PRINCIPAL',
-                ]);
+            //     $new_general_ap_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_ap_account_name'),
+            //         'account_number' => $request->input('get_ap_account_number'),
+            //         'debit_record' => $request->input('accounts_payable'),
+            //         'credit_record' => 0,
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_ap_general_account_number'),
+            //         'running_balance' => $running_balance,
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
 
-                $new_general_due_bir_ledger->save();
-            } else {
-                $new_general_due_bir_ledger = new General_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_bank_account_name'),
-                    'account_number' => $request->input('get_bank_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('cash_in_bank'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_bank_general_account_number'),
-                    'running_balance' => $request->input('cash_in_bank'),
-                    'transaction' => 'PAYMENT TO PRINCIPAL',
-                ]);
+            //     $new_general_ap_ledger->save();
+            // } else {
+            //     $new_general_ap_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_ap_account_name'),
+            //         'account_number' => $request->input('get_ap_account_number'),
+            //         'debit_record' => $request->input('accounts_payable'),
+            //         'credit_record' => 0,
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_ap_general_account_number'),
+            //         'running_balance' => $request->input('accounts_payable'),
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
 
-                $new_general_due_bir_ledger->save();
-            }
+            //     $new_general_ap_ledger->save();
+            // }
 
-            $get_bir_due = General_ledger::select('running_balance')
-                ->where('account_name', $request->input('get_bir_due_account_name'))
-                ->where('account_number', $request->input('get_bir_due_account_number'))
-                ->orderBy('id', 'DESC')
-                ->first();
+            // $get_bank = General_ledger::select('running_balance')
+            //     ->where('account_name', $request->input('get_bank_account_name'))
+            //     ->where('account_number', $request->input('get_bank_account_number'))
+            //     ->orderBy('id', 'DESC')
+            //     ->first();
 
-            if ($get_bir_due) {
-                $running_balance = $get_bir_due->running_balance + $request->input('withholding_tax');
+            // if ($get_bank) {
+            //     $running_balance = $get_bank->running_balance - $request->input('cash_in_bank');
 
-                $new_general_ap_ledger = new General_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_bir_due_account_name'),
-                    'account_number' => $request->input('get_bir_due_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('withholding_tax'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_bir_due_general_account_number'),
-                    'running_balance' => $running_balance,
-                    'transaction' => 'PAYMENT TO PRINCIPAL',
-                ]);
+            //     $new_general_due_bir_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_bank_account_name'),
+            //         'account_number' => $request->input('get_bank_account_number'),
+            //         'debit_record' => 0,
+            //         'credit_record' => $request->input('cash_in_bank'),
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_bank_general_account_number'),
+            //         'running_balance' => $running_balance,
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
 
-                $new_general_ap_ledger->save();
-            } else {
-                $new_general_ap_ledger = new General_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'account_name' => $request->input('get_bir_due_account_name'),
-                    'account_number' => $request->input('get_bir_due_account_number'),
-                    'debit_record' => 0,
-                    'credit_record' => $request->input('withholding_tax'),
-                    'user_id' => auth()->user()->id,
-                    'transaction_date' => $date,
-                    'general_account_number' => $request->input('get_bir_due_general_account_number'),
-                    'running_balance' => $request->input('withholding_tax'),
-                    'transaction' => 'PAYMENT TO PRINCIPAL',
-                ]);
+            //     $new_general_due_bir_ledger->save();
+            // } else {
+            //     $new_general_due_bir_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_bank_account_name'),
+            //         'account_number' => $request->input('get_bank_account_number'),
+            //         'debit_record' => 0,
+            //         'credit_record' => $request->input('cash_in_bank'),
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_bank_general_account_number'),
+            //         'running_balance' => $request->input('cash_in_bank'),
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
 
-                $new_general_ap_ledger->save();
-            }
+            //     $new_general_due_bir_ledger->save();
+            // }
+
+            // $get_bir_due = General_ledger::select('running_balance')
+            //     ->where('account_name', $request->input('get_bir_due_account_name'))
+            //     ->where('account_number', $request->input('get_bir_due_account_number'))
+            //     ->orderBy('id', 'DESC')
+            //     ->first();
+
+            // if ($get_bir_due) {
+            //     $running_balance = $get_bir_due->running_balance + $request->input('withholding_tax');
+
+            //     $new_general_ap_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_bir_due_account_name'),
+            //         'account_number' => $request->input('get_bir_due_account_number'),
+            //         'debit_record' => 0,
+            //         'credit_record' => $request->input('withholding_tax'),
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_bir_due_general_account_number'),
+            //         'running_balance' => $running_balance,
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
+
+            //     $new_general_ap_ledger->save();
+            // } else {
+            //     $new_general_ap_ledger = new General_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'account_name' => $request->input('get_bir_due_account_name'),
+            //         'account_number' => $request->input('get_bir_due_account_number'),
+            //         'debit_record' => 0,
+            //         'credit_record' => $request->input('withholding_tax'),
+            //         'user_id' => auth()->user()->id,
+            //         'transaction_date' => $date,
+            //         'general_account_number' => $request->input('get_bir_due_general_account_number'),
+            //         'running_balance' => $request->input('withholding_tax'),
+            //         'transaction' => 'PAYMENT TO PRINCIPAL',
+            //     ]);
+
+            //     $new_general_ap_ledger->save();
+            // }
         } elseif ($request->input('disbursement') == 'collection') {
             return $request->input();
             $new = new Sales_invoice_collection_receipt([
