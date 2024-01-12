@@ -52,6 +52,7 @@
                     <th style="text-align: center">A/R BALANCE</th>
                     <th style="text-align: center">AMOUNT COLLECTED</th>
                     <th style="text-align: center">OUTSTANDING BALANCE</th>
+                    <th style="text-align: center">CM APPLIED</th>
                     <th style="text-align: center">REMARKS</th>
                 </tr>
             </thead>
@@ -76,7 +77,7 @@
                         <td>{{ $data->principal->principal }}</td>
                         <td style="text-align: right">
                             @php
-                                $outstanding_balance = ($data->total - $data->total_returned_amount) - $data->total_payment;
+                                $outstanding_balance = $data->total - $data->total_returned_amount - $data->total_payment;
                                 echo number_format($outstanding_balance, 2, '.', ',');
                             @endphp
 
@@ -90,8 +91,6 @@
                             @endphp
                             <input type="hidden" name="amount_collected[{{ $data->id }}]"
                                 value="{{ $amount_collected[$data->id] }}">
-
-
                         </td>
                         <td style="text-align: right">
                             @php
@@ -101,7 +100,9 @@
 
                             <input type="hidden" name="new_outstanding_balance[{{ $data->id }}]"
                                 value="{{ $new_outstanding_balance }}">
-
+                        </td>
+                        <td style="text-align: center">
+                            {{ $cm_number[$data->id] }}
                         </td>
                         <td>
                             {{ $remarks[$data->id] }}
@@ -126,7 +127,85 @@
     <input type="hidden" value="{{ $disbursement }}" name="disbursement">
     <input type="hidden" value="{{ $customer_id }}" name="customer_id">
 
-    <table class="table table-bordered table-hover table-sm table-striped">
+    @if ($bo_cm_number != 0)
+        <table class="table table-bordered table-hover table-sm table-striped">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;">JOURNAL ENTRY - BO</th>
+                    <th style="text-align: center;">DR</th>
+                    <th style="text-align: center;">CR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">{{ $get_spoiled_goods->account_name }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?></td>
+                    <td><input type="hidden" name="bo_spoiled_goods" value="{{ array_sum($bo_poiled_goods) }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
+                    <td><input type="hidden" name="credit_record" value="{{ array_sum($bo_poiled_goods) }}">
+                    </td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_poiled_goods), 2, '.', ','); ?>
+                        <input type="hidden" name="bo_accounts_receivable" value="{{ array_sum($bo_poiled_goods) }}">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
+
+    @if ($rgs_cm_number != 0)
+        <table class="table table-bordered table-hover table-sm table-striped">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;">JOURNAL ENTRY - RGS</th>
+                    <th style="text-align: center;">DR</th>
+                    <th style="text-align: center;">CR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">{{ $get_sales_return_and_allowances->account_name }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_sales_return_and_allowances), 2, '.', ','); ?></td>
+                    <td><input type="hidden" name="rgs_sales_return_and_allowances"
+                            value="{{ array_sum($rgs_sales_return_and_allowances) }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
+                    <td><input type="hidden" name="credit_record" value="{{ array_sum($rgs_accounts_receivable) }}">
+                    </td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_accounts_receivable), 2, '.', ','); ?>
+                        <input type="hidden" name="rgs_accounts_receivable"
+                            value="{{ array_sum($rgs_accounts_receivable) }}">
+                    </td>
+                </tr>
+                @for ($i = 0; $i < count($get_merchandise_inventory_account_name); $i++)
+                    <tr>
+                        <td style="text-align: center;">{{ $get_merchandise_inventory_account_name[$i] }}</td>
+                        <td></td>
+                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs_inventory[$i], 2, '.', ','); ?></td>
+                        <td><input type="hidden" name="rgs_inventory" value="{{ $rgs_inventory[$i] }}">
+                        </td>
+                    </tr>
+                @endfor
+                {{-- @for ($i = 0; $i < count($get_cost_of_sales_account_name); $i++)
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center;">{{ $get_cost_of_sales_account_name[$i] }}</td>
+                    </tr>
+                @endfor --}}
+            </tbody>
+        </table>
+    @endif
+
+
+    {{-- <table class="table table-bordered table-hover table-sm table-striped">
         <thead>
             <tr>
                 <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -159,16 +238,13 @@
 
 
     <input type="hidden" value="{{ $get_bank->account_name }}" name="get_bank_account_name">
-    <input type="hidden" value="{{ $get_bank->account_number }}"
-        name="get_bank_account_number">
+    <input type="hidden" value="{{ $get_bank->account_number }}" name="get_bank_account_number">
     <input type="hidden" value="{{ $get_bank->chart_of_accounts->account_number }}"
         name="get_bank_general_account_number">
-    <input type="hidden" value="{{ $get_customer_ar->account_name }}"
-        name="get_customer_ar_account_name">
-    <input type="hidden" value="{{ $get_customer_ar->account_number }}"
-        name="get_customer_ar_account_number">
+    <input type="hidden" value="{{ $get_customer_ar->account_name }}" name="get_customer_ar_account_name">
+    <input type="hidden" value="{{ $get_customer_ar->account_number }}" name="get_customer_ar_account_number">
     <input type="hidden" value="{{ $get_customer_ar->chart_of_accounts->account_number }}"
-        name="get_customer_ar_general_account_number">
+        name="get_customer_ar_general_account_number"> --}}
 
     <button class="btn btn-sm float-right btn-success">Submit</button>
 </form>

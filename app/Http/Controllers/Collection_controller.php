@@ -79,11 +79,11 @@ class Collection_controller extends Controller
 
         $get_bank = Chart_of_accounts::select('id')->where('account_name', 'CASH IN BANK')->first();
 
-        $get_rgs = Return_good_stock::select('id','pcm_number','total_amount')
+        $get_rgs = Return_good_stock::select('id', 'pcm_number', 'total_amount')
             ->where('confirm_status', 'confirmed')
             ->get();
 
-        $get_bo = Bad_order::select('id','pcm_number','total_amount')
+        $get_bo = Bad_order::select('id', 'pcm_number', 'total_amount')
             ->where('confirm_status', 'confirmed')
             ->get();
 
@@ -107,7 +107,7 @@ class Collection_controller extends Controller
 
     public function collection_final_summary(Request $request)
     {
-        //return $request->input('customer_id');
+
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
 
@@ -124,23 +124,111 @@ class Collection_controller extends Controller
             ->first();
 
         if ($get_bank && $get_customer_ar) {
-          
+            $amount_collected_filtered = array_filter($request->input('amount_collected'));
 
-            // foreach ($request->input('amount_collected') as $key => $value) {
-            //     if ($request->input('outstanding_balance')[$key] < str_replace(',', '', $value)) {
-            //         return 'cannot proceed';
-            //     }
-            // }
+            foreach ($amount_collected_filtered as $key => $value) {
+                if ($request->input('outstanding_balance')[$key] < str_replace(',', '', $value)) {
+                    return 'cannot proceed';
+                } else {
+                    $explode = explode('|', $request->input('cm_id')[$key]);
+                    $cm_number[$key] = $explode[2];
+                }
+            }
+
+            foreach (array_filter(array_unique($request->input('cm_id'))) as $cm_key => $cm_data) {
+                $explode = explode('|', $cm_data);
+
+                if ($explode[0] == 'bo') {
+                    $bo_reference = Bad_order::select('spoiled_goods', 'accounts_receivable', 'pcm_number', 'id')->find($explode[1]);
+                    $bo_poiled_goods[$cm_key] = $bo_reference->spoiled_goods;
+                    $bo_accounts_receivable[$cm_key] = $bo_reference->accounts_receivable;
+                    $bo_cm_number[$cm_key] = $bo_reference->pcm_number;
+                    $bo_id[$cm_key] = $bo_reference->id;
+
+                    $rgs_sales_return_and_allowances[] = "";
+                    $rgs_accounts_receivable[] = "";
+                    $rgs_inventory[] = "";
+                    $rgs_cm_number[] = 0;
+                    $rgs_id[] = "";
+                } else {
+                    $rgs_reference = Return_good_stock::select('sales_return_and_allowances', 'accounts_receivable', 'inventory', 'cost_of_goods_sold', 'pcm_number', 'id', 'principal_id')->find($explode[1]);
+
+                    $get_merchandise_inventory = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                        ->where('account_name', 'MERCHANDISE INVENTORY - ' . $rgs_reference->principal->principal)
+                        ->where('principal_id', $rgs_reference->principal_id)
+                        ->first();
+
+                    $get_merchandise_inventory_account_name[] = $get_merchandise_inventory->account_name;
+                    $get_merchandise_inventory_account_number[] = $get_merchandise_inventory->account_number;
+                    $get_merchandise_inventory_chart_of_accounts_id[] = $get_merchandise_inventory->chart_of_accounts_id;
+
+                    $get_cost_of_sales = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                        ->where('account_name', 'COST OF SALES - ' . $rgs_reference->principal->principal)
+                        ->where('principal_id', $rgs_reference->principal_id)
+                        ->first();
+
+                    $get_cost_of_sales_account_name[] = $get_cost_of_sales->account_name;
+                    $get_cost_of_sales_account_number[] = $get_cost_of_sales->account_number;
+                    $get_cost_of_sales_chart_of_accounts_id[] = $get_cost_of_sales->chart_of_accounts_id;
+
+                    $rgs_sales_return_and_allowances[] = $rgs_reference->sales_return_and_allowances;
+                    $rgs_accounts_receivable[] = $rgs_reference->accounts_receivable;
+                    $rgs_inventory[] = $rgs_reference->inventory;
+                    $rgs_cm_number[] = $rgs_reference->pcm_number;
+                    $rgs_id[] = $rgs_reference->id;
+
+                    $bo_poiled_goods[$cm_key] = "";
+                    $bo_accounts_receivable[$cm_key] = "";
+                    $bo_cm_number[$cm_key] = 0;
+                    $bo_id[$cm_key] = "";
+                }
+            }
+
+           
+
+
+
 
             $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
             $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
                 ->whereIn('id', array_keys($amount_collected))
                 ->get();
+
+
+            $get_spoiled_goods = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'SPOILED GOODS')
+                ->first();
+
+            $get_sales_return_and_allowances = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'SALES RETURNS AND ALLOWANCES')
+                ->first();
+
+
+
             return view('collection_final_summary', [
+                'get_cost_of_sales_account_name' => $get_cost_of_sales_account_name,
+                'get_cost_of_sales_account_number' => $get_cost_of_sales_account_number,
+                'get_cost_of_sales_chart_of_accounts_id' => $get_cost_of_sales_chart_of_accounts_id,
+                
+                'get_merchandise_inventory_account_name' => $get_merchandise_inventory_account_name,
+                'get_merchandise_inventory_account_number' => $get_merchandise_inventory_account_number,
+                'get_merchandise_inventory_chart_of_accounts_id' => $get_merchandise_inventory_chart_of_accounts_id,
+                'rgs_sales_return_and_allowances' => $rgs_sales_return_and_allowances,
+                'rgs_accounts_receivable' => $rgs_accounts_receivable,
+                'rgs_inventory' => $rgs_inventory,
+                'rgs_cm_number' => $rgs_cm_number,
+                'rgs_id' => $rgs_id,
+                'bo_poiled_goods' => $bo_poiled_goods,
+                'bo_accounts_receivable' => $bo_accounts_receivable,
+                'bo_cm_number' => $bo_cm_number,
+                'bo_id' => $bo_id,
+                'get_sales_return_and_allowances' => $get_sales_return_and_allowances,
+                'get_spoiled_goods' => $get_spoiled_goods,
+                'get_customer_ar' => $get_customer_ar,
                 'amount_collected' => $amount_collected,
                 'sales_invoice' => $sales_invoice,
                 'get_bank' => $get_bank,
-                'get_customer_ar' => $get_customer_ar,
+                'cm_number' => $cm_number,
             ])->with('customer_id', $request->input('customer_id'))
                 ->with('bank', $bank)
                 ->with('date', $date)
@@ -148,7 +236,8 @@ class Collection_controller extends Controller
                 ->with('disbursement', $request->input('disbursement'))
                 ->with('official_receipt_no', strtoupper($request->input('official_receipt_no')))
                 ->with('payment_date', $request->input('payment_date'))
-                ->with('remarks', $request->input('remarks'));
+                ->with('remarks', $request->input('remarks'))
+                ->with('cm_id', $request->input('cm_id'));
         } else {
             return 'No chart of account';
         }
