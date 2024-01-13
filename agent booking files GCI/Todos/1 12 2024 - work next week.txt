@@ -1,2 +1,10 @@
 --- kani e add sa pag add sa principal ang mo generate automatic ang purchase discount sa chart of account
 --- check ang collection kai mag dungang og sulod ang BO RGS AND COLLECTION SA ACCOUNTS RECEIVABLE NGA TABLE
+
+if CM siya wala nay cash in bank
+
+add total dr and cr sa ubos sa jer
+
+add migration for beginning balance sa tanan chart of accounts
+
+add kag new search storyahan sa monday sa ledger
