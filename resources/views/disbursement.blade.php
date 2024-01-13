@@ -31,7 +31,7 @@
                                             <option value="" default>Select</option>
                                             <option value="payment to principal">Principal Payment</option>
                                             {{-- <option value="collection">Collection</option> --}}
-                                            <option value="others">General Disbursement</option>
+                                            <option value="others">Recurring Transactions</option>
                                             <option value="unidentified_chart_of_account">Others</option>
                                         </select>
                                     </div>

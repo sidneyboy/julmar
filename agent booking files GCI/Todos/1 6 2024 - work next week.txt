@@ -1,10 +1,4 @@
-e check ang cm sa accounting kai naay somthing sa quantity!
 
-(------------------------------------------)
-
-e save nalang ugma ang cm nga naay average cost
-
-(------------------------------------------)
 warehouse - verify
 accounting cm
 	- identify to use the unit cost of the DR
