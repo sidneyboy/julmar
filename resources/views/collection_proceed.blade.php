@@ -55,7 +55,6 @@
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">BALANCE</th>
                     <th style="text-align: center">COLLECTION</th>
-                    <th style="text-align: center">CM</th>
                     <th style="text-align: center">AGING</th>
                     <th style="text-align: center">REMARKS</th>
                 </tr>
@@ -95,7 +94,7 @@
                                 class="form-control amount_collected" min="0"
                                 name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
                         </td>
-                        <td style="width:30%;">
+                        {{-- <td style="width:30%;">
                             <select name="cm_id[{{ $data->id }}]" class="form-control select2bs4" style="width:100%;">
                                 <option value="" default>Select CM</option>
                                 @foreach ($get_rgs as $rgs_data)
@@ -105,7 +104,7 @@
                                     <option value="{{ 'bo|'.$bo_data->id .'|'. $bo_data->pcm_number }}">{{ str_replace('PCM-','',$bo_data->pcm_number) ." [". $bo_data->total_amount ."]" }}</option>
                                 @endforeach
                             </select>
-                        </td>
+                        </td> --}}
                         <td style="text-align: center;">
                             @if (!isset($data->delivered))
                                 @php

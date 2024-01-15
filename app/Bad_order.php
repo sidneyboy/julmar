@@ -41,6 +41,16 @@ class Bad_order extends Model
         return $this->belongsTo('App\Agent', 'agent_id');
     }
 
+    public function collection_agent()
+    {
+        return $this->belongsTo('App\Agent', 'agent_id')->select('full_name');
+    }
+
+    public function collection_customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id')->select('store_name');
+    }
+
     public function principal()
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id');
