@@ -116,7 +116,7 @@ class Collection_controller extends Controller
             $bad_order = Bad_order::where('agent_id', $request->input('agent_id'))
                 ->where('customer_id', $request->input('customer_id'))
                 ->where('confirm_status', 'confirmed')
-                ->where('final_status',null)
+                ->where('final_status', null)
                 ->get();
 
             return view('collection_post_bo', [
@@ -130,7 +130,53 @@ class Collection_controller extends Controller
 
     public function collection_post_bo_final_summary(Request $request)
     {
-        $bad_order = Bad_order::find($request->input('cm_id'));
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+
+        $get_spoiled_goods = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'SPOILED GOODS')
+            ->first();
+
+        $get_customer_ar = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('customer_id', $request->input('customer_id'))
+            ->first();
+
+
+        if ($get_spoiled_goods && $get_customer_ar) {
+            $bad_order = Bad_order::select('total_amount', 'customer_id', 'agent_id', 'pcm_number')->find($request->input('cm_id'));
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
+                ->whereIn('id', $request->input('sales_invoice_id'))
+                ->get();
+
+            $originalAmount = $bad_order->total_amount;
+
+            foreach ($sales_invoice as $data) {
+                $outstanding_balance =  $data->total - $data->total_returned_amount - $data->total_payment;
+                $originalAmount -= $outstanding_balance;
+                if ($originalAmount > 0) {
+                    $bo_amount[$data->id] = $outstanding_balance;
+                } else {
+                    $bo_amount[$data->id] = $outstanding_balance + $originalAmount;
+                }
+            }
+
+            $get_spoiled_goods = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'SPOILED GOODS')
+                ->first();
+
+            return view('collection_post_bo_final_summary', [
+                'get_spoiled_goods' => $get_spoiled_goods,
+                'get_customer_ar' => $get_customer_ar,
+                'date' => $date,
+                'remarks' => $request->input('remarks'),
+                'date' => $date,
+                'bad_order' => $bad_order,
+                'sales_invoice' => $sales_invoice,
+                'bo_amount' => $bo_amount,
+            ])->with('cm_id', $request->input('cm_id'));
+        }else{
+            return 'No chart of accounts';
+        }
     }
 
     public function collection_final_summary(Request $request)

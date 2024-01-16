@@ -153,7 +153,31 @@ $sku_id_data = $data->id;
 
 ------------------------------------------------
 
+@php
+                    $total = $total_final_cost;
 
+                    $discount_value_holder = $total;
+                    $discount_value_holder_history = [];
+                    $less_discount_value_holder_history_for_bo_allowance = [];
+                @endphp
+                @foreach ($less_other_discount_selected as $data_discount)
+                    @php
+                        $discount_value_holder_dummy = $discount_value_holder;
+                        $less_percentage_by = $data_discount->discount_rate / 100;
+
+                        $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
+                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+
+                        $less_discount_value_holder_history[] = $less_discount_rate_answer;
+                        $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
+                    @endphp
+
+                    {{ number_format($less_discount_rate_answer, 2, '.', ',') }}
+                    <input type="hidden" name="less_other_discount_selected_name[]"
+                        value="{{ $data_discount->discount_name }}">
+                    <input type="hidden" name="less_other_discount_selected_rate[]"
+                        value="{{ $data_discount->discount_rate }}">
+                @endforeach
 
 
 
