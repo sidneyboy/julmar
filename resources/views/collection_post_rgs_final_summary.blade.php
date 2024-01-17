@@ -1,16 +1,16 @@
 <table class="table table-bordered table-sm table-striped">
     <tr>
-        <th colspan="8" style="text-align: center;">BAD ORDER CREDIT MEMO</th>
+        <th colspan="8" style="text-align: center;">RGS CREDIT MEMO</th>
     </tr>
     <tr>
         <td>CM #</td>
-        <th style="text-align: center;">{{ $bad_order->pcm_number }}</th>
+        <th style="text-align: center;">{{ $rgs->pcm_number }}</th>
         <td>SALES AGENT</td>
-        <th style="text-align: center;">{{ $bad_order->collection_agent->full_name }}</th>
+        <th style="text-align: center;">{{ $rgs->collection_agent->full_name }}</th>
         <td>DATE</td>
         <th style="text-align: center;">{{ $date }}</th>
         <td>CUSTOMER NAME</td>
-        <th style="text-align: center;">{{ $bad_order->collection_customer->store_name }}</th>
+        <th style="text-align: center;">{{ $rgs->collection_customer->store_name }}</th>
     </tr>
 </table>
 <form id="collection_post_bo_save">
@@ -38,12 +38,13 @@
                             @endphp
                         </td>
                         <td style="text-align: right">
-                            {{ number_format($bo_amount[$data->id], 2, '.', ',') }}
-                            <input type="hidden" name="bo_amount[{{ $data->id }}]" value="{{ $bo_amount[$data->id] }}">
+                            {{ number_format($rgs_amount[$data->id], 2, '.', ',') }}
+                            <input type="hidden" name="rgs_amount[{{ $data->id }}]"
+                                value="{{ $rgs_amount[$data->id] }}">
                         </td>
                         <td style="text-align: right">
                             @php
-                                $balance = $outstanding_balance - $bo_amount[$data->id];
+                                $balance = $outstanding_balance - $rgs_amount[$data->id];
                             @endphp
                             {{ number_format($balance, 2, '.', ',') }}
                         </td>
@@ -67,9 +68,9 @@
         </thead>
         <tbody>
             <tr>
-                <td style="text-align: center;">{{ $get_spoiled_goods->account_name }}</td>
+                <td style="text-align: center;">{{ $get_sales_return_and_allowances->account_name }}</td>
                 <td></td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_amount), 2, '.', ','); ?></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_amount), 2, '.', ','); ?></td>
                 <td></td>
             </tr>
             <tr>
@@ -77,22 +78,32 @@
                 <td style="text-align: center;">{{ $get_customer_ar->account_name }}</td>
                 <td>
                 </td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($bo_amount), 2, '.', ','); ?>
-                    <input type="hidden" name="spoiled_goods_amount" value="{{ array_sum($bo_amount) }}">
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_amount), 2, '.', ','); ?>
+                    <input type="hidden" name="spoiled_goods_amount" value="{{ array_sum($rgs_amount) }}">
 
                 </td>
             </tr>
+            @for ($i = 0; $i < count($get_general_merchandise_account_name); $i++)
+                <tr>
+                    <td style="text-align: center;">{{ $get_general_merchandise_account_name[$i] }}</td>
+                    <td></td>
+                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?></td>
+                    <td></td>
+                </tr>
+            @endfor
         </tbody>
     </table>
 
     <input type="hidden" name="customer_id" value="{{ $customer_id }}">
-    <input type="hidden" name="principal_id" value="{{ $bad_order->principal_id }}">
+    <input type="hidden" name="principal_id" value="{{ $rgs->principal_id }}">
     <input type="hidden" name="cm_id" value="{{ $cm_id }}">
 
-    <input type="hidden" value="{{ $get_spoiled_goods->account_name }}" name="get_spoiled_goods_account_name">
-    <input type="hidden" value="{{ $get_spoiled_goods->account_number }}" name="get_spoiled_goods_account_number">
-    <input type="hidden" value="{{ $get_spoiled_goods->chart_of_accounts->account_number }}"
-        name="get_spoiled_goods_general_account_number">
+    <input type="text" value="{{ $get_sales_return_and_allowances->account_name }}"
+        name="get_sales_return_and_allowances_account_name">
+    <input type="text" value="{{ $get_sales_return_and_allowances->account_number }}"
+        name="get_sales_return_and_allowances_account_number">
+    <input type="text" value="{{ $get_sales_return_and_allowances->chart_of_accounts->account_number }}"
+        name="get_sales_return_and_allowances_general_account_number">
 
     <input type="hidden" value="{{ $get_customer_ar->account_name }}" name="get_customer_ar_account_name">
     <input type="hidden" value="{{ $get_customer_ar->account_number }}" name="get_customer_ar_account_number">

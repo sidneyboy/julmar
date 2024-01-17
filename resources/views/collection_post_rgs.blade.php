@@ -1,14 +1,14 @@
 <center>
-    <h3 style="font-weight: bold;">POST BAD ORDER CREDIT MEMO</h3>
+    <h3 style="font-weight: bold;">RGS CREDIT MEMO</h3>
 </center>
 <br />
-<form id="collection_post_bo_final_summary">
+<form id="collection_post_rgs_final_summary">
     <div class="form-group">
         <select name="cm_id" style="width:100%;" class="form-control select2bs4" required>
-            <option value="" default>SELECT CREDIT MEMO</option>
-            @foreach ($bad_order as $bad_order_data)
-                <option value="{{ $bad_order_data->id }}">
-                    {{ str_replace('PCM-BO-', '', $bad_order_data->pcm_number) . ' [₱' . number_format($bad_order_data->total_amount - $bad_order_data->posted_amount, 2, '.', ',') . ']' }}
+            <option value="" default>SELECT RGS CREDIT MEMO</option>
+            @foreach ($return_good_stock as $return_good_stock_data)
+                <option value="{{ $return_good_stock_data->id }}">
+                    {{ str_replace('PCM-RGS-', '', $return_good_stock_data->pcm_number) . ' [₱' . number_format($return_good_stock_data->total_amount, 2, '.', ',') . ']' }}
                 </option>
             @endforeach
         </select>
@@ -30,7 +30,7 @@
                     <td>{{ $data->principal->principal }}</td>
                     <td style="text-align: right">
                         @php
-                            $outstanding_balance = $data->total - $data->cm_amount_deducted - $data->total_payment;
+                            $outstanding_balance = $data->total - $data->total_returned_amount - $data->total_payment;
                             echo number_format($outstanding_balance, 2, '.', ',');
                         @endphp
                         <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
@@ -91,11 +91,11 @@
         }
     }
 
-    $("#collection_post_bo_final_summary").on('submit', (function(e) {
+    $("#collection_post_rgs_final_summary").on('submit', (function(e) {
         e.preventDefault();
         $('#loader').show();
         $.ajax({
-            url: "collection_post_bo_final_summary",
+            url: "collection_post_rgs_final_summary",
             type: "POST",
             data: new FormData(this),
             contentType: false,

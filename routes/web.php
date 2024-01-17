@@ -882,6 +882,10 @@ Route::post('/collection_saved', 'Collection_controller@collection_saved')->name
 Route::get('/collection_sales_invoice_show_copy/{id}', 'Collection_controller@collection_sales_invoice_show_copy')->name('collection_sales_invoice_show_copy');
 Route::post('/collection_sales_invoice_show_copy', 'Collection_controller@collection_sales_invoice_show_copy')->name('collection_sales_invoice_show_copy');
 Route::post('/collection_post_bo_final_summary', 'Collection_controller@collection_post_bo_final_summary')->name('collection_post_bo_final_summary');
+Route::post('/collection_post_bo_save', 'Collection_controller@collection_post_bo_save')->name('collection_post_bo_save');
+Route::post('/collection_post_rgs_final_summary', 'Collection_controller@collection_post_rgs_final_summary')->name('collection_post_rgs_final_summary');
+
+
 
 
 
@@ -907,4 +911,3 @@ Route::post('/chart_of_accounts_save', 'Chart_of_accounts_controller@chart_of_ac
 
 Route::get('/general_ledger', 'General_ledger_controller@index');
 Route::post('/general_ledger_generate', 'General_ledger_controller@general_ledger_generate')->name('general_ledger_generate');
-

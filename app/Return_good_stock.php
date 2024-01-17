@@ -29,6 +29,7 @@ class Return_good_stock extends Model
         'accounts_receivable',
         'inventory',
         'cost_of_goods_sold',
+        'posted_amount'
     ];
 
     public function return_good_stock_details()
@@ -44,6 +45,16 @@ class Return_good_stock extends Model
     public function principal()
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id')->select('principal');
+    }
+
+    public function collection_agent()
+    {
+        return $this->belongsTo('App\Agent', 'agent_id')->select('full_name');
+    }
+
+    public function collection_customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id')->select('store_name');
     }
 
 

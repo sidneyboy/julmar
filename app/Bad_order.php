@@ -24,6 +24,7 @@ class Bad_order extends Model
         'si_id',
         'spoiled_goods',
         'accounts_receivable',
+        'posted_amount',
     ];
 
     public function bad_order_details_sku_id()

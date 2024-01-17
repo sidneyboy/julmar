@@ -74,7 +74,7 @@ class Collection_controller extends Controller
         $date = date('Y-m-d');
 
         if ($request->input('transaction') == 'collection') {
-            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount', 'cm_amount_deducted')
                 ->where('customer_id', $request->input('customer_id'))
                 ->where('payment_status', null)
                 ->orWhere('payment_status', 'partial')
@@ -107,13 +107,14 @@ class Collection_controller extends Controller
                 return 'No chart of account';
             }
         } else if ($request->input('transaction') == 'post_bo') {
-            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
                 ->where('customer_id', $request->input('customer_id'))
                 ->where('payment_status', null)
                 ->orWhere('payment_status', 'partial')
                 ->get();
 
-            $bad_order = Bad_order::where('agent_id', $request->input('agent_id'))
+            $bad_order = Bad_order::select('id', 'pcm_number', 'total_amount', 'posted_amount')
+                ->where('agent_id', $request->input('agent_id'))
                 ->where('customer_id', $request->input('customer_id'))
                 ->where('confirm_status', 'confirmed')
                 ->where('final_status', null)
@@ -125,6 +126,95 @@ class Collection_controller extends Controller
             ])->with('date', $date)
                 ->with('customer_id', $request->input('customer_id'))
                 ->with('agent_id', $request->input('agent_id'));
+        } else if ($request->input('transaction') == 'post_rgs') {
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
+                ->where('customer_id', $request->input('customer_id'))
+                ->where('payment_status', null)
+                ->orWhere('payment_status', 'partial')
+                ->get();
+
+            $return_good_stock = Return_good_stock::select('id', 'pcm_number', 'total_amount')
+                ->where('agent_id', $request->input('agent_id'))
+                ->where('customer_id', $request->input('customer_id'))
+                ->where('confirm_status', 'confirmed')
+                ->where('final_status', null)
+                ->get();
+
+
+            return view('collection_post_rgs', [
+                'sales_invoice' => $sales_invoice,
+                'return_good_stock' => $return_good_stock,
+            ])->with('date', $date)
+                ->with('customer_id', $request->input('customer_id'))
+                ->with('agent_id', $request->input('agent_id'));
+        }
+    }
+
+    public function collection_post_rgs_final_summary(Request $request)
+    {
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+
+        $get_sales_return_and_allowances = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'SALES RETURNS AND ALLOWANCES')
+            ->first();
+
+
+        $get_customer_ar = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('customer_id', $request->input('customer_id'))
+            ->first();
+
+
+
+
+
+        if ($get_sales_return_and_allowances && $get_customer_ar) {
+            $rgs = Return_good_stock::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id','inventory')
+                ->find($request->input('cm_id'));
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
+                ->whereIn('id', $request->input('sales_invoice_id'))
+                ->get();
+
+            $originalAmount = $rgs->total_amount;
+
+            foreach ($sales_invoice as $data) {
+                $outstanding_balance =  $data->total - $data->cm_amount_deducted - $data->total_payment;
+                $originalAmount -= $outstanding_balance;
+                if ($originalAmount > 0) {
+                    $rgs_amount[$data->id] = $outstanding_balance;
+                } else {
+                    $rgs_amount[$data->id] = $outstanding_balance + $originalAmount;
+                }
+
+                $get_general_merchandise = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                    ->where('principal_id', $data->principal_id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
+
+                $get_general_merchandise_account_name[] = $get_general_merchandise->account_name;
+                $get_general_merchandise_account_number[] = $get_general_merchandise->account_number;
+                $get_customer_ar_general_account_number[] = $get_general_merchandise->chart_of_accounts->account_number;
+
+            
+            }
+
+            return view('collection_post_rgs_final_summary', [
+                'get_general_merchandise_account_name' => $get_general_merchandise_account_name,
+                'get_general_merchandise_account_number' => $get_general_merchandise_account_number,
+                'get_customer_ar_general_account_number' => $get_customer_ar_general_account_number,
+
+                'get_sales_return_and_allowances' => $get_sales_return_and_allowances,
+                'get_customer_ar' => $get_customer_ar,
+                'date' => $date,
+                'remarks' => $request->input('remarks'),
+                'date' => $date,
+                'rgs' => $rgs,
+                'sales_invoice' => $sales_invoice,
+                'rgs_amount' => $rgs_amount,
+            ])->with('cm_id', $request->input('cm_id'))
+                ->with('customer_id', $request->input('customer_id'));
+        } else {
+            return 'No chart of accounts';
         }
     }
 
@@ -143,15 +233,15 @@ class Collection_controller extends Controller
 
 
         if ($get_spoiled_goods && $get_customer_ar) {
-            $bad_order = Bad_order::select('total_amount', 'customer_id', 'agent_id', 'pcm_number')->find($request->input('cm_id'));
-            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
+            $bad_order = Bad_order::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id','posted_amount')->find($request->input('cm_id'));
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
                 ->whereIn('id', $request->input('sales_invoice_id'))
                 ->get();
 
-            $originalAmount = $bad_order->total_amount;
+            $originalAmount = $bad_order->total_amount - $bad_order->posted_amount;
 
             foreach ($sales_invoice as $data) {
-                $outstanding_balance =  $data->total - $data->total_returned_amount - $data->total_payment;
+                $outstanding_balance =  $data->total - $data->cm_amount_deducted - $data->total_payment;
                 $originalAmount -= $outstanding_balance;
                 if ($originalAmount > 0) {
                     $bo_amount[$data->id] = $outstanding_balance;
@@ -159,10 +249,6 @@ class Collection_controller extends Controller
                     $bo_amount[$data->id] = $outstanding_balance + $originalAmount;
                 }
             }
-
-            $get_spoiled_goods = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
-                ->where('account_name', 'SPOILED GOODS')
-                ->first();
 
             return view('collection_post_bo_final_summary', [
                 'get_spoiled_goods' => $get_spoiled_goods,
@@ -173,10 +259,146 @@ class Collection_controller extends Controller
                 'bad_order' => $bad_order,
                 'sales_invoice' => $sales_invoice,
                 'bo_amount' => $bo_amount,
-            ])->with('cm_id', $request->input('cm_id'));
-        }else{
+            ])->with('cm_id', $request->input('cm_id'))
+                ->with('customer_id', $request->input('customer_id'));
+        } else {
             return 'No chart of accounts';
         }
+    }
+
+    public function collection_post_bo_save(Request $request)
+    {
+        //return $request->input();
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+
+        // foreach ($request->input('bo_amount') as $si_id => $data) {
+        //     $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
+        //         ->find($si_id);
+
+        //     $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
+
+        //     if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
+        //         Sales_invoice::where('id', $si_id)
+        //             ->update([
+        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
+        //                 'payment_status' => 'paid',
+        //             ]);
+        //     } else {
+        //         Sales_invoice::where('id', $si_id)
+        //             ->update([
+        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
+        //             ]);
+        //     }
+        // }
+
+        // Bad_order::where('id', $request->input('cm_id'))
+        //     ->update(['posted_amount' => $request->input('spoiled_goods_amount')]);
+
+        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_accounts_receivable) {
+        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('spoiled_goods_amount');
+        // } else {
+        //     $sales_invoice_ar_running_balance = $request->input('spoiled_goods_amount');
+        // }
+
+        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'credit memo bo',
+        //     'all_id' => $request->input('cm_id'),
+        //     'debit_record' => 0,
+        //     'credit_record' => $request->input('spoiled_goods_amount'),
+        //     'running_balance' => $sales_invoice_ar_running_balance,
+        // ]);
+
+        // $new_sales_invoice_accounts_receivable->save();
+
+        // $get_spoiled_goods = General_ledger::select('running_balance')
+        //     ->where('account_name', $request->input('get_spoiled_goods_account_name'))
+        //     ->where('account_number', $request->input('get_spoiled_goods_account_number'))
+        //     ->orderBy('id', 'DESC')
+        //     ->first();
+
+        // if ($get_spoiled_goods) {
+        //     $get_spoined_goods_running_balance = $get_spoiled_goods->running_balance + $request->input('spoiled_goods_amount');
+
+        //     $get_spoined_goods_new_general_ledger = new General_ledger([
+        //         'account_name' => $request->input('get_spoiled_goods_account_name'),
+        //         'account_number' => $request->input('get_spoiled_goods_account_number'),
+        //         'debit_record' => $request->input('spoiled_goods_amount'),
+        //         'credit_record' => 0,
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_date' => $date,
+        //         'general_account_number' => $request->input('get_spoiled_goods_general_account_number'),
+        //         'running_balance' => $get_spoined_goods_running_balance,
+        //         'transaction' => 'CREDIT MEMO - BO',
+        //         'customer_id' => $request->input('customer_id'),
+        //     ]);
+
+        //     $get_spoined_goods_new_general_ledger->save();
+        // } else {
+        //     $get_spoined_goods_new_general_ledger = new General_ledger([
+        //         'account_name' => $request->input('get_spoiled_goods_account_name'),
+        //         'account_number' => $request->input('get_spoiled_goods_account_number'),
+        //         'debit_record' => $request->input('spoiled_goods_amount'),
+        //         'credit_record' => 0,
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_date' => $date,
+        //         'general_account_number' => $request->input('get_spoiled_goods_general_account_number'),
+        //         'running_balance' => $request->input('spoiled_goods_amount'),
+        //         'transaction' => 'CREDIT MEMO - BO',
+        //         'customer_id' => $request->input('customer_id'),
+        //     ]);
+
+        //     $get_spoined_goods_new_general_ledger->save();
+        // }
+
+        // $get_customer_ar = General_ledger::select('running_balance')
+        //     ->where('account_name', $request->input('get_customer_ar_account_name'))
+        //     ->where('customer_id', $request->input('customer_id'))
+        //     ->where('account_number', $request->input('get_customer_ar_account_number'))
+        //     ->orderBy('id', 'DESC')
+        //     ->first();
+
+        // if ($get_customer_ar) {
+        //     $running_balance = $get_customer_ar->running_balance - $request->input('spoiled_goods_amount');
+
+        //     $new_general_ledger = new General_ledger([
+        //         'account_name' => $request->input('get_customer_ar_account_name'),
+        //         'account_number' => $request->input('get_customer_ar_account_number'),
+        //         'debit_record' => 0,
+        //         'credit_record' => $request->input('spoiled_goods_amount'),
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_date' => $date,
+        //         'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+        //         'running_balance' => $running_balance,
+        //         'transaction' => 'CREDIT MEMO - BO',
+        //         'customer_id' => $request->input('customer_id'),
+        //     ]);
+
+        //     $new_general_ledger->save();
+        // } else {
+        //     $new_general_ledger = new General_ledger([
+        //         'account_name' => $request->input('get_customer_ar_account_name'),
+        //         'account_number' => $request->input('get_customer_ar_account_number'),
+        //         'debit_record' => 0,
+        //         'credit_record' => $request->input('spoiled_goods_amount'),
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_date' => $date,
+        //         'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+        //         'running_balance' => $request->input('spoiled_goods_amount'),
+        //         'transaction' => 'CREDIT MEMO - BO',
+        //         'customer_id' => $request->input('customer_id'),
+        //     ]);
+
+        //     $new_general_ledger->save();
+        // }
     }
 
     public function collection_final_summary(Request $request)
@@ -206,7 +428,7 @@ class Collection_controller extends Controller
             }
 
             $amount_collected = array_filter(str_replace(',', '', $request->input('amount_collected')));
-            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount')
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
                 ->whereIn('id', array_keys($amount_collected))
                 ->get();
 
@@ -356,30 +578,30 @@ class Collection_controller extends Controller
 
                 $new_details->save();
 
-                // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                //     ->where('principal_id', $sales_invoice_checker->principal_id)
-                //     ->orderBy('id', 'desc')
-                //     ->first();
+                $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $sales_invoice_checker->principal_id)
+                    ->orderBy('id', 'desc')
+                    ->first();
 
-                // if ($get_last_row_sales_invoice_accounts_receivable) {
-                //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $value;
-                // } else {
-                //     $sales_invoice_ar_running_balance = $value;
-                // }
+                if ($get_last_row_sales_invoice_accounts_receivable) {
+                    $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $value;
+                } else {
+                    $sales_invoice_ar_running_balance = $value;
+                }
 
-                // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                //     'user_id' => auth()->user()->id,
-                //     'principal_id' => $sales_invoice_checker->principal_id,
-                //     'customer_id' => $request->input('customer_id'),
-                //     'transaction' => 'collection receipt',
-                //     'all_id' => $new->id,
-                //     'debit_record' => 0,
-                //     'credit_record' => $value,
-                //     'running_balance' => $sales_invoice_ar_running_balance,
-                //     'status' => 'paid',
-                // ]);
+                $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                    'user_id' => auth()->user()->id,
+                    'principal_id' => $sales_invoice_checker->principal_id,
+                    'customer_id' => $request->input('customer_id'),
+                    'transaction' => 'collection receipt',
+                    'all_id' => $new->id,
+                    'debit_record' => 0,
+                    'credit_record' => $value,
+                    'running_balance' => $sales_invoice_ar_running_balance,
+                    'status' => 'paid',
+                ]);
 
-                // $new_sales_invoice_accounts_receivable->save();
+                $new_sales_invoice_accounts_receivable->save();
             } else {
                 Sales_invoice::where('id', $key)
                     ->update([
@@ -399,29 +621,29 @@ class Collection_controller extends Controller
 
                 $new_details->save();
 
-                // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                //     ->where('principal_id', $sales_invoice_checker->principal_id)
-                //     ->orderBy('id', 'desc')
-                //     ->first();
+                $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                    ->where('principal_id', $sales_invoice_checker->principal_id)
+                    ->orderBy('id', 'desc')
+                    ->first();
 
-                // if ($get_last_row_sales_invoice_accounts_receivable) {
-                //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $value;
-                // } else {
-                //     $sales_invoice_ar_running_balance = $value;
-                // }
+                if ($get_last_row_sales_invoice_accounts_receivable) {
+                    $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $value;
+                } else {
+                    $sales_invoice_ar_running_balance = $value;
+                }
 
-                // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                //     'user_id' => auth()->user()->id,
-                //     'principal_id' => $sales_invoice_checker->principal_id,
-                //     'customer_id' => $request->input('customer_id'),
-                //     'transaction' => 'collection receipt',
-                //     'all_id' => $new->id,
-                //     'debit_record' => 0,
-                //     'credit_record' => $value,
-                //     'running_balance' => $sales_invoice_ar_running_balance,
-                // ]);
+                $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                    'user_id' => auth()->user()->id,
+                    'principal_id' => $sales_invoice_checker->principal_id,
+                    'customer_id' => $request->input('customer_id'),
+                    'transaction' => 'collection receipt',
+                    'all_id' => $new->id,
+                    'debit_record' => 0,
+                    'credit_record' => $value,
+                    'running_balance' => $sales_invoice_ar_running_balance,
+                ]);
 
-                // $new_sales_invoice_accounts_receivable->save();
+                $new_sales_invoice_accounts_receivable->save();
             }
         }
     }
