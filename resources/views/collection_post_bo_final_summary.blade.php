@@ -35,15 +35,20 @@
                             @php
                                 $outstanding_balance = $data->total - $data->cm_amount_deducted - $data->total_payment;
                                 echo number_format($outstanding_balance, 2, '.', ',');
+                                $sum_outstanding_balance[] = $outstanding_balance;
                             @endphp
                         </td>
                         <td style="text-align: right">
                             {{ number_format($bo_amount[$data->id], 2, '.', ',') }}
+                            @php
+                                $sum_bo_amount[] = $bo_amount[$data->id];
+                            @endphp
                             <input type="hidden" name="bo_amount[{{ $data->id }}]" value="{{ $bo_amount[$data->id] }}">
                         </td>
                         <td style="text-align: right">
                             @php
                                 $balance = $outstanding_balance - $bo_amount[$data->id];
+                                $sum_balance[] = $balance;
                             @endphp
                             {{ number_format($balance, 2, '.', ',') }}
                         </td>
@@ -53,6 +58,15 @@
                     </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2" style="text-align: center;">GRAND TOTAL</th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_outstanding_balance), 2, '.', ',') }}</th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_bo_amount), 2, '.', ',') }}</th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_balance), 2, '.', ',') }}</th>
+                    <th></th>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

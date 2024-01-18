@@ -83,14 +83,23 @@
 
                 </td>
             </tr>
-            @for ($i = 0; $i < count($get_general_merchandise_account_name); $i++)
-                <tr>
-                    <td style="text-align: center;">{{ $get_general_merchandise_account_name[$i] }}</td>
-                    <td></td>
-                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?></td>
-                    <td></td>
-                </tr>
-            @endfor
+            <tr>
+                <td style="text-align: center;">{{ $get_general_merchandise->account_name }}</td>
+                <td></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: center;"> COST OF GOODS SOLD</td>
+                <td>
+                </td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?>
+                    <input type="hidden" name="spoiled_goods_amount" value="{{ $rgs->inventory }}">
+
+                </td>
+            </tr>
+           
         </tbody>
     </table>
 
@@ -98,11 +107,11 @@
     <input type="hidden" name="principal_id" value="{{ $rgs->principal_id }}">
     <input type="hidden" name="cm_id" value="{{ $cm_id }}">
 
-    <input type="text" value="{{ $get_sales_return_and_allowances->account_name }}"
+    <input type="hidden" value="{{ $get_sales_return_and_allowances->account_name }}"
         name="get_sales_return_and_allowances_account_name">
-    <input type="text" value="{{ $get_sales_return_and_allowances->account_number }}"
+    <input type="hidden" value="{{ $get_sales_return_and_allowances->account_number }}"
         name="get_sales_return_and_allowances_account_number">
-    <input type="text" value="{{ $get_sales_return_and_allowances->chart_of_accounts->account_number }}"
+    <input type="hidden" value="{{ $get_sales_return_and_allowances->chart_of_accounts->account_number }}"
         name="get_sales_return_and_allowances_general_account_number">
 
     <input type="hidden" value="{{ $get_customer_ar->account_name }}" name="get_customer_ar_account_name">
