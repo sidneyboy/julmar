@@ -18,6 +18,14 @@
         <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
+                    <th style="text-align: center;">CM AMOUNT:</th>
+                    <th style="text-align: center;">{{ number_format($rgs->total_amount, 2, '.', ',')}}</th>
+                    <th style="text-align: center;">CM COST OF GOODS SOLD:</th>
+                    <th style="text-align: center;">{{ number_format($rgs->cost_of_goods_sold, 2, '.', ',')}}</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
                     <th style="text-align: center">INVOICE NO</th>
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">OUTSTANDING</th>
@@ -86,7 +94,12 @@
             <tr>
                 <td style="text-align: center;">{{ $get_general_merchandise->account_name }}</td>
                 <td></td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?></td>
+                <td style="font-weight: bold;text-align: center;">
+                    <?php
+                        $inventory = (array_sum($rgs_amount) / $rgs->total_amount) * $rgs->cost_of_goods_sold;
+                        echo number_format($inventory, 2, '.', ',');
+                    ?>
+                </td>
                 <td></td>
             </tr>
             <tr>
@@ -94,9 +107,12 @@
                 <td style="text-align: center;"> COST OF GOODS SOLD</td>
                 <td>
                 </td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format($rgs->inventory, 2, '.', ','); ?>
+                <td style="font-weight: bold;text-align: center;">
+                    <?php
+                        $inventory = (array_sum($rgs_amount) / $rgs->total_amount) * $rgs->cost_of_goods_sold;
+                        echo number_format($inventory, 2, '.', ',');
+                    ?>
                     <input type="hidden" name="spoiled_goods_amount" value="{{ $rgs->inventory }}">
-
                 </td>
             </tr>
            

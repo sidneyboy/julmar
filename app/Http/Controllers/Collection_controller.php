@@ -167,16 +167,11 @@ class Collection_controller extends Controller
 
 
         if ($get_sales_return_and_allowances && $get_customer_ar) {
-            $rgs = Return_good_stock::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id', 'inventory')
+            $rgs = Return_good_stock::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id', 'cost_of_goods_sold')
                 ->find($request->input('cm_id'));
             $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
                 ->whereIn('id', $request->input('sales_invoice_id'))
                 ->get();
-
-            $get_general_merchandise = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
-                ->where('principal_id', $rgs->principal_id)
-                ->orderBy('id', 'DESC')
-                ->first();
 
             $originalAmount = $rgs->total_amount;
 
@@ -189,6 +184,11 @@ class Collection_controller extends Controller
                     $rgs_amount[$data->id] = $outstanding_balance + $originalAmount;
                 }
             }
+
+            $get_general_merchandise = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+                ->where('account_name', 'MERCHANDISE INVENTORY - ' . $rgs->principal->principal)
+                ->where('principal_id', $rgs->principal_id)
+                ->first();
 
             return view('collection_post_rgs_final_summary', [
                 'get_general_merchandise' => $get_general_merchandise,
