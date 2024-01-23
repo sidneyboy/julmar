@@ -164,10 +164,13 @@ class Collection_controller extends Controller
             ->where('customer_id', $request->input('customer_id'))
             ->first();
 
+        $get_cost_of_goods_sold = Chart_of_accounts_details::select('account_name', 'account_number', 'chart_of_accounts_id')
+            ->where('account_name', 'COST OF GOODS SOLD')
+            ->first();
 
 
         if ($get_sales_return_and_allowances && $get_customer_ar) {
-            $rgs = Return_good_stock::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id', 'cost_of_goods_sold')
+            $rgs = Return_good_stock::select('total_amount', 'customer_id', 'agent_id', 'pcm_number', 'principal_id', 'cost_of_goods_sold', 'deducted_cost_of_goods_sold', 'deducted_inventory')
                 ->find($request->input('cm_id'));
             $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'cm_amount_deducted')
                 ->whereIn('id', $request->input('sales_invoice_id'))
@@ -190,9 +193,12 @@ class Collection_controller extends Controller
                 ->where('principal_id', $rgs->principal_id)
                 ->first();
 
+
+
             return view('collection_post_rgs_final_summary', [
                 'get_general_merchandise' => $get_general_merchandise,
                 'get_sales_return_and_allowances' => $get_sales_return_and_allowances,
+                'get_cost_of_goods_sold' => $get_cost_of_goods_sold,
                 'get_customer_ar' => $get_customer_ar,
                 'date' => $date,
                 'remarks' => $request->input('remarks'),
@@ -205,6 +211,69 @@ class Collection_controller extends Controller
         } else {
             return 'No chart of accounts';
         }
+    }
+
+    public function collection_post_rgs_save(Request $request)
+    {
+        // foreach ($request->input('rgs_amount') as $si_id => $data) {
+        //     $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
+        //         ->find($si_id);
+
+        //     $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
+
+        //     if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
+        //         Sales_invoice::where('id', $si_id)
+        //             ->update([
+        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
+        //                 'payment_status' => 'paid',
+        //             ]);
+        //     } else {
+        //         Sales_invoice::where('id', $si_id)
+        //             ->update([
+        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
+        //             ]);
+        //     }
+        // }
+
+        // $get_rgs_data = Return_good_stock::select('deducted_inventory', 'deducted_cost_of_goods_sold')->find($request->input('cm_id'));
+
+        // $new_deducted_inventory_amount = $get_rgs_data->deducted_inventory + $request->input('deducted_inventory');
+        // $new_deducted_cost_of_goods_sold = $get_rgs_data->deducted_cost_of_goods_sold + $request->input('deducted_cost_of_goods_sold');
+
+        // Return_good_stock::where('id', $request->input('cm_id'))
+        //     ->update([
+        //         'deducted_inventory' => $new_deducted_inventory_amount,
+        //         'deducted_cost_of_goods_sold' => $new_deducted_cost_of_goods_sold,
+        //     ]);
+
+        // Return_good_stock::where('id', $request->input('cm_id'))
+        //     ->update(['posted_amount' => $request->input('accounts_receivable_amount')]);
+
+        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_accounts_receivable) {
+        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('accounts_receivable_amount');
+        // } else {
+        //     $sales_invoice_ar_running_balance = $request->input('accounts_receivable_amount');
+        // }
+
+        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'credit memo rgs',
+        //     'all_id' => $request->input('cm_id'),
+        //     'debit_record' => 0,
+        //     'credit_record' => $request->input('accounts_receivable_amount'),
+        //     'running_balance' => $sales_invoice_ar_running_balance,
+        // ]);
+
+        // $new_sales_invoice_accounts_receivable->save();
+
+        return 'JOURNAL ENTRY NALANG KULANG ANI';
     }
 
     public function collection_post_bo_final_summary(Request $request)

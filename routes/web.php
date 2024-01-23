@@ -884,6 +884,8 @@ Route::post('/collection_sales_invoice_show_copy', 'Collection_controller@collec
 Route::post('/collection_post_bo_final_summary', 'Collection_controller@collection_post_bo_final_summary')->name('collection_post_bo_final_summary');
 Route::post('/collection_post_bo_save', 'Collection_controller@collection_post_bo_save')->name('collection_post_bo_save');
 Route::post('/collection_post_rgs_final_summary', 'Collection_controller@collection_post_rgs_final_summary')->name('collection_post_rgs_final_summary');
+Route::post('/collection_post_rgs_save', 'Collection_controller@collection_post_rgs_save')->name('collection_post_rgs_save');
+
 
 
 

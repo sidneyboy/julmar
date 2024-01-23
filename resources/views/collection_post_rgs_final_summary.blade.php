@@ -13,15 +13,15 @@
         <th style="text-align: center;">{{ $rgs->collection_customer->store_name }}</th>
     </tr>
 </table>
-<form id="collection_post_bo_save">
+<form id="collection_post_rgs_save">
     <div class="table table-responsive">
         <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
                     <th style="text-align: center;">CM AMOUNT:</th>
-                    <th style="text-align: center;">{{ number_format($rgs->total_amount, 2, '.', ',')}}</th>
+                    <th style="text-align: center;">{{ number_format($rgs->total_amount - $rgs->posted_amount, 2, '.', ',') }}</th>
                     <th style="text-align: center;">CM COST OF GOODS SOLD:</th>
-                    <th style="text-align: center;">{{ number_format($rgs->cost_of_goods_sold, 2, '.', ',')}}</th>
+                    <th style="text-align: center;">{{ number_format($rgs->cost_of_goods_sold - $rgs->deducted_inventory, 2, '.', ',') }}</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -78,7 +78,9 @@
             <tr>
                 <td style="text-align: center;">{{ $get_sales_return_and_allowances->account_name }}</td>
                 <td></td>
-                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_amount), 2, '.', ','); ?></td>
+                <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_amount), 2, '.', ','); ?>
+                    <input type="hidden" name="sales_return_and_allowances_amount" value="{{ array_sum($rgs_amount) }}">
+                </td>
                 <td></td>
             </tr>
             <tr>
@@ -87,8 +89,7 @@
                 <td>
                 </td>
                 <td style="font-weight: bold;text-align: center;"><?php echo number_format(array_sum($rgs_amount), 2, '.', ','); ?>
-                    <input type="hidden" name="spoiled_goods_amount" value="{{ array_sum($rgs_amount) }}">
-
+                    <input type="hidden" name="accounts_receivable_amount" value="{{ array_sum($rgs_amount) }}">
                 </td>
             </tr>
             <tr>
@@ -96,26 +97,27 @@
                 <td></td>
                 <td style="font-weight: bold;text-align: center;">
                     <?php
-                        $inventory = (array_sum($rgs_amount) / $rgs->total_amount) * $rgs->cost_of_goods_sold;
-                        echo number_format($inventory, 2, '.', ',');
+                    $inventory_amount = (array_sum($rgs_amount) / $rgs->total_amount) * ($rgs->cost_of_goods_sold - $rgs->deducted_inventory);
+                    echo number_format($inventory_amount, 2, '.', ',');
                     ?>
+                    <input type="hidden" name="deducted_inventory" value="{{ $inventory_amount }}">
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
-                <td style="text-align: center;"> COST OF GOODS SOLD</td>
+                <td style="text-align: center;">{{ $get_cost_of_goods_sold->account_name }}</td>
                 <td>
                 </td>
                 <td style="font-weight: bold;text-align: center;">
                     <?php
-                        $inventory = (array_sum($rgs_amount) / $rgs->total_amount) * $rgs->cost_of_goods_sold;
-                        echo number_format($inventory, 2, '.', ',');
+                    $cost_of_goods_sold_amount = (array_sum($rgs_amount) / $rgs->total_amount) * ($rgs->cost_of_goods_sold - $rgs->deducted_cost_of_goods_sold);
+                    echo number_format($cost_of_goods_sold_amount, 2, '.', ',');
                     ?>
-                    <input type="hidden" name="spoiled_goods_amount" value="{{ $rgs->inventory }}">
+                    <input type="hidden" name="deducted_cost_of_goods_sold" value="{{ $cost_of_goods_sold_amount }}">
                 </td>
             </tr>
-           
+
         </tbody>
     </table>
 
@@ -135,17 +137,31 @@
     <input type="hidden" value="{{ $get_customer_ar->chart_of_accounts->account_number }}"
         name="get_customer_ar_general_account_number">
 
+    <input type="hidden" value="{{ $get_general_merchandise->account_name }}"
+        name="get_general_merchandise_account_name">
+    <input type="hidden" value="{{ $get_general_merchandise->account_number }}"
+        name="get_general_merchandise_account_number">
+    <input type="hidden" value="{{ $get_general_merchandise->chart_of_accounts->account_number }}"
+        name="get_general_merchandise_general_account_number">
+
+    <input type="hidden" value="{{ $get_cost_of_goods_sold->account_name }}"
+        name="get_cost_of_goods_sold_account_name">
+    <input type="hidden" value="{{ $get_cost_of_goods_sold->account_number }}"
+        name="get_cost_of_goods_sold_account_number">
+    <input type="hidden" value="{{ $get_cost_of_goods_sold->chart_of_accounts->account_number }}"
+        name="get_cost_of_goods_sold_general_account_number">
+
 
 
     <button class="btn btn-sm float-right btn-success" type="submit">Submit</button>
 </form>
 
 <script>
-    $("#collection_post_bo_save").on('submit', (function(e) {
+    $("#collection_post_rgs_save").on('submit', (function(e) {
         e.preventDefault();
         $('#loader').show();
         $.ajax({
-            url: "collection_post_bo_save",
+            url: "collection_post_rgs_save",
             type: "POST",
             data: new FormData(this),
             contentType: false,

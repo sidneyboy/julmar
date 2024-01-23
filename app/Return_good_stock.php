@@ -29,7 +29,9 @@ class Return_good_stock extends Model
         'accounts_receivable',
         'inventory',
         'cost_of_goods_sold',
-        'posted_amount'
+        'posted_amount',
+        'deducted_inventory',
+        'deducted_cost_of_goods_sold',
     ];
 
     public function return_good_stock_details()
