@@ -215,24 +215,48 @@ class Collection_controller extends Controller
 
     public function collection_post_rgs_save(Request $request)
     {
-        // foreach ($request->input('rgs_amount') as $si_id => $data) {
-        //     $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
-        //         ->find($si_id);
+        //foreach ($request->input('rgs_amount') as $si_id => $data) {
+        // $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
+        //     ->find($si_id);
 
-        //     $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
+        // $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
 
-        //     if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
-        //         Sales_invoice::where('id', $si_id)
-        //             ->update([
-        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
-        //                 'payment_status' => 'paid',
-        //             ]);
-        //     } else {
-        //         Sales_invoice::where('id', $si_id)
-        //             ->update([
-        //                 'cm_amount_deducted' => $new_cm_amount_deducted,
-        //             ]);
-        //     }
+        // if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
+        //     Sales_invoice::where('id', $si_id)
+        //         ->update([
+        //             'cm_amount_deducted' => $new_cm_amount_deducted,
+        //             'payment_status' => 'paid',
+        //         ]);
+        // } else {
+        //     Sales_invoice::where('id', $si_id)
+        //         ->update([
+        //             'cm_amount_deducted' => $new_cm_amount_deducted,
+        //         ]);
+        // }
+
+        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+        //     ->where('principal_id', $request->input('principal_id'))
+        //     ->orderBy('id', 'desc')
+        //     ->first();
+
+        // if ($get_last_row_sales_invoice_accounts_receivable) {
+        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $data;
+        // } else {
+        //     $sales_invoice_ar_running_balance = $data;
+        // }
+
+        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+        //     'user_id' => auth()->user()->id,
+        //     'principal_id' => $request->input('principal_id'),
+        //     'customer_id' => $request->input('customer_id'),
+        //     'transaction' => 'credit memo rgs',
+        //     'all_id' => $request->input('cm_id'),
+        //     'debit_record' => 0,
+        //     'credit_record' => $data,
+        //     'running_balance' => $sales_invoice_ar_running_balance,
+        // ]);
+
+        // $new_sales_invoice_accounts_receivable->save();
         // }
 
         // $get_rgs_data = Return_good_stock::select('deducted_inventory', 'deducted_cost_of_goods_sold')->find($request->input('cm_id'));
@@ -248,32 +272,190 @@ class Collection_controller extends Controller
 
         // Return_good_stock::where('id', $request->input('cm_id'))
         //     ->update(['posted_amount' => $request->input('accounts_receivable_amount')]);
+        //return $request->input();
 
-        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-        //     ->where('principal_id', $request->input('principal_id'))
-        //     ->orderBy('id', 'desc')
-        //     ->first();
 
-        // if ($get_last_row_sales_invoice_accounts_receivable) {
-        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('accounts_receivable_amount');
-        // } else {
-        //     $sales_invoice_ar_running_balance = $request->input('accounts_receivable_amount');
-        // }
+        $get_sales_return_and_allowances_account_name = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('get_sales_return_and_allowances_account_name'))
+            ->where('account_number', $request->input('get_sales_return_and_allowances_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
-        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-        //     'user_id' => auth()->user()->id,
-        //     'principal_id' => $request->input('principal_id'),
-        //     'customer_id' => $request->input('customer_id'),
-        //     'transaction' => 'credit memo rgs',
-        //     'all_id' => $request->input('cm_id'),
-        //     'debit_record' => 0,
-        //     'credit_record' => $request->input('accounts_receivable_amount'),
-        //     'running_balance' => $sales_invoice_ar_running_balance,
-        // ]);
 
-        // $new_sales_invoice_accounts_receivable->save();
+        if ($get_sales_return_and_allowances_account_name) {
+            $running_balance = $get_sales_return_and_allowances_account_name->running_balance + $request->input('sales_return_and_allowances_amount');
 
-        return 'JOURNAL ENTRY NALANG KULANG ANI';
+            $get_sales_return_and_allowances_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_sales_return_and_allowances_account_name'),
+                'account_number' => $request->input('get_sales_return_and_allowances_account_number'),
+                'debit_record' => $request->input('sales_return_and_allowances_amount'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_sales_return_and_allowances_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_sales_return_and_allowances_new_general_ledger->save();
+        } else {
+            $get_sales_return_and_allowances_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_sales_return_and_allowances_account_name'),
+                'account_number' => $request->input('get_sales_return_and_allowances_account_number'),
+                'debit_record' => $request->input('sales_return_and_allowances_amount'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_sales_return_and_allowances_general_account_number'),
+                'running_balance' => $request->input('sales_return_and_allowances_amount'),
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_sales_return_and_allowances_new_general_ledger->save();
+        }
+
+        $get_customer_ar_account_name = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('get_customer_ar_account_name'))
+            ->where('account_number', $request->input('get_customer_ar_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+
+        if ($get_customer_ar_account_name) {
+            $customer_ar_running_balance = $get_customer_ar_account_name->running_balance - $request->input('accounts_receivable_amount');
+
+            $get_customer_ar_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_customer_ar_account_name'),
+                'account_number' => $request->input('get_customer_ar_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('accounts_receivable_amount'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+                'running_balance' => $customer_ar_running_balance,
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_customer_ar_new_general_ledger->save();
+        } else {
+            $get_customer_ar_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_customer_ar_account_name'),
+                'account_number' => $request->input('get_customer_ar_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('accounts_receivable_amount'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_customer_ar_general_account_number'),
+                'running_balance' => $request->input('accounts_receivable_amount'),
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_customer_ar_new_general_ledger->save();
+        }
+
+        $get_general_merchandise_account_name = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('get_general_merchandise_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('get_general_merchandise_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+
+        if ($get_general_merchandise_account_name) {
+            $customer_ar_running_balance = $get_general_merchandise_account_name->running_balance + $request->input('deducted_inventory');
+
+            $get_general_merchandise_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_general_merchandise_account_name'),
+                'account_number' => $request->input('get_general_merchandise_account_number'),
+                'debit_record' => $request->input('deducted_inventory'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_general_merchandise_general_account_number'),
+                'running_balance' => $customer_ar_running_balance,
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_general_merchandise_new_general_ledger->save();
+        } else {
+            $get_general_merchandise_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_general_merchandise_account_name'),
+                'account_number' => $request->input('get_general_merchandise_account_number'),
+                'debit_record' => $request->input('deducted_inventory'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_general_merchandise_general_account_number'),
+                'running_balance' => $request->input('deducted_inventory'),
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_general_merchandise_new_general_ledger->save();
+        }
+
+        $get_cost_of_goods_sold_account_name = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('get_cost_of_goods_sold_account_name'))
+            ->where('account_number', $request->input('get_cost_of_goods_sold_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+
+        if ($get_cost_of_goods_sold_account_name) {
+            $customer_ar_running_balance = $get_cost_of_goods_sold_account_name->running_balance + $request->input('deducted_cost_of_goods_sold');
+
+            $get_cost_of_goods_sold_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_cost_of_goods_sold_account_name'),
+                'account_number' => $request->input('get_cost_of_goods_sold_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('deducted_cost_of_goods_sold'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_cost_of_goods_sold_general_account_number'),
+                'running_balance' => $customer_ar_running_balance,
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_cost_of_goods_sold_new_general_ledger->save();
+        } else {
+            $get_cost_of_goods_sold_new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('get_cost_of_goods_sold_account_name'),
+                'account_number' => $request->input('get_cost_of_goods_sold_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('deducted_cost_of_goods_sold'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('get_cost_of_goods_sold_general_account_number'),
+                'running_balance' => $request->input('deducted_cost_of_goods_sold'),
+                'transaction' => 'CREDIT MEMO - RGS',
+                'customer_id' => $request->input('customer_id'),
+            ]);
+
+            $get_cost_of_goods_sold_new_general_ledger->save();
+        }
+
+
+
+
+
+
+
+
+        // return 'JOURNAL ENTRY NALANG KULANG ANI';
     }
 
     public function collection_post_bo_final_summary(Request $request)
@@ -348,34 +530,34 @@ class Collection_controller extends Controller
                         'cm_amount_deducted' => $new_cm_amount_deducted,
                     ]);
             }
+
+            $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($get_last_row_sales_invoice_accounts_receivable) {
+                $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $data;
+            } else {
+                $sales_invoice_ar_running_balance = $data;
+            }
+
+            $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                'user_id' => auth()->user()->id,
+                'principal_id' => $request->input('principal_id'),
+                'customer_id' => $request->input('customer_id'),
+                'transaction' => 'credit memo bo',
+                'all_id' => $request->input('cm_id'),
+                'debit_record' => 0,
+                'credit_record' => $data,
+                'running_balance' => $sales_invoice_ar_running_balance,
+            ]);
+
+            $new_sales_invoice_accounts_receivable->save();
         }
 
         Bad_order::where('id', $request->input('cm_id'))
             ->update(['posted_amount' => $request->input('spoiled_goods_amount')]);
-
-        $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($get_last_row_sales_invoice_accounts_receivable) {
-            $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('spoiled_goods_amount');
-        } else {
-            $sales_invoice_ar_running_balance = $request->input('spoiled_goods_amount');
-        }
-
-        $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-            'user_id' => auth()->user()->id,
-            'principal_id' => $request->input('principal_id'),
-            'customer_id' => $request->input('customer_id'),
-            'transaction' => 'credit memo bo',
-            'all_id' => $request->input('cm_id'),
-            'debit_record' => 0,
-            'credit_record' => $request->input('spoiled_goods_amount'),
-            'running_balance' => $sales_invoice_ar_running_balance,
-        ]);
-
-        $new_sales_invoice_accounts_receivable->save();
 
         $get_spoiled_goods = General_ledger::select('running_balance')
             ->where('account_name', $request->input('get_spoiled_goods_account_name'))
