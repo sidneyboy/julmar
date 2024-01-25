@@ -215,64 +215,76 @@ class Collection_controller extends Controller
 
     public function collection_post_rgs_save(Request $request)
     {
-        //foreach ($request->input('rgs_amount') as $si_id => $data) {
-        // $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
-        //     ->find($si_id);
+        date_default_timezone_set('Asia/Manila');
+        $date = date('Y-m-d');
+        foreach ($request->input('rgs_amount') as $si_id => $data) {
+            $get_sales_invoice_returned_amount = Sales_invoice::select('cm_amount_deducted', 'total')
+                ->find($si_id);
 
-        // $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
+            $new_cm_amount_deducted = $get_sales_invoice_returned_amount->cm_amount_deducted + $data;
 
-        // if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
-        //     Sales_invoice::where('id', $si_id)
-        //         ->update([
-        //             'cm_amount_deducted' => $new_cm_amount_deducted,
-        //             'payment_status' => 'paid',
-        //         ]);
-        // } else {
-        //     Sales_invoice::where('id', $si_id)
-        //         ->update([
-        //             'cm_amount_deducted' => $new_cm_amount_deducted,
-        //         ]);
-        // }
+            if ($get_sales_invoice_returned_amount->total <= $new_cm_amount_deducted) {
+                Sales_invoice::where('id', $si_id)
+                    ->update([
+                        'cm_amount_deducted' => $new_cm_amount_deducted,
+                        'payment_status' => 'paid',
+                    ]);
+            } else {
+                Sales_invoice::where('id', $si_id)
+                    ->update([
+                        'cm_amount_deducted' => $new_cm_amount_deducted,
+                    ]);
+            }
 
-        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-        //     ->where('principal_id', $request->input('principal_id'))
-        //     ->orderBy('id', 'desc')
-        //     ->first();
+            $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
+                ->where('principal_id', $request->input('principal_id'))
+                ->orderBy('id', 'desc')
+                ->first();
 
-        // if ($get_last_row_sales_invoice_accounts_receivable) {
-        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $data;
-        // } else {
-        //     $sales_invoice_ar_running_balance = $data;
-        // }
+            if ($get_last_row_sales_invoice_accounts_receivable) {
+                $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $data;
+            } else {
+                $sales_invoice_ar_running_balance = $data;
+            }
 
-        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-        //     'user_id' => auth()->user()->id,
-        //     'principal_id' => $request->input('principal_id'),
-        //     'customer_id' => $request->input('customer_id'),
-        //     'transaction' => 'credit memo rgs',
-        //     'all_id' => $request->input('cm_id'),
-        //     'debit_record' => 0,
-        //     'credit_record' => $data,
-        //     'running_balance' => $sales_invoice_ar_running_balance,
-        // ]);
+            $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
+                'user_id' => auth()->user()->id,
+                'principal_id' => $request->input('principal_id'),
+                'customer_id' => $request->input('customer_id'),
+                'transaction' => 'credit memo rgs',
+                'all_id' => $request->input('cm_id'),
+                'debit_record' => 0,
+                'credit_record' => $data,
+                'running_balance' => $sales_invoice_ar_running_balance,
+            ]);
 
-        // $new_sales_invoice_accounts_receivable->save();
-        // }
+            $new_sales_invoice_accounts_receivable->save();
+        }
 
-        // $get_rgs_data = Return_good_stock::select('deducted_inventory', 'deducted_cost_of_goods_sold')->find($request->input('cm_id'));
+        $get_rgs_data = Return_good_stock::select('deducted_inventory', 'deducted_cost_of_goods_sold', 'total_amount', 'posted_amount')->find($request->input('cm_id'));
 
-        // $new_deducted_inventory_amount = $get_rgs_data->deducted_inventory + $request->input('deducted_inventory');
-        // $new_deducted_cost_of_goods_sold = $get_rgs_data->deducted_cost_of_goods_sold + $request->input('deducted_cost_of_goods_sold');
+        $rgs_balance = $get_rgs_data->posted_amount + $request->input('accounts_receivable_amount');
+        $new_deducted_inventory_amount = $get_rgs_data->deducted_inventory + $request->input('deducted_inventory');
+        $new_deducted_cost_of_goods_sold = $get_rgs_data->deducted_cost_of_goods_sold + $request->input('deducted_cost_of_goods_sold');
 
-        // Return_good_stock::where('id', $request->input('cm_id'))
-        //     ->update([
-        //         'deducted_inventory' => $new_deducted_inventory_amount,
-        //         'deducted_cost_of_goods_sold' => $new_deducted_cost_of_goods_sold,
-        //     ]);
+        if ($rgs_balance >= $get_rgs_data->total_amount) {
+            Return_good_stock::where('id', $request->input('cm_id'))
+                ->update([
+                    'deducted_inventory' => $new_deducted_inventory_amount,
+                    'deducted_cost_of_goods_sold' => $new_deducted_cost_of_goods_sold,
+                    'posted_amount' => $request->input('accounts_receivable_amount'),
+                    'final_status' => 'posted',
+                ]);
+        } else {
+            Return_good_stock::where('id', $request->input('cm_id'))
+                ->update([
+                    'deducted_inventory' => $new_deducted_inventory_amount,
+                    'deducted_cost_of_goods_sold' => $new_deducted_cost_of_goods_sold,
+                    'posted_amount' => $request->input('accounts_receivable_amount'),
+                    'final_status' => 'partial',
+                ]);
+        }
 
-        // Return_good_stock::where('id', $request->input('cm_id'))
-        //     ->update(['posted_amount' => $request->input('accounts_receivable_amount')]);
-        //return $request->input();
 
 
         $get_sales_return_and_allowances_account_name = General_ledger::select('running_balance')
@@ -292,7 +304,7 @@ class Collection_controller extends Controller
                 'debit_record' => $request->input('sales_return_and_allowances_amount'),
                 'credit_record' => 0,
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_sales_return_and_allowances_general_account_number'),
                 'running_balance' => $running_balance,
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -308,7 +320,7 @@ class Collection_controller extends Controller
                 'debit_record' => $request->input('sales_return_and_allowances_amount'),
                 'credit_record' => 0,
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_sales_return_and_allowances_general_account_number'),
                 'running_balance' => $request->input('sales_return_and_allowances_amount'),
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -335,7 +347,7 @@ class Collection_controller extends Controller
                 'debit_record' => 0,
                 'credit_record' => $request->input('accounts_receivable_amount'),
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_customer_ar_general_account_number'),
                 'running_balance' => $customer_ar_running_balance,
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -351,7 +363,7 @@ class Collection_controller extends Controller
                 'debit_record' => 0,
                 'credit_record' => $request->input('accounts_receivable_amount'),
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_customer_ar_general_account_number'),
                 'running_balance' => $request->input('accounts_receivable_amount'),
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -379,7 +391,7 @@ class Collection_controller extends Controller
                 'debit_record' => $request->input('deducted_inventory'),
                 'credit_record' => 0,
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_general_merchandise_general_account_number'),
                 'running_balance' => $customer_ar_running_balance,
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -395,7 +407,7 @@ class Collection_controller extends Controller
                 'debit_record' => $request->input('deducted_inventory'),
                 'credit_record' => 0,
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_general_merchandise_general_account_number'),
                 'running_balance' => $request->input('deducted_inventory'),
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -422,7 +434,7 @@ class Collection_controller extends Controller
                 'debit_record' => 0,
                 'credit_record' => $request->input('deducted_cost_of_goods_sold'),
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_cost_of_goods_sold_general_account_number'),
                 'running_balance' => $customer_ar_running_balance,
                 'transaction' => 'CREDIT MEMO - RGS',
@@ -438,7 +450,7 @@ class Collection_controller extends Controller
                 'debit_record' => 0,
                 'credit_record' => $request->input('deducted_cost_of_goods_sold'),
                 'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
+                'transaction_date' => $date,
                 'general_account_number' => $request->input('get_cost_of_goods_sold_general_account_number'),
                 'running_balance' => $request->input('deducted_cost_of_goods_sold'),
                 'transaction' => 'CREDIT MEMO - RGS',

@@ -913,3 +913,5 @@ Route::post('/chart_of_accounts_save', 'Chart_of_accounts_controller@chart_of_ac
 
 Route::get('/general_ledger', 'General_ledger_controller@index');
 Route::post('/general_ledger_generate', 'General_ledger_controller@general_ledger_generate')->name('general_ledger_generate');
+Route::post('/general_ledger_show_report_type', 'General_ledger_controller@general_ledger_show_report_type')->name('general_ledger_show_report_type');
+

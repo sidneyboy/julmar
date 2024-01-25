@@ -30,7 +30,7 @@
                     <td>{{ $data->principal->principal }}</td>
                     <td style="text-align: right">
                         @php
-                            $outstanding_balance = $data->total - $data->total_returned_amount - $data->total_payment;
+                            $outstanding_balance = $data->total - $data->cm_amount_deducted - $data->total_payment;
                             echo number_format($outstanding_balance, 2, '.', ',');
                         @endphp
                         <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
