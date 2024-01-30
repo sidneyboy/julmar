@@ -888,10 +888,6 @@ Route::post('/collection_post_rgs_save', 'Collection_controller@collection_post_
 
 
 
-
-
-
-
 Route::get('/post_credit_memo', 'Post_credit_memo_controller@index');
 Route::post('/post_credit_memo_proceed', 'Post_credit_memo_controller@post_credit_memo_proceed')->name('post_credit_memo_proceed');
 Route::post('/post_credit_generate_final_summary', 'Post_credit_memo_controller@post_credit_generate_final_summary')->name('post_credit_generate_final_summary');
@@ -914,4 +910,13 @@ Route::post('/chart_of_accounts_save', 'Chart_of_accounts_controller@chart_of_ac
 Route::get('/general_ledger', 'General_ledger_controller@index');
 Route::post('/general_ledger_generate', 'General_ledger_controller@general_ledger_generate')->name('general_ledger_generate');
 Route::post('/general_ledger_show_report_type', 'General_ledger_controller@general_ledger_show_report_type')->name('general_ledger_show_report_type');
+
+
+
+
+Route::get('/sales_invoice', 'Sales_invoice_control_controller@index');
+Route::post('/sales_invoice_control_generate', 'Sales_invoice_control_controller@sales_invoice_control_generate')->name('sales_invoice_control_generate');
+Route::post('/sales_invoice_control_print', 'Sales_invoice_control_controller@sales_invoice_control_print')->name('sales_invoice_control_print');
+
+
 

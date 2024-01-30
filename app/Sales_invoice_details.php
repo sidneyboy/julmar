@@ -21,6 +21,11 @@ class Sales_invoice_details extends Model
         'quantity_returned',
     ];
 
+    public function sales_invoice_control_sku()
+    {
+        return $this->belongsTo('App\Sku_add', 'sku_id')->select('description','unit_of_measurement','sku_code');
+    }
+
     public function sku()
     {
         return $this->belongsTo('App\Sku_add', 'sku_id');
@@ -28,7 +33,7 @@ class Sales_invoice_details extends Model
 
     public function sales_invoice_sku()
     {
-        return $this->belongsTo('App\Sku_add', 'sku_id')->select('description','sku_type','id');
+        return $this->belongsTo('App\Sku_add', 'sku_id')->select('description', 'sku_type', 'id');
     }
 
     public function sales_invoice()
