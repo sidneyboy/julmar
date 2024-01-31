@@ -5,16 +5,20 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Location;
 use App\Agent;
+use App\Driver_helper;
 use App\Sales_invoice;
 use App\Sales_invoice_details;
 use App\Truck;
 use App\Logistics;
 use App\Logistics_details;
 use App\Logistics_invoices;
+use App\Sales_invoice_status_logs;
+use Carbon\Carbon;
 use DB;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 class Truck_load_controller extends Controller
 {
@@ -53,7 +57,8 @@ class Truck_load_controller extends Controller
     {
         $sales_invoice = Sales_invoice::select('id', 'delivery_receipt', 'agent_id')
             ->whereIn('agent_id', $request->input('agent_id'))
-            ->where('truck_load_status',null)
+            ->where('control', 'printed')
+            ->where('truck_load_status', null)
             ->get();
 
         $truck = Truck::select('id', 'plate_no')
@@ -64,9 +69,13 @@ class Truck_load_controller extends Controller
             ->where('id', $request->input('location_id'))
             ->get();
 
+        $driver = Driver_helper::select('id', 'full_name')
+            ->get();
+
         return view('truck_load_generated_invoices', [
             'sales_invoice' => $sales_invoice,
             'truck' => $truck,
+            'driver' => $driver,
             'location' => $location,
         ])->with('location_id', $request->input('location_id'));
     }
@@ -75,14 +84,19 @@ class Truck_load_controller extends Controller
     {
         $sales_invoice = Sales_invoice::select('id', 'customer_id', 'principal_id', 'agent_id', 'sku_type', 'delivery_receipt')->find($request->input('sales_invoice_id'));
 
+        $explode = explode('|', $request->input('driver'));
+        $driver_id = $explode[0];
+        $driver = $explode[1];
+
         return view('truck_load_generated_invoices_data', [
             'sales_invoice' => $sales_invoice,
         ])->with('location_id', $request->input('location_id'))
             ->with('detailed_location', strtoupper(str_replace(',', '', $request->input('detailed_location'))))
             ->with('sales_invoice_id', $request->input('sales_invoice_id'))
             ->with('truck_id', $request->input('truck_id'))
+            ->with('driver_id', $driver_id)
             ->with('trucking_company', strtoupper($request->input('trucking_company')))
-            ->with('driver', strtoupper($request->input('driver')))
+            ->with('driver', strtoupper($driver))
             ->with('contact_number', strtoupper($request->input('contact_number')))
             ->with('helper_1', strtoupper($request->input('helper_1')))
             ->with('helper_2', strtoupper($request->input('helper_2')));
@@ -118,6 +132,7 @@ class Truck_load_controller extends Controller
             ->with('truck_id', $request->input('truck_id'))
             ->with('trucking_company', strtoupper($request->input('trucking_company')))
             ->with('driver', strtoupper($request->input('driver')))
+            ->with('driver_id', $request->input('driver_id'))
             ->with('contact_number', strtoupper($request->input('contact_number')))
             ->with('helper_1', strtoupper($request->input('helper_1')))
             ->with('helper_2', strtoupper($request->input('helper_2')));
@@ -137,6 +152,7 @@ class Truck_load_controller extends Controller
             ->with('sales_invoice_id', $request->input('sales_invoice_id'))
             ->with('truck_id', $request->input('truck_id'))
             ->with('driver', strtoupper($request->input('driver')))
+            // ->with('driver_id', $request->input('driver_id'))
             ->with('trucking_company', strtoupper($request->input('trucking_company')))
             ->with('contact_number', strtoupper($request->input('contact_number')))
             ->with('helper_1', strtoupper($request->input('helper_1')))
@@ -230,10 +246,14 @@ class Truck_load_controller extends Controller
         $explode = explode('-', $request->input('truck_id'));
         $truck_primary_id = $explode[0];
         $plate_no = $explode[1];
+
+        $driver_data = Driver_helper::select('contact_number')->find($request->input('driver_id'));
+
         return view('truck_load_generated_very_final_summary_invoices_data', [
             'outlet' => $outlet,
             'cart' => $cart,
             'number_of_customers' => $number_of_customers,
+            'driver_data' => $driver_data,
             'sum_total_conversion' => $sum_total_conversion,
             'sum_total_quantity_per_case' => $sum_total_quantity_per_case,
             'conversion_butal' => $conversion_butal,
@@ -250,6 +270,7 @@ class Truck_load_controller extends Controller
             ->with('detailed_location', strtoupper(str_replace(',', '', $request->input('detailed_location'))))
             ->with('final_sales_invoice_id', $request->input('final_sales_invoice_id'))
             ->with('driver', strtoupper($request->input('driver')))
+            ->with('driver_id', $request->input('driver_id'))
             ->with('trucking_company', strtoupper($request->input('trucking_company')))
             ->with('contact_number', strtoupper($request->input('contact_number')))
             ->with('helper_1', strtoupper($request->input('helper_1')))
@@ -259,11 +280,14 @@ class Truck_load_controller extends Controller
 
     public function truck_load_save(Request $request)
     {
+        date_default_timezone_set('Asia/Manila');
+        $date_now = date('Y-m-d');
+
         //return $request->input();
         if ($request->input('total_expense_per_delivery') == 0) {
             $new_logistics = new Logistics([
                 'truck_id' => $request->input('truck_primary_id'),
-                'driver' => $request->input('driver'),
+                'driver' => $request->input('driver_id'),
                 'location_id' => $request->input('location_id'),
                 'contact_number' => $request->input('contact_number'),
                 'helper_1' => $request->input('helper_1'),
@@ -272,14 +296,13 @@ class Truck_load_controller extends Controller
                 'user_id' => auth()->user()->id,
                 'trucking_company' => $request->input('trucking_company'),
                 'number_of_invoices' => $request->input('number_of_invoices'),
-
             ]);
 
             $new_logistics->save();
         } else {
             $new_logistics = new Logistics([
                 'truck_id' => $request->input('truck_primary_id'),
-                'driver' => $request->input('driver'),
+                'driver' => $request->input('driver_id'),
                 'location_id' => $request->input('location_id'),
                 'contact_number' => $request->input('contact_number'),
                 'helper_1' => $request->input('helper_1'),
@@ -365,6 +388,27 @@ class Truck_load_controller extends Controller
 
                 $new_logistics_invoices->save();
             }
+
+            $sales_invoice_logs = Sales_invoice_status_logs::select('id', 'posted')->where('sales_invoice_id', $value->id)
+                ->orderBy('id', 'desc')
+                ->first();
+            $diff = now()->diffInDays(Carbon::parse($sales_invoice_logs->posted));
+
+            Sales_invoice_status_logs::where('id', $sales_invoice_logs->id)
+                ->update([
+                    'updated' => $date_now,
+                    'no_of_days' => $diff
+                ]);
+
+            $new_sales_invoice_status_logs_save = new Sales_invoice_status_logs([
+                'sales_invoice_id' => $value->id,
+                'posted' => $date_now,
+                'updated' => '',
+                'status' => 'Loadsheet',
+                'user_id' => auth()->user()->id,
+            ]);
+
+            $new_sales_invoice_status_logs_save->save();
         }
         Cart::session(auth()->user()->id)->clear();
     }

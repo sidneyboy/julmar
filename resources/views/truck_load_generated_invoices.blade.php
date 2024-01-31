@@ -2,25 +2,26 @@
     <div class="row">
         <div class="col-md-12">
             <label for="">Trucking Company</label>
-            <input type="text" class="form-control" name="trucking_company" required>
+            <input type="text" class="form-control" style="text-transform: uppercase" name="trucking_company" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label for="">Truck</label>
             <select name="truck_id" class="form-control" required>
-                <option value="" default>Select</option>
+                <option value="" default>SELECT</option>
                 @foreach ($truck as $data)
                     <option value="{{ $data->id . '-' . $data->plate_no }}">{{ $data->plate_no }}</option>
                 @endforeach
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label for="">Driver</label>
-            <input type="text" class="form-control" name="driver" required style="text-transform: uppercase">
-        </div>
-        <div class="col-md-4">
-            <label for="">Contact #</label>
-            <input type="text" class="form-control" name="contact_number" required
-                onkeypress="return isNumberKey(event)">
+            <select name="driver" class="form-control" required>
+                <option value="" default>SELECT</option>
+                @foreach ($driver as $driver_data)
+                    <option value="{{ $driver_data->id . '|' . $driver_data->full_name }}">{{ $driver_data->full_name }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
             <label for="">Helper 1</label>

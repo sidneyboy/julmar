@@ -32,7 +32,7 @@ class Customer extends Model
 
     public function location_details()
     {
-    	return $this->BelongsTo('App\Location_details', 'location_details_id');
+    	return $this->BelongsTo('App\Location_details', 'location_id');
     }
 
     public function customer_discount()

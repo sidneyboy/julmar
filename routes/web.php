@@ -234,8 +234,8 @@ Route::post('/principal_discount_show_input', 'Principal_discount_controller@pri
 Route::post('/principal_discount_save', 'Principal_discount_controller@principal_discount_save')->name('principal_discount_save');
 
 
-Route::get('/driver_helper', 'Driver_helper_controller@index');
-Route::post('/driver_helper_saved', 'Driver_helper_controller@driver_helper_saved')->name('driver_helper_saved');
+Route::get('/driver', 'driver_controller@index');
+Route::post('/driver_saved', 'driver_controller@driver_saved')->name('driver_saved');
 
 Route::get('/agent', 'Agent_controller@index');
 Route::post('/agent_saved', 'Agent_controller@agent_saved')->name('agent_saved');
@@ -649,8 +649,8 @@ Route::post('/customer_agent_export', 'Customer_upload_controller@customer_agent
 
 
 
-Route::get('/sales_invoice_control', 'Sales_invoice_control_controller@index');
-Route::post('/sales_invoice_control_proceed', 'Sales_invoice_control_controller@sales_invoice_control_proceed')->name('sales_invoice_control_proceed');
+// Route::get('/sales_invoice_control', 'Sales_invoice_control_controller@index');
+// Route::post('/sales_invoice_control_proceed', 'Sales_invoice_control_controller@sales_invoice_control_proceed')->name('sales_invoice_control_proceed');
 
 
 Route::get('/sku_sub_category', 'Sku_sub_category_controller@index');
@@ -914,9 +914,12 @@ Route::post('/general_ledger_show_report_type', 'General_ledger_controller@gener
 
 
 
-Route::get('/sales_invoice', 'Sales_invoice_control_controller@index');
+Route::get('/sales_invoice_control', 'Sales_invoice_control_controller@index');
 Route::post('/sales_invoice_control_generate', 'Sales_invoice_control_controller@sales_invoice_control_generate')->name('sales_invoice_control_generate');
 Route::post('/sales_invoice_control_print', 'Sales_invoice_control_controller@sales_invoice_control_print')->name('sales_invoice_control_print');
 
 
 
+Route::get('/truck_controler', 'Truck_control_controller@index');
+Route::post('/truck_controler_proceed', 'Truck_control_controller@truck_controler_proceed')->name('truck_controler_proceed');
+Route::post('/truck_load_controler_print', 'Truck_control_controller@truck_load_controler_print')->name('truck_load_controler_print');

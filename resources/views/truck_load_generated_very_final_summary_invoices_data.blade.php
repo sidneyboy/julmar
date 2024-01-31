@@ -16,7 +16,7 @@
                 </tr>
                 <tr>
                     <td>DRIVER CONTACT #:</td>
-                    <td style="text-align: center;" colspan="6">{{ $contact_number }}</td>
+                    <td style="text-align: center;" colspan="6">{{ $driver_data->contact_number }}</td>
                 </tr>
                 <tr>
                     <td>HELPER 1:</td>
@@ -184,7 +184,8 @@
     <input type="hidden" name="total_expense_per_delivery" id="total_expense_per_delivery"
         value="{{ $total_expense_per_delivery }}">
     <input type="hidden" name="driver" id="driver" value="{{ $driver }}">
-    <input type="hidden" name="contact_number" id="contact_number" value="{{ $contact_number }}">
+    <input type="hidden" name="driver_id" id="driver_id" value="{{ $driver_id }}">
+    <input type="hidden" name="contact_number" id="contact_number" value="{{ $driver_data->contact_number }}">
     <input type="hidden" name="helper_1" id="helper_1" value="{{ $helper_1 }}">
     <input type="hidden" name="helper_2" id="helper_2" value="{{ $helper_2 }}">
     @foreach ($cart as $item)

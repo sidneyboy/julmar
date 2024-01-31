@@ -16,10 +16,9 @@ class CreateDriverHelpersTable extends Migration
         Schema::create('driver_helpers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('full_name');
-             $table->string('contact_number');
-              $table->string('full_address');
-               $table->string('truck_unit_number');
-                $table->string('work_description');
+            $table->string('contact_number');
+            $table->string('truck_unit_number');
+            $table->string('work_description');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

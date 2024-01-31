@@ -29,4 +29,9 @@ class Logistics_invoices extends Model
     {
         return $this->belongsTo('App\Logistics', 'logistics_id')->select('driver');
     }
+
+    public function logistics()
+    {
+        return $this->belongsTo('App\Logistics', 'logistics_id');
+    }
 }

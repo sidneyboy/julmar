@@ -11,7 +11,7 @@
                 <h3 class="card-title" style="font-weight: bold;">SALES INVOICE PRINT</h3>
             </div>
             <div class="card-body">
-                <form action="{{ route('sales_invoice_generate') }}" method="get">
+                <form action="{{ route('sales_invoice_generate') }}" target="_blank" method="get">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -20,7 +20,7 @@
                                 <option value="" default>Select</option>
                                 @foreach ($sales_invoice as $data)
                                     <option value="{{ $data->id }}">
-                                        {{ $data->delivery_receipt }}
+                                        {{ strtoupper($data->delivery_receipt) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -49,6 +49,10 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        $("#submit").click(function() {
+           location.reload();
         });
 
         // $("#submit").on("click", function() {

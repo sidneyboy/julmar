@@ -55,6 +55,7 @@
     <input type="hidden" name="sales_invoice_id" value="{{ $sales_invoice_id }}">
     <input type="hidden" name="truck_id" value="{{ $truck_id }}">
     <input type="hidden" name="driver" value="{{ $driver }}">
+    <input type="hidden" name="driver_id" value="{{ $driver_id }}">
     <input type="hidden" name="contact_number" value="{{ $contact_number }}">
     <input type="hidden" name="helper_1" value="{{ $helper_1 }}">
     <input type="hidden" name="helper_2" value="{{ $helper_2 }}">

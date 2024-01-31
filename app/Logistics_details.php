@@ -22,4 +22,6 @@ class Logistics_details extends Model
     {
         return $this->belongsTo('App\Sku_principal', 'principal_id');
     }
+
+   
 }

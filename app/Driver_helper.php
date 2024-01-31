@@ -13,6 +13,7 @@ class Driver_helper extends Model
     	'truck_unit_number',
     	'work_description',
     	'user_id',
+		'status',
     ];
 
     public function user()

@@ -443,7 +443,15 @@
                                             <a href="{{ url('/truck_register') }}"
                                                 class="nav-link {{ $active_tab == 'truck_register' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Truck</p>
+                                                <p>Reg Truck</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/driver') }}"
+                                                class="nav-link {{ $active_tab == 'driver' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Reg Driver</p>
                                             </a>
                                         </li>
 
@@ -451,14 +459,23 @@
                                             <a href="{{ url('/truck_load') }}"
                                                 class="nav-link {{ $active_tab == 'truck_load' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Truck Load</p>
+                                                <p>New Load Sheet</p>
                                             </a>
                                         </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_controler') }}"
+                                                class="nav-link {{ $active_tab == 'truck_controler' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Control</p>
+                                            </a>
+                                        </li>
+                                        
                                         <li class="nav-item">
                                             <a href="{{ url('/truck_load_list') }}"
                                                 class="nav-link {{ $active_tab == 'truck_load_list' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
-                                                <p>Truck Load List</p>
+                                                <p>Update Loadsheet</p>
                                             </a>
                                         </li>
 

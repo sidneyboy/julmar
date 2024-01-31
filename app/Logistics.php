@@ -31,6 +31,7 @@ class Logistics extends Model
         'total_expense',
         'total_expense_updated_by',
         'status',
+        'control',
     ];
 
     public function location()
@@ -38,6 +39,17 @@ class Logistics extends Model
         return $this->belongsTo('App\Location', 'location_id');
     }
 
+    public function load_sheet_driver()
+    {
+        return $this->belongsTo('App\Driver_helper', 'driver')->select('full_name');
+    }
+
+    public function load_sheet_truck()
+    {
+        return $this->belongsTo('App\Truck', 'truck_id')->select('plate_no');
+    }
+
+   
     public function sales_invoice()
     {
         return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');

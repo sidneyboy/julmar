@@ -1,6 +1,7 @@
 <form id="truck_load_generated_very_final_summary_invoices_data">
     <label for="">Total Expense Per Delivery</label>
-    <input type="text" class="form-control" required name="total_expense_per_delivery" onkeypress="return isNumberKey(event)">
+    <input type="text" class="form-control" required name="total_expense_per_delivery"
+        onkeypress="return isNumberKey(event)">
     <br />
     <div class="table table-responsive">
         <table class="table table-bordered table-hover table-striped table-sm" style="width:100%;">
@@ -48,6 +49,7 @@
     <input type="hidden" name="sales_invoice_id" id="sales_invoice_id" value="{{ $sales_invoice_id }}">
     <input type="hidden" name="truck_id" id="truck_id" value="{{ $truck_id }}">
     <input type="hidden" name="driver" id="driver" value="{{ $driver }}">
+    <input type="hidden" name="driver_id" id="driver_id" value="{{ $driver_id }}">
     <input type="hidden" name="contact_number" id="contact_number" value="{{ $contact_number }}">
     <input type="hidden" name="helper_1" id="helper_1" value="{{ $helper_1 }}">
     <input type="hidden" name="helper_2" id="helper_2" value="{{ $helper_2 }}">
