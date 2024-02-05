@@ -401,6 +401,14 @@
                                         </li>
 
                                         <li class="nav-item">
+                                            <a href="{{ url('invoice_out_control') }}"
+                                                class="nav-link {{ $active_tab == 'invoice_out_control' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Invoice Out Control</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a href="{{ url('warehouse_pcm') }}"
                                                 class="nav-link {{ $active_tab == 'warehouse_pcm' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

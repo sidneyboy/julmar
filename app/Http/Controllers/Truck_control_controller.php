@@ -45,6 +45,9 @@ class Truck_control_controller extends Controller
 
     public function truck_load_controler_print(Request $request)
     {
+
+        //return $request->input();
+
         date_default_timezone_set('Asia/Manila');
         $date_now = date('Y-m-d');
         foreach ($request->input('sales_invoice_id') as $key => $data_sales_invoice_id) {
@@ -69,6 +72,12 @@ class Truck_control_controller extends Controller
 
             $new_sales_invoice_status_logs_save->save();
         }
+
+
+        Logistics::where('id', $request->input('logistics_id'))
+            ->update([
+                'control' => 'printed',
+            ]);
 
         $logistics_invoices = Logistics_invoices::whereIn('sales_invoice_id', $request->input('sales_invoice_id'))
             ->get();

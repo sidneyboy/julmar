@@ -30,11 +30,11 @@
                                 @foreach ($sales_invoice as $sales_invoice_data)
                                     @if ($user->position == 'admin')
                                         <option value="{{ 'agent_booking-' . $sales_invoice_data->id }}">
-                                            BOOKING-{{ $sales_invoice_data->delivery_receipt }}</option>
+                                            {{ strtoupper($sales_invoice_data->delivery_receipt) }}</option>
                                     @else
                                         @if ($sales_invoice_data->sales_invoice->principal_id == $user->principal_id)
                                             <option value="{{ 'agent_booking-' . $sales_invoice_data->id }}">
-                                                BOOKING-{{ $sales_invoice_data->delivery_receipt }}</option>
+                                                {{ strtoupper($sales_invoice_data->delivery_receipt) }}</option>
                                         @endif
                                     @endif
                                 @endforeach

@@ -51,6 +51,7 @@
     </div>
 
     <div class="form-group">
+        <input type="hidden" name="logistics_id" value="{{ $logistics->id }}">
         <button class="btn btn-sm float-right btn-success" id="submit" type="submit">Print Control</button>
     </div>
 </form>

@@ -3,7 +3,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="">Bo Cost Adjustment</label>
-                <input type="text" class="form-control form-control-sm" name="unit_cost_adjustment">
+                <input type="text" class="form-control" name="unit_cost_adjustment">
             </div>
         </div>
         <div class="col-md-6">

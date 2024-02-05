@@ -12,6 +12,10 @@ use App\Vs_withdrawal_details;
 use App\Sku_add;
 use App\Sales_invoice;
 use App\Sales_invoice_details;
+use App\Sales_invoice_status_logs;
+use App\Warehouse_out;
+use App\Warehouse_out_details;
+use Carbon\Carbon;
 use DB;
 use Cart;
 use Illuminate\Support\Facades\Auth;
@@ -418,19 +422,49 @@ class Invoice_out_controller extends Controller
     {
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
-        $load_sheet_id = uniqid();
+        $date_now = date('Y-m-d');
 
         $cart = Cart::session(auth()->user()->id)->getContent();
 
         Sales_invoice::where('id', $request->input('rep_dr'))
             ->update(['status' => 'out']);
 
+        $sales_invoice = Sales_invoice::select('principal_id', 'id')->find($request->input('rep_dr'));
+
+        $new_warehouse_out = new Warehouse_out([
+            'principal_id' => $sales_invoice->principal_id,
+            'user_id' => auth()->user()->id,
+            'sales_invoice_id' => $request->input('rep_dr'),
+            'status' => 'out',
+        ]);
+
+        $new_warehouse_out->save();
+
+
+        $sales_invoice_logs = Sales_invoice_status_logs::select('id', 'posted')->where('sales_invoice_id', $sales_invoice->id)
+            ->orderBy('id', 'desc')
+            ->first();
+        $diff = now()->diffInDays(Carbon::parse($sales_invoice_logs->posted));
+
+        Sales_invoice_status_logs::where('id', $sales_invoice_logs->id)
+            ->update([
+                'updated' => $date_now,
+                'no_of_days' => $diff
+            ]);
+
+        $new_sales_invoice_status_logs_save = new Sales_invoice_status_logs([
+            'sales_invoice_id' => $sales_invoice->id,
+            'posted' => $date_now,
+            'updated' => '',
+            'status' => 'Out From Warehouse',
+            'user_id' => auth()->user()->id,
+        ]);
+
+        $new_sales_invoice_status_logs_save->save();
+
         foreach ($cart as $key => $cart_data) {
             $sku_id = $cart_data->id;
             $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$sku_id' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-
-
 
 
             $final_unit_cost = $ledger_results[0]->running_amount / $ledger_results[0]->running_balance;
@@ -457,6 +491,14 @@ class Invoice_out_controller extends Controller
             Sales_invoice_details::where('sales_invoice_id', $request->input('rep_dr'))
                 ->where('sku_id', $sku_id)
                 ->update(['remarks' => 'out']);
+
+            $new_warehouse_out_details = new Warehouse_out_details([
+                'warehouse_out_id' => $new_warehouse_out->id,
+                'sku_id' => $sku_id,
+                'quantity' => $cart_data->quantity,
+            ]);
+
+            $new_warehouse_out_details->save();
         }
     }
 }

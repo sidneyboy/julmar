@@ -54,7 +54,7 @@
                     title: 'Your work has been saved',
                     showConfirmButton: false,
                     timer: 1500
-                });
+               });
 
                 location.reload();
             },

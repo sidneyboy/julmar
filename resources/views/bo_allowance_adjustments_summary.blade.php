@@ -87,6 +87,12 @@
                     <td></td>
                     <td></td>
                 </tr>
+                <tr>
+                    <td colspan="7"></td>
+                    <td style="text-align: right">{{ array_sum($sum_total_amount) / $received_purchase_order->gross_purchase }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
             </tbody>
         </table>
     </div>
