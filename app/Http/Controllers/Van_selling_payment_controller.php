@@ -73,11 +73,14 @@ class Van_selling_payment_controller extends Controller
 
     public function van_selling_short_payment_save(Request $request)
     {
-        $ledger = Van_selling_ar_ledger::where('customer_id',$request->input('customer_id'))
-                                ->orderBy('id','desc')
-                                ->limit(1)
-                                ->first();
-         
+
+        //return $request->input();
+
+        $ledger = Van_selling_ar_ledger::select('short', 'outstanding_balance')->where('customer_id', $request->input('customer_id'))
+            ->orderBy('id', 'desc')
+            ->limit(1)
+            ->first();
+
         $over_short = $ledger->short - $request->input('amount');
         if ($over_short >= 0) {
             $new = new Van_selling_ar_ledger([
