@@ -225,6 +225,8 @@ class Disbursement_controller extends Controller
                 $sum_invoice_cost[] = 0;
             }
 
+            
+
             if ($checker->payment_status == 'partial') {
                 $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
                     ->sum('amount');
@@ -247,9 +249,13 @@ class Disbursement_controller extends Controller
 
                 $amount_payable = $receive_purchase_order_unpaid_amount->dr  + array_sum($sum_return) + array_sum($sum_bo_allowance) + array_sum($sum_invoice_cost);
 
-                $net_payable = $amount_payable - $request->input('purchase_discount');
+                $final_amount_payable = $amount_payable - $request->input('purchase_discount');
 
-                $ewt_amount = $net_payable * $ewt_rate;
+
+
+                $ewt_amount = ($final_amount_payable / 1.12) * $ewt_rate;
+                $net_payable = $final_amount_payable - $ewt_amount;
+
             }
         } elseif ($transaction == "PO ") {
             $checker = Purchase_order::select('payment_status')
@@ -276,9 +282,12 @@ class Disbursement_controller extends Controller
             $ap_ledger = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->latest()->first();
             $ewt_rate = $request->input('ewt') / 100;
             $amount_payable = $ap_ledger->running_balance;
-            $net_payable = $amount_payable - $request->input('purchase_discount');
-            $ewt_amount = $net_payable * $ewt_rate;
+            $final_amount_payable = $amount_payable - $request->input('purchase_discount');
+            $ewt_amount = ($final_amount_payable / 1.12) * $ewt_rate;
+            $net_payable = $final_amount_payable - $ewt_amount;
+
         }
+
 
 
 
@@ -421,7 +430,7 @@ class Disbursement_controller extends Controller
 
     public function disbursement_saved(Request $request)
     {
-        //dd($request->all());
+        dd($request->all());
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
         //return $request->input();

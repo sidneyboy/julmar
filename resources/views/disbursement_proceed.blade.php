@@ -31,7 +31,7 @@
                 <input type="text" class="form-control" name="check_deposit_slip" required>
             </div>
             <div class="col-md-3">
-                <label for="">CV #</label>
+                <label for="">DV #</label>
                 <input type="text" class="form-control" required name="cv_number" required>
             </div>
             <div class="col-md-3">

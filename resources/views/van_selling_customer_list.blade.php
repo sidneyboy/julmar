@@ -53,7 +53,7 @@
 
         $("#van_selling_customer_list_show_data").on('submit', (function(e) {
             e.preventDefault();
-            //$('#loader').show();
+            $('#loader').show();
             $('#hide_if_trigger').hide();
             $.ajax({
                 url: "van_selling_customer_list_show_data",
