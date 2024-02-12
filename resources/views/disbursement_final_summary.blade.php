@@ -164,15 +164,15 @@
                 processData: false,
                 success: function(data) {
                     $('#loader').hide();
-                    // Swal.fire({
-                    //     position: 'top-end',
-                    //     icon: 'success',
-                    //     title: 'Your work has been saved',
-                    //     showConfirmButton: false,
-                    //     timer: 1500
-                    // });
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                    // location.reload();
+                    location.reload();
                 },
                 error: function(error) {
                     $('#loader').hide();
@@ -460,11 +460,11 @@
                             </tr>
                         @endfor
                     @endif
-                    @for ($i = 0; $i < count($account_name); $i++)
+                    @for ($i = 0; $i < count($transaction_entry); $i++)
                         <tr>
-                            <td>{{ $account_name[$i] }}
+                            <td>{{ $transaction_entry[$i]->account_name }}
 
-                                <input type="hidden" value="{{ $account_name[$i] }}" name="account_name[]">
+                                <input type="hidden" value="{{ $transaction_entry[$i]->account_name }}" name="account_name[]">
                             </td>
                             <td style="text-align: center;">{{ $transaction_entry[$i]->account_number }}
                                 <input type="hidden" value="{{ $transaction_entry[$i]->account_number }}"

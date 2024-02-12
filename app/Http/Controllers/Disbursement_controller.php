@@ -175,9 +175,7 @@ class Disbursement_controller extends Controller
         } elseif ($request->input('disbursement') == 'unidentified_chart_of_account') {
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
-            //return $request->input();
             $transaction_cash_in_bank = Chart_of_accounts_details::select('id', 'account_name')->find($request->input('cash_in_bank_id'));
-
 
             return view('disbursement_proceed', [
                 'transaction_cash_in_bank' => $transaction_cash_in_bank,
@@ -225,7 +223,7 @@ class Disbursement_controller extends Controller
                 $sum_invoice_cost[] = 0;
             }
 
-            
+
 
             if ($checker->payment_status == 'partial') {
                 $prev_payment = Disbursement::where('po_rr_id', $po_rr_id)
@@ -255,7 +253,6 @@ class Disbursement_controller extends Controller
 
                 $ewt_amount = ($final_amount_payable / 1.12) * $ewt_rate;
                 $net_payable = $final_amount_payable - $ewt_amount;
-
             }
         } elseif ($transaction == "PO ") {
             $checker = Purchase_order::select('payment_status')
@@ -285,7 +282,6 @@ class Disbursement_controller extends Controller
             $final_amount_payable = $amount_payable - $request->input('purchase_discount');
             $ewt_amount = ($final_amount_payable / 1.12) * $ewt_rate;
             $net_payable = $final_amount_payable - $ewt_amount;
-
         }
 
 
@@ -293,7 +289,7 @@ class Disbursement_controller extends Controller
 
         return view('disbursement_show_po_rr_payable')
             ->with('purchase_discount', $request->input('purchase_discount'))
-            ->with('net_payable', $net_payable)
+            ->with('net_payable', round($net_payable,2))
             ->with('amount_payable', $amount_payable)
             ->with('ewt_amount', $ewt_amount);
     }
@@ -393,9 +389,10 @@ class Disbursement_controller extends Controller
 
             date_default_timezone_set('Asia/Manila');
             $date = date('Y-m-d');
-            // return $request->input();
+         
             $transaction_entry = Chart_of_accounts_details::select('id', 'account_name', 'account_number', 'normal_balance', 'chart_of_accounts_id')
                 ->whereIn('id', $request->input("id"))
+                ->orderBy('id','desc')
                 ->get();
 
             $new_account_name_checker = $request->input('new_account_name');
@@ -406,6 +403,9 @@ class Disbursement_controller extends Controller
             } else {
                 $transaction_insert_entry[] = 0;
             }
+
+
+            
 
 
             return view('disbursement_final_summary', [
@@ -430,7 +430,7 @@ class Disbursement_controller extends Controller
 
     public function disbursement_saved(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
         //return $request->input();
@@ -443,6 +443,8 @@ class Disbursement_controller extends Controller
                 $transaction = $explode[0];
                 $po_rr_id = $explode[1];
             }
+
+            //return $transaction;
 
             $new = new Disbursement([
                 'user_id' => auth()->user()->id,
@@ -473,23 +475,31 @@ class Disbursement_controller extends Controller
 
             $new_jer->save();
 
-            if ($transaction == 'PO') {
+            if ($transaction == 'PO ') {
                 if ($request->input('outstanding_balance') != 0) {
                     Purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'partial']);
+
+                    $general_ledger_remarks = "partial payment to PO:" . $po_rr_id;
                 } else {
                     Purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'paid']);
+                    $general_ledger_remarks = "full payment to PO:" . $po_rr_id;
                 }
-            } elseif ($transaction == 'RR') {
+            } elseif ($transaction == 'RR ') {
                 if ($request->input('outstanding_balance') != 0) {
                     Received_purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'partial']);
+                    $general_ledger_remarks = "partial payment to RR:" . $po_rr_id;
                 } else {
                     Received_purchase_order::where('id', $po_rr_id)
                         ->update(['payment_status' => 'paid']);
+
+                    $general_ledger_remarks = "full payment to RR:" . $po_rr_id;
                 }
             }
+
+
 
             $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
             if ($principal_ledger_latest) {
@@ -506,6 +516,7 @@ class Disbursement_controller extends Controller
                     'adjustment' => 0,
                     'payment' =>  str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
                     'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $principal_ledger_saved->save();
@@ -522,6 +533,7 @@ class Disbursement_controller extends Controller
                     'adjustment' => 0,
                     'payment' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
                     'accounts_payable_end' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount') * -1,
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $principal_ledger_saved->save();
@@ -573,6 +585,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_purchase_discount_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();
@@ -588,6 +601,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_purchase_discount_general_account_number'),
                     'running_balance' => $request->input('purchase_discount'),
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();
@@ -614,6 +628,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_ap_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();
@@ -629,6 +644,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_ap_general_account_number'),
                     'running_balance' => $request->input('accounts_payable'),
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();
@@ -654,6 +670,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_bank_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_due_bir_ledger->save();
@@ -669,6 +686,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_bank_general_account_number'),
                     'running_balance' => $request->input('cash_in_bank'),
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_due_bir_ledger->save();
@@ -694,6 +712,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_bir_due_general_account_number'),
                     'running_balance' => $running_balance,
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();
@@ -709,6 +728,7 @@ class Disbursement_controller extends Controller
                     'general_account_number' => $request->input('get_bir_due_general_account_number'),
                     'running_balance' => $request->input('withholding_tax'),
                     'transaction' => 'PAYMENT TO PRINCIPAL',
+                    'remarks' => $general_ledger_remarks,
                 ]);
 
                 $new_general_ap_ledger->save();

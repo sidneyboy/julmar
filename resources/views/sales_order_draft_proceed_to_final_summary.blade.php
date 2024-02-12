@@ -265,7 +265,7 @@
         </table>
 
         @if ($customer_discount != 0)
-            <table class="table table-bordered table-hover table-sm table-striped">
+            {{-- <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -296,7 +296,6 @@
                             <input type="hidden" value="{{ $final_total }}" name="sales_total">
                         </td>
                     </tr>
-
                     <tr>
                         <td style="text-align: center;">{{ $get_cost_of_sales->account_name }}
                         </td>
@@ -322,9 +321,17 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
+
+
+            <input type="hidden" value="{{ $final_total }}" name="customer_ar_total">
+            <input type="hidden" name="final_gross_amount_jer" value="{{ $final_total }}">
+            <input type="hidden" value="{{ $final_total }}" name="sales_total">
+            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}" name="cost_of_sales_total">
+            <input type="hidden" name="final_unit_cost_amount_jer" value="{{ array_sum($sum_unit_cost_sub_total) }}">
+            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}" name="inventory_total">
         @else
-            <table class="table table-bordered table-hover table-sm table-striped">
+            {{-- <table class="table table-bordered table-hover table-sm table-striped">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -354,8 +361,6 @@
                             <input type="hidden" value="{{ array_sum($sum_total) }}" name="sales_total">
                         </td>
                     </tr>
-
-
                     <tr>
                         <td style="text-align: center;">{{ $get_cost_of_sales->account_name }}
                         </td>
@@ -381,7 +386,16 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
+
+
+            <input type="hidden" value="{{ array_sum($sum_total) }}" name="customer_ar_total">
+            <input type="hidden" name="final_gross_amount_jer" value="{{ array_sum($sum_total) }}">
+            <input type="hidden" value="{{ array_sum($sum_total) }}" name="sales_total">
+            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}" name="cost_of_sales_total">
+            <input type="hidden" name="final_unit_cost_amount_jer"
+                value="{{ array_sum($sum_unit_cost_sub_total) }}">
+            <input type="hidden" value="{{ array_sum($sum_unit_cost_sub_total) }}" name="inventory_total">
         @endif
 
 

@@ -4,7 +4,7 @@ then e lahi lahi nimo sila depending kong bo ba or rgs ang JER
 --- kani e add sa pag add sa principal ang mo generate automatic ang purchase discount sa chart of account
 --- sa general disbursements kai wala nag ka dimao ang mga account number
 --- add status tomorrow sa logistics kong na print na ang control para dili na makita balik (OKAY NANI)
-
+--- please check to maam van ang kwenta sa purchase order discount sa principal payment
 
 date_default_timezone_set('Asia/Manila');
         $date_now = date('Y-m-d');

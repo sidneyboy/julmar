@@ -19,6 +19,7 @@ class General_ledger extends Model
         'transaction',
         'branch',
         'customer_id',
+        'remarks',
     ];
 
     public function chart_of_account_details()
