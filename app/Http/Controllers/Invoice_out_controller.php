@@ -484,6 +484,8 @@ class Invoice_out_controller extends Controller
                 'amount' => $amount,
                 'final_unit_cost' => $final_unit_cost,
                 'running_amount' => $running_amount,
+                'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
             ]);
 
             $new_sku_ledger->save();

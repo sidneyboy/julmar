@@ -534,6 +534,8 @@ class Receive_controller extends Controller
                         'final_unit_cost' => $request->input('final_unit_cost')[$data],
                         'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $running_amount,
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
                     ]);
 
                     $new_sku_ledger->save();
@@ -550,6 +552,8 @@ class Receive_controller extends Controller
                         'final_unit_cost' => $request->input('final_unit_cost')[$data],
                         'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $request->input('final_total_cost_per_sku')[$data],
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
                     ]);
 
                     $new_sku_ledger->save();

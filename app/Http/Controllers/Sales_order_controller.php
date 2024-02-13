@@ -172,7 +172,7 @@ class Sales_order_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $sales_order_draft = Sales_order_draft::where('status', 'draft')->get();
+            $sales_order_draft = Sales_order_draft::where('status', 'draft')->orderBy('id', 'desc')->get();
             return view('sales_order_draft', [
                 'user' => $user,
                 'sales_order_draft' => $sales_order_draft,
@@ -287,11 +287,11 @@ class Sales_order_controller extends Controller
         if ($get_merchandise_inventory && $get_sales && $get_cost_of_sales && $get_customer_ar) {
             if ($request->input('principal') == 'GCI') {
                 $dr_checker = Sales_invoice::select('delivery_receipt')
-                    ->where('delivery_receipt', $request->input('delivery_receipt_for_gci'))->count();
+                    ->where('delivery_receipt', strtoupper($request->input('delivery_receipt_for_gci')))->count();
                 if ($dr_checker != 0) {
                     return 'existing dr';
                 } else {
-                    $delivery_receipt_data = $request->input('delivery_receipt_for_gci');
+                    $delivery_receipt_data = strtoupper($request->input('delivery_receipt_for_gci'));
                     $sku_type = strtoupper($request->input('sku_type'));
                 }
             } else {
@@ -338,7 +338,7 @@ class Sales_order_controller extends Controller
 
             $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
 
-            $check_dr = $request->input('delivery_receipt_for_gci');
+            $check_dr = strtoupper($request->input('delivery_receipt_for_gci'));
             if (isset($check_dr)) {
                 $delivery_receipt = $check_dr;
             } else {
@@ -548,9 +548,6 @@ class Sales_order_controller extends Controller
             $new_general_ledger->save();
         }
 
-
-
-
         $discount_checker = $request->input('discount_rate');
         if (isset($discount_checker)) {
             $discount_rate = implode('-', $request->input('discount_rate'));
@@ -659,6 +656,26 @@ class Sales_order_controller extends Controller
         $new_sales_invoice_jer->save();
 
         foreach ($request->input('sku_id') as $key => $data) {
+            $get_sku_ledger = Sku_ledger::where('sku_id', $data)->orderBy('id', 'desc')->first();
+
+            $new_sku_ledger = new Sku_ledger([
+                'sku_id' => $get_sku_ledger->sku_id,
+                'quantity' => 0,
+                'running_balance' => $get_sku_ledger->running_balance,
+                'user_id' => auth()->user()->id,
+                'transaction_type' => "encoder with invoice quantity",
+                'all_id' => $sales_invoice_save->id,
+                'principal_id' => $get_sku_ledger->principal_id,
+                'sku_type' => $get_sku_ledger->sku_type,
+                'amount' => $get_sku_ledger->amount,
+                'running_amount' => $get_sku_ledger->running_amount,
+                'final_unit_cost' => $get_sku_ledger->final_unit_cost,
+                'with_invoice_quantity' => $request->input('final_quantity')[$data],
+                'with_invoice_net_balance' => $get_sku_ledger->running_balance - $request->input('final_quantity')[$data],
+            ]);
+
+            $new_sku_ledger->save();
+
             $sales_invoice_details = new Sales_invoice_details([
                 'sales_invoice_id' => $sales_invoice_save->id,
                 'sku_id' => $data,

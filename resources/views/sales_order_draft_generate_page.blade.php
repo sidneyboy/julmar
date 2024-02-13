@@ -1,7 +1,7 @@
 <form id="sales_order_draft_proceed_to_final_summary">
     @if ($sales_order_draft->principal->principal == 'GCI')
         <label for="">Delivery Receipt</label>
-        <input type="text" name="delivery_receipt_for_gci" class="form-control" required>
+        <input type="text" style="text-transform: uppercase" name="delivery_receipt_for_gci" class="form-control" required>
     @endif
     <br />
 
@@ -53,6 +53,7 @@
                     <th>Desc</th>
                     <th>UOM</th>
                     <th>Qty</th>
+                    <th>Balance</th>
                     <th>U/P</th>
                 </tr>
             </thead>
@@ -66,6 +67,9 @@
                             <input type="number" style="text-align:right" min="0"
                                 value="{{ $details->quantity }}" class="form-control"
                                 name="final_quantity[{{ $details->sku_id }}]">
+                        </td>
+                        <td style="text-align: right">
+                            {{ $details->sku_ledger_latest->with_invoice_net_balance }}
                         </td>
                         <td style="text-align: right">
                             @if ($customer_principal_price->price_level == 'price_1')

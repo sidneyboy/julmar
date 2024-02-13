@@ -36,4 +36,5 @@ class Sales_order_draft extends Model
   {
     return $this->hasMany('App\Sales_order_draft_details', 'sales_order_draft_id');
   }
+  
 }

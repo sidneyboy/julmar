@@ -230,9 +230,10 @@ class Warehouse_pcm_controller extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
-        //return $request->input();
+        return $request->input();
         if ($request->input('type') == 'rgs') {
             $cart = Cart::session(auth()->user()->id)->getContent();
+
             Return_good_stock::where('id', $request->input('id'))
                 ->update([
                     'status' => 'verified',
@@ -240,7 +241,7 @@ class Warehouse_pcm_controller extends Controller
                     'verified_by' => auth()->user()->id,
                     'total_amount' => 0,
                 ]);
-                
+
             foreach ($cart as $key => $data) {
                 Return_good_stock_details::where('sku_id', $data->id)
                     ->where('return_good_stock_id', $request->input('id'))
@@ -248,6 +249,26 @@ class Warehouse_pcm_controller extends Controller
                         'confirmed_quantity' => $data->quantity,
                         'user_id' => auth()->user()->id,
                     ]);
+
+                // $get_sku_ledger = Sku_ledger::where('sku_id', $data->id)->orderBy('id', 'desc')->first();
+                // $running_balance = $get_sku_ledger->running_balance + $data->quantity;
+                // $new_sku_ledger = new Sku_ledger([
+                //     'sku_id' => $data->id,
+                //     'quantity' => $data->quantity,
+                //     'running_balance' => $running_balance,
+                //     'user_id' => auth()->user()->id,
+                //     'transaction_type' => "rgs verified cm",
+                //     'all_id' => $request->input('id'),
+                //     'principal_id' => $get_sku_ledger->principal_id,
+                //     'sku_type' => $get_sku_ledger->sku_type,
+                //     'amount' => $get_sku_ledger->amount,
+                //     'running_amount' => $get_sku_ledger->running_amount,
+                //     'final_unit_cost' => $get_sku_ledger->final_unit_cost,
+                //     'with_invoice_quantity' => $request->input('final_quantity')[$data],
+                //     'with_invoice_net_balance' => $get_sku_ledger->running_balance - $request->input('final_quantity')[$data],
+                // ]);
+
+                // $new_sku_ledger->save();
             }
 
             // foreach ($request->input('discount_rate') as $key => $discount_rate) {

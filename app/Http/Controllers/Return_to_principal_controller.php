@@ -335,6 +335,8 @@ class Return_to_principal_controller extends Controller
                         'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
                         'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
                         'running_amount' => $running_amount,
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
                     ]);
 
                     $new_sku_ledger->save();
@@ -353,6 +355,8 @@ class Return_to_principal_controller extends Controller
                         'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
                         'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
                         'running_amount' => $running_amount,
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
                     ]);
 
                     $new_sku_ledger->save();
