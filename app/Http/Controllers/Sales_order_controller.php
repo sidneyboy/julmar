@@ -687,6 +687,8 @@ class Sales_order_controller extends Controller
                 'sku_type' => strtoupper($request->input('sku_type')),
                 'kilograms' => $request->input('kilograms')[$data],
                 'total_discount_per_sku' => $request->input('total_discount_per_sku')[$data],
+                'final_unit_cost' => $request->input('final_unit_cost')[$data],
+                'average_cost' => $request->input('average_cost')[$data],
             ]);
 
             $sales_invoice_details->save();

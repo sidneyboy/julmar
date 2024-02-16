@@ -31,9 +31,9 @@
             <thead>
                 <tr>
                     @if ($customer_discount != 0)
-                        <th colspan="{{ 10 + count($customer_discount) }}">DR: {{ $delivery_receipt }}</th>
+                        <th colspan="{{ 11 + count($customer_discount) }}">DR: {{ $delivery_receipt }}</th>
                     @else
-                        <th colspan="10">DR: {{ $delivery_receipt }}</th>
+                        <th colspan="11">DR: {{ $delivery_receipt }}</th>
                     @endif
                 </tr>
                 <tr>
@@ -52,6 +52,7 @@
                     <th>Final Total</th>
                     <th>Avg Cost</th>
                     <th>Sub Total</th>
+                    <th>FUC</th>
                 </tr>
             </thead>
             <tbody>
@@ -153,9 +154,17 @@
 
                                 echo number_format($unit_cost_sub_total, 2, '.', ',');
                             @endphp
+
+                            <input type="hidden" name="average_cost[{{ $details->sku_id }}]"
+                                value="{{ $unit_cost_sub_total }}">
+                            <input type="hidden" name="final_unit_cost[{{ $details->sku_id }}]"
+                                value="{{ $details->sku->sku_ledger_get_average_cost->final_unit_cost }}">
                         </td>
                         <td style="text-align:right">
                             {{ number_format($unit_cost_sub_total * $final_quantity[$details->sku_id], 2, '.', ',') }}
+                        </td>
+                        <td style="text-align: right">
+                            {{ $details->sku->sku_ledger_get_average_cost->final_unit_cost }}
                         </td>
                     </tr>
                 @endforeach

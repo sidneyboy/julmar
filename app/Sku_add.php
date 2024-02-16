@@ -66,7 +66,7 @@ class Sku_add extends Model
 
     public function sku_ledger_get_average_cost()
     {
-      return $this->hasOne('App\Sku_ledger', 'sku_id')->select('running_balance','running_amount')->latest();
+      return $this->hasOne('App\Sku_ledger', 'sku_id')->select('running_balance','running_amount','final_unit_cost')->latest();
     }
 
     public function vs_sku_ledger()

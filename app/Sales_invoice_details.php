@@ -19,6 +19,8 @@ class Sales_invoice_details extends Model
         'kilograms',
         'total_discount_per_sku',
         'quantity_returned',
+        'final_unit_cost',
+        'average_cost',
     ];
 
     public function sales_invoice_control_sku()
