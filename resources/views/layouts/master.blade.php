@@ -472,6 +472,14 @@
                                         </li>
 
                                         <li class="nav-item">
+                                            <a href="{{ url('/truck_sales_invoice_transfer_controler') }}"
+                                                class="nav-link {{ $active_tab == 'truck_sales_invoice_transfer_controler' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Transfer</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a href="{{ url('/truck_controler') }}"
                                                 class="nav-link {{ $active_tab == 'truck_controler' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>

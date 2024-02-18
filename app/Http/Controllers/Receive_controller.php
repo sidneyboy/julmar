@@ -24,6 +24,7 @@ use DB;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class Receive_controller extends Controller
 {
@@ -382,42 +383,42 @@ class Receive_controller extends Controller
 
             $received_jer_save->save();
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => $request->input('net_payable'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
-                ]);
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => $request->input('net_payable'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => 0,
-                    'received' => $request->input('net_payable'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $request->input('net_payable'),
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => $request->input('net_payable'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $request->input('net_payable'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
         } else {
             $received_jer_save = new Received_jer([
                 'principal_id' => $request->input('principal_id'),
@@ -429,42 +430,42 @@ class Receive_controller extends Controller
 
             $received_jer_save->save();
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => $request->input('total_final_cost'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
-                ]);
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => $request->input('total_final_cost'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => 0,
-                    'received' => $request->input('total_final_cost'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $request->input('total_final_cost'),
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => $request->input('total_final_cost'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $request->input('total_final_cost'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
         }
 
         for ($i = 0; $i < count($request->input('discount_selected_name')); $i++) {
@@ -522,6 +523,8 @@ class Receive_controller extends Controller
                 if ($count_ledger_row > 0) {
                     $running_balance = $ledger_results[0]->running_balance + $request->input('received_quantity')[$data];
                     $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
+                    $with_invoice_quantity = $ledger_results[0]->with_invoice_quantity;
+                    $with_invoice_net_balance = $ledger_results[0]->with_invoice_net_balance;
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,
                         'quantity' => $request->input('received_quantity')[$data],
@@ -534,12 +537,14 @@ class Receive_controller extends Controller
                         'final_unit_cost' => $request->input('final_unit_cost')[$data],
                         'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $running_amount,
-                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
-                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
+                        'with_invoice_quantity' => $with_invoice_quantity,
+                        'with_invoice_net_balance' => $with_invoice_net_balance,
                     ]);
 
                     $new_sku_ledger->save();
                 } else {
+                    $with_invoice_quantity = 0;
+                    $with_invoice_net_balance = 0;
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,
                         'quantity' => $request->input('received_quantity')[$data],
@@ -552,8 +557,8 @@ class Receive_controller extends Controller
                         'final_unit_cost' => $request->input('final_unit_cost')[$data],
                         'amount' => $request->input('final_total_cost_per_sku')[$data],
                         'running_amount' => $request->input('final_total_cost_per_sku')[$data],
-                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
-                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance,
+                        'with_invoice_quantity' => $request->input('received_quantity')[$data],
+                        'with_invoice_net_balance' => $request->input('received_quantity')[$data],
                     ]);
 
                     $new_sku_ledger->save();

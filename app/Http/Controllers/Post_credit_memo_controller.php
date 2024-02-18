@@ -117,6 +117,8 @@ class Post_credit_memo_controller extends Controller
 
                         $average_cost[$details->sku_id] = $sku_ledger->running_amount / $sku_ledger->running_balance;
                     }
+
+                    $final_unit_cost[$details->sku_id] = $details->sku->sku_ledger_get_average_cost->final_unit_cost;
                 }
             } else {
                 $sales_invoice = Sales_invoice::select('id', 'discount_rate', 'delivery_receipt', 'total', 'total_returned_amount')->find($request->input('si_id'));
@@ -138,13 +140,11 @@ class Post_credit_memo_controller extends Controller
                         ->orderBy('id', 'desc')
                         ->first();
 
-
                     if ($price_history) {
                         $unit_price[$details->sku_id] = $price_history->price_level;
 
                         $average_cost[$details->sku_id] = $sku_ledger->running_amount / $sku_ledger->running_balance;
                     } else {
-
                         $price_details = Sku_price_details::select($customer_price_level->price_level . ' as price_level')
                             ->where('sku_id', $details->sku_id)
                             ->first();
@@ -154,10 +154,17 @@ class Post_credit_memo_controller extends Controller
                         $average_cost[$details->sku_id] = $sku_ledger->running_amount / $sku_ledger->running_balance;
                     }
                 }
+
+                foreach ($sales_invoice->sales_invoice_details_sku as $key_2 => $invoice_details) {
+                    $final_unit_cost[$invoice_details->sku_id] = $invoice_details->final_unit_cost;
+                }
             }
+
+
 
             return view('post_credit_generate_final_summary', [
                 'cm_data' => $cm_data,
+                'final_unit_cost' => $final_unit_cost,
                 'sales_invoice' => $sales_invoice,
                 'average_cost' => $average_cost,
                 'unit_price' => $unit_price,
@@ -281,31 +288,104 @@ class Post_credit_memo_controller extends Controller
                             'cost_of_goods_sold' => $request->input('final_average_cost_total'),
                         ]);
 
-                    // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //     ->where('principal_id', $request->input('principal_id'))
-                    //     ->orderBy('id', 'desc')
-                    //     ->first();
+                    foreach ($request->input('quantity_returned') as $key => $quantity) {
 
-                    // if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    // } else {
-                    //     $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    // }
+                        $sku_ledger = Sku_ledger::select('sku_type', 'running_balance', 'running_amount', 'with_invoice_quantity', 'with_invoice_net_balance')
+                            ->where('sku_id', $key)->orderBy('id', 'desc')->first();
 
-                    // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //     'user_id' => auth()->user()->id,
-                    //     'principal_id' => $request->input('principal_id'),
-                    //     'customer_id' => $request->input('customer_id'),
-                    //     'transaction' => 'credit memo rgs',
-                    //     'all_id' => $request->input('cm_id'),
-                    //     'debit_record' => 0,
-                    //     'credit_record' => $request->input('total_amount'),
-                    //     'running_balance' => $sales_invoice_ar_running_balance,
-                    // ]);
+                        if ($sku_ledger) {
+                            $running_balance = $sku_ledger->running_balance + $request->input('quantity_returned')[$key];
+                            $running_amount = $sku_ledger->running_amount + $request->input('final_total_cost_per_sku')[$key];
+                            $with_invoice_quantity = $sku_ledger->with_invoice_quantity;
+                            $with_invoice_net_balance = $sku_ledger->with_invoice_net_balance;
+                            $new_sku_ledger = new Sku_ledger([
+                                'sku_id' => $key,
+                                'quantity' => $request->input('quantity_returned')[$key],
+                                'running_balance' => $running_balance,
+                                'user_id' => auth()->user()->id,
+                                'transaction_type' => 'rgs - ' . $request->input('delivery_receipt'),
+                                'all_id' => $request->input('cm_id'),
+                                'principal_id' => $request->input('principal_id'),
+                                'sku_type' => $sku_ledger->sku_type,
+                                'final_unit_cost' => $request->input('final_unit_cost')[$key],
+                                'amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'running_amount' => $running_amount,
+                                'with_invoice_quantity' => $with_invoice_quantity,
+                                'with_invoice_net_balance' => $with_invoice_net_balance,
+                            ]);
 
-                    // $new_sales_invoice_accounts_receivable->save();
+                            $new_sku_ledger->save();
+                        } else {
+                            $with_invoice_quantity = 0;
+                            $with_invoice_net_balance = 0;
+                            $new_sku_ledger = new Sku_ledger([
+                                'sku_id' => $key,
+                                'quantity' => $request->input('quantity_returned')[$key],
+                                'running_balance' => $request->input('quantity_returned')[$key],
+                                'user_id' => auth()->user()->id,
+                                'transaction_type' => 'rgs - ' . $request->input('delivery_receipt'),
+                                'all_id' => $request->input('cm_id'),
+                                'principal_id' => $request->input('principal_id'),
+                                'sku_type' => $sku_ledger->sku_type,
+                                'final_unit_cost' => $request->input('final_unit_cost')[$key],
+                                'amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'running_amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'with_invoice_quantity' => $request->input('quantity_returned')[$key],
+                                'with_invoice_net_balance' => $request->input('quantity_returned')[$key],
+                            ]);
+
+                            $new_sku_ledger->save();
+                        }
+                    }
                 } else {
                     foreach ($request->input('quantity_returned') as $key => $quantity) {
+
+                        $sku_ledger = Sku_ledger::select('sku_type', 'running_balance', 'running_amount', 'with_invoice_quantity', 'with_invoice_net_balance')->where('sku_id', $key)->orderBy('id', 'desc')->first();
+
+                        if ($sku_ledger) {
+                            $running_balance = $sku_ledger->running_balance + $request->input('quantity_returned')[$key];
+                            $running_amount = $sku_ledger->running_amount + $request->input('final_total_cost_per_sku')[$key];
+                            $with_invoice_quantity = $sku_ledger->with_invoice_quantity;
+                            $with_invoice_net_balance = $sku_ledger->with_invoice_net_balance;
+                            $new_sku_ledger = new Sku_ledger([
+                                'sku_id' => $key,
+                                'quantity' => $request->input('quantity_returned')[$key],
+                                'running_balance' => $running_balance,
+                                'user_id' => auth()->user()->id,
+                                'transaction_type' => 'rgs - ' . $request->input('delivery_receipt'),
+                                'all_id' => $request->input('cm_id'),
+                                'principal_id' => $request->input('principal_id'),
+                                'sku_type' => $sku_ledger->sku_type,
+                                'final_unit_cost' => $request->input('final_unit_cost')[$key],
+                                'amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'running_amount' => $running_amount,
+                                'with_invoice_quantity' => $with_invoice_quantity,
+                                'with_invoice_net_balance' => $with_invoice_net_balance,
+                            ]);
+
+                            $new_sku_ledger->save();
+                        } else {
+                            $with_invoice_quantity = 0;
+                            $with_invoice_net_balance = 0;
+                            $new_sku_ledger = new Sku_ledger([
+                                'sku_id' => $key,
+                                'quantity' => $request->input('quantity_returned')[$key],
+                                'running_balance' => $request->input('quantity_returned')[$key],
+                                'user_id' => auth()->user()->id,
+                                'transaction_type' => 'rgs - ' . $request->input('delivery_receipt'),
+                                'all_id' => $request->input('cm_id'),
+                                'principal_id' => $request->input('principal_id'),
+                                'sku_type' => $sku_ledger->sku_type,
+                                'final_unit_cost' => $request->input('final_unit_cost')[$key],
+                                'amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'running_amount' => $request->input('final_total_cost_per_sku')[$key],
+                                'with_invoice_quantity' => $request->input('quantity_returned')[$key],
+                                'with_invoice_net_balance' => $request->input('quantity_returned')[$key],
+                            ]);
+
+                            $new_sku_ledger->save();
+                        }
+
                         $sales_invoice_details_data = Sales_invoice_details::select('quantity_returned')
                             ->where('sales_invoice_id', $request->input('si_id'))
                             ->where('sku_id', $key)
@@ -334,7 +414,6 @@ class Post_credit_memo_controller extends Controller
                     }
 
 
-
                     Return_good_stock::where('id', $request->input('cm_id'))
                         ->update([
                             'total_amount' => $request->input('total_amount'),
@@ -347,70 +426,6 @@ class Post_credit_memo_controller extends Controller
                             'inventory' => $request->input('final_average_cost_total'),
                             'cost_of_goods_sold' => $request->input('final_average_cost_total'),
                         ]);
-
-                    // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
-                    // $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
-                    // $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
-
-                    // if ($sales_invoice_data->total == $amount_checker) {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update([
-                    //             'total_returned_amount' => $new_total_returned_amount,
-                    //             'payment_status' => 'paid',
-                    //         ]);
-
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
-
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
-
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo rgs',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //         'status' => 'paid',
-                    //     ]);
-
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // } else {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update(['total_returned_amount' => $new_total_returned_amount]);
-
-                    //     $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //         ->where('principal_id', $request->input('principal_id'))
-                    //         ->orderBy('id', 'desc')
-                    //         ->first();
-
-                    //     if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //         $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     } else {
-                    //         $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     }
-
-                    //     $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //         'user_id' => auth()->user()->id,
-                    //         'principal_id' => $request->input('principal_id'),
-                    //         'customer_id' => $request->input('customer_id'),
-                    //         'transaction' => 'credit memo rgs',
-                    //         'all_id' => $request->input('cm_id'),
-                    //         'debit_record' => 0,
-                    //         'credit_record' => $request->input('total_amount'),
-                    //         'running_balance' => $sales_invoice_ar_running_balance,
-                    //     ]);
-
-                    //     $new_sales_invoice_accounts_receivable->save();
-                    // }
                 }
             } else if ($request->input('transaction') == 'BO') {
                 if ($request->input('si_id') == 'unidentified') {
@@ -423,30 +438,6 @@ class Post_credit_memo_controller extends Controller
                             'spoiled_goods' => $request->input('total_amount'),
                             'accounts_receivable' => $request->input('total_amount'),
                         ]);
-
-                    // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //     ->where('principal_id', $request->input('principal_id'))
-                    //     ->orderBy('id', 'desc')
-                    //     ->first();
-
-                    // if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    // } else {
-                    //     $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    // }
-
-                    // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //     'user_id' => auth()->user()->id,
-                    //     'principal_id' => $request->input('principal_id'),
-                    //     'customer_id' => $request->input('customer_id'),
-                    //     'transaction' => 'credit memo bo',
-                    //     'all_id' => $request->input('cm_id'),
-                    //     'debit_record' => 0,
-                    //     'credit_record' => $request->input('total_amount'),
-                    //     'running_balance' => $sales_invoice_ar_running_balance,
-                    // ]);
-
-                    // $new_sales_invoice_accounts_receivable->save();
                 } else {
                     foreach ($request->input('quantity_returned') as $key => $quantity) {
                         Bad_order_details::where('bad_order_id', $request->input('cm_id'))
@@ -475,70 +466,6 @@ class Post_credit_memo_controller extends Controller
                             'spoiled_goods' => $request->input('total_amount'),
                             'accounts_receivable' => $request->input('total_amount'),
                         ]);
-
-                    // $sales_invoice_data = Sales_invoice::select('total_returned_amount', 'total', 'total_payment')->find($request->input('si_id'));
-                    // $amount_checker = $sales_invoice_data->total_returned_amount + $sales_invoice_data->total_payment + $request->input('total_amount');
-                    // $new_total_returned_amount = $sales_invoice_data->total_returned_amount + $request->input('total_amount');
-
-                    // if ($sales_invoice_data->total == $amount_checker) {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update([
-                    //             'total_returned_amount' => $new_total_returned_amount,
-                    //             'payment_status' => 'paid',
-                    //         ]);
-
-                        // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                        //     ->where('principal_id', $request->input('principal_id'))
-                        //     ->orderBy('id', 'desc')
-                        //     ->first();
-
-                        // if ($get_last_row_sales_invoice_accounts_receivable) {
-                        //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                        // } else {
-                        //     $sales_invoice_ar_running_balance = $request->input('total_amount');
-                        // }
-
-                        // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                        //     'user_id' => auth()->user()->id,
-                        //     'principal_id' => $request->input('principal_id'),
-                        //     'customer_id' => $request->input('customer_id'),
-                        //     'transaction' => 'credit memo bo',
-                        //     'all_id' => $request->input('cm_id'),
-                        //     'debit_record' => 0,
-                        //     'credit_record' => $request->input('total_amount'),
-                        //     'running_balance' => $sales_invoice_ar_running_balance,
-                        //     'status' => 'paid',
-                        // ]);
-
-                        // $new_sales_invoice_accounts_receivable->save();
-                    // } else {
-                    //     Sales_invoice::where('id', $request->input('si_id'))
-                    //         ->update(['total_returned_amount' => $new_total_returned_amount]);
-
-                    //     // $get_last_row_sales_invoice_accounts_receivable = Sales_invoice_accounts_receivable::where('customer_id', $request->input('customer_id'))
-                    //     //     ->where('principal_id', $request->input('principal_id'))
-                    //     //     ->orderBy('id', 'desc')
-                    //     //     ->first();
-
-                    //     // if ($get_last_row_sales_invoice_accounts_receivable) {
-                    //     //     $sales_invoice_ar_running_balance = $get_last_row_sales_invoice_accounts_receivable->running_balance - $request->input('total_amount');
-                    //     // } else {
-                    //     //     $sales_invoice_ar_running_balance = $request->input('total_amount');
-                    //     // }
-
-                    //     // $new_sales_invoice_accounts_receivable = new Sales_invoice_accounts_receivable([
-                    //     //     'user_id' => auth()->user()->id,
-                    //     //     'principal_id' => $request->input('principal_id'),
-                    //     //     'customer_id' => $request->input('customer_id'),
-                    //     //     'transaction' => 'credit memo bo',
-                    //     //     'all_id' => $request->input('cm_id'),
-                    //     //     'debit_record' => 0,
-                    //     //     'credit_record' => $request->input('total_amount'),
-                    //     //     'running_balance' => $sales_invoice_ar_running_balance,
-                    //     // ]);
-
-                    //     // $new_sales_invoice_accounts_receivable->save();
-                    // }
                 }
             }
         }

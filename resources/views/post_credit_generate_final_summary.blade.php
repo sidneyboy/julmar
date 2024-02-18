@@ -39,6 +39,7 @@
                             <td>Delivery Receipt:</td>
                             <th style="text-align: center;">
                                 {{ Str::ucfirst($si_id) }}
+                                <input type="hidden" name="delivery_receipt" value="{{ Str::ucfirst($si_id) }}">
                             </th>
                             <td>Sku Type:</td>
                             <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
@@ -59,6 +60,7 @@
                                 <th style="text-align: center;">Sub-Total</th>
                                 <th style="text-align: center;">Avg Cost</th>
                                 <th style="text-align: center;">Sub-Total</th>
+                                <th style="text-align: center;">FUC</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,7 +68,10 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}
+                                        <input type="hidden" name="quantity_returned[{{ $data->sku_id }}]"
+                                            value="{{ $data->confirmed_quantity }}">
+                                    </td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
@@ -87,6 +92,12 @@
                                             echo number_format($average_cost[$data->sku_id] * $data->confirmed_quantity, 2, '.', ',');
                                         @endphp
                                     </td>
+                                    <td style="text-align: right">
+                                        {{ number_format($final_unit_cost[$data->sku_id], 2, '.', ',') }}
+                                        <input type="hidden" name="final_unit_cost[{{ $data->sku_id }}]" value="{{ $final_unit_cost[$data->sku_id] }}">
+
+                                        <input type="hidden" name="final_total_cost_per_sku[{{ $data->sku_id }}]" value="{{ $final_unit_cost[$data->sku_id] * $data->confirmed_quantity }}">
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -96,7 +107,8 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th style="text-align: right;text-decoration: overline">{{ number_format(array_sum($sum_total), 2, '.', ',') }}
+                                <th style="text-align: right;text-decoration: overline">
+                                    {{ number_format(array_sum($sum_total), 2, '.', ',') }}
                                     <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
                                 </th>
                                 <th></th>
@@ -158,6 +170,7 @@
                             <td>Delivery Receipt:</td>
                             <th style="text-align: center;">
                                 {{ Str::ucfirst($si_id) }}
+                                <input type="hidden" name="delivery_receipt" value="{{ Str::ucfirst($si_id) }}">
                             </th>
                             <td>Sku Type:</td>
                             <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
@@ -185,7 +198,11 @@
                                 <tr>
                                     <td>{{ $data->sku->sku_code }}</td>
                                     <td>{{ $data->sku->description }}</td>
-                                    <td style="text-align: right">{{ $data->confirmed_quantity }}</td>
+                                    <td style="text-align: right">{{ $data->confirmed_quantity }}
+                                        <input type="hidden" name="quantity_returned[{{ $data->sku_id }}]"
+                                            value="{{ $data->confirmed_quantity }}">
+                                    
+                                    </td>
                                     <td style="text-align: right">
                                         {{ number_format($unit_price[$data->sku_id], 2, '.', ',') }}</td>
                                     <td style="text-align: right">
@@ -219,8 +236,8 @@
                                     {{ number_format(array_sum($sum_total), 2, '.', ',') }}
                                     <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
                                 </th>
-                               
-                              
+
+
                             </tr>
                         </tfoot>
                     </table>
@@ -276,6 +293,7 @@
                             <td>Delivery Receipt:</td>
                             <th style="text-align: center;">
                                 {{ $sales_invoice->delivery_receipt }}
+                                <input type="hidden" name="delivery_receipt" value="{{ $sales_invoice->delivery_receipt }}">
                             </th>
                             <td>Sku Type:</td>
                             <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
@@ -296,6 +314,7 @@
                                 <th style="text-align: center;">Sub-Total</th>
                                 <th style="text-align: center;">Avg Cost</th>
                                 <th style="text-align: center;">Sub-Total</th>
+                                <th style="text-align: center">FUC</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -328,6 +347,13 @@
                                             echo number_format($average_cost[$data->sku_id] * $data->confirmed_quantity, 2, '.', ',');
                                         @endphp
                                     </td>
+                                    <td style="text-align: right">
+                                        {{ number_format($final_unit_cost[$data->sku_id], 2, '.', ',') }}
+                                        <input type="hidden" name="final_unit_cost[{{ $data->sku_id }}]" value="{{ $final_unit_cost[$data->sku_id] }}">
+
+                                        <input type="hidden" name="final_total_cost_per_sku[{{ $data->sku_id }}]" value="{{ $final_unit_cost[$data->sku_id] * $data->confirmed_quantity }}">
+
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -340,7 +366,8 @@
                                     <th></th>
                                     <th style="text-align: right">
                                         {{ number_format(array_sum($sum_total), 2, '.', ',') }}
-                                        <input type="hidden" value="{{ array_sum($sum_total) }}" name="total_amount">
+                                        <input type="hidden" value="{{ array_sum($sum_total) }}"
+                                            name="total_amount">
                                         <input type="hidden" name="customer_discount[]" value="0">
                                     </th>
                                 </tr>
@@ -399,6 +426,7 @@
                                         <input type="hidden" value="{{ array_sum($sum_average_cost) }}"
                                             name="final_average_cost_total">
                                     </th>
+                                    
                                 </tr>
                             @endif
                         </tfoot>
@@ -461,6 +489,7 @@
                             <td>Delivery Receipt:</td>
                             <th style="text-align: center;">
                                 {{ $sales_invoice->delivery_receipt }}
+                                <input type="hidden" name="delivery_receipt" value="{{ $sales_invoice->delivery_receipt }}">
                             </th>
                             <td>Sku Type:</td>
                             <th style="text-align: center;">{{ $cm_data->sku_type }}</th>
@@ -619,18 +648,18 @@
             success: function(data) {
                 $('#loader').hide();
                 if (data == 'exceed') {
-                    Swal.fire(
-                        'Cannot Proceed',
-                        'Amount Exceed AR Balance',
+                   Swal.fire(
+                       'Cannot Proceed',
+                       'Amount Exceed AR Balance',
                         'error'
                     )
                 } else {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Your work has been saved',
-                        showConfirmButton: false,
-                        timer: 1500
+                   Swal.fire({
+                       position: 'top-end',
+                       icon: 'success',
+                       title: 'Your work has been saved',
+                       showConfirmButton: false,
+                       timer: 1500
                     });
 
                     location.reload();

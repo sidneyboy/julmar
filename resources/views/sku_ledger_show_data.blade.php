@@ -47,7 +47,7 @@
                                     <div style="overflow-y:scroll;
                                     height:300px;">
                                         <table class="table table-bordered table-sm table-striped"
-                                            style="font-size:11;width:100%;">
+                                            style="font-size:13px;width:100%;">
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
@@ -59,6 +59,9 @@
                                                     <th>Amount</th>
                                                     <th>Running Amount</th>
                                                     <th>Average Cost</th>
+                                                    <th>W/ Invoice Qty</th>
+                                                    <th>W/ Invoice Qty Balance</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -149,6 +152,12 @@
                                                         </td>
                                                         <td style="text-align: right">
                                                             {{ number_format($details->running_amount / $details->running_balance, 4, '.', ',') }}
+                                                        </td>
+                                                        <td style="text-align: right">
+                                                            {{ $details->with_invoice_quantity }}
+                                                        </td>
+                                                        <td style="text-align: right">
+                                                            {{ $details->with_invoice_net_balance }}
                                                         </td>
                                                     </tr>
                                                 @endforeach

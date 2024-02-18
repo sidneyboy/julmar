@@ -27,7 +27,7 @@
             </tbody>
         </table>
 
-        <table class="table table-bordered table-hover table-sm table-striped">
+        <table class="table table-bordered table-hover table-sm table-striped text-center" style="font-size:14px;">
             <thead>
                 <tr>
                     @if ($customer_discount != 0)

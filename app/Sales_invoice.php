@@ -84,6 +84,11 @@ class Sales_invoice extends Model
         return $this->hasMany('App\Sales_invoice_details', 'sales_invoice_id');
     }
 
+    public function sales_invoice_details_sku()
+    {
+        return $this->hasMany('App\Sales_invoice_details', 'sales_invoice_id')->select('sku_id','final_unit_cost');
+    }
+
     public function sales_invoice_status_logs()
     {
         return $this->hasMany('App\Sales_invoice_status_logs', 'sales_invoice_id')->orderBy('id', 'desc');
