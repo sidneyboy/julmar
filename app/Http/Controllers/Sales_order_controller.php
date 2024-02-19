@@ -258,7 +258,11 @@ class Sales_order_controller extends Controller
 
     public function sales_order_draft_proceed_to_final_summary(Request $request)
     {
-        //return $request->input();
+        foreach ($request->input('final_quantity') as $key => $value) {
+            if ($value > $request->input('quantity_net_balance')[$key]) {
+                return 'quantity exceed';
+            }
+        }
 
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
@@ -337,6 +341,10 @@ class Sales_order_controller extends Controller
             }
 
             $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
+            $sales_order_details = Sales_order_draft_details::select('sku_id')
+                ->where('sales_order_draft_id', $request->input('sales_order_id'))
+                ->where('sku_id', array_keys(array_filter($request->input('final_quantity'))))
+                ->get();
 
             $check_dr = strtoupper($request->input('delivery_receipt_for_gci'));
             if (isset($check_dr)) {
@@ -346,6 +354,7 @@ class Sales_order_controller extends Controller
             }
 
             return view('sales_order_draft_proceed_to_final_summary', [
+                'sales_order_details' => $sales_order_details,
                 'get_merchandise_inventory' => $get_merchandise_inventory,
                 'get_sales' => $get_sales,
                 'get_cost_of_sales' => $get_cost_of_sales,
@@ -358,7 +367,7 @@ class Sales_order_controller extends Controller
                 'agent_id' => $request->input('agent_id'),
                 'principal_id' => $request->input('principal_id'),
                 'customer_principal_price' => $request->input('customer_principal_price'),
-                'final_quantity' => $request->input('final_quantity'),
+                'final_quantity' => array_filter($request->input('final_quantity')),
                 'customer_principal_code' => $request->input('customer_principal_code'),
                 'unit_price' => $request->input('unit_price'),
                 'customer_discount' => $request->input('customer_discount'),
@@ -373,6 +382,7 @@ class Sales_order_controller extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $date = date('Y-m-d');
+        $date_time = date('Y-m-d H:i:s');
         //return $request->input();
 
         $get_customer_ar = General_ledger::select('running_balance')

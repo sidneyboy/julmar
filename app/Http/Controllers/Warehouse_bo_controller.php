@@ -17,7 +17,7 @@ class Warehouse_bo_controller extends Controller
 {
     public function index()
     {
-        if (Auth()->user()->id) {
+        if (Auth::check()) {
             $user = User::select('name', 'position', 'principal_id')->find(Auth()->user()->id);
 
             return view('warehouse_bo', [

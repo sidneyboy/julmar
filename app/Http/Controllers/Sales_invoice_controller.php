@@ -46,6 +46,7 @@ class Sales_invoice_controller extends Controller
             ->update([
                 'sales_invoice_printed' => $date_now,
                 'status' => 'printed',
+                'created_at' => $date_time,
             ]);
 
         $sales_invoice_status_logs_save = new Sales_invoice_status_logs([

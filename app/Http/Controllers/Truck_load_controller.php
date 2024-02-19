@@ -161,7 +161,7 @@ class Truck_load_controller extends Controller
 
     public function truck_load_generated_very_final_summary_invoices_data(Request $request)
     {
-
+        //return $request->input();
         $outlet = Sales_invoice::select('principal_id', 'id', 'sku_type')
             ->whereIn('id', $request->input('final_sales_invoice_id'))
             ->groupBy('principal_id')
@@ -191,7 +191,6 @@ class Truck_load_controller extends Controller
                 $sum_total_quantity_per_case[] = 0;
             }
         }
-
 
 
         foreach ($outlets as $key_2 => $data_butal) {
@@ -348,7 +347,7 @@ class Truck_load_controller extends Controller
             $total_kg[$value->sku_type] = $data_invoice_details->total_kg;
 
             Sales_invoice::where('id', $value->id)
-                ->update(['truck_load_status' => 'loaded']);
+                ->update(['truck_load_status' => 'loadsheet']);
 
             if ($value->sku_type == 'CASE') {
                 $new_logistics_invoices = new Logistics_invoices([

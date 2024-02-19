@@ -422,7 +422,9 @@ class Invoice_out_controller extends Controller
     {
         //return $request->input();
         date_default_timezone_set('Asia/Manila');
+        $date_time = date('Y-m-d H:i:s');
         $date_now = date('Y-m-d');
+        $time = date('H:i:s');
 
         $cart = Cart::session(auth()->user()->id)->getContent();
 
@@ -449,7 +451,8 @@ class Invoice_out_controller extends Controller
         Sales_invoice_status_logs::where('id', $sales_invoice_logs->id)
             ->update([
                 'updated' => $date_now,
-                'no_of_days' => $diff
+                'no_of_days' => $diff,
+                'created_at' => $date_time,
             ]);
 
         $new_sales_invoice_status_logs_save = new Sales_invoice_status_logs([

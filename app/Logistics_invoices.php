@@ -25,6 +25,11 @@ class Logistics_invoices extends Model
         return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');
     }
 
+    public function sales_invoice_transfer()
+    {
+        return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id')->select('delivery_receipt','principal_id');
+    }
+
     public function logistics_driver()
     {
         return $this->belongsTo('App\Logistics', 'logistics_id')->select('driver');

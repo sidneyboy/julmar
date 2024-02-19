@@ -56,7 +56,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sales_order_draft->sales_order_draft_details as $details)
+                @foreach ($sales_order_details as $details)
                     <tr>
                         <td>{{ $details->sku->sku_code }}</td>
                         <td>{{ $details->sku->description }}</td>

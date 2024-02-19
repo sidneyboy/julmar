@@ -1,7 +1,8 @@
 <form id="sales_order_draft_proceed_to_final_summary">
     @if ($sales_order_draft->principal->principal == 'GCI')
         <label for="">Delivery Receipt</label>
-        <input type="text" style="text-transform: uppercase" name="delivery_receipt_for_gci" class="form-control" required>
+        <input type="text" style="text-transform: uppercase" name="delivery_receipt_for_gci" class="form-control"
+            required>
     @endif
     <br />
 
@@ -69,7 +70,15 @@
                                 name="final_quantity[{{ $details->sku_id }}]">
                         </td>
                         <td style="text-align: right">
-                            {{ $details->sku_ledger_latest->with_invoice_net_balance }}
+                            @if ($details->sku_ledger_latest)
+                                {{ $details->sku_ledger_latest->with_invoice_net_balance }}
+                                <input type="text" name="quantity_net_balance[{{ $details->sku_id }}]"
+                                    value="{{ $details->sku_ledger_latest->with_invoice_net_balance }}">
+                            @else
+                                0
+                                <input type="text" name="quantity_net_balance[{{ $details->sku_id }}]"
+                                    value="0">
+                            @endif
                         </td>
                         <td style="text-align: right">
                             @if ($customer_principal_price->price_level == 'price_1')
@@ -189,6 +198,12 @@
                     Swal.fire(
                         'Cannot Proceed',
                         'No chart of account!',
+                        'error'
+                    )
+                } else if (data == 'quantity exceed') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Nag exceed ang quantity nga gi order sa Quantity Remaining!',
                         'error'
                     )
                 } else {

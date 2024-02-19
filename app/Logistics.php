@@ -49,7 +49,7 @@ class Logistics extends Model
         return $this->belongsTo('App\Truck', 'truck_id')->select('plate_no');
     }
 
-   
+
     public function sales_invoice()
     {
         return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');
@@ -68,6 +68,11 @@ class Logistics extends Model
     public function logistics_invoices()
     {
         return $this->hasMany('App\Logistics_invoices', 'logistics_id');
+    }
+
+    public function logistics_invoices_transfer()
+    {
+        return $this->hasMany('App\Logistics_invoices', 'logistics_id')->select('sales_invoice_id');
     }
 
     public function user()
