@@ -14,17 +14,20 @@
                 <form id="truck_sales_invoice_transfer_proceed">
                     @csrf
                     <div class="row">
-                        <div class="col-md-12">
-                            <select name="sales_invoice" class="form-control select2bs4" style="width:100%;" required>
-                                <option value="" default>SELECT INVOICE</option>
+                        <div class="col-md-6">
+                            <label>SELECT LOADSHEET</label>
+                            <select name="logistics_id" id="logistics_id" class="form-control select2bs4"
+                                style="width:100%;" required>
+                                <option value="" default>SELECT LOAD SHEET</option>
                                 @foreach ($logistics as $data)
-                                    @foreach ($data->logistics_invoices_transfer as $details)
-                                        <option value="{{ $details->sales_invoice_id }}">
-                                            {{ $data->load_sheet_driver->full_name . ' - ' . $details->sales_invoice_transfer->principal->principal . ' - ' . $details->sales_invoice_transfer->delivery_receipt }}
-                                        </option>
-                                    @endforeach
+                                    <option value="{{ $data->id }}">
+                                        LOAD SHEET - {{ $data->id . ' - ' . $data->load_sheet_driver->full_name }}
+                                    </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="truck_sales_invoice_transfer_generate_invoice_page"></div>
                         </div>
                         <div class="col-md-12">
                             <br />
@@ -47,6 +50,29 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+
+        $("#logistics_id").change(function() {
+            $('#loader').show();
+            var logistics_id = $(this).val();
+            $.post({
+                type: "POST",
+                url: "/truck_sales_invoice_transfer_generate_invoice",
+                data: 'logistics_id=' + logistics_id,
+                success: function(data) {
+                    $('#loader').hide();
+                    $('#truck_sales_invoice_transfer_generate_invoice_page').html(data);
+                },
+                error: function(error) {
+                    $('#loader').hide();
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Please Contact IT Support',
+                        'error'
+                    )
+                }
+            });
         });
 
 

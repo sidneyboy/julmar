@@ -19,7 +19,7 @@
                                 <option value="" default>SELECT TRUCK AND DRIVER</option>
                                 @foreach ($logistics as $data)
                                     <option value="{{ $data->id }}">
-                                        {{ $data->load_sheet_driver->full_name . ' - ' . $data->load_sheet_truck->plate_no }}
+                                        LOAD SHEET - {{ $data->id ." - ". $data->load_sheet_driver->full_name }}
                                     </option>
                                 @endforeach
                             </select>

@@ -925,6 +925,6 @@ Route::post('/truck_controler_proceed', 'Truck_control_controller@truck_controle
 Route::post('/truck_load_controler_print', 'Truck_control_controller@truck_load_controler_print')->name('truck_load_controler_print');
 
 Route::get('/truck_sales_invoice_transfer', 'Truck_sales_invoice_transfer_controller@index');
+Route::post('/truck_sales_invoice_transfer_generate_invoice', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_generate_invoice')->name('truck_sales_invoice_transfer_generate_invoice');
 Route::post('/truck_sales_invoice_transfer_proceed', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_proceed')->name('truck_sales_invoice_transfer_proceed');
 Route::post('/truck_sales_invoice_transfer_save', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_save')->name('truck_sales_invoice_transfer_save');
-
