@@ -928,3 +928,6 @@ Route::get('/truck_sales_invoice_transfer', 'Truck_sales_invoice_transfer_contro
 Route::post('/truck_sales_invoice_transfer_generate_invoice', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_generate_invoice')->name('truck_sales_invoice_transfer_generate_invoice');
 Route::post('/truck_sales_invoice_transfer_proceed', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_proceed')->name('truck_sales_invoice_transfer_proceed');
 Route::post('/truck_sales_invoice_transfer_save', 'Truck_sales_invoice_transfer_controller@truck_sales_invoice_transfer_save')->name('truck_sales_invoice_transfer_save');
+
+Route::get('/truck_logistics_export', 'Truck_logistics_export_controller@index');
+Route::post('/truck_logistics_export_proceed', 'Truck_logistics_export_controller@truck_logistics_export_proceed')->name('truck_logistics_export_proceed');

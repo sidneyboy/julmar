@@ -29,22 +29,25 @@
             </thead>
             <tbody>
                 @foreach ($logistics->logistics_invoices as $details)
-                    <tr>
-                        <td>{{ date('F j, Y', strtotime($details->created_at)) }}</td>
-                        <td>{{ $details->sales_invoice->customer->location_details->barangay }}</td>
-                        <td>{{ $details->sales_invoice->agent->full_name }}</td>
-                        <td>{{ $details->sales_invoice->delivery_receipt }}</td>
-                        <td>{{ $details->sales_invoice->customer->store_name }}</td>
-                        <td>{{ $details->sales_invoice->customer->detailed_location }}</td>
-                        <td style="text-align: right">{{ $details->case }}</td>
-                        <td style="text-align: right">{{ $details->butal }}</td>
-                        <td style="text-align: right">{{ $details->conversion }}</td>
-                        <td style="text-align: right">{{ number_format($details->amount,2,".",",") }}</td>
-                        <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
-                        <th style="text-align: right">{{ $details->weight }}
-                            <input type="hidden" name="sales_invoice_id[]" value="{{ $details->sales_invoice_id }}">
-                        </th>
-                    </tr>
+                    @if ($details->status == null)
+                        <tr>
+                            <td>{{ date('F j, Y', strtotime($details->created_at)) }}</td>
+                            <td>{{ $details->sales_invoice->customer->location_details->barangay }}</td>
+                            <td>{{ $details->sales_invoice->agent->full_name }}</td>
+                            <td>{{ $details->sales_invoice->delivery_receipt }}</td>
+                            <td>{{ $details->sales_invoice->customer->store_name }}</td>
+                            <td>{{ $details->sales_invoice->customer->detailed_location }}</td>
+                            <td style="text-align: right">{{ $details->case }}</td>
+                            <td style="text-align: right">{{ $details->butal }}</td>
+                            <td style="text-align: right">{{ $details->conversion }}</td>
+                            <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}</td>
+                            <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                            <th style="text-align: right">{{ $details->weight }}
+                                <input type="hidden" name="sales_invoice_id[]"
+                                    value="{{ $details->sales_invoice_id }}">
+                            </th>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

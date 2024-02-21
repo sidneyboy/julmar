@@ -486,6 +486,14 @@
                                                 <p>Control</p>
                                             </a>
                                         </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/truck_logistics_export') }}"
+                                                class="nav-link {{ $active_tab == 'truck_logistics_export' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Export</p>
+                                            </a>
+                                        </li>
                                         
                                         <li class="nav-item">
                                             <a href="{{ url('/truck_load_list') }}"

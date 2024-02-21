@@ -53,162 +53,200 @@
         </thead>
     </table> --}}
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="table table-responsive">
-            <table class="table table-bordered table-striped table-sm table-hover" style="width:100%;" id="example1">
-                <thead>
-                    <tr>
-                        <th colspan="6" class="text-center">ORIGINAL LOAD SHEET CONTROL</th>
-                    </tr>
-                    <tr>
-                        <th colspan="6" class="text-center">LOAD SHEET -
-                            {{ $logistics_invoice_original[0]->logistics_id }}</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center">INVOICE</th>
-                        <th class="text-center">CASE</th>
-                        <th class="text-center">BUTAL</th>
-                        <th class="text-center">CONVERSION</th>
-                        <th class="text-center">AMOUNT</th>
-                        <th class="text-center">TRANSACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($logistics_invoice_original as $details)
+<form id="truck_sales_invoice_transfer_save">
+    @csrf
+    <div class="row">
+        <div class="col-md-6">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-striped table-sm table-hover" style="width:100%;" id="example1">
+                    <thead>
                         <tr>
-                            <td>{{ $details->sales_invoice->delivery_receipt }}</td>
-                            <td style="text-align: right">{{ $details->case }}</td>
-                            <td style="text-align: right">{{ $details->butal }}</td>
-                            <td style="text-align: right">{{ number_format($details->conversion, 2, '.', ',') }}</td>
-                            <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}</td>
-                            <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                            <th colspan="6" class="text-center">ORIGINAL LOAD SHEET CONTROL</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="table table-responsive">
-            <table class="table table-bordered table-striped table-sm table-hover" style="width:100%;" id="example1">
-                <thead>
-                    <tr>
-                        <th colspan="6" class="text-center">NEW LOAD SHEET CONTROL</th>
-                    </tr>
-                    <tr>
-                        <th colspan="6" class="text-center">LOAD SHEET -
-                            {{ $logistics_invoice_original[0]->logistics_id }}</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center">INVOICE</th>
-                        <th class="text-center">CASE</th>
-                        <th class="text-center">BUTAL</th>
-                        <th class="text-center">CONVERSION</th>
-                        <th class="text-center">AMOUNT</th>
-                        <th class="text-center">TRANSACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($logistics_invoice_new as $details)
                         <tr>
-                            <td>{{ $details->sales_invoice->delivery_receipt }}</td>
-                            <td style="text-align: right">{{ $details->case }}
-                                @php
-                                    $new_total_case[$details->principal_id][] = $details->case;
-                                    $new_sum_total_case[] = $details->case;
-                                @endphp
-                            </td>
-                            <td style="text-align: right">{{ $details->butal }}
-                                @php
-                                    $new_total_butal[$details->principal_id][] = $details->butal;
-                                @endphp
-                            </td>
-                            <td style="text-align: right">{{ number_format($details->conversion, 2, '.', ',') }}
-                                @php
-                                    $new_total_conversion[$details->principal_id][] = $details->conversion;
-                                    $new_sum_total_conversion[] = $details->conversion;
-                                @endphp
-                            </td>
-                            <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}
-                                @php
-                                    $new_total_amount[$details->principal_id][] = $details->amount;
-                                @endphp
-                            </td>
-                            <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                            <th colspan="6" class="text-center">LOAD SHEET -
+                                {{ $logistics_invoice_original[0]->logistics_id }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        <tr>
+                            <th class="text-center">INVOICE</th>
+                            <th class="text-center">CASE</th>
+                            <th class="text-center">BUTAL</th>
+                            <th class="text-center">CONVERSION</th>
+                            <th class="text-center">AMOUNT</th>
+                            <th class="text-center">TRANSACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($logistics_invoice_original as $details)
+                            <tr>
+                                <td>{{ $details->sales_invoice->delivery_receipt }}</td>
+                                <td style="text-align: right">{{ $details->case }}</td>
+                                <td style="text-align: right">{{ $details->butal }}</td>
+                                <td style="text-align: right">{{ number_format($details->conversion, 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}</td>
+                                <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="col-md-12">
-        <div class="table table-responsive">
-            {{-- @php
+        <div class="col-md-6">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-striped table-sm table-hover" style="width:100%;"
+                    id="example1">
+                    <thead>
+                        <tr>
+                            <th colspan="6" class="text-center">NEW LOAD SHEET CONTROL</th>
+                        </tr>
+                        <tr>
+                            <th colspan="6" class="text-center">LOAD SHEET -
+                                {{ $logistics_invoice_original[0]->logistics_id }}</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">INVOICE</th>
+                            <th class="text-center">CASE</th>
+                            <th class="text-center">BUTAL</th>
+                            <th class="text-center">CONVERSION</th>
+                            <th class="text-center">AMOUNT</th>
+                            <th class="text-center">TRANSACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($logistics_invoice_new as $details)
+                            <tr>
+                                <td>{{ $details->sales_invoice->delivery_receipt }}</td>
+                                <td style="text-align: right">{{ $details->case }}
+                                    @php
+                                        $new_total_case[$details->principal_id][] = $details->case;
+                                        $new_sum_total_case[] = $details->case;
+                                    @endphp
+                                </td>
+                                <td style="text-align: right">{{ $details->butal }}
+                                    @php
+                                        $new_total_butal[$details->principal_id][] = $details->butal;
+                                        $new_sum_total_butal[] = $details->butal;
+                                    @endphp
+                                </td>
+                                <td style="text-align: right">{{ number_format($details->conversion, 2, '.', ',') }}
+                                    @php
+                                        $new_total_conversion[$details->principal_id][] = $details->conversion;
+                                        $new_sum_total_conversion[] = $details->conversion;
+                                    @endphp
+                                </td>
+                                <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}
+                                    @php
+                                        $new_total_amount[$details->principal_id][] = $details->amount;
+                                        $new_sum_total_amount[] = $details->amount;
+                                    @endphp
+                                </td>
+                                <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="table table-responsive">
+                {{-- @php
                 var_export($new_total_case);
                 echo array_sum($new_total_case[2]);
             @endphp --}}
-            <table class="table table-sm table-striped table-bordered table-hover" style="width:100%;">
-                <thead>
-                    <tr style="background: orange">
-                        <th style="text-align: center;">PRINCIPAL</th>
-                        <th style="text-align: center;">CASE</th>
-                        <th style="text-align: center;">BUTAL</th>
-                        <th style="text-align: center;">CONVERSION</th>
-                        <th style="text-align: center;">AMOUNT</th>
-                        <th style="text-align: center;">WEIGHT</th>
-                        <th style="text-align: center;">PERCENTAGE</th>
-                        <th style="text-align: center;">EQUIVALENT</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($logistics->logistics_details as $data)
-                        <tr>
-                            <td style="text-align: center;">{{ $data->principal->principal }}</td>
-                            <td>{{ array_sum($new_total_case[$data->principal_id]) }}</td>
-                            <td>{{ array_sum($new_total_butal[$data->principal_id]) }}</td>
-                            <td>{{ array_sum($new_total_conversion[$data->principal_id]) }}</td>
-                            <td>{{ array_sum($new_total_amount[$data->principal_id]) }}</td>
-                            <td></td>
-                            <td>
-                                @php
-                                    $percentage = (array_sum($new_total_case[$data->principal_id]) + array_sum($new_total_conversion[$data->principal_id])) / (array_sum($new_sum_total_case) + array_sum($new_sum_total_conversion));
-
-                                    echo $percentage;
-                                @endphp
-                            </td>
-                            <td>
-                                @php
-                                    $equivalent = $logistics->total_expense_per_delivery * $percentage;
-                                    echo number_format($equivalent, 2, '.', ',');
-                                    $sum_equivalent[] = $equivalent;
-                                @endphp
-                            </td>
-                            {{-- <td style="text-align: center;">{{ array_sum($new_total_case[$data->principal_id]) }}</td> --}}
+                <table class="table table-sm table-striped table-bordered table-hover" style="width:100%;">
+                    <thead>
+                        <tr style="background: orange">
+                            <th style="text-align: center;">PRINCIPAL</th>
+                            <th style="text-align: center;">CASE</th>
+                            <th style="text-align: center;">BUTAL</th>
+                            <th style="text-align: center;">CONVERSION</th>
+                            <th style="text-align: center;">AMOUNT</th>
+                            {{-- <th style="text-align: center;">WEIGHT</th> --}}
+                            <th style="text-align: center;">PERCENTAGE</th>
+                            <th style="text-align: center;">EQUIVALENT</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                {{-- <tfoot>
-                    <tr>
-                        <th style="text-align: center;">TOTAL</th>
-                        <td style="text-align: right">{{ array_sum($sum_case) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_butal) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_conversion) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_amount) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_weight) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_percentage) }}</td>
-                        <td style="text-align: right">{{ array_sum($sum_equivalent) }}</td>
-                    </tr>
-                </tfoot> --}}
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($logistics->logistics_details as $data)
+                            <tr>
+                                <td style="text-align: center;">{{ $data->principal->principal }}</td>
+                                <td style="text-align: right">{{ array_sum($new_total_case[$data->principal_id]) }}
+                                </td>
+                                <td style="text-align: right">{{ array_sum($new_total_butal[$data->principal_id]) }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ array_sum($new_total_conversion[$data->principal_id]) }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ number_format(array_sum($new_total_amount[$data->principal_id]), 2, '.', ',') }}
+                                </td>
+                                <td style="text-align: right">
+                                    @php
+                                        $percentage = (array_sum($new_total_case[$data->principal_id]) + array_sum($new_total_conversion[$data->principal_id])) / (array_sum($new_sum_total_case) + array_sum($new_sum_total_conversion));
+
+                                        echo $percentage;
+
+                                        $total_sum_percentage[] = $percentage;
+                                    @endphp
+                                </td>
+                                <td style="text-align: right">
+                                    @php
+                                        $equivalent = $logistics->total_expense_per_delivery * $percentage;
+                                        echo number_format($equivalent, 2, '.', ',');
+                                        $total_sum_equivalent[] = $equivalent;
+                                    @endphp
+
+
+                                    <input type="text"
+                                        name="new_total_case_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ array_sum($new_total_case[$data->principal_id]) }}">
+                                    <input type="text"
+                                        name="new_total_butal_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ array_sum($new_total_butal[$data->principal_id]) }}">
+                                    <input type="text"
+                                        name="new_total_conversion_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ array_sum($new_total_conversion[$data->principal_id]) }}">
+                                    <input type="text"
+                                        name="new_total_amount_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ array_sum($new_total_amount[$data->principal_id]) }}">
+                                    <input type="text"
+                                        name="new_total_percentage_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ $percentage }}">
+                                    <input type="text"
+                                        name="new_total_equivalent_per_principal[{{ $data->principal_id }}]"
+                                        value="{{ $equivalent }}">
+                                    <input type="text" name="principal_id[]" value="{{ $data->principal_id }}">
+                                </td>
+                                {{-- <td style="text-align: center;">{{ array_sum($new_total_case[$data->principal_id]) }}</td> --}}
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="text-align: center;">TOTAL</th>
+                            <td style="text-align: right">{{ array_sum($new_sum_total_case) }}</td>
+                            <td style="text-align: right">{{ array_sum($new_sum_total_butal) }}</td>
+                            <td style="text-align: right">{{ array_sum($new_sum_total_conversion) }}</td>
+                            <td style="text-align: right">
+                                {{ number_format(array_sum($new_sum_total_amount), 2, '.', ',') }}
+                            </td>
+                            {{-- <td style="text-align: right">{{ number_format(array_sum($sum_weight),2,".",",") }}</td> --}}
+                            <td style="text-align: right">{{ array_sum($total_sum_percentage) }}</td>
+                            <td style="text-align: right">{{ array_sum($total_sum_equivalent) }}</td>
+
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
+    @for ($i = 0; $i < count($logistics_invoice_id); $i++)
+        <input type="text" name="logistics_invoice_id[]" value="{{ $logistics_invoice_id[$i] }}">
+        <input type="text" name="sales_invoice_id[]" value="{{ $sales_invoice_id[$i] }}">
+    @endfor
 
-<form id="truck_sales_invoice_transfer_save">
-    @csrf
-    {{-- <input type="text" name="sales_invoice_id" value="{{ $sales_invoice->id }}"> --}}
     <button class="btn btn-sm float-right btn-success" type="submit">Transfer</button>
 </form>
 
@@ -234,7 +272,7 @@
                 });
 
                 location.reload();
-                s
+
             },
             error: function(error) {
                 $('#loader').hide();
