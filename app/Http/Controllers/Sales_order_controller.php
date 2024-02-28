@@ -258,6 +258,7 @@ class Sales_order_controller extends Controller
 
     public function sales_order_draft_proceed_to_final_summary(Request $request)
     {
+        //return $request->input();
         foreach ($request->input('final_quantity') as $key => $value) {
             if ($value > $request->input('quantity_net_balance')[$key]) {
                 return 'quantity exceed';
@@ -343,7 +344,7 @@ class Sales_order_controller extends Controller
             $sales_order_draft = Sales_order_draft::find($request->input('sales_order_id'));
             $sales_order_details = Sales_order_draft_details::select('sku_id')
                 ->where('sales_order_draft_id', $request->input('sales_order_id'))
-                ->where('sku_id', array_keys(array_filter($request->input('final_quantity'))))
+                ->whereIn('sku_id', array_keys(array_filter($request->input('final_quantity'))))
                 ->get();
 
             $check_dr = strtoupper($request->input('delivery_receipt_for_gci'));

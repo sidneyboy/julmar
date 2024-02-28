@@ -462,11 +462,6 @@ class Collection_controller extends Controller
 
 
 
-
-
-
-
-
         // return 'JOURNAL ENTRY NALANG KULANG ANI';
     }
 

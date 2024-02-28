@@ -42,7 +42,7 @@
                         <td>{{ $details->sales_invoice->customer->detailed_location }}</td>
                         <td style="text-align: right">{{ $details->case }}</td>
                         <td style="text-align: right">{{ $details->butal }}</td>
-                        <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}</td>
+                        <td style="text-align: right">{{ $details->amount }}</td>
                         <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
                     </tr>
                 @endif

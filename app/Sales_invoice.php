@@ -32,6 +32,9 @@ class Sales_invoice extends Model
         'truck_load_status',
         'total_returned_amount',
         'cm_deducted_amount',
+        'delivery_status',
+        'delivered_date',
+        'cm_for_confirmation_amount',
     ];
 
     public function principal()

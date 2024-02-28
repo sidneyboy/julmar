@@ -72,11 +72,11 @@
                         <td style="text-align: right">
                             @if ($details->sku_ledger_latest)
                                 {{ $details->sku_ledger_latest->with_invoice_net_balance }}
-                                <input type="text" name="quantity_net_balance[{{ $details->sku_id }}]"
+                                <input type="hidden" name="quantity_net_balance[{{ $details->sku_id }}]"
                                     value="{{ $details->sku_ledger_latest->with_invoice_net_balance }}">
                             @else
                                 0
-                                <input type="text" name="quantity_net_balance[{{ $details->sku_id }}]"
+                                <input type="hidden" name="quantity_net_balance[{{ $details->sku_id }}]"
                                     value="0">
                             @endif
                         </td>

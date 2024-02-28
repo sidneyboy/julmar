@@ -273,6 +273,13 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="{{ url('/driver_collection') }}"
+                                                class="nav-link {{ $active_tab == 'driver_collection' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Driver Collection</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="{{ url('/post_credit_memo') }}"
                                                 class="nav-link {{ $active_tab == 'post_credit_memo' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
@@ -494,12 +501,20 @@
                                                 <p>Export</p>
                                             </a>
                                         </li>
-                                        
+
                                         <li class="nav-item">
                                             <a href="{{ url('/truck_load_list') }}"
                                                 class="nav-link {{ $active_tab == 'truck_load_list' ? 'active' : '' }}">
                                                 <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
                                                 <p>Update Loadsheet</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ url('/logistics_upload') }}"
+                                                class="nav-link {{ $active_tab == 'logistics_upload' ? 'active' : '' }}">
+                                                <i class="nav-icon fas fa-regular fa-arrow-right fa-beat fa-2xs"></i>
+                                                <p>Upload</p>
                                             </a>
                                         </li>
 

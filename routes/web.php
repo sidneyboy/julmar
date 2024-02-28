@@ -931,3 +931,18 @@ Route::post('/truck_sales_invoice_transfer_save', 'Truck_sales_invoice_transfer_
 
 Route::get('/truck_logistics_export', 'Truck_logistics_export_controller@index');
 Route::post('/truck_logistics_export_proceed', 'Truck_logistics_export_controller@truck_logistics_export_proceed')->name('truck_logistics_export_proceed');
+
+Route::get('/logistics_upload', 'Logistics_upload_controller@index');
+Route::post('/logistics_upload_proceed', 'Logistics_upload_controller@logistics_upload_proceed')->name('logistics_upload_proceed');
+Route::post('/logistics_upload_save', 'Logistics_upload_controller@logistics_upload_save')->name('logistics_upload_save');
+
+
+Route::get('/driver_collection', 'Driver_collection_controller@index');
+Route::post('/driver_collection_search_per_generate', 'Driver_collection_controller@driver_collection_search_per_generate')->name('driver_collection_search_per_generate');
+Route::post('/driver_collection_proceed', 'Driver_collection_controller@driver_collection_proceed')->name('driver_collection_proceed');
+Route::post('/driver_collection_final_summary', 'Driver_collection_controller@driver_collection_final_summary')->name('driver_collection_final_summary');
+Route::post('/driver_collection_final_save', 'Driver_collection_controller@driver_collection_final_save')->name('driver_collection_final_save');
+
+
+
+
