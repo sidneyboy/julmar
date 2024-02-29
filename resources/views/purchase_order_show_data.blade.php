@@ -32,7 +32,7 @@
                     <th>Total</th>
                     <th></th>
                     <th></th>
-                    <th style="text-align: right">{{ array_sum($sum_quantity) }}</th>
+                    <th style="text-align: right">{{ number_format(array_sum($sum_quantity)) }}</th>
                 </tr>
             </tfoot>
         </table>

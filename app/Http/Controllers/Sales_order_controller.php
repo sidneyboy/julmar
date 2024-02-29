@@ -681,8 +681,8 @@ class Sales_order_controller extends Controller
                 'amount' => $get_sku_ledger->amount,
                 'running_amount' => $get_sku_ledger->running_amount,
                 'final_unit_cost' => $get_sku_ledger->final_unit_cost,
-                'with_invoice_quantity' => $request->input('final_quantity')[$data],
-                'with_invoice_net_balance' => $get_sku_ledger->running_balance - $request->input('final_quantity')[$data],
+                'with_invoice_quantity' => $request->input('final_quantity')[$data] + $get_sku_ledger->with_invoice_quantity,
+                'with_invoice_net_balance' => $get_sku_ledger->with_invoice_net_balance - $request->input('final_quantity')[$data],
             ]);
 
             $new_sku_ledger->save();

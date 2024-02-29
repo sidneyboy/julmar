@@ -54,9 +54,9 @@
                         </td>
 
                         <td style="text-align: right">
-                            {{ number_format(round($data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount, 2) - str_replace(',', '', $payment[$data->id]), 2, '.', ',') }}
+                            {{ number_format(round($data->sales_invoice->total - $data->sales_invoice->total_payment, 2) - str_replace(',', '', $payment[$data->id]), 2, '.', ',') }}
                             @php
-                                $outstanding_balance = round($data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount, 2) - str_replace(',', '', $payment[$data->id]);
+                                $outstanding_balance = round($data->sales_invoice->total - $data->sales_invoice->total_payment, 2) - str_replace(',', '', $payment[$data->id]);
                             @endphp
                             <input type="hidden" name="outstanding_balance[{{ $data->id }}]"
                                 value="{{ $outstanding_balance }}">

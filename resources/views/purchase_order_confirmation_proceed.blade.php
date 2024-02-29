@@ -4,18 +4,18 @@
             <label for="">Payment Term:</label>
             <select name="payment_term" class="form-control" required>
                 <option value="" default>Select</option>
-                <option value="cash with order">cash with order</option>
-                <option value="15 days">15 days</option>
-                <option value="30 days">30 days</option>
+                <option value="cash with order">CASH W/ ORDER</option>
+                <option value="15 days">15 DAYS</option>
+                <option value="30 days">30 DAYS</option>
             </select>
         </div>
         <div class="col-md-3">
             <label for="">Delivery Term:</label>
-            <input type="text" class="form-control" required name="delivery_term">
+            <input type="text" class="form-control" style="text-transform: uppercase" required name="delivery_term">
         </div>
         <div class="col-md-3">
             <label for="">Van #:</label>
-            <input type="text" class="form-control" required name="van_number">
+            <input type="text" class="form-control" style="text-transform: uppercase" required name="van_number">
         </div>
         <div class="col-md-3">
             <label for="">Discount Type:</label>

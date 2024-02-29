@@ -15,41 +15,45 @@
             </thead>
             <tbody>
                 @foreach ($logistics_upload as $data)
-             
-                        <tr>
-                            <td class="text-center">{{ $data->delivered_date }}</td>
-                            <td class="text-center">{{ $data->sales_invoice->delivery_receipt }}</td>
-                            <td class="text-center">{{ $data->sales_invoice->customer->store_name }}</td>
-                            <td class="text-center">{{ $data->sales_invoice->principal->principal }}</td>
-                            <td style="text-align: right">{{ number_format($data->sales_invoice->total, 2, '.', ',') }}
-                            </td>
-                            <td style="text-align: right">
-                                @php
-                                    $unconfirmed_cm_amount = $data->sales_invoice->cm_amount_deducted + $data->sales_invoice->cm_for_confirmation_amount;
-                                    echo number_format($unconfirmed_cm_amount, 2, '.', ',');
-                                @endphp
-                            </td>
-                            <td style="text-align: right">
-                                {{ number_format($data->sales_invoice->total_payment, 2, '.', ',') }}</td>
-                            <td>
-                                @php
+                    <tr>
+                        <td class="text-center">{{ $data->delivered_date }}</td>
+                        <td class="text-center">{{ $data->sales_invoice->delivery_receipt }}</td>
+                        <td class="text-center">{{ $data->sales_invoice->customer->store_name }}</td>
+                        <td class="text-center">{{ $data->sales_invoice->principal->principal }}</td>
+                        <td style="text-align: right">{{ number_format($data->sales_invoice->total, 2, '.', ',') }}
+                        </td>
+                        <td style="text-align: right">
+                            @php
+                                $unconfirmed_cm_amount = $data->sales_invoice->cm_amount_deducted + $data->sales_invoice->cm_for_confirmation_amount;
+                                echo number_format($unconfirmed_cm_amount, 2, '.', ',');
+                            @endphp
+                        </td>
+                        <td style="text-align: right">
+                            {{ number_format($data->sales_invoice->total_payment, 2, '.', ',') }}</td>
+                        <td>
+                            @php
+
+                                if ($data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount > 0) {
                                     $total = $data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount;
-                                @endphp
-                                <input type="hidden" name="logistics_upload_id[]"
-                                    value="{{ $data->sales_invoice_id }}">
-                                <input type="text" name="payment[{{ $data->sales_invoice_id }}]"
-                                    class="form-control form-control-sm text-center"
-                                    onkeypress="return isNumberKey(event)"
-                                    value="{{ number_format($total, 2, '.', ',') }}">
-                            </td>
-                        </tr>
+                                } else {
+                                    $total = 0;
+                                }
+                            @endphp
+                            <input type="hidden" name="logistics_upload_id[]" value="{{ $data->sales_invoice_id }}">
+                            <input type="text" name="payment[{{ $data->sales_invoice_id }}]"
+                                class="form-control form-control-sm text-center" onkeypress="return isNumberKey(event)"
+                                value="{{ number_format($total, 2, '.', ',') }}">
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
 
     <input type="hidden" name="search_per" value="{{ $search_per }}">
-    <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
+    @if ($total > 0)
+        <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
+    @endif
 </form>
 
 <script>

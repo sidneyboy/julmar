@@ -1,23 +1,25 @@
 <form id="return_to_principal_summary">
     @csrf
-    <div class="form-group">
-        <label>Remarks</label>
-        <select name="remarks" id="remarks" class="form-control" required>
-            <option value="" default>Select Remarks</option>
-            <option value="Good Stock">Good Stock</option>
-            <option value="Bad Stock">Bad Stock</option>
-            <option value="Expire">Expire</option>
-            <option value="Near Expire">Near Expire</option>
-        </select>
-    </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
-                <label>Driver</label>
-                <input type="text" name="personnel" class="form-control" required>
+                <label>Remarks</label>
+                <select name="remarks" id="remarks" class="form-control" required>
+                    <option value="" default>Select Remarks</option>
+                    <option value="Good Stock">GOOD STOCK</option>
+                    <option value="Bad Stock">BAD STOCK</option>
+                    <option value="Expired">EXPIRED</option>
+                    <option value="Near Expire">NEAR EXPIRE</option>
+                </select>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Driver</label>
+                <input type="text" name="personnel" style="text-transform: uppercase" class="form-control" required>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="form-group">
                 <label>Transaction Date</label>
                 <input type="date" class="form-control" name="transaction_date" required>

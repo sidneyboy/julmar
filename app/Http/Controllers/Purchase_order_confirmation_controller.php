@@ -93,9 +93,9 @@ class Purchase_order_confirmation_controller extends Controller
 
         Purchase_order::where('id', $request->input('purchase_order_id'))
             ->update([
-                'payment_term' => $request->input('payment_term'),
-                'delivery_term' => $request->input('delivery_term'),
-                'van_number' => $request->input('van_number'),
+                'payment_term' => strtoupper($request->input('payment_term')),
+                'delivery_term' => strtoupper($request->input('delivery_term')),
+                'van_number' => strtoupper($request->input('van_number')),
                 'status' => 'confirmed',
                 'discount_type' => $request->input('discount_type'),
                 'gross_purchase' => $request->input('gross_purchases'),

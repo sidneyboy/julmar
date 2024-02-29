@@ -60,6 +60,7 @@ class Truck_load_list_controller extends Controller
         $logistics_details = Logistics_invoices::select('sales_invoice_id', 'id')
             ->where('logistics_id', $request->input('logistic_id'))
             ->where('delivered_date', null)
+            ->where('status',null)
             ->get();
 
         return view('truck_logistics_details_show', [

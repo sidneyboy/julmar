@@ -1,6 +1,6 @@
  <form id="purchase_order_cart">
      <div class="row">
-         <div class="col-md-12">
+         <div class="col-md-6">
              <div class="form-group">
                  <label>Sku</label>
                  <select style="width:100%;" class="form-control select2bs4" autofocus required name="sku"
@@ -13,7 +13,7 @@
                  </select>
              </div>
          </div>
-         <div class="col-md-12">
+         <div class="col-md-6">
              <div class="form-group">
                  <label>Quantity</label>
                  <input style="width:100%;" type="number" name="quantity" required id="quantity"

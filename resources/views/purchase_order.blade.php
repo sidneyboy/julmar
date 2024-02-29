@@ -40,8 +40,8 @@
                             <label for="">SKU Type</label>
                             <select name="sku_type" class="form-control" required>
                                 <option value="" default>Select</option>
-                                <option value="Case">Case</option>
-                                <option value="Butal">Butal</option>
+                                <option value="Case">CASE</option>
+                                <option value="Butal">BUTAL</option>
                             </select>
                         </div>
                         <div class="col-md-12">

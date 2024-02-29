@@ -34,6 +34,7 @@ class Truck_sales_invoice_transfer_controller extends Controller
 
     public function truck_sales_invoice_transfer_generate_invoice(Request $request)
     {
+        
         $logistics_invoice = Logistics_invoices::select('id', 'sales_invoice_id')->where('logistics_id', $request->input('logistics_id'))->get();
 
         return view('truck_sales_invoice_transfer_generate_invoice', [

@@ -47,11 +47,12 @@ class Driver_collection_controller extends Controller
                 'logistics_upload' => $logistics_upload,
             ])->with('search_per', $request->input('search_per'));
         } else if ($request->input('search_per') == 'invoice') {
-            $logistics_upload = Logistics_upload::select('date', 'sales_invoice_id')
-                ->where('status', null)
-                ->get();
+
+            // $logistics_upload = Logistics_upload::select('date', 'sales_invoice_id')
+            //     ->where('status', null)
+            //     ->get();
             return view('driver_collection_search_per_generate', [
-                'logistics_upload' => $logistics_upload,
+                // 'logistics_upload' => $logistics_upload,
             ])->with('search_per', $request->input('search_per'));
         }
     }
@@ -68,8 +69,10 @@ class Driver_collection_controller extends Controller
                 'logistics_upload' => $logistics_upload,
             ])->with('search_per', $request->input('search_per'));
         } else if ($request->input('search_per') == 'invoice') {
+            $sales_invoice = Sales_invoice::select('id')->where('delivery_receipt', 'like', '%' . $request->input('delivery_receipt') . '%')->first();
+
             $logistics_upload = Logistics_upload::select('id', 'logistics_id', 'delivered_date', 'sales_invoice_id')
-                ->where('sales_invoice_id', $request->input('sales_invoice_id'))
+                ->where('sales_invoice_id', $sales_invoice->id)
                 ->get();
 
             return view('driver_collection_proceed', [
@@ -104,7 +107,7 @@ class Driver_collection_controller extends Controller
 
     public function driver_collection_final_save(Request $request)
     {
-        //return $request->input();
+
         $curdate = DB::select('SELECT CURDATE()');
         if ($request->input('search_per') == 'driver') {
             foreach ($request->input('logistics_id') as $key => $logistics_id) {
@@ -164,14 +167,15 @@ class Driver_collection_controller extends Controller
                         ]);
 
                     $sales_invoice_collection_checker = Sales_invoice_collection_receipt_details::select('outstanding_balance')->where('si_id', $request->input('sales_invoice_id')[$logistics_id])->orderBy('id', 'desc')->first();
-                    $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
+
 
 
                     if ($sales_invoice_collection_checker) {
+                        $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
                         $new_details = new Sales_invoice_collection_receipt_details([
                             'sicrd_id' => $new->id,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('outstanding_balance')[$logistics_id],
+                            'ar_balance' => round($request->input('outstanding_balance')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
                             'outstanding_balance' => $outstanding_balance,
                             'remarks' => '',
@@ -183,9 +187,9 @@ class Driver_collection_controller extends Controller
                         $new_details = new Sales_invoice_collection_receipt_details([
                             'sicrd_id' => $new->id,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('total_amount')[$logistics_id],
+                            'ar_balance' => round($request->input('total_amount')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' => round($request->input('total_amount')[$logistics_id], 2) - $request->input('payment')[$logistics_id],
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -225,9 +229,10 @@ class Driver_collection_controller extends Controller
 
                     $sales_invoice_collection_checker = Sales_invoice_collection_receipt_details::select('outstanding_balance')->where('si_id', $request->input('sales_invoice_id')[$logistics_id])->orderBy('id', 'desc')->first();
 
-                    $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
+
 
                     if ($sales_invoice_collection_checker) {
+                        $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
                         $new_details = new Sales_invoice_collection_receipt_details([
                             'sicrd_id' => $new->id,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
@@ -243,9 +248,9 @@ class Driver_collection_controller extends Controller
                         $new_details = new Sales_invoice_collection_receipt_details([
                             'sicrd_id' => $new->id,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('total_amount')[$logistics_id],
+                            'ar_balance' => round($request->input('total_amount')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' =>  round($request->input('total_amount')[$logistics_id], 2) - $request->input('payment')[$logistics_id],
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -346,28 +351,31 @@ class Driver_collection_controller extends Controller
                     'user_id' => auth()->user()->id,
                 ]);
 
-                $new_sales_invoice_status_logs_save->save();
+                    $new_sales_invoice_status_logs_save->save();
 
-                $new = new Sales_invoice_collection_receipt([
-                    'user_id' => auth()->user()->id,
-                    'customer_id' => $request->input('customer_id')[$logistics_id],
-                    'agent_id' => $request->input('agent_id')[$logistics_id],
-                    'check_ref_cash' => "N/A",
-                    'official_receipt' => "ASK MAAM VAN",
-                    'bank' => "N/A",
-                    'payment_date' => $curdate[0]->{'CURDATE()'},
-                ]);
+                    $new = new Sales_invoice_collection_receipt([
+                        'user_id' => auth()->user()->id,
+                        'customer_id' => $request->input('customer_id')[$logistics_id],
+                        'agent_id' => $request->input('agent_id')[$logistics_id],
+                        'check_ref_cash' => "N/A",
+                        'official_receipt' => "ASK MAAM VAN",
+                        'bank' => "N/A",
+                        'payment_date' => $curdate[0]->{'CURDATE()'},
+                    ]);
 
-                $new->save();
+                    $new->save();
 
-                $new_jer = new Sales_invoice_collection_jer([
-                    'sicrd_id' => $new->id,
-                    'payment' => $request->input('payment')[$logistics_id],
-                    'payment' => $request->input('payment')[$logistics_id],
-                ]);
+                    $new_jer = new Sales_invoice_collection_jer([
+                        'sicrd_id' => $new->id,
+                        'payment' => $request->input('payment')[$logistics_id],
+                        'payment' => $request->input('payment')[$logistics_id],
+                    ]);
 
-                $new_jer->save();
+                    $new_jer->save();
                 //---------------------------------------
+
+                //return $request->input();
+
                 $sales_invoice_checker = Sales_invoice::select('total_payment', 'total', 'principal_id', 'customer_id')->find($request->input('sales_invoice_id')[$logistics_id]);
 
                 $total_payment = $sales_invoice_checker->total_payment + $request->input('payment')[$logistics_id];
@@ -380,16 +388,14 @@ class Driver_collection_controller extends Controller
                         ]);
 
                     $sales_invoice_collection_checker = Sales_invoice_collection_receipt_details::select('outstanding_balance')->where('si_id', $request->input('sales_invoice_id')[$logistics_id])->orderBy('id', 'desc')->first();
-                    $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
-
 
                     if ($sales_invoice_collection_checker) {
                         $new_details = new Sales_invoice_collection_receipt_details([
-                            'sicrd_id' => $new->id,
+                            'sicrd_id' => 1,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('outstanding_balance')[$logistics_id],
+                            'ar_balance' => round($request->input('outstanding_balance')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' => $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id],
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -397,11 +403,11 @@ class Driver_collection_controller extends Controller
                         $new_details->save();
                     } else {
                         $new_details = new Sales_invoice_collection_receipt_details([
-                            'sicrd_id' => $new->id,
+                            'sicrd_id' => 1,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('total_amount')[$logistics_id],
+                            'ar_balance' => round($request->input('total_amount')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' => round($request->input('total_amount')[$logistics_id], 2) - $request->input('payment')[$logistics_id],
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -425,7 +431,7 @@ class Driver_collection_controller extends Controller
                         'principal_id' => $sales_invoice_checker->principal_id,
                         'customer_id' => $request->input('customer_id')[$logistics_id],
                         'transaction' => 'collection receipt',
-                        'all_id' => $new->id,
+                        'all_id' => 1,
                         'debit_record' => 0,
                         'credit_record' =>  $request->input('payment')[$logistics_id],
                         'running_balance' => $sales_invoice_ar_running_balance,
@@ -441,15 +447,14 @@ class Driver_collection_controller extends Controller
 
                     $sales_invoice_collection_checker = Sales_invoice_collection_receipt_details::select('outstanding_balance')->where('si_id', $request->input('sales_invoice_id')[$logistics_id])->orderBy('id', 'desc')->first();
 
-                    $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
-
                     if ($sales_invoice_collection_checker) {
+                        $sales_invoice_outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
                         $new_details = new Sales_invoice_collection_receipt_details([
-                            'sicrd_id' => $new->id,
+                            'sicrd_id' => 1,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
                             'ar_balance' => $sales_invoice_collection_checker->outstanding_balance,
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' => $sales_invoice_outstanding_balance,
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -457,11 +462,11 @@ class Driver_collection_controller extends Controller
                         $new_details->save();
                     } else {
                         $new_details = new Sales_invoice_collection_receipt_details([
-                            'sicrd_id' => $new->id,
+                            'sicrd_id' => 1,
                             'si_id' => $request->input('sales_invoice_id')[$logistics_id],
-                            'ar_balance' => $request->input('total_amount')[$logistics_id],
+                            'ar_balance' => round($request->input('total_amount')[$logistics_id], 2),
                             'amount_collected' => $request->input('payment')[$logistics_id],
-                            'outstanding_balance' => $outstanding_balance,
+                            'outstanding_balance' => round($request->input('total_amount')[$logistics_id], 2) - $request->input('payment')[$logistics_id],
                             'remarks' => '',
                             'status' => 'paid',
                         ]);
@@ -485,7 +490,7 @@ class Driver_collection_controller extends Controller
                         'principal_id' => $sales_invoice_checker->principal_id,
                         'customer_id' => $request->input('customer_id')[$logistics_id],
                         'transaction' => 'collection receipt',
-                        'all_id' => $new->id,
+                        'all_id' => 1,
                         'debit_record' => 0,
                         'credit_record' =>  $request->input('payment')[$logistics_id],
                         'running_balance' => $sales_invoice_ar_running_balance,

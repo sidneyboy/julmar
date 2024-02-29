@@ -198,25 +198,25 @@
                                     @endphp
 
 
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_case_per_principal[{{ $data->principal_id }}]"
                                         value="{{ array_sum($new_total_case[$data->principal_id]) }}">
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_butal_per_principal[{{ $data->principal_id }}]"
                                         value="{{ array_sum($new_total_butal[$data->principal_id]) }}">
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_conversion_per_principal[{{ $data->principal_id }}]"
                                         value="{{ array_sum($new_total_conversion[$data->principal_id]) }}">
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_amount_per_principal[{{ $data->principal_id }}]"
                                         value="{{ array_sum($new_total_amount[$data->principal_id]) }}">
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_percentage_per_principal[{{ $data->principal_id }}]"
                                         value="{{ $percentage }}">
-                                    <input type="text"
+                                    <input type="hidden"
                                         name="new_total_equivalent_per_principal[{{ $data->principal_id }}]"
                                         value="{{ $equivalent }}">
-                                    <input type="text" name="principal_id[]" value="{{ $data->principal_id }}">
+                                    <input type="hidden" name="principal_id[]" value="{{ $data->principal_id }}">
                                 </td>
                                 {{-- <td style="text-align: center;">{{ array_sum($new_total_case[$data->principal_id]) }}</td> --}}
                             </tr>
@@ -243,8 +243,8 @@
     </div>
 
     @for ($i = 0; $i < count($logistics_invoice_id); $i++)
-        <input type="text" name="logistics_invoice_id[]" value="{{ $logistics_invoice_id[$i] }}">
-        <input type="text" name="sales_invoice_id[]" value="{{ $sales_invoice_id[$i] }}">
+        <input type="hidden" name="logistics_invoice_id[]" value="{{ $logistics_invoice_id[$i] }}">
+        <input type="hidden" name="sales_invoice_id[]" value="{{ $sales_invoice_id[$i] }}">
     @endfor
 
     <button class="btn btn-sm float-right btn-success" type="submit">Transfer</button>

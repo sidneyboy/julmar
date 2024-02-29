@@ -26,7 +26,7 @@
                             <select name="purchase_id" class="form-control select2bs4" style="width:100%;" required>
                                 <option value="" default>Select</option>
                                 @foreach ($purchase_order as $data)
-                                    <option value="{{ $data->id }}">{{ $data->purchase_id . '-' . $data->sku_type }}
+                                    <option value="{{ $data->id }}">{{ $data->purchase_id . '-' . strtoupper($data->sku_type) }}
                                     </option>
                                 @endforeach
                             </select>
