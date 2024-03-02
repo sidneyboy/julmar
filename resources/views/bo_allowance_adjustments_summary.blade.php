@@ -11,11 +11,14 @@
                     <th>UOM</th>
                     <th>Quantity</th>
                     <th>FUC</th>
-                    <th>Amount</th>
+                    {{-- <th>Amount</th> --}}
                     <th>Adjustment</th>
                     <th>BO Allowance</th>
-                    <th>Adjusted Amount</th>
-                    <th>Adjusted FUC</th>
+                    <th>Vat</th>
+                    {{-- <th>Adjusted Amount</th>
+                    <th>Adjusted FUC</th> --}}
+                    <th>Freight</th>
+                    <th>Total Cost</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,40 +31,84 @@
                         </td>
                         <td style="text-align: center;">{{ $quantity[$data->sku_id] }}</td>
                         <td style="text-align: right;">
-                            {{ number_format($unit_cost[$data->sku_id], 2, '.', ',') }}
+                            {{ number_format($unit_cost[$data->sku_id], 4, '.', ',') }}
                         </td>
-                        <td style="text-align: right">
+                        {{-- <td style="text-align: right">
                             @php
                                 $amount = $quantity[$data->sku_id] * $unit_cost[$data->sku_id];
                             @endphp
-                            {{ number_format($amount, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($unit_cost_adjustment, 2, '.', ',') }}
+                            {{ number_format($amount, 4, '.', ',') }}</td> --}}
+                        <td style="text-align: right;">{{ number_format($unit_cost_adjustment, 4, '.', ',') }}
                         </td>
                         <td style="text-align: right;">
                             @php
-                                if ($unit_cost_adjustment > 0) {
-                                    $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
-                                    $sum_total_amount[] = $total_amount;
-                                } else {
-                                    $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
-                                    $sum_total_amount[] = $total_amount;
-                                }
+                                // if ($unit_cost_adjustment > 0) {
+                                //     $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
+                                //     $sum_total_amount[] = $total_amount;
+                                // } else {
+                                //     $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
+                                //     $sum_total_amount[] = $total_amount;
+                                // }
+                                $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
+                                $sum_total_amount[] = $total_amount;
                             @endphp
-                            {{ number_format($total_amount, 2, '.', ',') }}
+                            {{ number_format($total_amount, 4, '.', ',') }}
                             <input type="hidden" name="bo_allowance_per_sku[{{ $data->sku_id }}]"
                                 value="{{ $total_amount }}">
                         </td>
-                        <td style="text-align: right">
+                        <td>
                             @php
-                                $adjusted_amount = $amount + $total_amount;
+                                $vat = $total_amount * 0.12;
+                                $sum_total_vat[] = $vat;
+                                echo number_format($vat, 4, '.', ',');
                             @endphp
-                            {{ number_format($adjusted_amount, 2, '.', ',') }}
+
+                            <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
+                            <input type="hidden" name="quantity[{{ $data->sku_id }}]"
+                                value="{{ $quantity[$data->sku_id] }}">
+                            <input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
+                                value="{{ $unit_cost[$data->sku_id] }}">
+                            <input type="hidden" name="adjusted_amount[{{ $data->sku_id }}]"
+                                value="{{ $unit_cost_adjustment }}">
+                            {{-- <input type="hidden" name="adjusted_amount_data[{{ $data->sku_id }}]"
+                                value="{{ $adjusted_amount }}"> --}}
+                            {{-- <input type="hidden" name="adjusted_final_unit_cost[{{ $data->sku_id }}]"
+                                value="{{ $difference }}"> --}}
+                            <input type="hidden" name="original_final_unit_cost[{{ $data->sku_id }}]"
+                                value="{{ $unit_cost[$data->sku_id] }}">
                         </td>
-                        <td style="text-align: right;">
+                        <td style="text-align: right">
+                            {{ number_format($data->freight, 4, '.', ',') }}
+                        </td>
+                        <td style="text-align: right">
+
+                            @if ($unit_cost_adjustment > 0)
+                                @php
+                                    $total_cost = ($total_amount + $vat + $data->freight) * -1;
+                                @endphp
+                                {{ number_format($total_cost, 4, '.', ',') }}
+                            @else
+                                @php
+                                    $total_cost = $total_amount + $vat + $data->freight;
+                                @endphp
+                                {{ number_format($total_cost, 4, '.', ',') }}
+                            @endif
+
+
+                            <input type="hidden" name="total_cost[{{ $data->sku_id }}]"
+                                value="{{ $total_cost }}">
+                        </td>
+                        {{-- <td style="text-align: right">
+                            @php
+                                $adjusted_amount = $amount + $total_amount + $vat;
+                            @endphp
+                            {{ number_format($adjusted_amount, 4, '.', ',') }}
+                        </td> --}}
+                        {{-- <td style="text-align: right;">
                             @php
                                 $difference = $adjusted_amount / $quantity[$data->sku_id];
                             @endphp
-                            {{ number_format($difference, 2, '.', ',') }}
+                            {{ number_format($difference, 4, '.', ',') }}
 
                             <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
                             <input type="hidden" name="quantity[{{ $data->sku_id }}]"
@@ -76,20 +123,24 @@
                                 value="{{ $difference }}">
                             <input type="hidden" name="original_final_unit_cost[{{ $data->sku_id }}]"
                                 value="{{ $unit_cost[$data->sku_id] }}">
-                        </td>
+                        </td> --}}
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="7" style="text-align: center;font-weight: bold;color:green;">GRAND TOTAL</td>
+                    <td colspan="6" style="text-align: center;font-weight: bold;color:green;">GRAND TOTAL</td>
                     <td style="font-weight: bold;text-align: right;color:green;">
                         {{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}
                     </td>
                     <td></td>
                     <td></td>
+                    <td></td>
+
                 </tr>
                 <tr>
-                    <td colspan="7"></td>
-                    <td style="text-align: right">{{ array_sum($sum_total_amount) / $received_purchase_order->gross_purchase }}</td>
+                    <td colspan="6"></td>
+                    <td style="text-align: right">
+                        {{ array_sum($sum_total_amount) / $received_purchase_order->gross_purchase }}</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -146,7 +197,8 @@
                 <tr>
                     <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
                     <td></td>
-                    <td style="font-weight: bold;text-align: center;">{{ number_format($net_deduction*-1, 2, '.', ',') }}
+                    <td style="font-weight: bold;text-align: center;">
+                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
                     </td>
                     <td></td>
 
@@ -156,7 +208,7 @@
                     <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction*-1, 2, '.', ',') }}
+                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
                     </td>
                 </tr>
             </tbody>
@@ -193,7 +245,8 @@
     @endif
     <div class="row">
         <div class="col-md-12">
-            <input type="hidden" value="{{ $get_accounts_payable->account_name }}" name="accounts_payable_account_name">
+            <input type="hidden" value="{{ $get_accounts_payable->account_name }}"
+                name="accounts_payable_account_name">
             <input type="hidden" value="{{ $get_accounts_payable->account_number }}"
                 name="accounts_payable_account_number">
             <input type="hidden" value="{{ $get_accounts_payable->chart_of_accounts->account_number }}"
@@ -204,7 +257,7 @@
                 name="merchandise_inventory_account_number">
             <input type="hidden" value="{{ $get_merchandise_inventory->chart_of_accounts->account_number }}"
                 name="merchandise_inventory_general_account_number">
-          
+
             <button class="btn btn-success btn-sm float-right" type="submit">Submit</button>
         </div>
     </div>
@@ -224,15 +277,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

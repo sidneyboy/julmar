@@ -20,7 +20,11 @@
                             ({{ array_sum($sum_discount_selected) }}%)
                         </th>
                         <th style="text-align: center">BO Allowance
-                            ({{ $bo_allowance_discount_selected }}%)</th>
+                            ({{ $bo_allowance_discount_selected }}%)
+                            <input type="hidden" name="bo_allowance_discount" value="{{ $bo_allowance_discount_selected/ 100 }}">
+                        </th>
+                        
+                   
                         <th style="text-align: center">CWO
                             ({{ $cwo_discount_selected }}%)</th>
                         <th style="text-align: center">T.Discount<br /></th>
@@ -63,6 +67,8 @@
                                     $bo_allowance_discount = $total_amount * ($bo_allowance_discount_selected / 100);
                                     $sum_bo_allowance_discount[] = $bo_allowance_discount;
                                     echo number_format($bo_allowance_discount, 2, '.', ',');
+                                    // echo "<br />";
+                                    // echo $bo_allowance_discount_selected/100;
                                 @endphp
                             </td>
                             <td style="text-align: right">
@@ -95,7 +101,8 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_total_cost = $total_amount - $total_discount + $vat_per_sku + $freight_per_sku;
+                                    $final_total_cost =
+                                        $total_amount - $total_discount + $vat_per_sku + $freight_per_sku;
                                     $sum_final_total_cost[] = $final_total_cost;
                                     echo number_format($final_total_cost, 2, '.', ',');
                                 @endphp
@@ -238,7 +245,8 @@
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
@@ -409,7 +417,7 @@
         @endif
     @elseif($discount_type == 'type_b')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover table-striped">
+            <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
                         <th>Desc</th>
@@ -424,6 +432,10 @@
                                 value="{{ $data->discount_name }}">
                             <input type="hidden" name="discount_selected_rate[]"
                                 value="{{ $data->discount_rate }}">
+                            @if ($data->discount_name == 'BO')
+                                <input type="hidden" name="bo_allowance_discount"
+                                    value="{{ $data->discount_rate / 100 }}">
+                            @endif
                         @endforeach
                         {{-- <th style="text-align: center">BO Allowance
                             ({{ $bo_allowance_discount_selected }}%)</th> --}}
@@ -470,11 +482,14 @@
                                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                                         $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                        $discount_value_holder =
+                                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                                         $discount_value_holder_history[] = $discount_rate_answer;
                                         $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                        echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                        echo '<td style="text-align:right;">' .
+                                            number_format($discount_rate_answer, 2, '.', ',') .
+                                            '</td>';
                                     }
                                 } else {
                                     $total = $total_amount;
@@ -489,24 +504,31 @@
                                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                                         $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                        $discount_value_holder =
+                                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                                         $discount_value_holder_history[] = 0;
                                         $discount_value_holder_history_for_bo_allowance[] = 0;
-                                        echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                        echo '<td style="text-align:right;">' .
+                                            number_format($discount_rate_answer, 2, '.', ',') .
+                                            '</td>';
                                     }
                                 }
 
                             @endphp
                             @php
                                 $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
-                                $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
+                                $bo_allowance_per_sku =
+                                    end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
 
                             <td style="text-align: right;">
                                 @php
-                                    $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
+                                    $vat =
+                                        ($total_amount -
+                                            (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) *
+                                        0.12;
                                     $sum_vat_per_sku[] = $vat;
                                 @endphp
                                 {{ number_format($vat, 2, '.', ',') }}
@@ -517,6 +539,8 @@
                                     $sum_vat_inclusive_total_cost_per_sku[] = $vat_inclusive_total_cost_per_sku;
                                 @endphp
                                 {{ number_format($vat_inclusive_total_cost_per_sku, 2, '.', ',') }}
+
+
                             </td>
                             <td style="text-align: right">
                                 @php
@@ -538,7 +562,8 @@
                                     if ($received_quantity[$data] == 0) {
                                         $final_unit_cost_per_sku = 0;
                                     } else {
-                                        $final_unit_cost_per_sku = $final_total_cost_per_sku / $received_quantity[$data];
+                                        $final_unit_cost_per_sku =
+                                            $final_total_cost_per_sku / $received_quantity[$data];
                                     }
 
                                     $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
@@ -572,10 +597,13 @@
                                 $less_percentage_by = $data_discount->discount_rate / 100;
 
                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                $discount_value_holder =
+                                    $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                                 $discount_value_holder_history[] = $discount_rate_answer;
-                                echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
+                                echo '<th style="text-align:right;">' .
+                                    number_format($discount_rate_answer, 2, '.', ',') .
+                                    '</th>';
                             }
                             $cwo_discount_lower = end($discount_value_holder_history);
                             $bo_discount = prev($discount_value_holder_history);
@@ -607,7 +635,8 @@
         </div>
 
         @if (isset($less_other_discount_selected))
-            <table class="table table-bordered table-hover table-sm float-right table-striped" style="width:35%;">
+            <table class="table table-bordered table-hover table-sm float-right table-striped"
+                style="width:35%;font-size:13px;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -630,17 +659,24 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' .
+                            Str::ucfirst($data_discount->discount_name) .
+                            '(' .
+                            $data_discount->discount_rate / 100 .
+                            '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                        echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
+                        echo '<td style="text-align:right;">' .
+                            number_format($less_discount_rate_answer, 2, '.', ',') .
+                            '</td></tr>';
                     }
                 @endphp
                 <input type="text" name="total_less_discount"
@@ -697,7 +733,8 @@
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
@@ -731,7 +768,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm table-striped">
+            <table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -756,7 +793,8 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-sm float-right table-striped" style="width:35%;">
+            <table class="table table-bordered table-hover table-sm float-right table-striped"
+                style="width:35%;font-size:13px">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -779,16 +817,23 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($discount_selected as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' .
+                            Str::ucfirst($data_discount->discount_name) .
+                            '(' .
+                            $data_discount->discount_rate / 100 .
+                            '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                        echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
+                        echo '<td style="text-align:right;">' .
+                            number_format($less_discount_rate_answer, 2, '.', ',') .
+                            '</td></tr>';
                     }
                 @endphp
 
@@ -835,7 +880,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-sm table-striped">
+            <table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -916,11 +961,11 @@
             success: function(data) {
                 $('#loader').hide();
                 Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
+                 position: 'top-end',
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
                 });
 
                 location.reload();

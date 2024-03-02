@@ -22,6 +22,8 @@ class Sku_ledger extends Model
       'final_unit_cost',
       'with_invoice_quantity',
       'with_invoice_net_balance',
+      'date',
+      'time',
     ];
 
     public function sku()

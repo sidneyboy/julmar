@@ -47,8 +47,11 @@ class Receive_order_report_controller extends Controller
         $principal_name = $variable_explode[1];
         $date = date('F j, Y', strtotime($date_from)) . ' - ' . date('F j, Y', strtotime($date_to));
 
-        $received_purchase_order = Received_purchase_order::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->orderBy('id','desc')->get();
-
+        $received_purchase_order = Received_purchase_order::where('principal_id', $principal_id)
+            ->whereBetween('date',[$date_from,$date_to])
+            ->orderBy('id','desc')
+            ->get();
+        // DB::raw('DATE(created_at)'),  [$date_from, $date_to]
         return view('receive_order_report_show_list', [
             'received_purchase_order' => $received_purchase_order,
         ])->with('principal_name', $principal_name)

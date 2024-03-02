@@ -167,7 +167,7 @@
         <div id="popup-content"></div>
     </div>
 
-    <input type="hidden" id="open" value="{{ asset('images/disconnected_accounts_marker.png') }}">
+    <input type="text" id="open" value="{{ asset('images/disconnected_accounts_marker.png') }}">
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -200,7 +200,7 @@
                     source: new ol.source.XYZ({
                         attributions: 'None',
                         attributionsCollapsible: true,
-                        url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+                        url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
                     })
                 }),
                 straitsLayer

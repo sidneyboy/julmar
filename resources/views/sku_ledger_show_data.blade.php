@@ -61,7 +61,7 @@
                                                     <th>Average Cost</th>
                                                     <th>W/ Invoice Qty</th>
                                                     <th>W/ Invoice Qty Balance</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -79,13 +79,13 @@
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'returned')
                                                                 (<span
-                                                                    style="color:red">{{ $details->quantity }}</span>)
+                                                                    style="color:red">{{ $details->quantity * -1 }}</span>)
                                                                 @php
                                                                     $lower_quantity = $details->quantity * -1;
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'out from warehouse')
                                                                 (<span
-                                                                    style="color:red">{{ $details->quantity }}</span>)
+                                                                    style="color:red">{{ $details->quantity * -1 }}</span>)
                                                                 @php
                                                                     $lower_quantity = $details->quantity * -1;
                                                                 @endphp
@@ -97,19 +97,19 @@
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'bodega out')
                                                                 (<span
-                                                                    style="color:red">{{ $details->quantity }}</span>)
+                                                                    style="color:red">{{ $details->quantity * -1 }}</span>)
                                                                 @php
                                                                     $lower_quantity = $details->quantity * -1;
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'transfer to branch')
                                                                 (<span
-                                                                    style="color:red">{{ $details->quantity }}</span>)
+                                                                    style="color:red">{{ $details->quantity * -1 }}</span>)
                                                                 @php
                                                                     $lower_quantity = $details->quantity * -1;
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'releasing')
                                                                 (<span
-                                                                    style="color:red">{{ $details->quantity }}</span>)
+                                                                    style="color:red">{{ $details->quantity * -1 }}</span>)
                                                                 @php
                                                                     $lower_quantity = $details->quantity * -1;
                                                                 @endphp
@@ -133,7 +133,7 @@
                                                                 @endphp
                                                             @elseif($details->transaction_type == 'out from warehouse booking')
                                                                 (<span
-                                                                    style="color:red">{{ $sku_ledger[$i]->quantity }}</span>)
+                                                                    style="color:red">{{ $sku_ledger[$i]->quantity * -1 }}</span>)
                                                             @else
                                                                 0
                                                             @endif
@@ -144,9 +144,16 @@
                                                         <td style="text-align: right">
                                                             {{ number_format($details->final_unit_cost, 4, '.', ',') }}
                                                         </td>
-                                                        <td style="text-align: right">
-                                                            {{ number_format($details->amount, 4, '.', ',') }}
-                                                        </td>
+                                                     
+                                                        @if ($details->amount > 0)
+                                                            <td style="text-align: right">
+                                                                {{ number_format($details->amount, 4, '.', ',') }}
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                (<span style="color:red;text-align: right">{{ number_format($details->amount * -1, 4, '.', ',') }}</span>)
+                                                            </td>
+                                                        @endif
                                                         <td style="text-align: right">
                                                             {{ number_format($details->running_amount, 4, '.', ',') }}
                                                         </td>

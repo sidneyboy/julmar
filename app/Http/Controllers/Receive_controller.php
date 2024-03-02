@@ -18,6 +18,8 @@ use App\Sku_ledger;
 use App\Received_discount_details;
 use App\Received_other_discount_details;
 use App\Purchase_order_discount_details;
+use App\Received_purchase_order_bo_allowance;
+use App\Received_purchase_order_inv_cost;
 use App\Sku_price_details;
 use App\Sku_principal;
 use DB;
@@ -187,94 +189,11 @@ class Receive_controller extends Controller
     public function received_order_save(Request $request)
     {
         //return $request->input();
-        date_default_timezone_set('Asia/Manila');
-        $date = date('Y-m-d');
 
-        $get_general_merchandise = General_ledger::select('running_balance')
-            ->where('account_name', $request->input('merchandise_inventory_account_name'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->where('account_number', $request->input('merchandise_inventory_account_number'))
-            ->orderBy('id', 'DESC')
-            ->first();
-
-        if ($get_general_merchandise) {
-            $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
-
-            $new_general_ledger = new General_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'account_name' => $request->input('merchandise_inventory_account_name'),
-                'account_number' => $request->input('merchandise_inventory_account_number'),
-                'debit_record' => $request->input('total_final_cost'),
-                'credit_record' => 0,
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
-                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
-                'running_balance' => $running_balance,
-                'transaction' => 'RECEIVED SKU',
-            ]);
-
-            $new_general_ledger->save();
-        } else {
-            $new_general_ledger = new General_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'account_name' => $request->input('merchandise_inventory_account_name'),
-                'account_number' => $request->input('merchandise_inventory_account_number'),
-                'debit_record' => $request->input('total_final_cost'),
-                'credit_record' => 0,
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
-                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
-                'running_balance' => $request->input('total_final_cost'),
-                'transaction' => 'RECEIVED SKU',
-            ]);
-
-            $new_general_ledger->save();
-        }
-
-        $get_accounts_payable = General_ledger::select('running_balance')
-            ->where('account_name', $request->input('accounts_payable_account_name'))
-            ->where('principal_id', $request->input('principal_id'))
-            ->where('account_number', $request->input('accounts_payable_account_number'))
-            ->orderBy('id', 'DESC')
-            ->first();
-
-        if ($get_accounts_payable) {
-            $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
-
-            $new_general_ledger = new General_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'account_name' => $request->input('accounts_payable_account_name'),
-                'account_number' => $request->input('accounts_payable_account_number'),
-                'debit_record' => 0,
-                'credit_record' => $request->input('total_final_cost'),
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
-                'general_account_number' => $request->input('accounts_payable_general_account_number'),
-                'running_balance' => $running_balance,
-                'transaction' => 'RECEIVED SKU',
-            ]);
-
-            $new_general_ledger->save();
-        } else {
-            $new_general_ledger = new General_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'account_name' => $request->input('accounts_payable_account_name'),
-                'account_number' => $request->input('accounts_payable_account_number'),
-                'debit_record' => 0,
-                'credit_record' => $request->input('total_final_cost'),
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $request->input('invoice_date'),
-                'general_account_number' => $request->input('accounts_payable_general_account_number'),
-                'running_balance' => $request->input('total_final_cost'),
-                'transaction' => 'RECEIVED SKU',
-            ]);
-
-            $new_general_ledger->save();
-        }
-
+        $curdate = DB::select('SELECT CURDATE()');
+        $curtime = DB::select('SELECT CURTIME()');
 
         $po = Purchase_order::select('purchase_id', 'payment_status')->find($request->input('purchase_order_id'));
-
 
         if ($po->payment_status == 'paid') {
             $new_received_purchase_orders = new Received_purchase_order([
@@ -303,6 +222,8 @@ class Receive_controller extends Controller
                 'cwo_discount_rate' => $request->input('cwo_discount_rate'),
                 'cwo_discount' => $request->input('cwo_discount'),
                 'payment_status' => 'paid',
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_received_purchase_orders->save();
@@ -332,33 +253,137 @@ class Receive_controller extends Controller
                 'invoice_image' => 'No Sales Invoice Yet',
                 'cwo_discount_rate' => $request->input('cwo_discount_rate'),
                 'cwo_discount' => $request->input('cwo_discount'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_received_purchase_orders->save();
         }
 
+        $get_general_merchandise = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('merchandise_inventory_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('merchandise_inventory_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
 
-        $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->orderBy('id', 'desc')->take(1)->first();
+        if ($get_general_merchandise) {
+            $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
 
-        if ($ap_ledger_last_transaction) {
-            $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RECEIVED SKU',
+                'description' => 'Received PO#: ' . $po->purchase_id,
+                'all_id' => $new_received_purchase_orders->id,
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
+            ]);
+
+            $new_general_ledger->save();
         } else {
-            $ap_ledger_running_balance = $request->input('total_final_cost');
-        }
-        $new_ap_ledger = new Ap_ledger([
-            'principal_id' => $request->input('principal_id'),
-            'user_id' => auth()->user()->id,
-            'transaction_date' => $request->input('invoice_date'),
-            'description' => 'Received PO#: ' . $po->purchase_id,
-            'debit_record' => 0,
-            'credit_record' => $request->input('total_final_cost'),
-            'running_balance' => $ap_ledger_running_balance,
-            'transaction' => 'received',
-            'reference' => $new_received_purchase_orders->id,
-            'remarks' => '',
-        ]);
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('merchandise_inventory_account_name'),
+                'account_number' => $request->input('merchandise_inventory_account_number'),
+                'debit_record' => $request->input('total_final_cost'),
+                'credit_record' => 0,
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('merchandise_inventory_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RECEIVED SKU',
+                'description' => 'Received PO#: ' . $po->purchase_id,
+                'all_id' => $new_received_purchase_orders->id,
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
+            ]);
 
-        $new_ap_ledger->save();
+            $new_general_ledger->save();
+        }
+
+        $get_accounts_payable = General_ledger::select('running_balance')
+            ->where('account_name', $request->input('accounts_payable_account_name'))
+            ->where('principal_id', $request->input('principal_id'))
+            ->where('account_number', $request->input('accounts_payable_account_number'))
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($get_accounts_payable) {
+            $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
+
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $running_balance,
+                'transaction' => 'RECEIVED SKU',
+                'description' => 'Received PO#: ' . $po->purchase_id,
+                'all_id' => $new_received_purchase_orders->id,
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
+            ]);
+
+            $new_general_ledger->save();
+        } else {
+            $new_general_ledger = new General_ledger([
+                'principal_id' => $request->input('principal_id'),
+                'account_name' => $request->input('accounts_payable_account_name'),
+                'account_number' => $request->input('accounts_payable_account_number'),
+                'debit_record' => 0,
+                'credit_record' => $request->input('total_final_cost'),
+                'user_id' => auth()->user()->id,
+                'transaction_date' => $request->input('invoice_date'),
+                'general_account_number' => $request->input('accounts_payable_general_account_number'),
+                'running_balance' => $request->input('total_final_cost'),
+                'transaction' => 'RECEIVED SKU',
+                'description' => 'Received PO#: ' . $po->purchase_id,
+                'all_id' => $new_received_purchase_orders->id,
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
+            ]);
+
+            $new_general_ledger->save();
+        }
+
+
+
+        //WALAY APIL
+        // $ap_ledger_last_transaction = Ap_ledger::select('running_balance')->where('principal_id', $request->input('principal_id'))->orderBy('id', 'desc')->take(1)->first();
+
+        // if ($ap_ledger_last_transaction) {
+        //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance + $request->input('total_final_cost');
+        // } else {
+        //     $ap_ledger_running_balance = $request->input('total_final_cost');
+        // }
+        // $new_ap_ledger = new Ap_ledger([
+        //     'principal_id' => $request->input('principal_id'),
+        //     'user_id' => auth()->user()->id,
+        //     'transaction_date' => $request->input('invoice_date'),
+        //     'description' => 'Received PO#: ' . $po->purchase_id,
+        // 'all_id' => 'Received PO#: ' . $po->purchase_id, $new_received_purchase_orders->id,
+        //     'debit_record' => 0,
+        //     'credit_record' => $request->input('total_final_cost'),
+        //     'running_balance' => $ap_ledger_running_balance,
+        //     'transaction' => 'received',
+        //     'reference' => $new_received_purchase_orders->id,
+        //     'remarks' => '',
+        // ]);
+
+        // $new_ap_ledger->save();
+        //WALAY APIL
 
         $check_less_other_discount_selected_name = $request->input('less_other_discount_selected_name');
 
@@ -373,99 +398,99 @@ class Receive_controller extends Controller
                 $new_received_purchase_order_other_discount->save();
             }
 
-            $received_jer_save = new Received_jer([
-                'principal_id' => $request->input('principal_id'),
-                'received_id' => $new_received_purchase_orders->id,
-                'dr' => $request->input('net_payable'),
-                'cr' => $request->input('net_payable'),
-                'date' => $date
-            ]);
+            // $received_jer_save = new Received_jer([
+            //     'principal_id' => $request->input('principal_id'),
+            //     'received_id' => $new_received_purchase_orders->id,
+            //     'dr' => $request->input('net_payable'),
+            //     'cr' => $request->input('net_payable'),
+            //     'date' =>  $curdate[0]->{'CURDATE()'},
+            // ]);
 
-            $received_jer_save->save();
+            // $received_jer_save->save();
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => $request->input('net_payable'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
-                ]);
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' =>  $curdate[0]->{'CURDATE()'},,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => $request->input('net_payable'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('net_payable'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => 0,
-                    'received' => $request->input('net_payable'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $request->input('net_payable'),
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' =>  $curdate[0]->{'CURDATE()'},,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => $request->input('net_payable'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $request->input('net_payable'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
         } else {
-            $received_jer_save = new Received_jer([
-                'principal_id' => $request->input('principal_id'),
-                'received_id' => $new_received_purchase_orders->id,
-                'dr' => $request->input('total_final_cost'),
-                'cr' => $request->input('total_final_cost'),
-                'date' => $date
-            ]);
+            // $received_jer_save = new Received_jer([
+            //     'principal_id' => $request->input('principal_id'),
+            //     'received_id' => $new_received_purchase_orders->id,
+            //     'dr' => $request->input('total_final_cost'),
+            //     'cr' => $request->input('total_final_cost'),
+            //     'date' =>  $curdate[0]->{'CURDATE()'},
+            // ]);
 
-            $received_jer_save->save();
+            // $received_jer_save->save();
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
 
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => $request->input('total_final_cost'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
-                ]);
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' =>  $curdate[0]->{'CURDATE()'},,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => $request->input('total_final_cost'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning + $request->input('total_final_cost'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new_received_purchase_orders->id,
-                    'transaction' => 'received',
-                    'accounts_payable_beginning' => 0,
-                    'received' => $request->input('total_final_cost'),
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => 0,
-                    'accounts_payable_end' => $request->input('total_final_cost'),
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' =>  $curdate[0]->{'CURDATE()'},,
+            //         'all_id' => $new_received_purchase_orders->id,
+            //         'transaction' => 'received',
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => $request->input('total_final_cost'),
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => 0,
+            //         'accounts_payable_end' => $request->input('total_final_cost'),
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
         }
 
         for ($i = 0; $i < count($request->input('discount_selected_name')); $i++) {
@@ -539,6 +564,8 @@ class Receive_controller extends Controller
                         'running_amount' => $running_amount,
                         'with_invoice_quantity' => $with_invoice_quantity,
                         'with_invoice_net_balance' => $with_invoice_net_balance,
+                        'date' => $curdate[0]->{'CURDATE()'},
+                        'time' => $curtime[0]->{'CURTIME()'},
                     ]);
 
                     $new_sku_ledger->save();
@@ -559,6 +586,8 @@ class Receive_controller extends Controller
                         'running_amount' => $request->input('final_total_cost_per_sku')[$data],
                         'with_invoice_quantity' => 0,
                         'with_invoice_net_balance' => $request->input('received_quantity')[$data],
+                        'date' => $curdate[0]->{'CURDATE()'},
+                        'time' => $curtime[0]->{'CURTIME()'},
                     ]);
 
                     $new_sku_ledger->save();
@@ -579,6 +608,22 @@ class Receive_controller extends Controller
                     $update_purchase_order_details->save();
                 }
             }
+
+            $new_bo_layer = new Received_purchase_order_bo_allowance([
+                'received_id' => 1,
+                'bo_allowance' => $request->input('bo_allowance_discount'),
+                'sku_id' => $data,
+            ]);
+
+            $new_bo_layer->save();
+
+            $new_invoice_cost_layer = new Received_purchase_order_inv_cost([
+                'received_id' => 1,
+                'invoice_cost' => $request->input('unit_cost')[$data],
+                'sku_id' => $data,
+            ]);
+
+            $new_invoice_cost_layer->save();
         }
 
         $check_purchase_order_details = Purchase_order_details::select('confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))

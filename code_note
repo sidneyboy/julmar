@@ -28,7 +28,9 @@ then e lahi lahi nimo sila depending kong bo ba or rgs ang JER
 
 
 $curdate = DB::select('SELECT CURDATE()');
-        $dateString = $curdate[0]->{'CURDATE()'};
+        $curdate[0]->{'CURDATE()'};
+        $curtime = DB::select('SELECT CURTIME()');
+        $curtime[0]->{'CURTIME()'};
 
 
 

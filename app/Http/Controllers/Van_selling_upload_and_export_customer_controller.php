@@ -51,9 +51,8 @@ class Van_selling_upload_and_export_customer_controller extends Controller
                 $csv[] = $data;
             }
         }
-        //return $csv;
         $counter = count($csv);
-
+        return $csv;
         if (isset($csv[0][11])) {
             if ($csv[0][11] != "VAN_SELLING_CUSTOMER_CSV_FILE") {
                 //return redirect('vs_upload_and_export_customer')->with('error', 'Incorrect File');
@@ -64,7 +63,6 @@ class Van_selling_upload_and_export_customer_controller extends Controller
                     $location_id = Location_details::select('location_id')
                                     ->where('id',$csv[$i][1])
                                     ->first();
-
         
                     $new = new Van_selling_customer([
                         'location_id' => $location_id->location_id,

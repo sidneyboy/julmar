@@ -44,8 +44,8 @@ class Van_selling_customer_list_controller extends Controller
         $customer_map_data = array();
         foreach ($customer as $key => $value) {
             $customer_map_data[] = array(
-                "Lon" => $value->latitude,
-                "Lat" => $value->longitude,
+                "Lon" => $value->longitude,
+                "Lat" => $value->latitude,
                 "Store_name" => $value->store_name,
                 "Store_type" => $value->store_type,
                 "Barangay" => $value->barangay,
@@ -54,8 +54,6 @@ class Van_selling_customer_list_controller extends Controller
                 "Contact_number" => $value->contact_number,
             );
         }
-
-        //return $customer_map_data;
 
         return view('van_selling_customer_list_show_map', [
             'customer' => $customer,

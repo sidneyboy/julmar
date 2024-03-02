@@ -1,14 +1,14 @@
 <form id="return_to_principal_save">
     @if ($received_purchase_order->discount_type == 'type_a')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover table-striped">
+            <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
-                        <th>Desc</th>
-                        <th>To be return</th>
-                        <th style="text-align: center;">U/C<br />(VAT EX)</th>
-                        <th>Amount</th>
-                        <th style="text-align: center">Discount
+                        <th class="text-center align-middle" style="text-transform:uppercase">Description</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Qty</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">U/C<br />(VAT EX)</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Amount</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Discount
                             @foreach ($received_purchase_order->received_discount_details as $data)
                                 @php
                                     $sum_discount_selected[] = $data->discount_rate;
@@ -16,15 +16,15 @@
                             @endforeach
                             ({{ array_sum($sum_discount_selected) }}%)
                         </th>
-                        <th style="text-align: center">BO Allowance
+                        <th class="text-center align-middle" style="text-transform:uppercase">BO Allowance
                             ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th>
-                        <th style="text-align: center">CWO
+                        <th class="text-center align-middle" style="text-transform:uppercase">CWO
                             ({{ $received_purchase_order->cwo_discount_rate }}%)</th>
-                        <th style="text-align: center">T.Discount<br /></th>
-                        <th>VAT</th>
-                        <th>Freight</th>
-                        <th style="text-align: center">Final Total Cost</th>
-                        <th style="text-align: center">Final Unit Cost</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">T.Discount<br /></th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">VAT</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Freight</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Final Total Cost</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Final Unit Cost</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -139,7 +139,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;font-size:13px;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -263,7 +263,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -289,7 +289,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;font-size:13px;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -370,7 +370,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -399,25 +399,25 @@
         @endif
     @elseif($received_purchase_order->discount_type == 'type_b')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover table-striped">
+            <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
-                        <th>Desc</th>
-                        <th>To be return</th>
-                        <th style="text-align: center;">U/C<br />(VAT EX)</th>
-                        <th>Amount</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Description</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Qty</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">U/C<br />(VAT EX)</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Amount</th>
                         @foreach ($received_purchase_order->received_discount_details as $data)
-                            <th style="text-align: center;">{{ Str::ucfirst($data->discount_name) }}
+                            <th class="text-center align-middle;" style="text-transform:uppercase">{{ Str::ucfirst($data->discount_name) }}
                                 ({{ $data->discount_rate }}%)
                             </th>
                         @endforeach
-                        {{-- <th style="text-align: center">BO Allowance
+                        {{-- <th class="text-center align-middle;" style="text-transform:uppercase">BO Allowance
                             ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th> --}}
-                        <th style="text-align: center">T.Discount<br /></th>
-                        <th>VAT</th>
-                        <th style="text-align: center">Freight</th>
-                        <th style="text-align: center">Final Total Cost</th>
-                        <th style="text-align: center">Final Unit Cost</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">T.Discount<br /></th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">VAT</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Freight</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Final Total Cost</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Final Unit Cost</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -576,7 +576,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;font-size:13px;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -710,7 +710,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -737,7 +737,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;font-size:13px;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -820,7 +820,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm">
+            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -957,15 +957,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

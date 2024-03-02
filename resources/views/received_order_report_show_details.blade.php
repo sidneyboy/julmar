@@ -122,9 +122,9 @@
                             <td><span style="color:green;font-weight:bold;">{{ $details->sku->sku_code }}</span>-
                                 {{ $details->sku->description }}
                             </td>
-                            <td style="text-align: right">{{ $details->quantity - $details->quantity_returned }}
+                            <td style="text-align: right">{{ $details->quantity }}
                                 @php
-                                    $quantity_final = $details->quantity - $details->quantity_returned;
+                                    $quantity_final = $details->quantity;
                                 @endphp
                             </td>
                             <td style="text-align: right">{{ number_format($details->unit_cost, 2, '.', ',') }}</td>

@@ -40,8 +40,8 @@
                       </div>
                       <div class="col-md-6">
                           <div class="form-group">
-                              <select class="form-control" id="principal" style="width:100%;">
-                                  <option value="" default>Select Principal</option>
+                              <select class="form-control" id="principal" required style="width:100%;">
+                                  <option value="" default>SELECT PRINCIPAL</option>
                                   @foreach ($principals as $principal)
                                       <option value="{{ $principal->id . '=' . $principal->principal }}">
                                           {{ $principal->principal }}</option>

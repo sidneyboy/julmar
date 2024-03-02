@@ -16,6 +16,7 @@ class Received_purchase_order extends Model
     'invoice_date',
     'remarks',
     'date',
+    'time',
     'invoice_image',
     'discount_type',
     'scanned_by',

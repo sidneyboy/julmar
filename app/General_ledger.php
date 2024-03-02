@@ -20,6 +20,9 @@ class General_ledger extends Model
         'branch',
         'customer_id',
         'remarks',
+        'date',
+        'time',
+        'all_id',
     ];
 
     public function chart_of_account_details()

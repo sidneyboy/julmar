@@ -21,6 +21,8 @@ class Return_to_principal extends Model
       'total_less_other_discount',
       'net_payable',
       'cwo_discount',
+      'date',
+      'time',
     ];
 
     public function principal()
