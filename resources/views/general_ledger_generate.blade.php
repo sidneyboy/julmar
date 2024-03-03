@@ -1,4 +1,4 @@
-<table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px;width:100%:" id="example1">
+<table class="table table-bordered table-hover table-sm table-striped" style="font-size:13px;width:100%:">
     <thead>
         <tr>
             <th>Transaction</th>

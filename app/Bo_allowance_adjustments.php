@@ -13,7 +13,8 @@ class Bo_allowance_adjustments extends Model
       'bo_allowance_deduction',
       'net_deduction',
       'user_id',
-      'date'
+      'date',
+      'time',
 
     ];
 

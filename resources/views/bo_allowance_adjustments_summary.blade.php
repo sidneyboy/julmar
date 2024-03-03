@@ -6,19 +6,20 @@
                     <th colspan="10">Particulars: {{ $particulars }}</th>
                 </tr>
                 <tr>
-                    <th>Code</th>
-                    <th>Description</th>
-                    <th>UOM</th>
-                    <th>Quantity</th>
-                    <th>FUC</th>
-                    {{-- <th>Amount</th> --}}
-                    <th>Adjustment</th>
-                    <th>BO Allowance</th>
-                    <th>Vat</th>
-                    {{-- <th>Adjusted Amount</th>
-                    <th>Adjusted FUC</th> --}}
-                    <th>Freight</th>
-                    <th>Total Cost</th>
+                    <th class="text-center align-middle">Code</th>
+                    <th class="text-center align-middle">Description</th>
+                    <th class="text-center align-middle">UOM</th>
+                    <th class="text-center align-middle">Quantity</th>
+                    {{-- <th class="text-center align-middle">Invoice Cost</th> --}}
+                    {{-- <th class="text-center align-middle">Amount</th> --}}
+                    <th class="text-center align-middle">BO Cost Adjustment</th>
+                    <th class="text-center align-middle">BO Discount</th>
+                    <th class="text-center align-middle">BO Allowance</th>
+                    <th class="text-center align-middle">Vat</th>
+                    {{-- <th class="text-center align-middle">Adjusted Amount</th>
+                    <th class="text-center align-middle">Adjusted FUC</th> --}}
+                    <th class="text-center align-middle">Freight</th>
+                    <th class="text-center align-middle">Total Cost</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,123 +29,90 @@
                         <td style="text-transform: uppercase;text-align: center;">{{ $description[$data->sku_id] }}</td>
                         <td style="text-transform: uppercase;text-align: center;">
                             {{ $unit_of_measurement[$data->sku_id] }}
+                            <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
                         </td>
-                        <td style="text-align: center;">{{ $quantity[$data->sku_id] }}</td>
+                        <td style="text-align: center;">{{ $quantity[$data->sku_id] }}
+                            <input type="hidden" name="quantity[{{ $data->sku_id }}]"
+                                value="{{ $quantity[$data->sku_id] }}">
+                        </td>
                         <td style="text-align: right;">
-                            {{ number_format($unit_cost[$data->sku_id], 4, '.', ',') }}
+                            {{ number_format($unit_cost_adjustment, 4, '.', ',') }}
+                            <input type="hidden" name="bo_cost_adjustment[{{ $data->sku_id }}]"
+                                value="{{ $unit_cost_adjustment }}">
                         </td>
-                        {{-- <td style="text-align: right">
+                        <td style="text-align: right;">
                             @php
-                                $amount = $quantity[$data->sku_id] * $unit_cost[$data->sku_id];
+                                $new_bo_allowance_layer =
+                                    $unit_cost_adjustment / $data->unit_cost + $bo_allowance_layer[$data->sku_id];
                             @endphp
-                            {{ number_format($amount, 4, '.', ',') }}</td> --}}
-                        <td style="text-align: right;">{{ number_format($unit_cost_adjustment, 4, '.', ',') }}
+                            {{ number_format($bo_allowance_layer[$data->sku_id] * 100, 4, '.', ',') . '%' }}
+                            <input type="hidden" name="new_bo_allowance_layer[{{ $data->sku_id }}]"
+                                value="{{ $new_bo_allowance_layer }}">
+                            <input type="hidden" name="bo_discount[{{ $data->sku_id }}]"
+                                value="{{ $bo_allowance_layer[$data->sku_id] }}">
                         </td>
                         <td style="text-align: right;">
                             @php
-                                // if ($unit_cost_adjustment > 0) {
-                                //     $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id] * -1;
-                                //     $sum_total_amount[] = $total_amount;
-                                // } else {
-                                //     $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
-                                //     $sum_total_amount[] = $total_amount;
-                                // }
                                 $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
                                 $sum_total_amount[] = $total_amount;
                             @endphp
                             {{ number_format($total_amount, 4, '.', ',') }}
-                            <input type="hidden" name="bo_allowance_per_sku[{{ $data->sku_id }}]"
+                            <input type="hidden" name="bo_allowance[{{ $data->sku_id }}]"
                                 value="{{ $total_amount }}">
-                        </td>
-                        <td>
-                            @php
-                                $vat = $total_amount * 0.12;
-                                $sum_total_vat[] = $vat;
-                                echo number_format($vat, 4, '.', ',');
-                            @endphp
-
-                            <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
-                            <input type="hidden" name="quantity[{{ $data->sku_id }}]"
-                                value="{{ $quantity[$data->sku_id] }}">
-                            <input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost[$data->sku_id] }}">
-                            <input type="hidden" name="adjusted_amount[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost_adjustment }}">
-                            {{-- <input type="hidden" name="adjusted_amount_data[{{ $data->sku_id }}]"
-                                value="{{ $adjusted_amount }}"> --}}
-                            {{-- <input type="hidden" name="adjusted_final_unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $difference }}"> --}}
-                            <input type="hidden" name="original_final_unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost[$data->sku_id] }}">
-                        </td>
-                        <td style="text-align: right">
-                            {{ number_format($data->freight, 4, '.', ',') }}
                         </td>
                         <td style="text-align: right">
 
                             @if ($unit_cost_adjustment > 0)
                                 @php
-                                    $total_cost = ($total_amount + $vat + $data->freight) * -1;
+                                    $vat = $total_amount * -0.12;
+                                    $sum_total_vat[] = $vat;
+                                    echo number_format($vat, 4, '.', ',');
+                                @endphp
+                            @else
+                                @php
+                                    $vat = $total_amount * 0.12 * -1;
+                                    $sum_total_vat[] = $vat;
+                                    echo number_format($vat, 4, '.', ',');
+                                @endphp
+                            @endif
+                            <input type="hidden" name="vat[{{ $data->sku_id }}]" value="{{ $vat }}">
+                        </td>
+                        <td style="text-align: right">
+                            {{ number_format($data->freight, 4, '.', ',') }}
+                            <input type="hidden" name="freight[{{ $data->sku_id }}]" value="{{ $data->freight }}">
+                        </td>
+                        <td style="text-align: right">
+                            @if ($unit_cost_adjustment > 0)
+                                @php
+                                    $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                 @endphp
                                 {{ number_format($total_cost, 4, '.', ',') }}
                             @else
                                 @php
-                                    $total_cost = $total_amount + $vat + $data->freight;
+                                    $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                 @endphp
                                 {{ number_format($total_cost, 4, '.', ',') }}
                             @endif
-
-
-                            <input type="hidden" name="total_cost[{{ $data->sku_id }}]"
-                                value="{{ $total_cost }}">
+                            @php
+                                $sum_total_cost[] = $total_cost;
+                            @endphp
+                            <input type="hidden" name="total_cost[{{ $data->sku_id }}]" value="{{ $total_cost }}">
                         </td>
-                        {{-- <td style="text-align: right">
-                            @php
-                                $adjusted_amount = $amount + $total_amount + $vat;
-                            @endphp
-                            {{ number_format($adjusted_amount, 4, '.', ',') }}
-                        </td> --}}
-                        {{-- <td style="text-align: right;">
-                            @php
-                                $difference = $adjusted_amount / $quantity[$data->sku_id];
-                            @endphp
-                            {{ number_format($difference, 4, '.', ',') }}
-
-                            <input type="hidden" name="sku_id[]" value="{{ $data->sku_id }}">
-                            <input type="hidden" name="quantity[{{ $data->sku_id }}]"
-                                value="{{ $quantity[$data->sku_id] }}">
-                            <input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost[$data->sku_id] }}">
-                            <input type="hidden" name="adjusted_amount[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost_adjustment }}">
-                            <input type="hidden" name="adjusted_amount_data[{{ $data->sku_id }}]"
-                                value="{{ $adjusted_amount }}">
-                            <input type="hidden" name="adjusted_final_unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $difference }}">
-                            <input type="hidden" name="original_final_unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $unit_cost[$data->sku_id] }}">
-                        </td> --}}
                     </tr>
                 @endforeach
+            </tbody>
+            <tfoot>
                 <tr>
-                    <td colspan="6" style="text-align: center;font-weight: bold;color:green;">GRAND TOTAL</td>
-                    <td style="font-weight: bold;text-align: right;color:green;">
+                    <th colspan="6" style="text-align: center;font-weight: bold;">GRAND TOTAL</th>
+                    <th style="text-align: right;">
                         {{ number_format(array_sum($sum_total_amount), 2, '.', ',') }}
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: right;">{{ number_format(array_sum($sum_total_cost), 2, '.', ',') }}</th>
 
                 </tr>
-                <tr>
-                    <td colspan="6"></td>
-                    <td style="text-align: right">
-                        {{ array_sum($sum_total_amount) / $received_purchase_order->gross_purchase }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
+            </tfoot>
         </table>
     </div>
     <input type="hidden" value="{{ $transaction_date }}" name="transaction_date">
@@ -163,7 +131,7 @@
             <td style="font-weight: bold;">BO ALLOWANCE</td>
             <td style="font-weight: bold; text-align: right;font-size: 15px;">
                 @php
-                    $bo_allowance_deduction = array_sum($sum_total_amount);
+                    $bo_allowance_deduction = array_sum($sum_total_cost);
                 @endphp
                 {{ number_format($bo_allowance_deduction, 2, '.', ',') }}
                 <input type="hidden" name="bo_allowance_deduction" value="{{ $bo_allowance_deduction }}">
@@ -172,10 +140,10 @@
         <tr>
             <td style="font-weight: bold;">NET DEDUCTION</td>
             <td style="font-weight: bold; text-align: right;font-size: 15px;border-bottom: 3px double #000000;">
-                @php
+                {{-- @php
                     $vat_deduction = array_sum($sum_total_amount) * 0.12;
                 @endphp
-                <input type="hidden" name="vat_deduction" value="{{ $vat_deduction }}">
+                <input type="hidden" name="vat_deduction" value="{{ $vat_deduction }}"> --}}
                 @php
                     $net_deduction = $bo_allowance_deduction;
                 @endphp
@@ -184,7 +152,7 @@
             </td>
         </tr>
     </table>
-    @if ($net_deduction < 0)
+    @if ($net_deduction > 0)
         <table class="table table-bordered table-hover table-striped table-sm">
             <thead>
                 <tr>
@@ -195,20 +163,20 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
+                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
+                        {{ number_format($net_deduction, 2, '.', ',') }}
                     </td>
                     <td></td>
 
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
+                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction * -1, 2, '.', ',') }}
+                        {{ number_format($net_deduction, 2, '.', ',') }}
                     </td>
                 </tr>
             </tbody>
@@ -224,20 +192,20 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
+                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction, 2, '.', ',') }}
+                        {{ number_format($net_deduction*-1, 2, '.', ',') }}
                     </td>
                     <td></td>
 
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: center;">{{ $get_accounts_payable->account_name }}</td>
+                    <td style="text-align: center;">{{ $get_merchandise_inventory->account_name }}</td>
                     <td></td>
                     <td style="font-weight: bold;text-align: center;">
-                        {{ number_format($net_deduction, 2, '.', ',') }}
+                        {{ number_format($net_deduction*-1, 2, '.', ',') }}
                     </td>
                 </tr>
             </tbody>

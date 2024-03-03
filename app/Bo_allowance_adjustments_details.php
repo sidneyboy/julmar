@@ -12,6 +12,11 @@ class Bo_allowance_adjustments_details extends Model
       'unit_cost',
       'adjusted_amount',
       'bo_allowance_id',
+      'bo_cost_adjustment',
+      'bo_discount',
+      'freight',
+      'vat',
+      'total_cost',  
     ];
 
     public function sku()

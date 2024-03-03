@@ -84,9 +84,21 @@ class Return_to_principal_controller extends Controller
                 ->where('principal_id', $request->input('principal_id'))
                 ->first();
 
+            foreach ($request->input('checkbox_entry') as $key_2 => $sku_id) {
+                $latest_bo_layer = Received_purchase_order_bo_allowance::select('bo_allowance')
+                    ->where('sku_id', $sku_id)
+                    ->where('received_id', $request->input('received_id'))
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                $bo_allowance_layer[$sku_id] = $latest_bo_layer->bo_allowance * 100;
+            }
+
+      
 
             if ($get_merchandise_inventory && $get_accounts_payable) {
                 return view('return_to_principal_summary', [
+                    'bo_allowance_layer' => $bo_allowance_layer,
                     'received_purchase_order' => $received_purchase_order,
                     'get_merchandise_inventory' => $get_merchandise_inventory,
                     'get_accounts_payable' => $get_accounts_payable,
@@ -112,7 +124,7 @@ class Return_to_principal_controller extends Controller
 
     public function return_to_principal_save(Request $request)
     {
-        
+
         $curdate = DB::select('SELECT CURDATE()');
         $curtime = DB::select('SELECT CURTIME()');
 
@@ -147,7 +159,7 @@ class Return_to_principal_controller extends Controller
             ->first();
 
         if ($get_accounts_payable) {
-            $running_balance = $get_accounts_payable->running_balance - $request->input('total_final_cost');
+            $running_balance = $get_accounts_payable->running_balance + $request->input('total_final_cost');
             $new_general_ledger = new General_ledger([
                 'principal_id' => $request->input('principal_id'),
                 'account_name' => $request->input('accounts_payable_account_name'),
@@ -195,7 +207,7 @@ class Return_to_principal_controller extends Controller
             ->first();
 
         if ($get_general_merchandise) {
-            $running_balance = $get_general_merchandise->running_balance - $request->input('total_final_cost');
+            $running_balance = $get_general_merchandise->running_balance + $request->input('total_final_cost');
 
             $new_general_ledger = new General_ledger([
                 'principal_id' => $request->input('principal_id'),
@@ -321,7 +333,7 @@ class Return_to_principal_controller extends Controller
         //     $principal_ledger_saved->save();
         // }
         //-------------WALA NAY APIL
-            //return $request->input();
+        //return $request->input();
         foreach ($request->input('sku_id') as $key => $data) {
             $new_return_details = new Return_to_principal_details([
                 'return_to_principal_id' => $return_to_principal_save->id,
@@ -352,9 +364,9 @@ class Return_to_principal_controller extends Controller
             if ($count_ledger_row > 0) {
                 $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
 
-                $running_amount = $ledger_results[0]->running_amount - $request->input('final_total_cost_per_sku')[$data];
+                $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
 
-                $amount = ($request->input('final_unit_cost_per_sku')[$data] * $request->input('quantity_return')[$data])*1;
+                $amount = ($request->input('final_unit_cost_per_sku')[$data] * $request->input('quantity_return')[$data]) * 1;
                 if ($ledger_results[0]->transaction_type == 'bo allowance adjustment' or $ledger_results[0]->transaction_type == 'invoice cost adjustment') {
                     $new_sku_ledger = new Sku_ledger([
                         'sku_id' => $data,

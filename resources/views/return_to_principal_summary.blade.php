@@ -1,7 +1,7 @@
 <form id="return_to_principal_save">
     @if ($received_purchase_order->discount_type == 'type_a')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <thead>
                     <tr>
                         <th class="text-center align-middle" style="text-transform:uppercase">Description</th>
@@ -12,18 +12,17 @@
                             @foreach ($received_purchase_order->received_discount_details as $data)
                                 @php
                                     $sum_discount_selected[] = $data->discount_rate;
+                                    echo $data->discount_rate;
                                 @endphp
                             @endforeach
-                            ({{ array_sum($sum_discount_selected) }}%)
                         </th>
-                        <th class="text-center align-middle" style="text-transform:uppercase">BO Allowance
-                            ({{ $received_purchase_order->bo_allowance_discount_rate }}%)</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">BO Allowance</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">CWO
                             ({{ $received_purchase_order->cwo_discount_rate }}%)</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">T.Discount<br /></th>
                         <th class="text-center align-middle" style="text-transform:uppercase">VAT</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">Freight</th>
-                        <th class="text-center align-middle" style="text-transform:uppercase">Final Total Cost</th>
+                        <th class="text-center align-middle" style="text-transform:uppercase">Total Cost</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">Final Unit Cost</th>
                     </tr>
                 </thead>
@@ -39,63 +38,64 @@
                                     name="unit_cost[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
-                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$data], 4, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $quantity[$data] * $unit_cost[$data];
+                                    $total_amount = $quantity[$data] * $unit_cost[$data] * -1;
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
-                                {{ number_format($total_amount, 2, '.', ',') }}
+                                {{ number_format($total_amount, 4, '.', ',') }}
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $discount = $total_amount * (array_sum($sum_discount_selected) / 100);
                                     $sum_discount[] = $discount;
-                                    echo number_format($discount, 2, '.', ',');
+                                    echo number_format($discount, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $bo_allowance_discount = $total_amount * ($received_purchase_order->bo_allowance_discount_rate / 100);
+                                    $bo_allowance_discount = ($bo_allowance_layer[$data] / 100) * $total_amount;
                                     $sum_bo_allowance_discount[] = $bo_allowance_discount;
-                                    echo number_format($bo_allowance_discount, 2, '.', ',');
+                                    echo number_format($bo_allowance_discount, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $cwo_discount = $total_amount * ($received_purchase_order->cwo_discount_rate / 100);
                                     $sum_cwo_discount[] = $cwo_discount;
-                                    echo number_format($cwo_discount, 2, '.', ',');
+                                    echo number_format($cwo_discount, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $total_discount = $discount + $bo_allowance_discount + $cwo_discount;
                                     $sum_total_discount[] = $total_discount;
-                                    echo number_format($total_discount, 2, '.', ',');
+                                    echo number_format($total_discount, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $vat_per_sku = ($total_amount - $total_discount) * 0.12;
                                     $sum_vat_per_sku[] = $vat_per_sku;
-                                    echo number_format($vat_per_sku, 2, '.', ',');
+                                    echo number_format($vat_per_sku, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $freight_per_sku = $freight[$data] * $quantity[$data];
                                     $sum_freight[] = $freight_per_sku;
-                                    echo number_format($freight_per_sku, 2, '.', ',');
+                                    echo number_format($freight_per_sku, 4, '.', ',');
                                 @endphp
                                 <input type="hidden" value="{{ $freight_per_sku }}"
                                     name="freight_per_sku[{{ $data }}]">
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $final_total_cost = $total_amount - $total_discount + $vat_per_sku + $freight_per_sku;
+                                    $final_total_cost =
+                                        $total_amount - $total_discount + $vat_per_sku + $freight_per_sku;
                                     $sum_final_total_cost[] = $final_total_cost;
-                                    echo number_format($final_total_cost, 2, '.', ',');
+                                    echo number_format($final_total_cost, 4, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
@@ -103,7 +103,7 @@
                                     $final_unit_cost = $final_total_cost / $quantity[$data];
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
-                                {{ number_format($final_unit_cost, 2, '.', ',') }}
+                                {{ number_format($final_unit_cost, 4, '.', ',') }}
 
                                 <input type="hidden" value="{{ $final_unit_cost }}"
                                     name="final_unit_cost_per_sku[{{ $data }}]">
@@ -139,7 +139,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;font-size:13px;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -233,7 +233,8 @@
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
@@ -263,7 +264,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -276,7 +277,7 @@
                         <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
+                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable * -1, 2, '.', ','); ?></td>
                         <td></td>
                     </tr>
                     <tr>
@@ -284,12 +285,12 @@
                         <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
+                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable * -1, 2, '.', ','); ?></td>
                     </tr>
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;font-size:13px;">
+            <table class="table table-bordered table-hover table-striped float-right table-sm" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -370,7 +371,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -384,7 +385,7 @@
                         <td style="text-align: center;">ACCOUNTS PAYABLE
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost * -1, 2, '.', ','); ?></td>
                         <td></td>
                     </tr>
                     <tr>
@@ -392,14 +393,14 @@
                         <td style="text-align: center;">INVENTORY
                             {{ $received_purchase_order->principal->principal }}</td>
                         <td></td>
-                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                        <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost * -1, 2, '.', ','); ?></td>
                     </tr>
                 </tbody>
             </table>
         @endif
     @elseif($received_purchase_order->discount_type == 'type_b')
         <div class="table table-responsive">
-            <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
+            <table class="table table-bordered table-sm table-hover table-striped">
                 <thead>
                     <tr>
                         <th class="text-center align-middle;" style="text-transform:uppercase">Description</th>
@@ -407,7 +408,8 @@
                         <th class="text-center align-middle;" style="text-transform:uppercase">U/C<br />(VAT EX)</th>
                         <th class="text-center align-middle;" style="text-transform:uppercase">Amount</th>
                         @foreach ($received_purchase_order->received_discount_details as $data)
-                            <th class="text-center align-middle;" style="text-transform:uppercase">{{ Str::ucfirst($data->discount_name) }}
+                            <th class="text-center align-middle;" style="text-transform:uppercase">
+                                {{ Str::ucfirst($data->discount_name) }}
                                 ({{ $data->discount_rate }}%)
                             </th>
                         @endforeach
@@ -455,17 +457,21 @@
                                     $less_percentage_by = $data_discount->discount_rate / 100;
 
                                     $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                    $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                    $discount_value_holder =
+                                        $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                                     $discount_value_holder_history[] = $discount_rate_answer;
                                     $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                    echo '<td style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</td>';
+                                    echo '<td style="text-align:right;">' .
+                                        number_format($discount_rate_answer, 2, '.', ',') .
+                                        '</td>';
                                 }
                             @endphp
                             {{-- <td style="text-align: right"> --}}
                             @php
                                 $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
-                                $bo_allowance_per_sku = end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
+                                $bo_allowance_per_sku =
+                                    end($discount_value_holder_history_for_bo_allowance) - $bo_allowance;
                                 $sum_bo_allowance_per_sku[] = $bo_allowance_per_sku;
                             @endphp
                             {{-- {{ number_format($bo_allowance_per_sku, 2, '.', ',') }}
@@ -474,7 +480,10 @@
                             <td style="text-align: right;">
                                 @php
 
-                                    $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
+                                    $vat =
+                                        ($total_amount -
+                                            (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) *
+                                        0.12;
                                     $sum_vat_per_sku[] = $vat;
                                 @endphp
                                 {{ number_format($vat, 2, '.', ',') }}
@@ -538,10 +547,13 @@
 
                                 // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                                $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                                $discount_value_holder =
+                                    $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                                 $discount_value_holder_history[] = $discount_rate_answer;
-                                echo '<th style="text-align:right;">' . number_format($discount_rate_answer, 2, '.', ',') . '</th>';
+                                echo '<th style="text-align:right;">' .
+                                    number_format($discount_rate_answer, 2, '.', ',') .
+                                    '</th>';
                             }
                             $cwo_discount_lower = end($discount_value_holder_history);
                             $bo_discount = prev($discount_value_holder_history);
@@ -576,7 +588,7 @@
         </div>
 
         @if ($received_purchase_order->total_less_other_discount != 0)
-            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;font-size:13px;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -599,17 +611,24 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($received_purchase_order->received_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' .
+                            Str::ucfirst($data_discount->discount_name) .
+                            '(' .
+                            $data_discount->discount_rate / 100 .
+                            '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                        echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
+                        echo '<td style="text-align:right;">' .
+                            number_format($less_discount_rate_answer, 2, '.', ',') .
+                            '</td></tr>';
                     }
                 @endphp
                 {{-- <tr> --}}
@@ -678,7 +697,8 @@
 
                         // $discount_value_holder = $discount_value_holder_dummy - $discount_value_holder_dummy * $less_percentage_by;
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
@@ -710,7 +730,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>
@@ -737,7 +757,7 @@
                 </tbody>
             </table>
         @else
-            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;font-size:13px;">
+            <table class="table table-bordered table-hover table-striped table-sm float-right" style="width:35%;">
                 <tr>
                     <td style="font-weight: bold; text-align: center;" colspan="2">FINAL SUMMARY OF DISCOUNTS:
                     </td>
@@ -760,17 +780,24 @@
                     $totalArray = [];
                     $percent = [];
                     foreach ($received_purchase_order->received_discount_details as $data_discount) {
-                        echo '<tr><td style="text-align:left">' . Str::ucfirst($data_discount->discount_name) . '(' . $data_discount->discount_rate / 100 . '%) </td>';
+                        echo '<tr><td style="text-align:left">' .
+                            Str::ucfirst($data_discount->discount_name) .
+                            '(' .
+                            $data_discount->discount_rate / 100 .
+                            '%) </td>';
                         $discount_value_holder_dummy = $discount_value_holder;
                         $less_percentage_by = $data_discount->discount_rate / 100;
 
                         // $discount_value_holder = $discount_value_holder_dummy - ($discount_value_holder_dummy * $less_percentage_by);
                         $less_discount_rate_answer = $discount_value_holder * $less_percentage_by;
-                        $discount_value_holder = $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
+                        $discount_value_holder =
+                            $discount_value_holder - $discount_value_holder_dummy * $less_percentage_by;
 
                         $less_discount_value_holder_history[] = $less_discount_rate_answer;
                         $less_discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                        echo '<td style="text-align:right;">' . number_format($less_discount_rate_answer, 2, '.', ',') . '</td></tr>';
+                        echo '<td style="text-align:right;">' .
+                            number_format($less_discount_rate_answer, 2, '.', ',') .
+                            '</td></tr>';
                     }
                 @endphp
                 {{-- <tr> --}}
@@ -820,7 +847,7 @@
                 </tr>
             </table>
 
-            <table class="table table-bordered table-hover table-striped table-sm" style="font-size:13px;">
+            <table class="table table-bordered table-hover table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="text-align: center;">JOURNAL ENTRY</th>

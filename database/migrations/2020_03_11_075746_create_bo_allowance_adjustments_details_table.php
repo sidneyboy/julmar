@@ -20,8 +20,8 @@ class CreateBoAllowanceAdjustmentsDetailsTable extends Migration
             $table->integer('sku_id')->unsigned()->index();
             $table->foreign('sku_id')->references('id')->on('sku_adds');
             $table->integer('quantity');
-            $table->double('unit_cost',15,4);
-            $table->double('adjusted_amount', 15,4);
+            $table->float('unit_cost',15,4)->nullable();
+            $table->float('adjusted_amount', 15,4);
             $table->timestamps();
 
 

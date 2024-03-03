@@ -40,7 +40,7 @@
                             @endphp
                             {{ $quantity }}
                         </td>
-                        <td style="text-align: right;">{{ number_format($data->final_unit_cost, 2, '.', ',') }}
+                        <td style="text-align: right;">{{ number_format($data->unit_cost, 2, '.', ',') }}
                             <input type="hidden" value="{{ $data->sku->description }}"
                                 name="description[{{ $data->sku->id }}]">
                             <input type="hidden" value="{{ $data->sku->unit_of_measurement }}"
@@ -48,7 +48,7 @@
                             <input type="hidden" value="{{ $quantity }}" name="quantity[{{ $data->sku->id }}]">
                             <input type="hidden" value="{{ $data->sku->sku_code }}"
                                 name="code[{{ $data->sku->id }}]">
-                            <input type="hidden" value="{{ $data->final_unit_cost }}"
+                            <input type="hidden" value="{{ $data->unit_cost }}"
                                 name="unit_cost[{{ $data->sku_id }}]">
                             <input type="hidden" value="{{ $data->sku->category_id }}"
                                 name="category_id[{{ $data->sku_id }}]">
