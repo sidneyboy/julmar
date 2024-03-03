@@ -21,6 +21,8 @@ class Invoice_cost_adjustments extends Model
     'net_payable',
     'user_id',
     'cwo_discount',
+    'date',
+    'time',
 
   ];
 

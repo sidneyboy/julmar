@@ -23,7 +23,7 @@
                         <th class="text-center align-middle" style="text-transform:uppercase">VAT</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">Freight</th>
                         <th class="text-center align-middle" style="text-transform:uppercase">Total Cost</th>
-                        <th class="text-center align-middle" style="text-transform:uppercase">Final Unit Cost</th>
+                        {{-- <th class="text-center align-middle" style="text-transform:uppercase">Final Unit Cost</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -55,7 +55,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $bo_allowance_discount = ($bo_allowance_layer[$data] / 100) * $total_amount;
+                                    $bo_allowance_discount = ($bo_allowance_layer / 100) * $total_amount;
                                     $sum_bo_allowance_discount[] = $bo_allowance_discount;
                                     echo number_format($bo_allowance_discount, 4, '.', ',');
                                 @endphp
@@ -97,19 +97,19 @@
                                     $sum_final_total_cost[] = $final_total_cost;
                                     echo number_format($final_total_cost, 4, '.', ',');
                                 @endphp
-                            </td>
-                            <td style="text-align: right">
                                 @php
                                     $final_unit_cost = $final_total_cost / $quantity[$data];
                                     $sum_final_unit_cost[] = $final_unit_cost;
                                 @endphp
-                                {{ number_format($final_unit_cost, 4, '.', ',') }}
 
                                 <input type="hidden" value="{{ $final_unit_cost }}"
                                     name="final_unit_cost_per_sku[{{ $data }}]">
                                 <input type="hidden" value="{{ $final_total_cost }}"
                                     name="final_total_cost_per_sku[{{ $data }}]">
                             </td>
+                            {{-- <td style="text-align: right">
+
+                            </td> --}}
                         </tr>
                     @endforeach
                     <tr>
@@ -130,9 +130,9 @@
                         <th style="text-align: right;">
                             {{ number_format(array_sum($sum_final_total_cost), 2, '.', ',') }}
                         </th>
-                        <th style="text-align: right;">
+                        {{-- <th style="text-align: right;">
                             {{ number_format(array_sum($sum_final_unit_cost), 2, '.', ',') }}
-                        </th>
+                        </th> --}}
                     </tr>
                 </tbody>
             </table>

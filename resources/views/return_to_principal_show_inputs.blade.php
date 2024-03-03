@@ -56,7 +56,7 @@
                                 class="form-control form-control-sm">
                         </td>
                         <td style="text-align: right;"><input type="hidden" name="unit_cost[{{ $data->sku_id }}]"
-                                value="{{ $data->unit_cost }}">{{ number_format($data->unit_cost, 2, '.', ',') }}
+                                value="{{ $invoice_cost_layer[$data->sku_id] }}">{{ number_format($invoice_cost_layer[$data->sku_id], 2, '.', ',') }}
                         </td>
                         <td>
                             <center><input type="checkbox" name="checkbox_entry[]" value="{{ $data->sku->id }}"

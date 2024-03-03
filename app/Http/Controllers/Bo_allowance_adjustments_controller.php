@@ -77,15 +77,12 @@ class Bo_allowance_adjustments_controller extends Controller
                 ->whereIn('sku_id', $request->input('checkbox_entry'))
                 ->get();
 
-            foreach ($sku_add_details as $key => $data) {
-                $latest_bo_layer = Received_purchase_order_bo_allowance::select('bo_allowance')
-                    ->where('sku_id', $data->sku_id)
-                    ->where('received_id', $request->input('received_id'))
-                    ->orderBy('id', 'desc')
-                    ->first();
+            $latest_bo_layer = Received_purchase_order_bo_allowance::select('bo_allowance')
+                ->where('received_id', $request->input('received_id'))
+                ->orderBy('id', 'desc')
+                ->first();
 
-                $bo_allowance_layer[$data->sku_id] = $latest_bo_layer->bo_allowance;
-            }
+            $bo_allowance_layer = $latest_bo_layer->bo_allowance;
 
             return view('bo_allowance_adjustments_summary', [
                 'received_purchase_order' => $received_purchase_order,
@@ -113,7 +110,7 @@ class Bo_allowance_adjustments_controller extends Controller
     public function bo_allowance_adjustments_save(Request $request)
     {
 
-        //return $request->input();
+        return $request->input();
         $curdate = DB::select('SELECT CURDATE()');
         $curtime = DB::select('SELECT CURTIME()');
 
@@ -338,7 +335,7 @@ class Bo_allowance_adjustments_controller extends Controller
 
 
 
-            
+
             //WALAY APIL
             // $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - ($request->input('net_deduction') * -1);
             // $new_ap_ledger = new Ap_ledger([
@@ -425,16 +422,14 @@ class Bo_allowance_adjustments_controller extends Controller
 
                 $new_sku_ledger->save();
             }
-
-            $new_bo_layer = new Received_purchase_order_bo_allowance([
-                'received_id' => $request->input('received_id'),
-                'bo_allowance' => $request->input('new_bo_allowance_layer')[$sku],
-                'sku_id' => $sku,
-            ]);
-
-            $new_bo_layer->save();
         }
 
+        $new_bo_layer = new Received_purchase_order_bo_allowance([
+            'received_id' => $request->input('received_id'),
+            'bo_allowance' => $request->input('new_bo_allowance_layer'),
+        ]);
+
+        $new_bo_layer->save();
 
 
 
@@ -446,7 +441,8 @@ class Bo_allowance_adjustments_controller extends Controller
 
 
 
-             //WALAY APIL
+
+        //WALAY APIL
         // $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
         // $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
         //     ->where('principal_id', $request->input('principal_id'))

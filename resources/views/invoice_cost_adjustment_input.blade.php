@@ -24,8 +24,8 @@
                         <td>
                             {{ $quantity = $data->quantity - $data->quantity_returned }}</td>
                         <td style="text-align: right;">
-                            {{ number_format($data->unit_cost, 2, '.', ',') }}
-                            <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $data->unit_cost }}">
+                            {{ number_format($invoice_cost_layer[$data->sku_id], 2, '.', ',') }}
+                            <input type="hidden" name="unit_cost[{{ $data->sku->id }}]" value="{{ $invoice_cost_layer[$data->sku_id] }}">
                         </td>
                         <td><input type="text" class="form-control form-control-sm"
                                 name="unit_cost_adjustment[{{ $data->sku->id }}]"

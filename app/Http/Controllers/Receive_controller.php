@@ -608,23 +608,14 @@ class Receive_controller extends Controller
                     $update_purchase_order_details->save();
                 }
             }
-
-            $new_bo_layer = new Received_purchase_order_bo_allowance([
-                'received_id' => 1,
-                'bo_allowance' => $request->input('bo_allowance_discount'),
-                'sku_id' => $data,
-            ]);
-
-            $new_bo_layer->save();
-
-            $new_invoice_cost_layer = new Received_purchase_order_inv_cost([
-                'received_id' => 1,
-                'invoice_cost' => $request->input('unit_cost')[$data],
-                'sku_id' => $data,
-            ]);
-
-            $new_invoice_cost_layer->save();
         }
+
+        $new_bo_layer = new Received_purchase_order_bo_allowance([
+            'received_id' => 1,
+            'bo_allowance' => $request->input('bo_allowance_discount'),
+        ]);
+
+        $new_bo_layer->save();
 
         $check_purchase_order_details = Purchase_order_details::select('confirmed_quantity', 'receive')->where('purchase_order_id', $request->input('purchase_order_id'))
             ->get();

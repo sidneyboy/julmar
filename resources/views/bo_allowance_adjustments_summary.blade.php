@@ -43,13 +43,13 @@
                         <td style="text-align: right;">
                             @php
                                 $new_bo_allowance_layer =
-                                    $unit_cost_adjustment / $data->unit_cost + $bo_allowance_layer[$data->sku_id];
+                                    $unit_cost_adjustment / $data->unit_cost + $bo_allowance_layer;
                             @endphp
-                            {{ number_format($bo_allowance_layer[$data->sku_id] * 100, 4, '.', ',') . '%' }}
-                            <input type="hidden" name="new_bo_allowance_layer[{{ $data->sku_id }}]"
+                            {{ number_format($bo_allowance_layer * 100, 4, '.', ',') . '%' }}
+                            <input type="hidden" name="new_bo_allowance_layer"
                                 value="{{ $new_bo_allowance_layer }}">
                             <input type="hidden" name="bo_discount[{{ $data->sku_id }}]"
-                                value="{{ $bo_allowance_layer[$data->sku_id] }}">
+                                value="{{ $bo_allowance_layer }}">
                         </td>
                         <td style="text-align: right;">
                             @php

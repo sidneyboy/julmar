@@ -18,6 +18,7 @@ use App\User;
 use App\Principal_discount;
 use App\Principal_ledger;
 use App\Received_purchase_order_bo_allowance;
+use App\Received_purchase_order_inv_cost;
 use App\Sku_principal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,8 +49,20 @@ class Return_to_principal_controller extends Controller
         $principal_id = $variable_explode[1];
 
         $received = Received_purchase_order_details::where('received_id', $received_id)->get();
+
+        foreach ($received as $key => $data) {
+            $latest_invoice_cost_layer = Received_purchase_order_inv_cost::select('invoice_cost')
+                ->where('received_id', $received_id)
+                ->where('sku_id', $data->sku_id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $invoice_cost_layer[$data->sku_id] = $latest_invoice_cost_layer->invoice_cost;
+        }
+
         return view('return_to_principal_show_inputs', [
             'received' => $received,
+            'invoice_cost_layer' => $invoice_cost_layer,
         ])->with('principal_id', $principal_id)
             ->with('received_id', $received_id);
     }
@@ -84,17 +97,16 @@ class Return_to_principal_controller extends Controller
                 ->where('principal_id', $request->input('principal_id'))
                 ->first();
 
-            foreach ($request->input('checkbox_entry') as $key_2 => $sku_id) {
-                $latest_bo_layer = Received_purchase_order_bo_allowance::select('bo_allowance')
-                    ->where('sku_id', $sku_id)
-                    ->where('received_id', $request->input('received_id'))
-                    ->orderBy('id', 'desc')
-                    ->first();
+            $latest_bo_layer = Received_purchase_order_bo_allowance::select('bo_allowance')
+                ->where('received_id', $request->input('received_id'))
+                ->orderBy('id', 'desc')
+                ->first();
 
-                $bo_allowance_layer[$sku_id] = $latest_bo_layer->bo_allowance * 100;
-            }
+            $bo_allowance_layer = $latest_bo_layer->bo_allowance * 100;
 
-      
+
+
+
 
             if ($get_merchandise_inventory && $get_accounts_payable) {
                 return view('return_to_principal_summary', [
