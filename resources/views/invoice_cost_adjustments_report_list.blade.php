@@ -69,7 +69,7 @@
                         @endphp
                     </td>
                     <td style="text-align: center;"><a
-                            href="{{ route('invoice_cost_adjustments_show_details', $data->id) }}"
+                            href="{{ route('invoice_cost_adjustments_report_generate', ['id' => $data->id]) }}"
                             target="_blank">{{ $data->id }}</a></td>
                     <td style="text-align: center;"><a
                             href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
@@ -84,13 +84,15 @@
             <tr>
                 <th>Grand Total</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_gross_purchase), 2, '.', ',') }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_discount), 2, '.', ',') }}
+                </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_bo_discount), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vatable_purchase), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_vat), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_freight), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_total_final_cost), 2, '.', ',') }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_total_less_other_discount), 2, '.', ',') }}
+                <th style="text-align: right">
+                    {{ number_format(array_sum($sum_total_less_other_discount), 2, '.', ',') }}
                 </th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_net_payable), 2, '.', ',') }}</th>
                 <th></th>

@@ -2,28 +2,34 @@
     <table class="table table-bordered table-hover table-sm table-striped" id="example1">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Gross Purchase</th>
-                <th>Less Discount</th>
-                <th>BO Discount</th>
-                <th>CWO Discount</th>
-                <th>Vatable Purchase</th>
-                <th>Vat</th>
-                <th>Freight</th>
-                <th>Final Cost Returned</th>
-                <th>Other Discount</th>
-                <th>Net Amount Returned</th>
-                <th>Date</th>
-                <th>Principal</th>
-                <th>Received #</th>
-                <th>Driver</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Date/Time</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">#</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Received #</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Amount</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Discount</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">BO Allowance</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">CWO</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">T-Discount</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Vat</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Freight</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Total Cost</th>
+                {{-- <th class="text-center align-middle" style="text-trnsform:uppercase">Other Discount</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Net Amount Returned</th> --}}
+                <th class="text-center align-middle" style="text-transform:uppercase">Principal</th>
+                <th class="text-center align-middle" style="text-transform:uppercase">Driver</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($return_to_principal_data as $data)
                 <tr>
-                    <td style="font-size:20px;text-align:right"><a target="_blank"
-                        href="{{ route('return_to_principal_show_list_details', $data->id) }}">{{ $data->id }}</a>
+                    <td>{{ date('F j, Y H:i a', strtotime($data->date . ' ' . $data->time)) }}</td>
+                    <td style="font-size:20px;" class="text-center"><a target="_blank"
+                            href="{{ url('return_to_principal_report_generate',[
+                                'id' => $data->id,
+                                'report_type' => 'return_to_principal',
+                                ]) }}">RET - {{ $data->id }}</a>
+                    <td style="font-size:20px;" class="text-center"><a href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
+                            target="_blank">RR - {{ $data->received_id }}</a></td>
                     <td style="text-align:right">
                         {{ number_format($data->gross_purchase, 2, '.', ',') }}
                         @php
@@ -45,10 +51,12 @@
                             $sum_cwo_discount[] = $data->cwo_discount;
                         @endphp
                     </td>
-                    <td style="text-align:right">{{ number_format($data->vatable_purchase, 2, '.', ',') }}
+                    <td style="text-align:right">
                         @php
-                            $sum_vatable_purchase[] = $data->vatable_purchase;
+                            $total_discount = $data->total_less_discount + $data->bo_discount + $data->cwo_discount;
+                            $sum_vatable_purchase[] = $total_discount;
                         @endphp
+                        {{ number_format($total_discount, 2, '.', ',') }}
                     </td>
                     <td style="text-align:right">{{ number_format($data->vat, 2, '.', ',') }}
                         @php
@@ -60,12 +68,14 @@
                             $sum_freight[] = $data->freight;
                         @endphp
                     </td>
-                    <td style="text-align:right">{{ number_format($data->total_final_cost, 2, '.', ',') }}
-                        @php
-                            $sum_total_final_cost[] = $data->total_final_cost;
-                        @endphp
-                    </td>
                     <td style="text-align:right">
+                        @php
+                            $total_cost = $data->gross_purchase - $total_discount + $data->vat + $data->freight;
+                            $sum_total_final_cost[] = $total_cost;
+                        @endphp
+                        {{ number_format($total_cost, 2, '.', ',') }}
+                    </td>
+                    {{-- <td style="text-align:right">
                         {{ number_format($data->total_less_other_discount, 2, '.', ',') }}
                         @php
                             $sum_total_less_other_discount[] = $data->total_less_other_discount;
@@ -75,14 +85,12 @@
                         @php
                             $sum_net_payable[] = $data->net_payable;
                         @endphp
+                    </td> --}}
+
                     </td>
-                    <td>{{ date('F j, Y', strtotime($data->created_at)) }}</td>
-                    
-                    </td>
-                    <td text-transform: uppercase;">{{ $data->principal->principal }}</td>
-                    <td><a href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
-                            target="_blank">{{ $data->received_id }}</a></td>
-                    <td text-transform: uppercase;">{{ $data->personnel }}</td>
+                    <td style="text-transform: uppercase;">{{ $data->principal->principal }}</td>
+
+                    <td style="text-transform: uppercase;">{{ $data->personnel }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -98,9 +106,9 @@
                 <th style="text-align: right">{{ number_format(array_sum($sum_vat), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_freight), 2, '.', ',') }}</th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_total_final_cost), 2, '.', ',') }}</th>
-                <th style="text-align: right">
+                {{-- <th style="text-align: right">
                     {{ number_format(array_sum($sum_total_less_other_discount), 2, '.', ',') }}</th>
-                <th style="text-align: right">{{ number_format(array_sum($sum_net_payable), 2, '.', ',') }}</th>
+                <th style="text-align: right">{{ number_format(array_sum($sum_net_payable), 2, '.', ',') }}</th> --}}
                 <th></th>
                 <th></th>
                 <th></th>
@@ -111,7 +119,7 @@
 </div>
 
 <script>
-   $(document).ready(function() {
+    $(document).ready(function() {
         var table = $('#example1').DataTable({
             responsive: true,
             paging: false,

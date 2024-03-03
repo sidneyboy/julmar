@@ -40,8 +40,11 @@ class Return_to_principal_report_controller extends Controller
         $principal_id = $variable_explode[0];
         $principal_name = $variable_explode[1];
 
-        $return_to_principal_data = Return_to_principal::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->orderBy('id','desc')->get();
-
+        $return_to_principal_data = Return_to_principal::where('principal_id', $principal_id)
+                ->whereBetween('date',[$date_from,$date_to])
+                ->orderBy('id','desc')
+                ->get();
+        //->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
         return view('return_to_principal_reports_show_list', [
             'return_to_principal_data' => $return_to_principal_data
         ]);

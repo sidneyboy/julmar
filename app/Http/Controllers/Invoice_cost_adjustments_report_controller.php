@@ -40,8 +40,11 @@ class Invoice_cost_adjustments_report_controller extends Controller
         $principal_id = $variable_explode[0];
         $principal_name = $variable_explode[1];
 
-        $invoice_cost_adjustment = Invoice_cost_adjustments::where('principal_id', $principal_id)->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
-
+        $invoice_cost_adjustment = Invoice_cost_adjustments::where('principal_id', $principal_id)
+            ->whereBetween('date',[$date_from,$date_to])
+            ->get();
+            //->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
+            
         return view('invoice_cost_adjustments_report_list', [
             'invoice_cost_adjustment' => $invoice_cost_adjustment
         ])->with('principal_id', $principal_id)

@@ -2,22 +2,27 @@
     <table class="table table-bordered table-hover table-sm table-striped" id="example1">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Received #</th>
-                <th>Principal</th>
-                <th>Particulars</th>
-                <th>Net BO Adjustment</th>
+                <th class="text-center align-middle" style="text-transform: uppercase">#</th>
+                <th class="text-center align-middle" style="text-transform: uppercase">Received #</th>
+                <th class="text-center align-middle" style="text-transform: uppercase">Principal</th>
+                <th class="text-center align-middle" style="text-transform: uppercase">Particulars</th>
+                <th class="text-center align-middle" style="text-transform: uppercase">Net BO Adjustment</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($bo_adjustments_data as $data)
                 <tr>
-                    <td><a href="{{ route('bo_allowance_adjustments_show_details', $data->id) }}" target="_blank">DM - BO
+                    <td class="text-center"><a
+                            href="{{ route('bo_allowance_adjustments_report_generate', [
+                                'id' => $data->id,
+                            ]) }}"
+                            target="_blank">DM - BO
                             {{ $data->id }}</a></td>
-                    <td><a href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
+                    <td class="text-center"><a
+                            href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
                             target="_blank">RR - {{ $data->received_id }}</a></td>
                     <td>{{ $data->principal->principal }}</td>
-                    <td>{{ $data->particulars }}</td>
+                    <td>{{ strtoupper($data->particulars) }}</td>
                     <td style="text-align: right;">
                         {{ number_format($data->net_deduction, 2, '.', ',') }}
                         @php

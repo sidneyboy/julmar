@@ -946,3 +946,7 @@ Route::post('/driver_collection_final_save', 'Driver_collection_controller@drive
 
 
 
+Route::get('/return_to_principal_report_generate/{id}/{report_type}', 'Julmar_report_controller@return_to_principal_report_generate')->name('return_to_principal_report_generate');
+Route::get('/bo_allowance_adjustments_report_generate/{id}/', 'Julmar_report_controller@bo_allowance_adjustments_report_generate')->name('bo_allowance_adjustments_report_generate');
+Route::get('/invoice_cost_adjustments_report_generate/{id}/', 'Julmar_report_controller@invoice_cost_adjustments_report_generate')->name('invoice_cost_adjustments_report_generate');
+

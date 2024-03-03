@@ -36,7 +36,10 @@ class Bo_allowance_adjustments_report_controller extends Controller
         $date_from = date('Y-m-d', strtotime($var[0]));
         $date_to = date('Y-m-d', strtotime($var[1]));
 
-        $bo_adjustments_data = Bo_allowance_adjustments::where('principal_id', $request->input('principal'))->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])->get();
+        $bo_adjustments_data = Bo_allowance_adjustments::where('principal_id', $request->input('principal'))
+            ->whereBetween('date',[$date_from,$date_to])
+            ->get();
+        //->whereBetween(DB::raw('DATE(created_at)'),  [$date_from, $date_to])
 
         return view('bo_allowance_adjustments_report_list', [
             'bo_adjustments_data' => $bo_adjustments_data
