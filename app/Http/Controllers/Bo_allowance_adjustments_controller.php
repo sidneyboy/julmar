@@ -110,7 +110,7 @@ class Bo_allowance_adjustments_controller extends Controller
     public function bo_allowance_adjustments_save(Request $request)
     {
 
-        return $request->input();
+       //return $request->input();
         $curdate = DB::select('SELECT CURDATE()');
         $curtime = DB::select('SELECT CURTIME()');
 

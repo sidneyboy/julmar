@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div style="overflow-y:scroll;
-                                    height:300px;">
+                                    height:500px;">
                                         <table class="table table-bordered table-sm table-striped"
                                             style="font-size:13px;width:100%;">
                                             <thead>

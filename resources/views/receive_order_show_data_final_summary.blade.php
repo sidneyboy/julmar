@@ -440,7 +440,7 @@
                         {{-- <th style="text-align: center">BO Allowance
                             ({{ $bo_allowance_discount_selected }}%)</th> --}}
                         <th style="text-align: center">T.Discount<br /></th>
-                        <th>VAT</th>
+                        <th>VAT INC</th>
                         <th style="text-align: center">Freight</th>
                         <th style="text-align: center">Final Total Cost</th>
                         <th style="text-align: center">Final Unit Cost</th>
@@ -525,10 +525,7 @@
 
                             <td style="text-align: right;">
                                 @php
-                                    $vat =
-                                        ($total_amount -
-                                            (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) *
-                                        0.12;
+                                    $vat = array_sum($discount_value_holder_history);
                                     $sum_vat_per_sku[] = $vat;
                                 @endphp
                                 {{ number_format($vat, 2, '.', ',') }}

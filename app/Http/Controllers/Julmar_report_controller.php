@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Bo_allowance_adjustments_details;
 use App\Invoice_cost_adjustments;
+use App\Received_purchase_order;
 use App\Return_to_principal;
 use App\User;
 use Illuminate\Http\Request;
@@ -53,6 +54,24 @@ class Julmar_report_controller extends Controller
             return view('invoice_cost_adjustments_report_generate', [
                 'user' => $user,
                 'invoice_cost_adjustment' => $invoice_cost_adjustment,
+                'main_tab' => '',
+                'sub_tab' => '',
+                'active_tab' => '',
+            ]);
+        } else {
+            return redirect('/')->with('error', 'Session Expired. Please Login');
+        }
+    }
+
+    public function received_order_report_generate($id)
+    {
+        if (Auth::check()) {
+            $user = User::select('name', 'position')->find(Auth()->user()->id);
+            $received_purchase_order = Received_purchase_order::find($id);
+
+            return view('received_order_report_generate', [
+                'user' => $user,
+                'received_purchase_order' => $received_purchase_order,
                 'main_tab' => '',
                 'sub_tab' => '',
                 'active_tab' => '',

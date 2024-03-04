@@ -950,3 +950,5 @@ Route::get('/return_to_principal_report_generate/{id}/{report_type}', 'Julmar_re
 Route::get('/bo_allowance_adjustments_report_generate/{id}/', 'Julmar_report_controller@bo_allowance_adjustments_report_generate')->name('bo_allowance_adjustments_report_generate');
 Route::get('/invoice_cost_adjustments_report_generate/{id}/', 'Julmar_report_controller@invoice_cost_adjustments_report_generate')->name('invoice_cost_adjustments_report_generate');
 
+Route::get('/received_order_report_generate/{id}/', 'Julmar_report_controller@received_order_report_generate')->name('received_order_report_generate');
+
