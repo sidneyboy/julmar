@@ -104,10 +104,6 @@ class Return_to_principal_controller extends Controller
 
             $bo_allowance_layer = $latest_bo_layer->bo_allowance * 100;
 
-
-
-
-
             if ($get_merchandise_inventory && $get_accounts_payable) {
                 return view('return_to_principal_summary', [
                     'bo_allowance_layer' => $bo_allowance_layer,
@@ -139,7 +135,7 @@ class Return_to_principal_controller extends Controller
 
         $curdate = DB::select('SELECT CURDATE()');
         $curtime = DB::select('SELECT CURTIME()');
-
+        //return $request->input();
         $return_to_principal_save = new Return_to_principal([
             'principal_id' => $request->input('principal_id'),
             'received_id' => $request->input('received_id'),
@@ -162,7 +158,6 @@ class Return_to_principal_controller extends Controller
         $return_to_principal_save->save();
 
         $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
-
         $get_accounts_payable = General_ledger::select('running_balance')
             ->where('account_name', $request->input('accounts_payable_account_name'))
             ->where('principal_id', $request->input('principal_id'))
@@ -260,6 +255,104 @@ class Return_to_principal_controller extends Controller
             $new_general_ledger->save();
         }
 
+        foreach ($request->input('sku_id') as $key => $data) {
+            $new_return_details = new Return_to_principal_details([
+                'return_to_principal_id' => $return_to_principal_save->id,
+                'sku_id' => $data,
+                'quantity_return' => $request->input('quantity_return')[$data],
+                'unit_cost' => $request->input('unit_cost')[$data],
+                'freight' => $request->input('freight_per_sku')[$data],
+                'bo_discount' => $request->input('bo_allowance_layer'),
+            ]);
+
+            $new_return_details->save();
+
+            $get_receive_purchase_order_details = Received_purchase_order_details::select('quantity_returned')
+                ->where('received_id', $request->input('received_id'))
+                ->where('sku_id', $data)->first();
+            if ($get_receive_purchase_order_details) {
+                Received_purchase_order_details::where('received_id', $request->input('received_id'))
+                    ->where('sku_id', $data)
+                    ->update(['quantity_returned' => $get_receive_purchase_order_details->quantity_returned + $request->input('quantity_return')[$data]]);
+            } else {
+                Received_purchase_order_details::where('received_id', $request->input('received_id'))
+                    ->where('sku_id', $data)
+                    ->update(['quantity_returned' => $request->input('quantity_return')[$data]]);
+            }
+
+            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
+            $count_ledger_row = count($ledger_results);
+
+            if ($count_ledger_row > 0) {
+                $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
+
+                $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
+
+                $amount = ($request->input('final_unit_cost_per_sku')[$data] * $request->input('quantity_return')[$data]) * 1;
+                if ($ledger_results[0]->transaction_type == 'bo allowance adjustment' or $ledger_results[0]->transaction_type == 'invoice cost adjustment') {
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('quantity_return')[$data] * -1,
+                        'running_balance' => $running_balance,
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'returned',
+                        'all_id' => $return_to_principal_save->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => strtoupper($request->input('sku_type')),
+                        'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
+                        'amount' => $amount,
+                        'running_amount' => $running_amount,
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance - $request->input('quantity_return')[$data],
+                        'date' =>  $curdate[0]->{'CURDATE()'},
+                        'time' => $curtime[0]->{'CURTIME()'},
+                    ]);
+
+                    $new_sku_ledger->save();
+                } else {
+                    $new_sku_ledger = new Sku_ledger([
+                        'sku_id' => $data,
+                        'quantity' => $request->input('quantity_return')[$data] * -1,
+                        'running_balance' => $running_balance,
+                        'user_id' => auth()->user()->id,
+                        'transaction_type' => 'returned',
+                        'all_id' => $return_to_principal_save->id,
+                        'principal_id' => $request->input('principal_id'),
+                        'sku_type' => strtoupper($request->input('sku_type')),
+                        'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
+                        'amount' => $amount,
+                        'running_amount' => $running_amount,
+                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
+                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance - $request->input('quantity_return')[$data],
+                        'date' =>  $curdate[0]->{'CURDATE()'},
+                        'time' => $curtime[0]->{'CURTIME()'},
+                    ]);
+
+                    $new_sku_ledger->save();
+                }
+            } else {
+                $new_sku_ledger = new Sku_ledger([
+                    'sku_id' => $data,
+                    'quantity' => $request->input('quantity_return')[$data] * -1,
+                    'running_balance' => $request->input('quantity_return')[$data],
+                    'user_id' => auth()->user()->id,
+                    'transaction_type' => 'returned',
+                    'all_id' => $return_to_principal_save->id,
+                    'principal_id' => $request->input('principal_id'),
+                    'sku_type' => strtoupper($request->input('sku_type')),
+                    'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
+                    'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
+                    'running_amount' => $request->input('final_total_cost_per_sku')[$data],
+                    'date' =>  $curdate[0]->{'CURDATE()'},
+                    'time' => $curtime[0]->{'CURTIME()'},
+                ]);
+
+                $new_sku_ledger->save();
+            }
+        }
+
+        return 'saved';
+
 
         //-------------WALA NAY APIL
         // $reference = Received_purchase_order::select('id', 'purchase_order_id')->find($request->input('received_id'));
@@ -345,104 +438,8 @@ class Return_to_principal_controller extends Controller
         //     $principal_ledger_saved->save();
         // }
         //-------------WALA NAY APIL
+
         //return $request->input();
-        foreach ($request->input('sku_id') as $key => $data) {
-            $new_return_details = new Return_to_principal_details([
-                'return_to_principal_id' => $return_to_principal_save->id,
-                'sku_id' => $data,
-                'quantity_return' => $request->input('quantity_return')[$data],
-                'unit_cost' => $request->input('unit_cost')[$data],
-                'freight' => $request->input('freight_per_sku')[$data],
-            ]);
-
-            $new_return_details->save();
-
-            $get_receive_purchase_order_details = Received_purchase_order_details::select('quantity_returned')
-                ->where('received_id', $request->input('received_id'))
-                ->where('sku_id', $data)->first();
-            if ($get_receive_purchase_order_details) {
-                Received_purchase_order_details::where('received_id', $request->input('received_id'))
-                    ->where('sku_id', $data)
-                    ->update(['quantity_returned' => $get_receive_purchase_order_details->quantity_returned + $request->input('quantity_return')[$data]]);
-            } else {
-                Received_purchase_order_details::where('received_id', $request->input('received_id'))
-                    ->where('sku_id', $data)
-                    ->update(['quantity_returned' => $request->input('quantity_return')[$data]]);
-            }
-
-            $ledger_results = DB::select(DB::raw("SELECT * FROM (SELECT * FROM Sku_ledgers WHERE sku_id = '$data' ORDER BY id DESC LIMIT 1)Var1 ORDER BY id ASC"));
-            $count_ledger_row = count($ledger_results);
-
-            if ($count_ledger_row > 0) {
-                $running_balance = $ledger_results[0]->running_balance - $request->input('quantity_return')[$data];
-
-                $running_amount = $ledger_results[0]->running_amount + $request->input('final_total_cost_per_sku')[$data];
-
-                $amount = ($request->input('final_unit_cost_per_sku')[$data] * $request->input('quantity_return')[$data]) * 1;
-                if ($ledger_results[0]->transaction_type == 'bo allowance adjustment' or $ledger_results[0]->transaction_type == 'invoice cost adjustment') {
-                    $new_sku_ledger = new Sku_ledger([
-                        'sku_id' => $data,
-                        'quantity' => $request->input('quantity_return')[$data] * -1,
-                        'running_balance' => $running_balance,
-                        'user_id' => auth()->user()->id,
-                        'transaction_type' => 'returned',
-                        'all_id' => 1,
-                        'principal_id' => $request->input('principal_id'),
-                        'sku_type' => strtoupper($request->input('sku_type')),
-                        'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
-                        'amount' => $amount,
-                        'running_amount' => $running_amount,
-                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
-                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance - $request->input('quantity_return')[$data],
-                        'date' =>  $curdate[0]->{'CURDATE()'},
-                        'time' => $curtime[0]->{'CURTIME()'},
-                    ]);
-
-                    $new_sku_ledger->save();
-                } else {
-                    $new_sku_ledger = new Sku_ledger([
-                        'sku_id' => $data,
-                        'quantity' => $request->input('quantity_return')[$data] * -1,
-                        'running_balance' => $running_balance,
-                        'user_id' => auth()->user()->id,
-                        'transaction_type' => 'returned',
-                        'all_id' => 1,
-                        'principal_id' => $request->input('principal_id'),
-                        'sku_type' => strtoupper($request->input('sku_type')),
-                        'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
-                        'amount' => $amount,
-                        'running_amount' => $running_amount,
-                        'with_invoice_quantity' => $ledger_results[0]->with_invoice_quantity,
-                        'with_invoice_net_balance' => $ledger_results[0]->with_invoice_net_balance - $request->input('quantity_return')[$data],
-                        'date' =>  $curdate[0]->{'CURDATE()'},
-                        'time' => $curtime[0]->{'CURTIME()'},
-                    ]);
-
-                    $new_sku_ledger->save();
-                }
-            } else {
-                $new_sku_ledger = new Sku_ledger([
-                    'sku_id' => $data,
-                    'quantity' => $request->input('quantity_return')[$data] * -1,
-                    'running_balance' => $request->input('quantity_return')[$data],
-                    'user_id' => auth()->user()->id,
-                    'transaction_type' => 'returned',
-                    'all_id' => 1,
-                    'principal_id' => $request->input('principal_id'),
-                    'sku_type' => strtoupper($request->input('sku_type')),
-                    'final_unit_cost' => $request->input('final_unit_cost_per_sku')[$data],
-                    'amount' => $request->input('final_total_cost_per_sku')[$data] * -1,
-                    'running_amount' => $request->input('final_total_cost_per_sku')[$data],
-                    'date' =>  $curdate[0]->{'CURDATE()'},
-                    'time' => $curtime[0]->{'CURTIME()'},
-                ]);
-
-                $new_sku_ledger->save();
-            }
-        }
-
-
-
-        return 'saved';
+      
     }
 }

@@ -607,11 +607,19 @@ class Receive_controller extends Controller
                     $update_purchase_order_details->scanned_remarks = null;
                     $update_purchase_order_details->save();
                 }
+
+                $new_invoice_cost_layer = new Received_purchase_order_inv_cost([
+                    'received_id' => $new_received_purchase_orders->id,
+                    'invoice_cost' => $request->input('unit_cost')[$data],
+                    'sku_id' => $data,
+                ]);
+                
+                $new_invoice_cost_layer->save();
             }
         }
 
         $new_bo_layer = new Received_purchase_order_bo_allowance([
-            'received_id' => 1,
+            'received_id' => $new_received_purchase_orders->id,
             'bo_allowance' => $request->input('bo_allowance_discount'),
         ]);
 

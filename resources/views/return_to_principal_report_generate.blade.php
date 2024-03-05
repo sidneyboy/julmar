@@ -436,7 +436,7 @@
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td style="text-align: center;">INVENTORY 
+                                    <td style="text-align: center;">INVENTORY
                                         {{ $return_to_principal->received_purchase_order->principal->principal }}</td>
                                     <td></td>
                                     <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
@@ -449,22 +449,27 @@
                         <table class="table table-bordered table-sm table-hover table-striped">
                             <thead>
                                 <tr>
-                                    <th>Desc</th>
-                                    <th>Received</th>
-                                    <th style="text-align: center;">U/C<br />(VAT EX)</th>
-                                    <th>Amount</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Description
+                                    </th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Received</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">U/C<br />(VAT
+                                        EX)</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Amount</th>
                                     @foreach ($return_to_principal->received_purchase_order->received_discount_details as $data)
-                                        <th style="text-align: center;">{{ Str::ucfirst($data->discount_name) }}
-                                            ({{ $data->discount_rate }}%)
+                                        <th class="text-center align-middle" style="text-transform: uppercase">
+                                            {{ Str::ucfirst($data->discount_name) }}
                                         </th>
                                     @endforeach
-                                    {{-- <th style="text-align: center">BO Allowance
+                                    {{-- <th class="text-center align-middle" style="text-transform: uppercase">BO Allowance
                                     ({{ $return_to_principal->received_purchase_order->bo_allowance_discount_rate }}%)</th> --}}
-                                    <th style="text-align: center">T.Discount<br /></th>
-                                    <th>VAT</th>
-                                    <th style="text-align: center">Freight</th>
-                                    <th style="text-align: center">Final Total Cost</th>
-                                    <th style="text-align: center">Final Unit Cost</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">
+                                        T.Discount<br /></th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">VAT</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Freight</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Final Total
+                                        Cost</th>
+                                    <th class="text-center align-middle" style="text-transform: uppercase">Final Unit Cost
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -479,26 +484,25 @@
                                         </td>
                                         <td style="text-align: right">
                                             @php
-                                                $total_amount = $data->quantity_return * $data->unit_cost;
+                                                $total_amount = $data->quantity_return * $data->unit_cost * -1;
                                                 $sum_total_amount[] = $total_amount;
                                             @endphp
                                             {{ number_format($total_amount, 2, '.', ',') }}
                                         </td>
                                         @php
                                             $total = $total_amount;
-
                                             $discount_value_holder = $total;
                                             $discount_value_holder_history = [];
                                             $discount_value_holder_history_for_bo_allowance = [];
-                                            $totalArray = [];
-                                            $percent = [];
-                                            foreach (
-                                                $return_to_principal->received_purchase_order->received_discount_details
-                                                as $data_discount
-                                            ) {
+                                        @endphp
+                                        @foreach ($return_to_principal->received_purchase_order->received_discount_details as $data_discount)
+                                            @php
                                                 $discount_value_holder_dummy = $discount_value_holder;
-                                                $less_percentage_by = $data_discount->discount_rate / 100;
-
+                                                if ($data_discount->discount_name != 'BO') {
+                                                    $less_percentage_by = $data_discount->discount_rate / 100;
+                                                } else {
+                                                    $less_percentage_by = $bo_allowance_layer / 100;
+                                                }
                                                 $discount_rate_answer = $discount_value_holder * $less_percentage_by;
                                                 $discount_value_holder =
                                                     $discount_value_holder -
@@ -506,11 +510,8 @@
 
                                                 $discount_value_holder_history[] = $discount_rate_answer;
                                                 $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
-                                                echo '<td style="text-align:right;">' .
-                                                    number_format($discount_rate_answer, 2, '.', ',') .
-                                                    '</td>';
-                                            }
-                                        @endphp
+                                            @endphp
+                                        @endforeach
                                         {{-- <td style="text-align: right"> --}}
                                         @php
                                             $bo_allowance = end($discount_value_holder_history_for_bo_allowance);
@@ -791,18 +792,18 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style="text-align: center;">INVENTORY
+                                    <td style="text-align: center;">ACCOUNTS PAYABLE
                                         {{ $return_to_principal->received_purchase_order->principal->principal }}</td>
                                     <td></td>
-                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
+                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable * -1, 2, '.', ','); ?></td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td style="text-align: center;">ACCOUNTS PAYABLE
+                                    <td style="text-align: center;">INVENTORY
                                         {{ $return_to_principal->received_purchase_order->principal->principal }}</td>
                                     <td></td>
-                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable, 2, '.', ','); ?></td>
+                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($net_payable * -1, 2, '.', ','); ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -917,18 +918,18 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style="text-align: center;">INVENTORY
+                                    <td style="text-align: center;">ACCOUNTS PAYABLE
                                         {{ $return_to_principal->received_purchase_order->principal->principal }}</td>
                                     <td></td>
-                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost * -1, 2, '.', ','); ?></td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td style="text-align: center;">ACCOUNTS PAYABLE
+                                    <td style="text-align: center;">INVENTORY
                                         {{ $return_to_principal->received_purchase_order->principal->principal }}</td>
                                     <td></td>
-                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost, 2, '.', ','); ?></td>
+                                    <td style="font-weight: bold;text-align: center;"><?php echo number_format($total_final_cost * -1, 2, '.', ','); ?></td>
                                 </tr>
                             </tbody>
                         </table>

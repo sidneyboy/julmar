@@ -498,7 +498,7 @@
                                 <td style="text-align: right;">
                                     @php
                                         
-                                        $vat = ($total_amount - (array_sum($discount_value_holder_history) + $bo_allowance_per_sku)) * 0.12;
+                                        $vat = array_sum($discount_value_holder_history);
                                         $sum_vat_per_sku[] = $vat;
                                     @endphp
                                     {{ number_format($vat, 2, '.', ',') }}

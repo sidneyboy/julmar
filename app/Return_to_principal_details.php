@@ -12,6 +12,7 @@ class Return_to_principal_details extends Model
       'quantity_return',
       'unit_cost',
       'freight',
+      'bo_discount',
     ];
 
     public function return_to_principal()

@@ -21,10 +21,11 @@
                         </th>
                         <th style="text-align: center">BO Allowance
                             ({{ $bo_allowance_discount_selected }}%)
-                            <input type="hidden" name="bo_allowance_discount" value="{{ $bo_allowance_discount_selected/ 100 }}">
+                            <input type="hidden" name="bo_allowance_discount"
+                                value="{{ $bo_allowance_discount_selected / 100 }}">
                         </th>
-                        
-                   
+
+
                         <th style="text-align: center">CWO
                             ({{ $cwo_discount_selected }}%)</th>
                         <th style="text-align: center">T.Discount<br /></th>
@@ -420,12 +421,13 @@
             <table class="table table-bordered table-sm table-hover table-striped" style="font-size:13px;">
                 <thead>
                     <tr>
-                        <th>Desc</th>
-                        <th>Received</th>
-                        <th style="text-align: center;">U/C<br />(VAT EX)</th>
-                        <th>Amount</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Desc</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Received</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">U/C<br />(VAT EX)</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Amount</th>
                         @foreach ($discount_selected as $data)
-                            <th style="text-align: center;">{{ Str::ucfirst($data->discount_name) }}
+                            <th class="text-center align-middle" style="text-transform: uppercase">
+                                {{ Str::ucfirst($data->discount_name) }}
                                 ({{ $data->discount_rate }}%)
                             </th>
                             <input type="hidden" name="discount_selected_name[]"
@@ -437,13 +439,13 @@
                                     value="{{ $data->discount_rate / 100 }}">
                             @endif
                         @endforeach
-                        {{-- <th style="text-align: center">BO Allowance
+                        {{-- <th class="text-center align-middle" style="text-transform: uppercase">BO Allowance
                             ({{ $bo_allowance_discount_selected }}%)</th> --}}
-                        <th style="text-align: center">T.Discount<br /></th>
-                        <th>VAT INC</th>
-                        <th style="text-align: center">Freight</th>
-                        <th style="text-align: center">Final Total Cost</th>
-                        <th style="text-align: center">Final Unit Cost</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">T.Discount<br /></th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">VAT INC</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Freight</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Final Total Cost</th>
+                        <th class="text-center align-middle" style="text-transform: uppercase">Final Unit Cost</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -958,14 +960,14 @@
             success: function(data) {
                 $('#loader').hide();
                 Swal.fire({
-                 position: 'top-end',
-                icon: 'success',
-                title: 'Your work has been saved',
-                showConfirmButton: false,
-                timer: 1500
-                });
+                   position: 'top-end',
+                   icon: 'success',
+                   title: 'Your work has been saved',
+                   showConfirmButton: false,
+                   timer: 1500
+               });
 
-                location.reload();
+               location.reload();
             },
             error: function(error) {
                 $('#loader').hide();
