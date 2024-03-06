@@ -2,6 +2,7 @@
     <table class="table table-bordered table-hover table-sm table-striped" id="example1">
         <thead>
             <tr>
+                <th class="text-center align-middle" style="text-transform: uppercase">DATE</th>
                 <th class="text-center align-middle" style="text-transform: uppercase">#</th>
                 <th class="text-center align-middle" style="text-transform: uppercase">Received #</th>
                 <th class="text-center align-middle" style="text-transform: uppercase">Principal</th>
@@ -12,6 +13,7 @@
         <tbody>
             @foreach ($bo_adjustments_data as $data)
                 <tr>
+                    <td class="text-center">{{ $data->date }}</td>
                     <td class="text-center"><a
                             href="{{ route('bo_allowance_adjustments_report_generate', [
                                 'id' => $data->id,
@@ -21,8 +23,8 @@
                     <td class="text-center"><a
                             href="{{ route('received_order_report_show_details', $data->received_id . '=' . $data->principal->principal) }}"
                             target="_blank">RR - {{ $data->received_id }}</a></td>
-                    <td>{{ $data->principal->principal }}</td>
-                    <td>{{ strtoupper($data->particulars) }}</td>
+                    <td class="text-center">{{ $data->principal->principal }}</td>
+                    <td class="text-center">{{ strtoupper($data->particulars) }}</td>
                     <td style="text-align: right;">
                         {{ number_format($data->net_deduction, 2, '.', ',') }}
                         @php
@@ -32,7 +34,7 @@
                 </tr>
             @endforeach
         </tbody>
-        <tfoot>
+        {{-- <tfoot>
             <tr>
                 <th>Grand Total</th>
                 <th></th>
@@ -40,7 +42,7 @@
                 <th></th>
                 <th style="text-align: right">{{ number_format(array_sum($sum_net_deduction), 2, '.', ',') }}</th>
             </tr>
-        </tfoot>
+        </tfoot> --}}
     </table>
 </div>
 

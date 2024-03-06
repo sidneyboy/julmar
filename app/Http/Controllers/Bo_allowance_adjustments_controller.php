@@ -14,6 +14,7 @@ use App\General_ledger;
 use App\Sku_ledger;
 use App\Principal_ledger;
 use App\Received_purchase_order_bo_allowance;
+use App\Received_purchase_order_inv_cost;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
@@ -84,7 +85,15 @@ class Bo_allowance_adjustments_controller extends Controller
 
             $bo_allowance_layer = $latest_bo_layer->bo_allowance;
 
+            $latest_invoice_cost_layer = Received_purchase_order_inv_cost::select('invoice_cost')
+                ->where('received_id', $request->input('received_id'))
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $invoice_cost_layer = $latest_invoice_cost_layer->invoice_cost;
+
             return view('bo_allowance_adjustments_summary', [
+                'invoice_cost_layer' => $invoice_cost_layer,
                 'received_purchase_order' => $received_purchase_order,
                 'bo_allowance_layer' => $bo_allowance_layer,
                 'get_merchandise_inventory' => $get_merchandise_inventory,
@@ -110,7 +119,7 @@ class Bo_allowance_adjustments_controller extends Controller
     public function bo_allowance_adjustments_save(Request $request)
     {
 
-       //return $request->input();
+        //return $request->input();
         $curdate = DB::select('SELECT CURDATE()');
         $curtime = DB::select('SELECT CURTIME()');
 

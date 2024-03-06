@@ -30,10 +30,10 @@
                 <div class="table table-responsive">
                     <table class="table table-bordered table-hover table-sm table-striped">
                         <thead>
-                            <tr>
+                            {{-- <tr>
                                 <th colspan="10">Particulars:
                                     {{ $bo_adjustments_details[0]->bo_allowance_adjustment->particulars }}</th>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <th class="text-center align-middle">CODE</th>
                                 <th class="text-center align-middle">DESCRIPTIOn</th>
@@ -60,7 +60,7 @@
                                     {{ number_format($data->bo_cost_adjustment, 2, '.', ',') }}
                                 </td>
                                 <td style="text-align: right">
-                                    {{ number_format($data->bo_discount * 100, 2, '.', ',') }}%
+                                    {{ number_format($data->bo_discount, 2, '.', ',') }}%
                                 </td>
                                 <td style="text-align: right">
                                     {{ number_format($data->quantity * $data->bo_cost_adjustment, 2, '.', ',') }}

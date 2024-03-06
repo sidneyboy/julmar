@@ -102,7 +102,7 @@ class Return_to_principal_controller extends Controller
                 ->orderBy('id', 'desc')
                 ->first();
 
-            $bo_allowance_layer = $latest_bo_layer->bo_allowance * 100;
+            $bo_allowance_layer = $latest_bo_layer->bo_allowance;
 
             if ($get_merchandise_inventory && $get_accounts_payable) {
                 return view('return_to_principal_summary', [

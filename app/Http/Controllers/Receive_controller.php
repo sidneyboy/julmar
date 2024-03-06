@@ -620,7 +620,7 @@ class Receive_controller extends Controller
 
         $new_bo_layer = new Received_purchase_order_bo_allowance([
             'received_id' => $new_received_purchase_orders->id,
-            'bo_allowance' => $request->input('bo_allowance_discount'),
+            'bo_allowance' => $request->input('bo_allowance_discount')*100,
         ]);
 
         $new_bo_layer->save();

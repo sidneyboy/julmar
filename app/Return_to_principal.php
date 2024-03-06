@@ -27,7 +27,7 @@ class Return_to_principal extends Model
 
     public function principal()
     {
-    	return $this->belongsTo('App\Sku_principal', 'principal_id');
+    	return $this->belongsTo('App\Sku_principal', 'principal_id')->select('principal');
     }
 
     public function return_to_principal_details()

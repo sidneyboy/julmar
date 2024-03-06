@@ -36,7 +36,6 @@ class Invoice_cost_adjustments extends Model
     return $this->hasOne('App\Invoice_cost_adjustments_jer', 'invoice_cost_id');
   }
 
-
   public function principal()
   {
     return $this->belongsTo('App\Sku_principal', 'principal_id');
@@ -45,6 +44,11 @@ class Invoice_cost_adjustments extends Model
   public function invoice_cost_adjustment_details()
   {
     return $this->hasMany('App\invoice_cost_adjustment_details', 'invoice_cost_id');
+  }
+
+  public function invoice_cost_adjustment_details_bo_discount()
+  {
+    return $this->hasMany('App\invoice_cost_adjustment_details', 'invoice_cost_id')->select('bo_discount');
   }
 
   public function user()

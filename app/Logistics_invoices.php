@@ -25,6 +25,11 @@ class Logistics_invoices extends Model
     {
         return $this->belongsTo('App\Sales_invoice', 'sales_invoice_id');
     }
+    
+    public function principal()
+    {
+        return $this->belongsTo('App\Sku_principal', 'principal_id');
+    }
 
     public function sales_invoice_transfer()
     {

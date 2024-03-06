@@ -426,7 +426,7 @@
                         <th class="text-center align-middle;" style="text-transform:uppercase">T.Discount<br /></th>
                         <th class="text-center align-middle;" style="text-transform:uppercase">VAT INC</th>
                         <th class="text-center align-middle;" style="text-transform:uppercase">Freight</th>
-                        <th class="text-center align-middle;" style="text-transform:uppercase">Final Total Cost</th>
+                        <th class="text-center align-middle;" style="text-transform:uppercase">Total Cost</th>
                         <th>FUC</th>
                     </tr>
                 </thead>
@@ -512,20 +512,13 @@
                             {{ number_format($final_total_cost_per_sku, 4, '.', ',') }}
                             <input type="hidden" value="{{ $final_total_cost_per_sku }}"
                                 name="final_total_cost_per_sku[{{ $data }}]">
-
-                            {{-- @php
-                                $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity[$data];
-                                $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
-                            @endphp
-                            <input type="hidden" value="{{ $final_unit_cost_per_sku }}"
-                                name="final_unit_cost_per_sku[{{ $data }}]"> --}}
                         </td>
                         <td style="text-align: right">
                             @php
                                 $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity[$data];
                                 $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                             @endphp
-                            {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
+                            {{ number_format($final_unit_cost_per_sku, 4, '.', ',') }}
                             <input type="hidden" value="{{ $final_unit_cost_per_sku }}"
                                 name="final_unit_cost_per_sku[{{ $data }}]">
                             <input type="hidden" value="{{ $final_total_cost_per_sku }}"

@@ -16,7 +16,7 @@ class Julmar_report_controller extends Controller
     {
         if (Auth::check()) {
             $user = User::select('name', 'position')->find(Auth()->user()->id);
-            $return_to_principal = Return_to_principal::select('id', 'received_id')->find($id);
+            $return_to_principal = Return_to_principal::select('id', 'received_id','principal_id')->find($id);
             return view('return_to_principal_report_generate', [
                 'user' => $user,
                 'return_to_principal' => $return_to_principal,

@@ -27,6 +27,8 @@
                 <th class="text-center">BUTAL</th>
                 <th class="text-center">AMOUNT</th>
                 <th class="text-center">TRANSACTION</th>
+                <th class="text-center">PRINCIPAL</th>
+                <th class="text-center">PRINCIPAL ID</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +46,8 @@
                         <td style="text-align: right">{{ $details->butal }}</td>
                         <td style="text-align: right">{{ $details->amount }}</td>
                         <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                        <td>{{ $details->principal->principal }}</td>
+                        <td>{{ $details->principal_id }}</td>
                     </tr>
                 @endif
             @endforeach

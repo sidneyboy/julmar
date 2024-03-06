@@ -21,6 +21,7 @@ class Invoice_cost_adjustment_details extends Model
     'total_discount',
     'vat',
     'total_cost',
+    'bo_discount',
   ];
 
   public function invoice_cost_adjustment()
