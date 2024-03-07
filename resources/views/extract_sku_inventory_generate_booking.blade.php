@@ -65,6 +65,7 @@
             @endfor
         </tbody>
     </table>
+    <input type="hidden" id="principal_name" value="{{ $principal_name->principal }}">
 </div>
 
 <script>
@@ -78,7 +79,7 @@
             buttons: [{
                     extend: 'csvHtml5',
                     title: 'Van Selling Inventory OS',
-                    filename: 'Booking Inventory',
+                    filename: $('#principal_name').val() + '-BOOKING INVENTORY',
                 },
                 'copyHtml5',
                 'excelHtml5',

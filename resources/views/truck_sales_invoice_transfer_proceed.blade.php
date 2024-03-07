@@ -79,13 +79,14 @@
                     <tbody>
                         @foreach ($logistics_invoice_original as $details)
                             <tr>
-                                <td>{{ $details->sales_invoice->delivery_receipt }}</td>
+                                <td class="text-center">{{ $details->sales_invoice->delivery_receipt }}</td>
                                 <td style="text-align: right">{{ $details->case }}</td>
                                 <td style="text-align: right">{{ $details->butal }}</td>
                                 <td style="text-align: right">{{ number_format($details->conversion, 2, '.', ',') }}
                                 </td>
                                 <td style="text-align: right">{{ number_format($details->amount, 2, '.', ',') }}</td>
-                                <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                                <td class="text-center">{{ $details->sales_invoice->customer->mode_of_transaction }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -116,7 +117,7 @@
                     <tbody>
                         @foreach ($logistics_invoice_new as $details)
                             <tr>
-                                <td>{{ $details->sales_invoice->delivery_receipt }}</td>
+                                <td class="text-center">{{ $details->sales_invoice->delivery_receipt }}</td>
                                 <td style="text-align: right">{{ $details->case }}
                                     @php
                                         $new_total_case[$details->principal_id][] = $details->case;
@@ -141,7 +142,8 @@
                                         $new_sum_total_amount[] = $details->amount;
                                     @endphp
                                 </td>
-                                <td>{{ $details->sales_invoice->customer->mode_of_transaction }}</td>
+                                <td class="text-center">{{ $details->sales_invoice->customer->mode_of_transaction }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -151,9 +153,9 @@
         <div class="col-md-12">
             <div class="table table-responsive">
                 {{-- @php
-                var_export($new_total_case);
-                echo array_sum($new_total_case[2]);
-            @endphp --}}
+                    var_export($new_total_case);
+                    echo array_sum($new_total_case[2]);
+                @endphp --}}
                 <table class="table table-sm table-striped table-bordered table-hover" style="width:100%;">
                     <thead>
                         <tr style="background: orange">
@@ -162,16 +164,18 @@
                             <th style="text-align: center;">BUTAL</th>
                             <th style="text-align: center;">CONVERSION</th>
                             <th style="text-align: center;">AMOUNT</th>
-                            {{-- <th style="text-align: center;">WEIGHT</th> --}}
                             <th style="text-align: center;">PERCENTAGE</th>
                             <th style="text-align: center;">EQUIVALENT</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($logistics->logistics_details as $data)
+                        @foreach ($logistics_invoice_summary as $data)
                             <tr>
                                 <td style="text-align: center;">{{ $data->principal->principal }}</td>
-                                <td style="text-align: right">{{ array_sum($new_total_case[$data->principal_id]) }}
+                                <td style="text-align: right">
+                                    @if ($new_total_case[$data->principal_id])
+                                        {{ array_sum($new_total_case[$data->principal_id]) }}
+                                    @endif
                                 </td>
                                 <td style="text-align: right">{{ array_sum($new_total_butal[$data->principal_id]) }}
                                 </td>
@@ -192,7 +196,7 @@
                                 </td>
                                 <td style="text-align: right">
                                     @php
-                                        $equivalent = $logistics->total_expense_per_delivery * $percentage;
+                                        $equivalent = $data->logistics->total_expense_per_delivery * $percentage;
                                         echo number_format($equivalent, 2, '.', ',');
                                         $total_sum_equivalent[] = $equivalent;
                                     @endphp
@@ -218,12 +222,11 @@
                                         value="{{ $equivalent }}">
                                     <input type="hidden" name="principal_id[]" value="{{ $data->principal_id }}">
                                 </td>
-                                {{-- <td style="text-align: center;">{{ array_sum($new_total_case[$data->principal_id]) }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
-                        <tr>
+                        {{-- <tr>
                             <th style="text-align: center;">TOTAL</th>
                             <td style="text-align: right">{{ array_sum($new_sum_total_case) }}</td>
                             <td style="text-align: right">{{ array_sum($new_sum_total_butal) }}</td>
@@ -231,11 +234,10 @@
                             <td style="text-align: right">
                                 {{ number_format(array_sum($new_sum_total_amount), 2, '.', ',') }}
                             </td>
-                            {{-- <td style="text-align: right">{{ number_format(array_sum($sum_weight),2,".",",") }}</td> --}}
                             <td style="text-align: right">{{ array_sum($total_sum_percentage) }}</td>
                             <td style="text-align: right">{{ array_sum($total_sum_equivalent) }}</td>
 
-                        </tr>
+                        </tr> --}}
                     </tfoot>
                 </table>
             </div>

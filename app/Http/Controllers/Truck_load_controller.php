@@ -331,6 +331,8 @@ class Truck_load_controller extends Controller
             ]);
 
             $new_logistics_details->save();
+
+            $logistics_details_id[$data] = $new_logistics_details->id;
         }
 
         $sales_invoice = Sales_invoice::select('sku_type', 'id')
@@ -361,6 +363,7 @@ class Truck_load_controller extends Controller
                     'percentage' => 0,
                     'equivalent' => 0,
                     'weight' => $total_kg[$value->sku_type],
+                    'logistics_details_id' => $logistics_details_id[$data_invoice_details->principal_id]
                 ]);
 
                 $new_logistics_invoices->save();
@@ -383,6 +386,7 @@ class Truck_load_controller extends Controller
                     'percentage' => 0,
                     'equivalent' => 0,
                     'weight' => $total_kg[$value->sku_type],
+                    'logistics_details_id' => $logistics_details_id[$data_invoice_details->principal_id]
                 ]);
 
                 $new_logistics_invoices->save();

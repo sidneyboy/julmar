@@ -333,6 +333,9 @@ class Sales_order_controller extends Controller
                 }
             }
 
+
+           
+
             $discount_checker = $request->input('customer_discount');
 
             if (isset($discount_checker)) {
@@ -346,9 +349,9 @@ class Sales_order_controller extends Controller
                 ->where('sales_order_draft_id', $request->input('sales_order_id'))
                 ->whereIn('sku_id', array_keys(array_filter($request->input('final_quantity'))))
                 ->get();
-
+            
             $check_dr = strtoupper($request->input('delivery_receipt_for_gci'));
-            if (isset($check_dr)) {
+            if ($check_dr) {
                 $delivery_receipt = $check_dr;
             } else {
                 $delivery_receipt = $delivery_receipt_data;
@@ -386,6 +389,9 @@ class Sales_order_controller extends Controller
         $date_time = date('Y-m-d H:i:s');
         //return $request->input();
 
+        $curdate = DB::select('SELECT CURDATE()');
+        $curtime = DB::select('SELECT CURTIME()');
+
         $get_customer_ar = General_ledger::select('running_balance')
             ->where('account_name', $request->input('customer_ar_account_name'))
             ->where('account_number', $request->input('customer_ar_account_number'))
@@ -409,6 +415,9 @@ class Sales_order_controller extends Controller
                 'running_balance' => $running_balance_customer_ar,
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
+                // 'all_id' => $return_to_principal_save->id,
             ]);
 
             $new_general_ledger->save();
@@ -425,6 +434,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $request->input('customer_ar_total'),
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -452,6 +463,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $running_balance_sales,
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -468,6 +481,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $request->input('sales_total'),
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -495,6 +510,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $running_balance_cost_of_sales,
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -511,6 +528,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $request->input('cost_of_sales_total'),
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -538,6 +557,8 @@ class Sales_order_controller extends Controller
                 'running_balance' => $running_balance_merchandise_inventory,
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
@@ -554,11 +575,13 @@ class Sales_order_controller extends Controller
                 'running_balance' => $request->input('inventory_total'),
                 'transaction' => 'SALES INVOICE',
                 'customer_id' => $request->input('customer_id'),
+                'date' => $curdate[0]->{'CURDATE()'},
+                'time' => $curtime[0]->{'CURTIME()'},
             ]);
 
             $new_general_ledger->save();
         }
-
+            // return $request->input();
         $discount_checker = $request->input('discount_rate');
         if (isset($discount_checker)) {
             $discount_rate = implode('-', $request->input('discount_rate'));

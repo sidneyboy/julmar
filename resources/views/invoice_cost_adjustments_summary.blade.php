@@ -81,7 +81,7 @@
                                 <input type="hidden" name="bo_allowance[{{ $data }}]"
                                     value="{{ $bo_allowance_discount }}">
 
-                                <input type="text" name="bo_allowance_layer[{{ $data }}]"
+                                <input type="hidden" name="bo_allowance_layer[{{ $data }}]"
                                     value="{{ $bo_allowance_layer }}">
                             </td>
                             <td style="text-align: right">

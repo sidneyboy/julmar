@@ -47,17 +47,22 @@ class Sku_extract_inventory_controller extends Controller
             ])->with('extract_for', $request->input('extract_for'));
         } elseif ($request->input('extract_for') == 'BOOKING') {
             $principal_id = $request->input('principal');
+            $principal_name = Sku_principal::select('principal')->find($request->input('principal'));
             $sku_ledger = DB::select("SELECT * FROM sku_ledgers WHERE id IN (SELECT MAX(id) FROM sku_ledgers
             WHERE principal_id = '$principal_id' GROUP BY sku_id)");
 
-            for ($i = 0; $i < count($sku_ledger); $i++) {
-                $description[] = Sku_add::select('sku_code', 'description', 'sku_type', 'id','unit_of_measurement')->find($sku_ledger[$i]->sku_id);
+            if ($sku_ledger) {
+                for ($i = 0; $i < count($sku_ledger); $i++) {
+                    $description[] = Sku_add::select('sku_code', 'description', 'sku_type', 'id', 'unit_of_measurement')->find($sku_ledger[$i]->sku_id);
+                }
+                return view('extract_sku_inventory_generate_booking', [
+                    'principal_name' => $principal_name,
+                    'sku_ledger' => $sku_ledger,
+                    'description' => $description,
+                ])->with('extract_for', $request->input('extract_for'));
+            } else {
+                return 'NO QTY SKU LEDGER';
             }
-
-            return view('extract_sku_inventory_generate_booking', [
-                'sku_ledger' => $sku_ledger,
-                'description' => $description,
-            ])->with('extract_for', $request->input('extract_for'));
         }
     }
 

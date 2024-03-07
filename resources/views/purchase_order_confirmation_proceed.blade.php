@@ -68,7 +68,7 @@
                 @foreach ($purchase_order->purchase_order_details as $data)
                     <tr>
                         <td>{{ $data->sku->sku_code }} - {{ $data->sku->description }}</td>
-                        <td>{{ $data->quantity }}</td>
+                        <td style="text-align: right">{{ $data->quantity }}</td>
                         <td><input style="text-align: right" type="number" min="0"
                                 class="form-control form-control-sm" required
                                 name="quantity_confirmed[{{ $data->sku_id }}]" value="0"></td>

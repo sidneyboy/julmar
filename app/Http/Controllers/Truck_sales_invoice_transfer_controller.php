@@ -57,11 +57,18 @@ class Truck_sales_invoice_transfer_controller extends Controller
         $logistics_invoice_original = Logistics_invoices::where('logistics_id', $request->input('logistics_id'))->get();
 
         $logistics_invoice_new = Logistics_invoices::whereNotIn('sales_invoice_id', $sales_invoice_id)->get();
-        //$logistics_invoice_new = Logistics_invoices::where('logistics_id', $request->input('logistics_id'))->get();
 
-        $logistics = Logistics::find($request->input('logistics_id'));
+        foreach ($logistics_invoice_new as $key => $data) {
+           $logistics_details_id[] = $data->logistics_details_id;
+        }
+
+     
+
+        $logistics_invoice_summary = Logistics_details::whereIn('id',$logistics_details_id)->get();
+
+        // $logistics = Logistics::find($request->input('logistics_id'));
         return view('truck_sales_invoice_transfer_proceed', [
-            'logistics' => $logistics,
+            'logistics_invoice_summary' => $logistics_invoice_summary,
             'logistics_invoice_original' => $logistics_invoice_original,
             'logistics_invoice_new' => $logistics_invoice_new,
         ])->with('logistics_invoice_id', $logistics_invoice_id)

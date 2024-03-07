@@ -82,9 +82,16 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
-                    $('#extract_sku_inventory_generate_data_page').html(data);
                     $('#loader').hide();
+                    if (data == "NO QTY SKU LEDGER") {
+                        Swal.fire(
+                            'Cannot Proceed',
+                            'No SKU Quantity in the ledger',
+                            'error'
+                        )
+                    } else {
+                        $('#extract_sku_inventory_generate_data_page').html(data);
+                    }
                 },
                 error: function(error) {
                     $('#loader').hide();
@@ -93,7 +100,7 @@
                         'Please Contact IT Support',
                         'error'
                     )
-                   
+
                 }
             });
         }));

@@ -392,7 +392,7 @@ class Invoice_cost_adjustment_controller extends Controller
                 'running_balance' => $ledger_results[0]->running_balance,
                 'user_id' => auth()->user()->id,
                 'transaction_type' => 'invoice cost adjustment',
-                'all_id' => $new_invoice_cost_adjustment->id,
+                'all_id' => 1,
                 'principal_id' => $request->input('principal_id'),
                 'sku_type' => $ledger_results[0]->sku_type,
                 'amount' => $request->input('final_total_cost_per_sku')[$data],

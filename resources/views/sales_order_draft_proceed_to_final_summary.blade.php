@@ -467,12 +467,12 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire(
-                    'Transaction Saved',
-                    '',
-                    'success'
-                )
-                location.reload();
+                // Swal.fire(
+                //     'Transaction Saved',
+                //     '',
+                //     'success'
+                // )
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

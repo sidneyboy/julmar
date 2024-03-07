@@ -17,7 +17,7 @@ class CreateReceivedPurchaseOrderInvCostsTable extends Migration
             $table->id();
             $table->BigInteger('received_id')->unsigned()->index();
             $table->foreign('received_id')->references('id')->on('Received_purchase_orders');
-            $table->float('invoice_cost',15,6);
+            $table->float('invoice_cost',15,4);
             $table->timestamps();
         });
     }

@@ -38,54 +38,54 @@
                                     name="unit_cost[{{ $data }}]">
                             </td>
                             <td style="text-align: right">{{ $quantity[$data] }}</td>
-                            <td style="text-align: right">{{ number_format($unit_cost[$data], 4, '.', ',') }}</td>
+                            <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
                             <td style="text-align: right">
                                 @php
-                                    $total_amount = $quantity[$data] * $unit_cost[$data] * -1;
+                                    $total_amount = ($quantity[$data] * $unit_cost[$data]) * -1;
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
-                                {{ number_format($total_amount, 4, '.', ',') }}
+                                {{ number_format($total_amount, 2, '.', ',') }}
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $discount = $total_amount * (array_sum($sum_discount_selected) / 100);
                                     $sum_discount[] = $discount;
-                                    echo number_format($discount, 4, '.', ',');
+                                    echo number_format($discount, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $bo_allowance_discount = ($bo_allowance_layer / 100) * $total_amount;
                                     $sum_bo_allowance_discount[] = $bo_allowance_discount;
-                                    echo number_format($bo_allowance_discount, 4, '.', ',');
+                                    echo number_format($bo_allowance_discount, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $cwo_discount = $total_amount * ($received_purchase_order->cwo_discount_rate / 100);
                                     $sum_cwo_discount[] = $cwo_discount;
-                                    echo number_format($cwo_discount, 4, '.', ',');
+                                    echo number_format($cwo_discount, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $total_discount = $discount + $bo_allowance_discount + $cwo_discount;
                                     $sum_total_discount[] = $total_discount;
-                                    echo number_format($total_discount, 4, '.', ',');
+                                    echo number_format($total_discount, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $vat_per_sku = ($total_amount - $total_discount) * 0.12;
                                     $sum_vat_per_sku[] = $vat_per_sku;
-                                    echo number_format($vat_per_sku, 4, '.', ',');
+                                    echo number_format($vat_per_sku, 2, '.', ',');
                                 @endphp
                             </td>
                             <td style="text-align: right">
                                 @php
                                     $freight_per_sku = $freight[$data] * $quantity[$data];
                                     $sum_freight[] = $freight_per_sku;
-                                    echo number_format($freight_per_sku, 4, '.', ',');
+                                    echo number_format($freight_per_sku, 2, '.', ',');
                                 @endphp
                                 <input type="hidden" value="{{ $freight_per_sku }}"
                                     name="freight_per_sku[{{ $data }}]">
@@ -95,7 +95,7 @@
                                     $final_total_cost =
                                         $total_amount - $total_discount + $vat_per_sku + $freight_per_sku;
                                     $sum_final_total_cost[] = $final_total_cost;
-                                    echo number_format($final_total_cost, 4, '.', ',');
+                                    echo number_format($final_total_cost, 2, '.', ',');
                                 @endphp
                                 @php
                                     $final_unit_cost = $final_total_cost / $quantity[$data];
@@ -443,13 +443,13 @@
                                 name="unit_cost[{{ $data }}]">
                         </td>
                         <td style="text-align: right">{{ $quantity[$data] }}</td>
-                        <td style="text-align: right">{{ number_format($unit_cost[$data], 4, '.', ',') }}</td>
+                        <td style="text-align: right">{{ number_format($unit_cost[$data], 2, '.', ',') }}</td>
                         <td style="text-align: right">
                             @php
                                 $total_amount = $quantity[$data] * $unit_cost[$data] * -1;
                                 $sum_total_amount[] = $total_amount;
                             @endphp
-                            {{ number_format($total_amount, 4, '.', ',') }}
+                            {{ number_format($total_amount, 2, '.', ',') }}
                         </td>
                         @php
                             $total = $total_amount;
@@ -472,7 +472,7 @@
                                 $discount_value_holder_history[] = $discount_rate_answer;
                                 $discount_value_holder_history_for_bo_allowance[] = $discount_value_holder;
                             @endphp
-                            <td style="text-align:right;">{{ number_format($discount_rate_answer, 4, '.', ',') }}
+                            <td style="text-align:right;">{{ number_format($discount_rate_answer, 2, '.', ',') }}
                             </td>
                         @endforeach
                         @php
@@ -486,21 +486,21 @@
                                 $vat = array_sum($discount_value_holder_history);
                                 $sum_vat_per_sku[] = $vat;
                             @endphp
-                            {{ number_format($vat, 4, '.', ',') }}
+                            {{ number_format($vat, 2, '.', ',') }}
                         </td>
                         <td style="text-align: right;">
                             @php
                                 $vat_inclusive_total_cost_per_sku = $bo_allowance * 1.12;
                                 $sum_vat_inclusive_total_cost_per_sku[] = $vat_inclusive_total_cost_per_sku;
                             @endphp
-                            {{ number_format($vat_inclusive_total_cost_per_sku, 4, '.', ',') }}
+                            {{ number_format($vat_inclusive_total_cost_per_sku, 2, '.', ',') }}
                         </td>
                         <td style="text-align: right">
                             @php
                                 $freight_per_sku = $freight[$data] * $quantity[$data];
                                 $sum_freight_per_sku[] = $freight_per_sku;
                             @endphp
-                            {{ number_format($freight_per_sku, 4, '.', ',') }}
+                            {{ number_format($freight_per_sku, 2, '.', ',') }}
                             <input type="hidden" value="{{ $freight_per_sku }}"
                                 name="freight_per_sku[{{ $data }}]">
                         </td>
@@ -509,7 +509,7 @@
                                 $final_total_cost_per_sku = $vat_inclusive_total_cost_per_sku + $freight_per_sku;
                                 $sum_final_total_cost_per_sku[] = $final_total_cost_per_sku;
                             @endphp
-                            {{ number_format($final_total_cost_per_sku, 4, '.', ',') }}
+                            {{ number_format($final_total_cost_per_sku, 2, '.', ',') }}
                             <input type="hidden" value="{{ $final_total_cost_per_sku }}"
                                 name="final_total_cost_per_sku[{{ $data }}]">
                         </td>
@@ -518,7 +518,7 @@
                                 $final_unit_cost_per_sku = $final_total_cost_per_sku / $quantity[$data];
                                 $sum_final_unit_cost_per_sku[] = $final_unit_cost_per_sku;
                             @endphp
-                            {{ number_format($final_unit_cost_per_sku, 4, '.', ',') }}
+                            {{ number_format($final_unit_cost_per_sku, 2, '.', ',') }}
                             <input type="hidden" value="{{ $final_unit_cost_per_sku }}"
                                 name="final_unit_cost_per_sku[{{ $data }}]">
                             <input type="hidden" value="{{ $final_total_cost_per_sku }}"

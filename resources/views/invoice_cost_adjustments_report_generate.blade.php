@@ -406,7 +406,7 @@
                                     @foreach ($invoice_cost_adjustment->received_purchase_order->received_discount_details as $data)
                                         @if ($data->discount_name == 'BO')
                                             <th class="text-center align-middle">BO
-                                                ({{ $invoice_cost_adjustment->invoice_cost_adjustment_details_bo_discount[0]->bo_discount * 100 }}%)
+                                                ({{ $invoice_cost_adjustment->invoice_cost_adjustment_details_bo_discount[0]->bo_discount}}%)
                                             </th>
                                         @else
                                             <th class="text-center align-middle" style="text-transform:uppercase">

@@ -41,25 +41,26 @@
                                         value="{{ $quantity[$data->sku_id] }}">
                                 </td>
                                 <td style="text-align: right;">
-                                    {{ number_format($unit_cost_adjustment, 4, '.', ',') }}
+                                    {{ number_format($unit_cost_adjustment, 2, '.', ',') }}
                                     <input type="hidden" name="bo_cost_adjustment[{{ $data->sku_id }}]"
                                         value="{{ $unit_cost_adjustment }}">
                                 </td>
                                 <td style="text-align: right;">
                                     @php
-                                        $new_bo_allowance_layer = (($unit_cost_adjustment / $data->unit_cost)*100) + $bo_allowance_layer;
+                                        $new_bo_allowance_layer =
+                                            ($unit_cost_adjustment / $data->unit_cost) * 100 + $bo_allowance_layer;
                                     @endphp
-                                    {{ number_format($bo_allowance_layer, 4, '.', ',') . '%' }}
-                                    <input type="text" name="new_bo_allowance_layer"
+                                    {{ number_format($bo_allowance_layer, 2, '.', ',') . '%' }}
+                                    <input type="hidden" name="new_bo_allowance_layer"
                                         value="{{ $new_bo_allowance_layer }}">
-                                    <input type="text" name="bo_discount[{{ $data->sku_id }}]"
+                                    <input type="hidden" name="bo_discount[{{ $data->sku_id }}]"
                                         value="{{ $bo_allowance_layer }}">
 
-                                        {{-- @php
+                                    {{-- @php
                                         $new_bo_allowance_layer =
                                 $unit_cost_adjustment / $data->unit_cost + $bo_allowance_layer;
                                     @endphp
-                                    {{ number_format($bo_allowance_layer*100, 4, '.', ',') . '%' }}
+                                    {{ number_format($bo_allowance_layer*100, 2, '.', ',') . '%' }}
                                     <input type="hidden" name="bo_discount[{{ $data->sku_id }}]"
                                         value="{{ $bo_allowance_layer*100 }}">
     
@@ -71,7 +72,7 @@
                                         $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
                                         $sum_total_amount[] = $total_amount;
                                     @endphp
-                                    {{ number_format($total_amount, 4, '.', ',') }}
+                                    {{ number_format($total_amount, 2, '.', ',') }}
                                     <input type="hidden" name="bo_allowance[{{ $data->sku_id }}]"
                                         value="{{ $total_amount }}">
                                 </td>
@@ -80,19 +81,19 @@
                                         @php
                                             $vat = $total_amount * -0.12;
                                             $sum_total_vat[] = $vat;
-                                            echo number_format($vat, 4, '.', ',');
+                                            echo number_format($vat, 2, '.', ',');
                                         @endphp
                                     @else
                                         @php
                                             $vat = $total_amount * 0.12 * -1;
                                             $sum_total_vat[] = $vat;
-                                            echo number_format($vat, 4, '.', ',');
+                                            echo number_format($vat, 2, '.', ',');
                                         @endphp
                                     @endif
                                     <input type="hidden" name="vat[{{ $data->sku_id }}]" value="{{ $vat }}">
                                 </td>
                                 <td style="text-align: right">
-                                    {{ number_format($data->freight, 4, '.', ',') }}
+                                    {{ number_format($data->freight, 2, '.', ',') }}
                                     <input type="hidden" name="freight[{{ $data->sku_id }}]"
                                         value="{{ $data->freight }}">
                                 </td>
@@ -101,12 +102,12 @@
                                         @php
                                             $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                         @endphp
-                                        {{ number_format($total_cost, 4, '.', ',') }}
+                                        {{ number_format($total_cost, 2, '.', ',') }}
                                     @else
                                         @php
                                             $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                         @endphp
-                                        {{ number_format($total_cost, 4, '.', ',') }}
+                                        {{ number_format($total_cost, 2, '.', ',') }}
                                     @endif
                                     @php
                                         $sum_total_cost[] = $total_cost;
@@ -281,28 +282,31 @@
                                 @endif
                             @endforeach
                             <td style="text-align: right;">
-                                {{ number_format($unit_cost_adjustment, 4, '.', ',') }}
+                                {{ number_format($unit_cost_adjustment, 2, '.', ',') }}
                                 <input type="hidden" name="bo_cost_adjustment[{{ $data->sku_id }}]"
                                     value="{{ $unit_cost_adjustment }}">
                             </td>
                             <td style="text-align: right;">
                                 @php
                                     $new_bo_allowance_layer =
-                            $unit_cost_adjustment / $data->unit_cost + $bo_allowance_layer;
+                                        ($unit_cost_adjustment /
+                                            ($invoice_cost_layer - array_sum($discount_value_holder_history))) *
+                                            100 +
+                                        $bo_allowance_layer;
                                 @endphp
-                                {{ number_format($bo_allowance_layer*100, 4, '.', ',') . '%' }}
+                                {{ number_format($bo_allowance_layer, 2, '.', ',') . '%' }}
                                 <input type="hidden" name="bo_discount[{{ $data->sku_id }}]"
-                                    value="{{ $bo_allowance_layer*100 }}">
+                                    value="{{ $bo_allowance_layer }}">
 
-                                <input type="text" name="new_bo_allowance_layer"
-                                    value="{{ ((($unit_cost_adjustment / ($invoice_cost_layer - array_sum($discount_value_holder_history))) * 100 + $bo_allowance_layer * 100) / 100)*100 }}">
+                                <input type="hidden" name="new_bo_allowance_layer"
+                                    value="{{ $new_bo_allowance_layer }}">
                             </td>
                             <td style="text-align: right;">
                                 @php
                                     $total_amount = $unit_cost_adjustment * $quantity[$data->sku_id];
                                     $sum_total_amount[] = $total_amount;
                                 @endphp
-                                {{ number_format($total_amount, 4, '.', ',') }}
+                                {{ number_format($total_amount, 2, '.', ',') }}
                                 <input type="hidden" name="bo_allowance[{{ $data->sku_id }}]"
                                     value="{{ $total_amount }}">
                             </td>
@@ -312,19 +316,19 @@
                                     @php
                                         $vat = $total_amount * -0.12;
                                         $sum_total_vat[] = $vat;
-                                        echo number_format($vat, 4, '.', ',');
+                                        echo number_format($vat, 2, '.', ',');
                                     @endphp
                                 @else
                                     @php
                                         $vat = $total_amount * 0.12 * -1;
                                         $sum_total_vat[] = $vat;
-                                        echo number_format($vat, 4, '.', ',');
+                                        echo number_format($vat, 2, '.', ',');
                                     @endphp
                                 @endif
                                 <input type="hidden" name="vat[{{ $data->sku_id }}]" value="{{ $vat }}">
                             </td>
                             <td style="text-align: right">
-                                {{ number_format($data->freight, 4, '.', ',') }}
+                                {{ number_format($data->freight, 2, '.', ',') }}
                                 <input type="hidden" name="freight[{{ $data->sku_id }}]"
                                     value="{{ $data->freight }}">
                             </td>
@@ -333,12 +337,12 @@
                                     @php
                                         $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                     @endphp
-                                    {{ number_format($total_cost, 4, '.', ',') }}
+                                    {{ number_format($total_cost, 2, '.', ',') }}
                                 @else
                                     @php
                                         $total_cost = ($total_amount - $vat + $data->freight) * -1;
                                     @endphp
-                                    {{ number_format($total_cost, 4, '.', ',') }}
+                                    {{ number_format($total_cost, 2, '.', ',') }}
                                 @endif
                                 @php
                                     $sum_total_cost[] = $total_cost;

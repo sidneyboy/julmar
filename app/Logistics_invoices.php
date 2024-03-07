@@ -19,6 +19,7 @@ class Logistics_invoices extends Model
         'weight',
         'delivered_date',
         'status',
+        'logistics_details_id',
     ];
 
     public function sales_invoice()
