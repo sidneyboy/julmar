@@ -19,7 +19,7 @@
                     <td>{{ $sales_invoice_case->customer->store_name }}</td>
                     <td>{{ $sales_invoice_case->principal->principal }}</td>
                     <td>{{ $sales_invoice_case->agent->full_name }}</td>
-                    <td style="text-align: right">{{ number_format($sales_invoice_case->total, 2, '.', ',') }}</td>
+                    <td style="text-align: right">{{ number_format($sales_invoice_case->total - $sales_invoice_case->total_payment, 2, '.', ',') }}</td>
                     <td>{{ $sales_invoice_case->delivery_receipt }}</td>
                     <td>{{ $sales_invoice_case->delivered_date }}</td>
                     <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
@@ -32,7 +32,7 @@
                     <td>{{ $sales_invoice_butal->customer->store_name }}</td>
                     <td>{{ $sales_invoice_butal->principal->principal }}</td>
                     <td>{{ $sales_invoice_butal->agent->full_name }}</td>
-                    <td style="text-align: right">{{ number_format($sales_invoice_butal->total, 2, '.', ',') }}</td>
+                    <td style="text-align: right">{{ number_format($sales_invoice_butal->total - $sales_invoice_case->total_payment, 2, '.', ',') }}</td>
                     <td>{{ $sales_invoice_butal->delivery_receipt }}</td>
                     <td>{{ $sales_invoice_butal->delivered_date }}</td>
                     <td><button class="btn btn-info btn-block btn-sm view_detailed_report"

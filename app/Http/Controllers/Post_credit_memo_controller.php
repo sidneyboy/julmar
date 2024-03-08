@@ -161,7 +161,6 @@ class Post_credit_memo_controller extends Controller
             }
 
 
-
             return view('post_credit_generate_final_summary', [
                 'cm_data' => $cm_data,
                 'final_unit_cost' => $final_unit_cost,
@@ -246,6 +245,7 @@ class Post_credit_memo_controller extends Controller
                     }
                 }
             }
+
 
             return view('post_credit_generate_final_summary', [
                 'cm_data' => $cm_data,
@@ -338,6 +338,7 @@ class Post_credit_memo_controller extends Controller
                         }
                     }
                 } else {
+                    //return $request->input();
                     foreach ($request->input('quantity_returned') as $key => $quantity) {
 
                         $sku_ledger = Sku_ledger::select('sku_type', 'running_balance', 'running_amount', 'with_invoice_quantity', 'with_invoice_net_balance')->where('sku_id', $key)->orderBy('id', 'desc')->first();
@@ -413,6 +414,11 @@ class Post_credit_memo_controller extends Controller
                         }
                     }
 
+                    
+                    // Sales_invoice::where('id', $request->input('si_id'))
+                    //     ->update([
+                    //         'total_returned_amount' => $request->input('total_amount'),
+                    //     ]);
 
                     Return_good_stock::where('id', $request->input('cm_id'))
                         ->update([

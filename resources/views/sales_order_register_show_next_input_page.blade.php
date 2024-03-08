@@ -2,6 +2,8 @@
 <select class="form-control select2bs4" name="customer_id" style="width:100%;" required>
     <option value="" default>SELECT CUSTOMER</option>
     @foreach ($sales_order as $data)
-        <option value="{{ $data->customer_id }}">{{ $data->customer->store_name }}</option>
+        @if ($data->total_payment >= round($data->total,2))
+            <option value="{{ $data->customer_id }}">{{ $data->customer->store_name }}</option>
+        @endif
     @endforeach
 </select>

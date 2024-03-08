@@ -10,6 +10,7 @@
                     <th class="text-center">Amount</th>
                     <th class="text-center">Unconfirmed CM</th>
                     <th class="text-center">Prev Payment</th>
+                    <th class="text-center">Balance</th>
                     <th class="text-center">Payment</th>
                 </tr>
             </thead>
@@ -24,15 +25,17 @@
                         </td>
                         <td style="text-align: right">
                             @php
-                                $unconfirmed_cm_amount = $data->sales_invoice->cm_amount_deducted + $data->sales_invoice->cm_for_confirmation_amount;
+                                $unconfirmed_cm_amount =
+                                    $data->sales_invoice->cm_amount_deducted +
+                                    $data->sales_invoice->cm_for_confirmation_amount;
                                 echo number_format($unconfirmed_cm_amount, 2, '.', ',');
                             @endphp
                         </td>
                         <td style="text-align: right">
                             {{ number_format($data->sales_invoice->total_payment, 2, '.', ',') }}</td>
+                        <td style="text-align: right">{{ number_format($data->sales_invoice->total - $data->sales_invoice->total_payment, 2, '.', ',') }}</td>
                         <td>
                             @php
-
                                 if ($data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount > 0) {
                                     $total = $data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount;
                                 } else {

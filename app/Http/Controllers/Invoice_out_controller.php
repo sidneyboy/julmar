@@ -61,6 +61,7 @@ class Invoice_out_controller extends Controller
                     ->where('status', 'printed')
                     ->get();
             }
+
             return view('invoice_out', [
                 'user' => $user,
                 // 'invoice_draft' => $invoice_draft,

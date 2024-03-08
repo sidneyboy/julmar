@@ -168,8 +168,6 @@ class Driver_collection_controller extends Controller
 
                     $sales_invoice_collection_checker = Sales_invoice_collection_receipt_details::select('outstanding_balance')->where('si_id', $request->input('sales_invoice_id')[$logistics_id])->orderBy('id', 'desc')->first();
 
-
-
                     if ($sales_invoice_collection_checker) {
                         $outstanding_balance = $sales_invoice_collection_checker->outstanding_balance - $request->input('payment')[$logistics_id];
                         $new_details = new Sales_invoice_collection_receipt_details([

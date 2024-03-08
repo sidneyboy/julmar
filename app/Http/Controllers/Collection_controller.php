@@ -74,7 +74,7 @@ class Collection_controller extends Controller
         $date = date('Y-m-d');
 
         if ($request->input('transaction') == 'collection') {
-            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount', 'cm_amount_deducted')
+            $sales_invoice = Sales_invoice::select('agent_id', 'customer_id', 'id', 'delivery_receipt', 'principal_id', 'total', 'total_payment', 'delivered_date', 'total_returned_amount', 'cm_amount_deducted','cm_for_confirmation_amount')
                 ->where('customer_id', $request->input('customer_id'))
                 ->where('payment_status', null)
                 ->orWhere('payment_status', 'partial')

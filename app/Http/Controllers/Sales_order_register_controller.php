@@ -32,10 +32,11 @@ class Sales_order_register_controller extends Controller
 
     public function sales_order_register_show_next_input(Request $request)
     {
-        $sales_order = Sales_invoice::select('customer_id')
+        $sales_order = Sales_invoice::select('customer_id','total','total_payment','delivery_receipt')
             ->where('agent_id', $request->input('agent_id'))
-            ->where('payment_status',null)
+            // ->whereColumn('total', '<', 'total_payment')
             ->orderBy('id', 'desc')
+            ->groupBy('customer_id')
             ->get();
 
         return view('sales_order_register_show_next_input_page', [

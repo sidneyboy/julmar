@@ -53,6 +53,8 @@
                     <th style="text-align: center">DELIVERED DATE</th>
                     <th style="text-align: center">INVOICE NO</th>
                     <th style="text-align: center">PRINCIPAL</th>
+                    <th style="text-align: center">AMOUNT</th>
+                    <th style="text-align: center">UNCONFIRMED CM</th>
                     <th style="text-align: center">BALANCE</th>
                     <th style="text-align: center">COLLECTION</th>
                     <th style="text-align: center">AGING</th>
@@ -61,40 +63,47 @@
             </thead>
             <tbody>
                 @foreach ($sales_invoice as $data)
-                    <tr>
-                        <td>
-                            @if (!isset($data->logistics_invoices->logistics_driver))
-                                Not yet updated
-                            @else
-                                {{ $data->logistics_invoices->logistics_driver->driver }}
-                            @endif
-                        </td>
-                        <td>
-                            @if (!isset($data->delivered_date))
-                                Not yet updated
-                            @else
-                                {{ $data->delivered_date }}
-                            @endif
-                        </td>
-                        <td>
-                            <button value="{{ $data->id }}" name="button"
-                                class="btn btn-block btn-sm btn-info show_dr">{{ $data->delivery_receipt }}</button>
-                        </td>
-                        <td>{{ $data->principal->principal }}</td>
-                        <td style="text-align: right">
-                            @php
-                                $outstanding_balance = $data->total - $data->cm_amount_deducted - $data->total_payment;
-                                echo number_format($outstanding_balance, 2, '.', ',');
-                            @endphp
-                            <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
-                                name="outstanding_balance[{{ $data->id }}]">
-                        </td>
-                        <td>
-                            <input style="text-align: right" type="text"
-                                class="form-control amount_collected" min="0"
-                                name="amount_collected[{{ $data->id }}]" onkeypress="return isNumberKey(event)">
-                        </td>
-                        {{-- <td style="width:30%;">
+                    @if (round($data->total,2) > $data->total_payment)
+                        <tr>
+                            <td>
+                                @if (!isset($data->logistics_invoices->logistics_driver))
+                                    Not yet updated
+                                @else
+                                    {{ $data->logistics_invoices->logistics_driver->driver }}
+                                @endif
+                            </td>
+                            <td>
+                                @if (!isset($data->delivered_date))
+                                    Not yet updated
+                                @else
+                                    {{ $data->delivered_date }}
+                                @endif
+                            </td>
+                            <td>
+                                <button value="{{ $data->id }}" name="button"
+                                    class="btn btn-block btn-sm btn-info show_dr">{{ $data->delivery_receipt }}</button>
+                            </td>
+                            <td>{{ $data->principal->principal }}</td>
+                            <td style="text-align: right">
+                                {{ number_format($data->total, 2, '.', ',') }}
+                            </td>
+                            <td style="text-align: right">
+                                {{ number_format($data->cm_amount_deducted + $data->cm_for_confirmation_amount, 2, '.', ',') }}
+                            </td>
+                            <td style="text-align: right">
+                                @php
+                                    $outstanding_balance = $data->total - $data->total_payment;
+                                    echo number_format($outstanding_balance, 2, '.', ',');
+                                @endphp
+                                <input type="hidden" value="{{ round($outstanding_balance, 2) }}"
+                                    name="outstanding_balance[{{ $data->id }}]">
+                            </td>
+                            <td>
+                                <input style="text-align: right" type="text" class="form-control amount_collected"
+                                    min="0" name="amount_collected[{{ $data->id }}]"
+                                    onkeypress="return isNumberKey(event)">
+                            </td>
+                            {{-- <td style="width:30%;">
                             <select name="cm_id[{{ $data->id }}]" class="form-control select2bs4" style="width:100%;">
                                 <option value="" default>Select CM</option>
                                 @foreach ($get_rgs as $rgs_data)
@@ -105,35 +114,38 @@
                                 @endforeach
                             </select>
                         </td> --}}
-                        <td style="text-align: center;">
-                            @if (!isset($data->delivered))
-                                @php
-                                    $aging = 0;
-                                @endphp
-                            @else
-                                @php
-                                    $now = time(); // or your date as well
-                                    $your_date = strtotime($data->delivered_date);
-                                    $datediff = $now - $your_date;
+                            <td style="text-align: center;">
+                                @if (!isset($data->delivered))
+                                    @php
+                                        $aging = 0;
+                                    @endphp
+                                @else
+                                    @php
+                                        $now = time(); // or your date as well
+                                        $your_date = strtotime($data->delivered_date);
+                                        $datediff = $now - $your_date;
 
-                                    $aging = round($datediff / (60 * 60 * 24));
-                                @endphp
-                            @endif
+                                        $aging = round($datediff / (60 * 60 * 24));
+                                    @endphp
+                                @endif
 
-                            @if ($aging <= 15)
-                                <span style="font-size:14px;" class="badge badge-success">{{ $aging }}</span>
-                            @elseif($aging <= 30)
-                                <span style="font-size:14px;" class="badge badge-warning">{{ $aging }}</span>
-                            @elseif($aging > 30)
-                                <span style="font-size:14px;" class="badge badge-danger">{{ $aging }}</span>
-                            @endif
+                                @if ($aging <= 15)
+                                    <span style="font-size:14px;"
+                                        class="badge badge-success">{{ $aging }}</span>
+                                @elseif($aging <= 30)
+                                    <span style="font-size:14px;"
+                                        class="badge badge-warning">{{ $aging }}</span>
+                                @elseif($aging > 30)
+                                    <span style="font-size:14px;" class="badge badge-danger">{{ $aging }}</span>
+                                @endif
 
-                        </td>
-                        <td>
-                            <input type="text" class="form-control form-control-sm"
-                                name="remarks[{{ $data->id }}]">
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm"
+                                    name="remarks[{{ $data->id }}]">
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

@@ -279,6 +279,7 @@ class Truck_load_controller extends Controller
 
     public function truck_load_save(Request $request)
     {
+        //return $request->input();
         date_default_timezone_set('Asia/Manila');
         $date_now = date('Y-m-d');
 
@@ -335,7 +336,9 @@ class Truck_load_controller extends Controller
             $logistics_details_id[$data] = $new_logistics_details->id;
         }
 
-        $sales_invoice = Sales_invoice::select('sku_type', 'id')
+        // return $logistics_details_id;
+
+        $sales_invoice = Sales_invoice::select('sku_type', 'id','principal_id')
             ->whereIn('id', $request->input('sales_invoice_id'))
             ->get();
 
@@ -351,6 +354,8 @@ class Truck_load_controller extends Controller
             Sales_invoice::where('id', $value->id)
                 ->update(['truck_load_status' => 'loadsheet']);
 
+            // echo $value->principal_id;
+
             if ($value->sku_type == 'CASE') {
                 $new_logistics_invoices = new Logistics_invoices([
                     'logistics_id' => $new_logistics->id,
@@ -363,7 +368,7 @@ class Truck_load_controller extends Controller
                     'percentage' => 0,
                     'equivalent' => 0,
                     'weight' => $total_kg[$value->sku_type],
-                    'logistics_details_id' => $logistics_details_id[$data_invoice_details->principal_id]
+                    'logistics_details_id' => $logistics_details_id[$value->principal_id]
                 ]);
 
                 $new_logistics_invoices->save();

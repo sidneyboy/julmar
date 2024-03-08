@@ -47,7 +47,7 @@ class Booking_pcm_controller extends Controller
     {
         $sales_invoice = Sales_invoice::select('id', 'delivery_receipt')
             ->where('agent_id', $request->input('agent_id'))
-            ->where('status','out')
+            ->where('status', 'out')
             ->where('payment_status', null)
             ->orWhere('payment_status', 'partial')
             ->get();
@@ -144,6 +144,8 @@ class Booking_pcm_controller extends Controller
                 $running_balance = $ledger_results[0]->running_balance + $data;
                 $unit_cost_per_sku = $data * $request->input('unit_price')[$sku_id_data];
                 $running_amount = $ledger_results[0]->running_amount + $unit_cost_per_sku;
+                $with_invoice_quantity = $ledger_results[0]->with_invoice_quantity;
+                $with_invoice_net_balance = $ledger_results[0]->with_invoice_net_balance;
                 $new_sku_ledger = new Sku_ledger([
                     'sku_id' => $sku_id_data,
                     'quantity' => $data,
@@ -156,6 +158,8 @@ class Booking_pcm_controller extends Controller
                     'final_unit_cost' => $ledger_results[0]->running_amount / $ledger_results[0]->running_balance,
                     'amount' => $unit_cost_per_sku,
                     'running_amount' => $running_amount,
+                    'with_invoice_quantity' => $with_invoice_quantity,
+                    'with_invoice_net_balance' => $with_invoice_net_balance,
                 ]);
 
                 $new_sku_ledger->save();

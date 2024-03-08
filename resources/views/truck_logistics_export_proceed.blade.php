@@ -4,16 +4,16 @@
         <thead>
             <tr>
                 <th colspan="2">Prepared By: </th>
-                <th colspan="10">{{ strtoupper($logistics->user->name) }}</th>
+                <th colspan="11">{{ strtoupper($logistics->user->name) }}</th>
             </tr>
             <tr>
                 <th colspan="2">Driver & Helper: </th>
-                <th colspan="10">{{ strtoupper($logistics->load_sheet_driver->full_name) }},
+                <th colspan="11">{{ strtoupper($logistics->load_sheet_driver->full_name) }},
                     {{ strtoupper($logistics->helper_1) }}, {{ strtoupper($logistics->helper_2) }}</th>
             </tr>
             <tr>
                 <th colspan="2">Logistics ID</th>
-                <th colspan="10">{{ $logistics->id }}</th>
+                <th colspan="11">{{ $logistics->id }}</th>
             </tr>
             <tr>
                 <th class="text-center">INVOICE ID</th>

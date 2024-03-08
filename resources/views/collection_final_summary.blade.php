@@ -45,11 +45,11 @@
         <table class="table table-bordered table-sm table-striped">
             <thead>
                 <tr>
-                    <th style="text-align: center">DRIVER</th>
+                    {{-- <th style="text-align: center">DRIVER</th> --}}
                     <th style="text-align: center">DELIVERED DATE</th>
                     <th style="text-align: center">DELIVERY RECEIPT</th>
                     <th style="text-align: center">PRINCIPAL</th>
-                    <th style="text-align: center">A/R BALANCE</th>
+                    <th style="text-align: center">AMOUNT</th>
                     <th style="text-align: center">AMOUNT COLLECTED</th>
                     <th style="text-align: center">OUTSTANDING BALANCE</th>
                     <th style="text-align: center">REMARKS</th>
@@ -58,14 +58,14 @@
             <tbody>
                 @foreach ($sales_invoice as $data)
                     <tr>
-                        <td>
+                        {{-- <td>
                             @if (!isset($data->logistics_invoices->logistics_driver))
                                 Not yet updated
                             @else
                                 {{ $data->logistics_invoices->logistics_driver->driver }}
                             @endif
-                        </td>
-                        <td>
+                        </td> --}}
+                        <td class="text-center">
                             @if (!isset($data->delivered_date))
                                 Not yet updated
                             @else
