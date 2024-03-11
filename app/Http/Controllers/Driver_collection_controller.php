@@ -107,8 +107,9 @@ class Driver_collection_controller extends Controller
 
     public function driver_collection_final_save(Request $request)
     {
-
+        //return $request->input();
         $curdate = DB::select('SELECT CURDATE()');
+        
         if ($request->input('search_per') == 'driver') {
             foreach ($request->input('logistics_id') as $key => $logistics_id) {
                 Logistics_upload::where('id', $logistics_id)
@@ -159,7 +160,7 @@ class Driver_collection_controller extends Controller
 
                 $total_payment = $sales_invoice_checker->total_payment + $request->input('payment')[$logistics_id];
 
-                if ($total_payment >= $sales_invoice_checker->total) {
+                if ($total_payment >= round($sales_invoice_checker->total,2)) {
                     Sales_invoice::where('id', $request->input('sales_invoice_id')[$logistics_id])
                         ->update([
                             'total_payment' => $total_payment,
@@ -378,7 +379,7 @@ class Driver_collection_controller extends Controller
 
                 $total_payment = $sales_invoice_checker->total_payment + $request->input('payment')[$logistics_id];
 
-                if ($total_payment >= $sales_invoice_checker->total) {
+                if ($total_payment >= round($sales_invoice_checker->total,2)) {
                     Sales_invoice::where('id', $request->input('sales_invoice_id')[$logistics_id])
                         ->update([
                             'total_payment' => $total_payment,

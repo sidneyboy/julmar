@@ -11,7 +11,7 @@
                     <th class="text-center">Unconfirmed CM</th>
                     <th class="text-center">Prev Payment</th>
                     <th class="text-center">Payment</th>
-                    <th class="text-center">Outstanding</th>
+                    <th class="text-center">Balance</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +40,7 @@
                         <td style="text-align: right">
                             {{ number_format(str_replace(',', '', $payment[$data->id]), 2, '.', ',') }}
                             @php
+                                
                                 $sum_total_payment[] = str_replace(',', '', $payment[$data->id]);
                             @endphp
                             <input type="hidden" name="logistics_id[]" value="{{ $data->id }}">
@@ -107,15 +108,15 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Your work has been saved',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Your work has been saved',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
 
-                location.reload();
+                // location.reload();
             },
             error: function(error) {
                 $('#loader').hide();

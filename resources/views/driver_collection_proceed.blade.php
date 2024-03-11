@@ -33,7 +33,12 @@
                         </td>
                         <td style="text-align: right">
                             {{ number_format($data->sales_invoice->total_payment, 2, '.', ',') }}</td>
-                        <td style="text-align: right">{{ number_format($data->sales_invoice->total - $data->sales_invoice->total_payment, 2, '.', ',') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($data->sales_invoice->total - $data->sales_invoice->total_payment, 2, '.', ',') }}
+                            @php
+                                $balance[] = $data->sales_invoice->total - $data->sales_invoice->total_payment;
+                            @endphp
+                        </td>
                         <td>
                             @php
                                 if ($data->sales_invoice->total - $data->sales_invoice->total_payment - $unconfirmed_cm_amount > 0) {
@@ -42,8 +47,8 @@
                                     $total = 0;
                                 }
                             @endphp
-                            <input type="hidden" name="logistics_upload_id[]" value="{{ $data->sales_invoice_id }}">
-                            <input type="text" name="payment[{{ $data->sales_invoice_id }}]"
+                            <input type="text" name="logistics_upload_id[]" value="{{ $data->id }}">
+                            <input type="text" name="payment[{{ $data->id }}]"
                                 class="form-control form-control-sm text-center" onkeypress="return isNumberKey(event)"
                                 value="{{ number_format($total, 2, '.', ',') }}">
                         </td>
@@ -54,7 +59,7 @@
     </div>
 
     <input type="hidden" name="search_per" value="{{ $search_per }}">
-    @if ($total > 0)
+    @if (array_sum($balance) > 0)
         <button class="btn btn-sm float-right btn-info" type="submit">Proceed</button>
     @endif
 </form>

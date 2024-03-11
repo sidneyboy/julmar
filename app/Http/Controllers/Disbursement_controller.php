@@ -501,68 +501,68 @@ class Disbursement_controller extends Controller
 
 
 
-            $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
-            if ($principal_ledger_latest) {
-                $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new->id,
-                    'transaction' => $request->input('disbursement'),
-                    'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
-                    'received' => 0,
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' =>  str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                    'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                    'remarks' => $general_ledger_remarks,
-                ]);
+            // $principal_ledger_latest = Principal_ledger::where('principal_id', $request->input('principal_id'))->orderBy('id', 'DESC')->limit(1)->first();
+            // if ($principal_ledger_latest) {
+            //     $principal_ledger_accounts_payable_beginning = $principal_ledger_latest->accounts_payable_end;
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new->id,
+            //         'transaction' => $request->input('disbursement'),
+            //         'accounts_payable_beginning' => $principal_ledger_accounts_payable_beginning,
+            //         'received' => 0,
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' =>  str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //         'accounts_payable_end' => $principal_ledger_accounts_payable_beginning - str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //         'remarks' => $general_ledger_remarks,
+            //     ]);
 
-                $principal_ledger_saved->save();
-            } else {
-                $principal_ledger_saved = new Principal_ledger([
-                    'principal_id' => $request->input('principal_id'),
-                    'user_id' => auth()->user()->id,
-                    'date' => $date,
-                    'all_id' => $new->id,
-                    'transaction' => $request->input('disbursement'),
-                    'accounts_payable_beginning' => 0,
-                    'received' => 0,
-                    'returned' => 0,
-                    'adjustment' => 0,
-                    'payment' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                    'accounts_payable_end' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount') * -1,
-                    'remarks' => $general_ledger_remarks,
-                ]);
+            //     $principal_ledger_saved->save();
+            // } else {
+            //     $principal_ledger_saved = new Principal_ledger([
+            //         'principal_id' => $request->input('principal_id'),
+            //         'user_id' => auth()->user()->id,
+            //         'date' => $date,
+            //         'all_id' => $new->id,
+            //         'transaction' => $request->input('disbursement'),
+            //         'accounts_payable_beginning' => 0,
+            //         'received' => 0,
+            //         'returned' => 0,
+            //         'adjustment' => 0,
+            //         'payment' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //         'accounts_payable_end' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount') * -1,
+            //         'remarks' => $general_ledger_remarks,
+            //     ]);
 
-                $principal_ledger_saved->save();
-            }
+            //     $principal_ledger_saved->save();
+            // }
 
-            $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
-                ->where('principal_id', $request->input('principal_id'))
-                ->orderBy('id', 'desc')->take(1)->first();
+            // $ap_ledger_last_transaction = Ap_ledger::select('running_balance')
+            //     ->where('principal_id', $request->input('principal_id'))
+            //     ->orderBy('id', 'desc')->take(1)->first();
 
-            if ($ap_ledger_last_transaction) {
-                $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - (str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'));
-            } else {
-                $ap_ledger_running_balance = str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount');
-            }
+            // if ($ap_ledger_last_transaction) {
+            //     $ap_ledger_running_balance = $ap_ledger_last_transaction->running_balance - (str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'));
+            // } else {
+            //     $ap_ledger_running_balance = str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount');
+            // }
 
-            $new_ap_ledger = new Ap_ledger([
-                'principal_id' => $request->input('principal_id'),
-                'user_id' => auth()->user()->id,
-                'transaction_date' => $date,
-                'description' => 'Payment to Principal',
-                'debit_record' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
-                'credit_record' => 0,
-                'running_balance' => $ap_ledger_running_balance,
-                'transaction' => 'payment to principal',
-                'reference' => 2,
-                'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
-            ]);
+            // $new_ap_ledger = new Ap_ledger([
+            //     'principal_id' => $request->input('principal_id'),
+            //     'user_id' => auth()->user()->id,
+            //     'transaction_date' => $date,
+            //     'description' => 'Payment to Principal',
+            //     'debit_record' => str_replace(',', '', $request->input('amount_paid')) + $request->input('ewt_amount'),
+            //     'credit_record' => 0,
+            //     'running_balance' => $ap_ledger_running_balance,
+            //     'transaction' => 'payment to principal',
+            //     'reference' => 2,
+            //     'remarks' => $request->input('particulars') . ', ' . $request->input('remarks'),
+            // ]);
 
-            $new_ap_ledger->save();
+            // $new_ap_ledger->save();
 
             $get_purchase_discount = General_ledger::select('running_balance')
                 ->where('account_name', $request->input('get_purchase_discount_account_name'))

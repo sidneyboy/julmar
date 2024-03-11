@@ -672,23 +672,23 @@
             processData: false,
             success: function(data) {
                 $('#loader').hide();
-                // if (data == 'exceed') {
-                //     Swal.fire(
-                //         'Cannot Proceed',
-                //         'Amount Exceed AR Balance',
-                //         'error'
-                //     )
-                // } else {
-                //     Swal.fire({
-                //         position: 'top-end',
-                //         icon: 'success',
-                //         title: 'Your work has been saved',
-                //         showConfirmButton: false,
-                //         timer: 1500
-                //     });
+                if (data == 'exceed') {
+                    Swal.fire(
+                        'Cannot Proceed',
+                        'Amount Exceed AR Balance',
+                        'error'
+                    )
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
-                //     location.reload();
-                // }
+                    location.reload();
+                }
             },
             error: function(error) {
                 $('#loader').hide();

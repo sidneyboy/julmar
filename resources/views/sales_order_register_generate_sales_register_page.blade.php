@@ -6,7 +6,7 @@
                 <th>Store Name</th>
                 <th>Principal</th>
                 <th>Agent</th>
-                <th>Total</th>
+                <th>Balance</th>
                 <th>DR</th>
                 <th>Delivered Date</th>
                 <th>Details</th>
@@ -14,30 +14,42 @@
         </thead>
         <tbody>
             @if ($sales_invoice_case != null)
-                <tr>
-                    <td style="color:blue;font-weight:bold;">{{ $sales_invoice_case->sku_type }}</td>
-                    <td>{{ $sales_invoice_case->customer->store_name }}</td>
-                    <td>{{ $sales_invoice_case->principal->principal }}</td>
-                    <td>{{ $sales_invoice_case->agent->full_name }}</td>
-                    <td style="text-align: right">{{ number_format($sales_invoice_case->total - $sales_invoice_case->total_payment, 2, '.', ',') }}</td>
-                    <td>{{ $sales_invoice_case->delivery_receipt }}</td>
-                    <td>{{ $sales_invoice_case->delivered_date }}</td>
-                    <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
-                            value="{{ $sales_invoice_case->id }}">Show</button></td>
-                </tr>
+                @foreach ($sales_invoice_case as $data_case)
+                    @if (round($data_case->total, 2) - $data_case->total_payment > 0)
+                        <tr>
+                            <td style="color:blue;font-weight:bold;">{{ $data_case->sku_type }}</td>
+                            <td>{{ $data_case->customer->store_name }}</td>
+                            <td>{{ $data_case->principal->principal }}</td>
+                            <td>{{ $data_case->agent->full_name }}</td>
+                            <td style="text-align: right">
+                                {{ number_format($data_case->total - $data_case->total_payment, 2, '.', ',') }}
+                            </td>
+                            <td>{{ $data_case->delivery_receipt }}</td>
+                            <td>{{ $data_case->delivered_date }}</td>
+                            <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
+                                    value="{{ $data_case->id }}">Show</button></td>
+                        </tr>
+                    @endif
+                @endforeach
             @endif
             @if ($sales_invoice_butal != null)
-                <tr>
-                    <td style="color:green;font-weight:bold;">{{ $sales_invoice_butal->sku_type }}</td>
-                    <td>{{ $sales_invoice_butal->customer->store_name }}</td>
-                    <td>{{ $sales_invoice_butal->principal->principal }}</td>
-                    <td>{{ $sales_invoice_butal->agent->full_name }}</td>
-                    <td style="text-align: right">{{ number_format($sales_invoice_butal->total - $sales_invoice_case->total_payment, 2, '.', ',') }}</td>
-                    <td>{{ $sales_invoice_butal->delivery_receipt }}</td>
-                    <td>{{ $sales_invoice_butal->delivered_date }}</td>
-                    <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
-                            value="{{ $sales_invoice_butal->id }}">Show</button></td>
-                </tr>
+                @foreach ($sales_invoice_butal as $data_butal)
+                    @if (round($data_butal->total, 2) - $data_butal->total_payment > 0)
+                        <tr>
+                            <td style="color:green;font-weight:bold;">{{ $data_butal->sku_type }}</td>
+                            <td>{{ $data_butal->customer->store_name }}</td>
+                            <td>{{ $data_butal->principal->principal }}</td>
+                            <td>{{ $data_butal->agent->full_name }}</td>
+                            <td style="text-align: right">
+                                {{ number_format($data_butal->total - $sales_invoice_case->total_payment, 2, '.', ',') }}
+                            </td>
+                            <td>{{ $data_butal->delivery_receipt }}</td>
+                            <td>{{ $data_butal->delivered_date }}</td>
+                            <td><button class="btn btn-info btn-block btn-sm view_detailed_report"
+                                    value="{{ $data_butal->id }}">Show</button></td>
+                        </tr>
+                    @endif
+                @endforeach
             @endif
         </tbody>
     </table>

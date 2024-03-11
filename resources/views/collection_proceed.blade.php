@@ -54,7 +54,7 @@
                     <th style="text-align: center">INVOICE NO</th>
                     <th style="text-align: center">PRINCIPAL</th>
                     <th style="text-align: center">AMOUNT</th>
-                    <th style="text-align: center">UNCONFIRMED CM</th>
+                    <th style="text-align: center">POSTED CM</th>
                     <th style="text-align: center">BALANCE</th>
                     <th style="text-align: center">COLLECTION</th>
                     <th style="text-align: center">AGING</th>
@@ -92,7 +92,7 @@
                             </td>
                             <td style="text-align: right">
                                 @php
-                                    $outstanding_balance = $data->total - $data->total_payment;
+                                    $outstanding_balance = $data->total - $data->total_payment - $data->cm_amount_deducted;
                                     echo number_format($outstanding_balance, 2, '.', ',');
                                 @endphp
                                 <input type="hidden" value="{{ round($outstanding_balance, 2) }}"

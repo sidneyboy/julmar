@@ -34,7 +34,8 @@ class Sales_order_register_controller extends Controller
     {
         $sales_order = Sales_invoice::select('customer_id','total','total_payment','delivery_receipt')
             ->where('agent_id', $request->input('agent_id'))
-            // ->whereColumn('total', '<', 'total_payment')
+            // ->where('payment_status','partial')
+            // ->orWhere('payment_status',null)
             ->orderBy('id', 'desc')
             ->groupBy('customer_id')
             ->get();
@@ -51,13 +52,13 @@ class Sales_order_register_controller extends Controller
             ->where('agent_id', $request->input('agent_id'))
             ->where('sku_type', 'CASE')
             ->orderBy('id', 'desc')
-            ->first();
+            ->get();
 
         $sales_invoice_butal = Sales_invoice::where('customer_id', $request->input('customer_id'))
             ->where('agent_id', $request->input('agent_id'))
             ->where('sku_type', 'BUTAL')
             ->orderBy('id', 'desc')
-            ->first();
+            ->get();
 
         return view('sales_order_register_generate_sales_register_page', [
             'sales_invoice_case' => $sales_invoice_case,
